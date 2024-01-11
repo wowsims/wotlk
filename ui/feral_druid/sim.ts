@@ -11,7 +11,8 @@ import {
 	RaidBuffs,
 	Spec,
 	Stat,
-	TristateEffect,
+        TristateEffect,
+    	WeaponImbue,
 } from '../core/proto/common.js';
 
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
@@ -142,7 +143,10 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 		IconInputs.MP5Buff,
 		IconInputs.JudgementOfWisdom,
 	],
-	excludeBuffDebuffInputs: [
+        excludeBuffDebuffInputs: [
+	    WeaponImbue.ElementalSharpeningStone,
+	    WeaponImbue.DenseSharpeningStone,
+	    WeaponImbue.WildStrikes,
 	],
 	// Inputs to include in the 'Other' section on the settings tab.
 	otherInputs: {
