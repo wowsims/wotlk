@@ -577,45 +577,17 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 		shortDescription: 'Executes optimized Feral DPS rotation using hardcoded legacy algorithm.',
 		includeIf: (player: Player<any>, isPrepull: boolean) => player.spec == Spec.SpecFeralDruid,
 		newValue: () => APLActionCatOptimalRotationAction.create({
-			rotationType: FeralDruid_Rotation_AplType.SingleTarget,
-			manualParams: true,
-			maxFfDelay: 0.1,
-			minRoarOffset: 25.0,
-			ripLeeway: 4,
-			useRake: true,
-			useBite: true,
-			biteTime: 4.0,
-			flowerWeave: false,
+			minCombosForRip: 3,
+			maxWaitTime: 1.5,
 		}),
 		fields: [
-			AplHelpers.rotationTypeFieldConfig('rotationType'),
-			AplHelpers.booleanFieldConfig('manualParams', 'Manual Advanced Parameters', {
-				'labelTooltip': 'Manually specify advanced parameters, otherwise will use preset defaults.',
+			AplHelpers.numberFieldConfig('minCombosForRip', false, {
+				'label': 'Min Rip CP',
+				'labelTooltip': 'Combo Point threshold for allowing a Rip cast.',
 			}),
-			AplHelpers.numberFieldConfig('maxFfDelay', true, {
-				'label': 'Max FF Delay',
-				'labelTooltip': 'Max allowed FF delay to fit in damage casts. Ignored if not using manual advanced parameters.',
-			}),
-			AplHelpers.numberFieldConfig('minRoarOffset', true, {
-				'label': 'Roar Offset',
-				'labelTooltip': 'Targeted offset in Rip/Roar timings. Ignored for AOE rotation or if not using manual advanced parameters.',
-			}),
-			AplHelpers.numberFieldConfig('ripLeeway', false, {
-				'label': 'Rip Leeway',
-				'labelTooltip': 'Rip leeway when optimizing Roar clips. Ignored for AOE rotation or if not using manual advanced parameters.',
-			}),
-			AplHelpers.booleanFieldConfig('useRake', 'Use Rake', {
-				'labelTooltip': 'Use Rake during rotation. Ignored for AOE rotation or if not using manual advanced parameters.',
-			}),
-			AplHelpers.booleanFieldConfig('useBite', 'Bite during rotation', {
-				'labelTooltip': 'Use Bite during rotation rather than exclusively at end of fight. Ignored for AOE rotation or if not using manual advanced parameters.',
-			}),
-			AplHelpers.numberFieldConfig('biteTime', true, {
-				'label': 'Bite Time',
-				'labelTooltip': 'Min seconds remaining on Rip/Roar to allow a Bite. Ignored if not Biting during rotation.',
-			}),
-			AplHelpers.booleanFieldConfig('flowerWeave', 'Flower Weave', {
-				'labelTooltip': 'Fish for Clearcasting procs during AOE rotation with GotW. Ignored for Single Target rotation or if not using manual advanced parameters.',
+			AplHelpers.numberFieldConfig('maxWaitTime', true, {
+				'label': 'Max Wait Time',
+				'labelTooltip': 'Max seconds to wait for an Energy tick to cast rather than powershifting.',
 			}),
 		],
 	}),
