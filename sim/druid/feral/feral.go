@@ -43,7 +43,7 @@ func NewFeralDruid(character *core.Character, options *proto.Player) *FeralDruid
 	cat.maxRipTicks = 6
 	//cat.setupRotation(feralOptions.Rotation)
 
-	cat.EnableEnergyBar(100.0, cat.OnEnergyGain)
+	cat.EnableEnergyBar(100.0, cat.OnGCDReady)
 
 	cat.EnableRageBar(core.RageBarOptions{RageMultiplier: 1, MHSwingSpeed: 2.5}, func(sim *core.Simulation) {})
 
@@ -53,9 +53,9 @@ func NewFeralDruid(character *core.Character, options *proto.Player) *FeralDruid
 		AutoSwingMelee: true,
 	})
 	/*
-	cat.ReplaceBearMHFunc = func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
-		return cat.checkReplaceMaul(sim, mhSwingSpell)
-	}*/
+		cat.ReplaceBearMHFunc = func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
+			return cat.checkReplaceMaul(sim, mhSwingSpell)
+		}*/
 
 	return cat
 }
@@ -65,16 +65,12 @@ type FeralDruid struct {
 
 	Rotation FeralDruidRotation
 
-	missChance        float64
-	readyToShift      bool
-	readyToGift       bool
-	waitingForTick    bool
-	latency           time.Duration
-	maxRipTicks       int32
-	bleedAura         *core.Aura
-	lastShift         time.Duration
-	ripRefreshPending bool
-	usingHardcodedAPL bool
+	missChance   float64
+	readyToShift bool
+	latency      time.Duration
+	maxRipTicks  int32
+	bleedAura    *core.Aura
+	lastShift    time.Duration
 
 	rotationAction *core.PendingAction
 }
@@ -104,7 +100,6 @@ func (cat *FeralDruid) Reset(sim *core.Simulation) {
 	cat.Druid.ClearForm(sim)
 	cat.CatFormAura.Activate(sim)
 	cat.readyToShift = false
-	cat.waitingForTick = false
 	//cat.berserkUsed = false
 	cat.rotationAction = nil
 }

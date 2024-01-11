@@ -115,23 +115,7 @@ func (impl *APLActionCatOptimalRotationAction) GetNextAction(*core.Simulation) *
 }
 
 func (cat *FeralDruid) newActionCatOptimalRotationAction(_ *core.APLRotation, config *proto.APLActionCatOptimalRotationAction) core.APLActionImpl {
-	rotationOptions := &proto.FeralDruid_Rotation{
-		RotationType:       config.RotationType,
-		MaintainFaerieFire: true,
-		UseRake:            config.UseRake,
-		UseBite:            config.UseBite,
-		BiteTime:           config.BiteTime,
-		MangleSpam:         false,
-		MaxFfDelay:         config.MaxFfDelay,
-		Powerbear:          false,
-		MinRoarOffset:      config.MinRoarOffset,
-		RipLeeway:          config.RipLeeway,
-		HotUptime:          0.0,
-		FlowerWeave:        config.FlowerWeave,
-		ManualParams:       config.ManualParams,
-	}
-
-	cat.setupRotation(rotationOptions)
+	cat.setupRotation(config)
 
 	return &APLActionCatOptimalRotationAction{
 		cat: cat,
@@ -158,12 +142,10 @@ func (action *APLActionCatOptimalRotationAction) Execute(sim *core.Simulation) {
 		cat.OnGCDReady(sim)
 	}
 
-	cat.doTigersFury(sim)
 	action.lastAction = sim.CurrentTime
 }
 
 func (action *APLActionCatOptimalRotationAction) Reset(*core.Simulation) {
-	action.cat.usingHardcodedAPL = true
 	action.lastAction = core.DurationFromSeconds(-100)
 }
 
