@@ -65,12 +65,14 @@ type FeralDruid struct {
 
 	Rotation FeralDruidRotation
 
-	missChance   float64
-	readyToShift bool
-	latency      time.Duration
-	maxRipTicks  int32
-	bleedAura    *core.Aura
-	lastShift    time.Duration
+	missChance    float64
+	readyToShift  bool
+	latency       time.Duration
+	maxRipTicks   int32
+	bleedAura     *core.Aura
+	lastShift     time.Duration
+	poolingMana   bool
+	poolStartTime time.Duration
 
 	rotationAction *core.PendingAction
 }
@@ -101,5 +103,6 @@ func (cat *FeralDruid) Reset(sim *core.Simulation) {
 	cat.CatFormAura.Activate(sim)
 	cat.readyToShift = false
 	//cat.berserkUsed = false
+	cat.poolingMana = false
 	cat.rotationAction = nil
 }
