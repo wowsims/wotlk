@@ -110,7 +110,7 @@ func (cat *FeralDruid) canRip(sim *core.Simulation) bool {
 	roarDur := cat.SavageRoarAura.RemainingDuration(sim)
 	fightDur := sim.GetRemainingDuration()
 	minRoarCp := min(int32((fightDur-roarDur-time.Second*9)/(time.Second*5))+1, 5)
-	return (cat.timeToCast(minRoarCp+1) < roarDur) && ((cat.ComboPoints() == 5) || (cat.timeToCast(minRoarCp+2) >= roarDur)) && (fightDur > time.Second*10)
+	return !cat.Rip.CurDot().IsActive() && (cat.timeToCast(minRoarCp+1) < roarDur) && ((cat.ComboPoints() == 5) || (cat.timeToCast(minRoarCp+2) >= roarDur)) && (fightDur > time.Second*10)
 }
 
 /*
@@ -198,7 +198,7 @@ func (cat *FeralDruid) shouldPoolMana(sim *core.Simulation, numShiftsToOom int32
 		return true
 	}
 
-	effectiveFightDur := sim.GetRemainingDuration() - core.DurationFromSeconds(1.5) - cat.latency
+	effectiveFightDur := sim.GetRemainingDuration() - core.DurationFromSeconds(3.0) - cat.latency
 	numShiftsToFightEnd := int32(effectiveFightDur / (time.Second * 4))
 	canPoolMana := (numShiftsToOom < cat.maxShifts()) && (numShiftsToOom < numShiftsToFightEnd-1) && (sim.CurrentTime-cat.lastShift > time.Second*5)
 

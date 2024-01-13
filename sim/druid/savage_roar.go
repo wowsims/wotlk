@@ -4,8 +4,8 @@ import (
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
-	"github.com/wowsims/sod/sim/core/stats"
 	"github.com/wowsims/sod/sim/core/proto"
+	"github.com/wowsims/sod/sim/core/stats"
 )
 
 func (druid *Druid) getSavageRoarMultiplier() float64 {
@@ -23,17 +23,16 @@ func (druid *Druid) applySavageRoar() {
 
 	druid.SavageRoarDurationTable = [6]time.Duration{
 		0,
-		time.Second*(9+5),
-		time.Second*(9+10),
-		time.Second*(9+15),
-		time.Second*(9+20),
-		time.Second*(9+25),
+		time.Second * (9 + 5),
+		time.Second * (9 + 10),
+		time.Second * (9 + 15),
+		time.Second * (9 + 20),
+		time.Second * (9 + 25),
 	}
 
 	druid.SavageRoarAura = druid.RegisterAura(core.Aura{
 		Label:    "Savage Roar Aura",
 		ActionID: actionID,
-		Duration: 9,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			druid.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= srm
 		},
@@ -41,6 +40,9 @@ func (druid *Druid) applySavageRoar() {
 			if druid.InForm(Cat) {
 				druid.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] /= srm
 			}
+		},
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Duration = druid.SavageRoarDurationTable[5] // for pre-pull
 		},
 	})
 
@@ -73,4 +75,3 @@ func (druid *Druid) applySavageRoar() {
 func (druid *Druid) CurrentSavageRoarCost() float64 {
 	return druid.SavageRoar.ApplyCostModifiers(druid.SavageRoar.DefaultCast.Cost)
 }
-
