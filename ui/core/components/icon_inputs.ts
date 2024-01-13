@@ -217,6 +217,7 @@ export const AshenvalePvpBuff = withLabel(
 export const MajorArmorDebuff = InputHelpers.makeMultiIconInput([
 	makeBooleanDebuffInput({id: ActionId.fromSpellId(11597), fieldName: 'sunderArmor'}),
 	makeTristateDebuffInput(ActionId.fromSpellId(11198), ActionId.fromSpellId(14169), 'exposeArmor'),
+        makeBooleanDebuffInput({id: ActionId.fromSpellId(402818), fieldName: 'degrade'}),
 ], 'Major ArP');
 
 export const CurseOfRecklessness = InputHelpers.makeMultiIconInput([

@@ -76,6 +76,18 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 				},
 			}, raid)
 		}
+
+		if debuffs.Degrade {
+			aura := DegradeAura(target, level)
+			ScheduledMajorArmorAura(aura, PeriodicActionOptions{
+				Period:          time.Second * 3,
+				NumTicks:        1,
+				TickImmediately: true,
+				OnAction: func(sim *Simulation) {
+					aura.Activate(sim)
+				},
+			}, raid)
+		}
 	}
 
 	if debuffs.CurseOfRecklessness {
@@ -490,6 +502,31 @@ func ExposeArmorAura(target *Unit, improvedEA int32, playerLevel int32) *Aura {
 	return aura
 }
 
+func DegradeAura(target *Unit, playerLevel int32) *Aura {
+	spellID := int32(402818)
+
+	arpen := float64(150 + playerLevel*35)
+
+	aura := target.GetOrRegisterAura(Aura{
+		Label:    "Degrade",
+		ActionID: ActionID{SpellID: spellID},
+		Duration: time.Second * 15,
+	})
+
+	aura.NewExclusiveEffect(majorArmorReductionEffectCategory, true, ExclusiveEffect{
+		Priority: arpen,
+		OnGain: func(ee *ExclusiveEffect, sim *Simulation) {
+			aura.Unit.AddStatDynamic(sim, stats.Armor, -ee.Priority)
+		},
+		OnExpire: func(ee *ExclusiveEffect, sim *Simulation) {
+			aura.Unit.AddStatDynamic(sim, stats.Armor, ee.Priority)
+		},
+	})
+
+	return aura
+}
+
+
 func CurseOfRecklessnessAura(target *Unit, playerLevel int32) *Aura {
 	spellID := map[int32]int32{
 		25: 704,
@@ -548,7 +585,7 @@ func FaerieFireAura(target *Unit, playerLevel int32) *Aura {
 	return aura
 }
 
-// TODO: Classic
+// Todo: Classic
 func CurseOfWeaknessAura(target *Unit, points int32, playerLevel int32) *Aura {
 	aura := target.GetOrRegisterAura(Aura{
 		Label:    "Curse of Weakness" + strconv.Itoa(int(points)),

@@ -525,6 +525,8 @@ message Debuffs {
 	TristateEffect hunters_mark = 20;
 
 	bool crystal_yield = 21;
+
+	bool degrade = 22;
 }
 
 enum MobType {
