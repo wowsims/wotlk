@@ -630,6 +630,11 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 		character.AddStat(stats.SpellPower, 25)
 	}
 
+	if individualBuffs.AshenvalePvpBuff {
+		character.PseudoStats.DamageDealtMultiplier *= 1.05
+		//TODO: healing dealt multiplier?
+	}
+
 	// TODO: Classic provide in APL?
 	registerPowerInfusionCD(agent, individualBuffs.PowerInfusions)
 	registerManaTideTotemCD(agent, partyBuffs.ManaTideTotems)

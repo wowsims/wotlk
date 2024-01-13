@@ -207,6 +207,12 @@ export const BoonOfBlackfathom = withLabel(
 	'Boon of Blackfathom',
 );
 
+export const AshenvalePvpBuff = withLabel(
+	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(430352), fieldName: 'ashenvalePvpBuff'}),
+	'Ashenvale PvP Buff',
+);
+
+
 // Debuffs
 export const MajorArmorDebuff = InputHelpers.makeMultiIconInput([
 	makeBooleanDebuffInput({id: ActionId.fromSpellId(11597), fieldName: 'sunderArmor'}),

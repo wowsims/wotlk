@@ -468,6 +468,7 @@ message IndividualBuffs {
 	// New SoD Buffs
 	bool boon_of_blackfathom = 15;
 	bool aspect_of_the_lion = 16;
+	bool ashenvale_pvp_buff = 17;
 }
 
 message Consumes {
