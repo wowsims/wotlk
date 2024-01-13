@@ -294,6 +294,7 @@ enum AgilityElixir {
 	AgilityElixirUnknown = 0;
 	ElixirOfTheMongoose = 1;
 	ElixirOfGreaterAgility = 2;
+	ElixirOfLesserAgility = 3;
 }
 
 enum ManaRegenElixir {
@@ -305,6 +306,7 @@ enum StrengthBuff {
 	StrengthBuffUnknown = 0;
 	JujuPower = 1;
 	ElixirOfGiants = 2;
+	ElixirOfOgresStrength = 3;
 }
 
 enum AttackPowerBuff {
