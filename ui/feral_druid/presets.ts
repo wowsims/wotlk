@@ -5,7 +5,11 @@ import {
 	Profession,
 	Spec,
 	Potions,
-	Conjured
+	Conjured,
+	AgilityElixir,
+	StrengthBuff,
+	WeaponImbue,
+	SaygesFortune,
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
@@ -57,6 +61,9 @@ export const DefaultConsumes = Consumes.create({
 	food: Food.FoodUnknown,
 	defaultPotion: Potions.ManaPotion,
 	defaultConjured: Conjured.ConjuredMinorRecombobulator,
+        agilityElixir: AgilityElixir.ElixirOfLesserAgility,
+        strengthBuff: StrengthBuff.ElixirOfOgresStrength,
+        mainHandImbue: WeaponImbue.BlackfathomSharpeningStone,
 });
 
 export const OtherDefaults = {

@@ -127,7 +127,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 			exposeArmor: TristateEffect.TristateEffectImproved,
 			faerieFire: true,
 			sunderArmor: true,
-			curseOfWeakness: TristateEffect.TristateEffectRegular,
+			degrade: true,
+		        curseOfWeakness: TristateEffect.TristateEffectRegular,
 		}),
 
 		other: Presets.OtherDefaults,
