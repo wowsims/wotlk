@@ -207,6 +207,12 @@ export const BoonOfBlackfathom = withLabel(
 	'Boon of Blackfathom',
 );
 
+export const AshenvalePvpBuff = withLabel(
+	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(430352), fieldName: 'ashenvalePvpBuff'}),
+	'Ashenvale PvP Buff',
+);
+
+
 // Debuffs
 export const MajorArmorDebuff = InputHelpers.makeMultiIconInput([
 	makeBooleanDebuffInput({id: ActionId.fromSpellId(11597), fieldName: 'sunderArmor'}),
@@ -496,12 +502,14 @@ export const makeFoodInput = makeConsumeInputFactory({
 export const AgilityBuffInput = makeConsumeInput('agilityElixir', [
 	{ actionId: ActionId.fromItemId(13452), value: AgilityElixir.ElixirOfTheMongoose, showWhen: (p) => p.getLevel() >= 46 },
 	{ actionId: ActionId.fromItemId(9187), value: AgilityElixir.ElixirOfGreaterAgility, showWhen: (p) => p.getLevel() >= 38},
-] as Array<IconEnumValueConfig<Player<any>, AgilityElixir>>, (p) => p.getLevel() >= 38);
+        { actionId: ActionId.fromItemId(3390), value: AgilityElixir.ElixirOfLesserAgility, showWhen: (p) => p.getLevel() >= 18},
+] as Array<IconEnumValueConfig<Player<any>, AgilityElixir>>, (p) => p.getLevel() >= 18);
 
 export const StrengthBuffInput = makeConsumeInput('strengthBuff', [
 	{ actionId: ActionId.fromItemId(12451), value: StrengthBuff.JujuPower, showWhen: (p) => p.getLevel() >= 46 },
 	{ actionId: ActionId.fromItemId(9206), value: StrengthBuff.ElixirOfGiants, showWhen: (p) => p.getLevel() >= 46 },
-] as Array<IconEnumValueConfig<Player<any>, StrengthBuff>>, (p) => p.getLevel() >= 46);
+        { actionId: ActionId.fromItemId(3391), value: StrengthBuff.ElixirOfOgresStrength, showWhen: (p) => p.getLevel() >= 20},
+] as Array<IconEnumValueConfig<Player<any>, StrengthBuff>>, (p) => p.getLevel() >= 20);
 
 export const SpellDamageBuff = makeConsumeInput('spellPowerBuff', [
 	{ actionId: ActionId.fromItemId(9155), value: SpellPowerBuff.ArcaneElixir, showWhen: (p) => p.getLevel() >= 37 },

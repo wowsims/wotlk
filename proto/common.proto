@@ -294,6 +294,7 @@ enum AgilityElixir {
 	AgilityElixirUnknown = 0;
 	ElixirOfTheMongoose = 1;
 	ElixirOfGreaterAgility = 2;
+	ElixirOfLesserAgility = 3;
 }
 
 enum ManaRegenElixir {
@@ -305,6 +306,7 @@ enum StrengthBuff {
 	StrengthBuffUnknown = 0;
 	JujuPower = 1;
 	ElixirOfGiants = 2;
+	ElixirOfOgresStrength = 3;
 }
 
 enum AttackPowerBuff {
@@ -466,6 +468,7 @@ message IndividualBuffs {
 	// New SoD Buffs
 	bool boon_of_blackfathom = 15;
 	bool aspect_of_the_lion = 16;
+	bool ashenvale_pvp_buff = 17;
 }
 
 message Consumes {

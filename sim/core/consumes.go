@@ -92,6 +92,10 @@ func applyConsumeEffects(agent Agent) {
 			character.AddStats(stats.Stats{
 				stats.Agility: 25,
 			})
+		case proto.AgilityElixir_ElixirOfLesserAgility:
+			character.AddStats(stats.Stats{
+				stats.Agility: 8,
+			})
 		}
 	}
 
@@ -104,6 +108,10 @@ func applyConsumeEffects(agent Agent) {
 		case proto.StrengthBuff_ElixirOfGiants:
 			character.AddStats(stats.Stats{
 				stats.Strength: 25,
+			})
+		case proto.StrengthBuff_ElixirOfOgresStrength:
+			character.AddStats(stats.Stats{
+				stats.Strength: 8,
 			})
 		}
 	}
