@@ -54,5 +54,12 @@ export const FeralDruidRotationConfig = {
 			float: true,
 			positive: true,
 		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecFeralDruid>({
+			fieldName: 'preroarDuration',
+			label: 'Pre-Roar Duration',
+			labelTooltip: 'Seconds remaining on a prior Savage Roar buff at the start of the pull.',
+			float: true,
+			positive: true,
+		}),
 	],
 };

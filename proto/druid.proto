@@ -149,6 +149,7 @@ message FeralDruid {
 	bool maintain_faerie_fire = 1;
 	int32 min_combos_for_rip = 2;
 	float max_wait_time = 3;
+	float preroar_duration = 4;
   }
   Rotation rotation = 1;
 

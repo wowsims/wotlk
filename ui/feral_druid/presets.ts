@@ -32,7 +32,8 @@ export const APL_ROTATION_DEFAULT = PresetUtils.makePresetAPLRotation('APL Defau
 export const DefaultRotation = FeralDruidRotation.create({
 	maintainFaerieFire: false,
 	minCombosForRip: 3,
-	maxWaitTime: 1.5,
+	maxWaitTime: 2.0,
+	preroarDuration: 26.0,
 });
 
 export const SIMPLE_ROTATION_DEFAULT = PresetUtils.makePresetSimpleRotation('Simple Default', Spec.SpecFeralDruid, DefaultRotation);
