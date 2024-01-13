@@ -1,12 +1,14 @@
 import { Player } from "ui/core/player";
 import { IndividualSimUI } from "../../individual_sim_ui";
 import {
+	Potions,
 	Flask,
 	Food,
 	Profession,
 	Spec,
 	Stat,
 	WeaponImbue,
+	Conjured
 } from "../../proto/common";
 import { Component } from "../component";
 import { IconEnumPicker } from "../icon_enum_picker";
@@ -24,6 +26,7 @@ export class ConsumesPicker extends Component {
 		this.settingsTab = settingsTab;
 		this.simUI = simUI;
 
+		this.buildPotionsPicker();
 		this.buildFlaskPicker();
 		this.buildWeaponImbuePicker();
 		this.buildFoodPicker();
@@ -31,6 +34,43 @@ export class ConsumesPicker extends Component {
 		this.buildSpellPowerBuffPicker();
 		this.buildEngPicker();
 		this.buildPetPicker();
+	}
+
+	private buildPotionsPicker() {
+		let fragment = document.createElement('fragment');
+		fragment.innerHTML = `
+      <div class="consumes-row input-root input-inline">
+        <label class="form-label">Potions</label>
+        <div class="consumes-row-inputs">
+          <div class="consumes-potions"></div>
+          <div class="consumes-conjured"></div>
+        </div>
+      </div>
+    `;
+
+		this.rootElem.appendChild(fragment.children[0] as HTMLElement);
+
+		const potionOptions = this.simUI.splitRelevantOptions([
+			{ item: Potions.LesserManaPotion, stats: [Stat.StatIntellect] },
+			{ item: Potions.ManaPotion, stats: [Stat.StatIntellect] },
+		]);
+		if (potionOptions.length) {
+			const elem = this.rootElem.querySelector('.consumes-potions') as HTMLElement;
+			new IconEnumPicker(
+				elem,
+				this.simUI.player,
+				IconInputs.makePotionsInput(potionOptions, 'Combat Potion')
+			);
+		}
+
+		const conjuredOptions = this.simUI.splitRelevantOptions([
+			{ item: Conjured.ConjuredMinorRecombobulator, stats: [Stat.StatIntellect] },
+			{ item: Conjured.ConjuredDemonicRune, stats: [Stat.StatIntellect] },
+		]);
+		if (conjuredOptions.length) {
+			const elem = this.rootElem.querySelector('.consumes-conjured') as HTMLElement;
+			new IconEnumPicker(elem, this.simUI.player, IconInputs.makeConjuredInput(conjuredOptions));
+		}
 	}
 
 	private buildFlaskPicker() {

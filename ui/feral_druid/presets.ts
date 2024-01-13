@@ -3,7 +3,9 @@ import {
 	Flask,
 	Food,
 	Profession,
-	Spec
+	Spec,
+	Potions,
+	Conjured
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
@@ -29,7 +31,7 @@ export const APL_ROTATION_DEFAULT = PresetUtils.makePresetAPLRotation('APL Defau
 
 export const DefaultRotation = FeralDruidRotation.create({
 	maintainFaerieFire: false,
-	minCombosForRip: 2,
+	minCombosForRip: 3,
 	maxWaitTime: 1.5,
 });
 
@@ -52,6 +54,8 @@ export const DefaultOptions = FeralDruidOptions.create({
 export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskUnknown,
 	food: Food.FoodUnknown,
+	defaultPotion: Potions.ManaPotion,
+	defaultConjured: Conjured.ConjuredMinorRecombobulator,
 });
 
 export const OtherDefaults = {
