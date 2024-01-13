@@ -177,7 +177,7 @@ func (druid *Druid) setupNaturesGrace() {
 
 // TODO: Class druid omen
 func (druid *Druid) applyOmenOfClarity() {
-	
+
 	if !druid.Talents.OmenOfClarity {
 		return
 	}
@@ -200,6 +200,7 @@ func (druid *Druid) applyOmenOfClarity() {
 				druid.Shred,
 				druid.SwipeBear,
 				druid.SwipeCat,
+				druid.SavageRoar,
 			}, func(spell *DruidSpell) bool { return spell != nil })
 		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {

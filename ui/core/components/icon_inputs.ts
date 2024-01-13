@@ -11,7 +11,9 @@ import {
 	SaygesFortune,
 	SpellPowerBuff,
 	StrengthBuff,
-	WeaponImbue
+	WeaponImbue,
+	Potions,
+	Conjured
 } from '../proto/common.js';
 import { ActionId } from '../proto_utils/action_id.js';
 
@@ -415,39 +417,25 @@ function makeMultistateIndividualBuffInput(id: ActionId, numStates: number, fiel
 // Custom buffs that don't fit into any of the helper functions above.
 //////////////////////////////////////////////////////////////////////
 
-// function makePotionInputFactory(consumesFieldName: keyof Consumes): (options: Array<Potions>, tooltip?: string) => InputHelpers.TypedIconEnumPickerConfig<Player<any>, Potions> {
-// 	return makeConsumeInputFactory({
-// 		consumesFieldName: consumesFieldName,
-// 		allOptions: [
-// 			{ actionId: ActionId.fromItemId(33447), value: Potions.RunicHealingPotion },
-// 			{ actionId: ActionId.fromItemId(41166), value: Potions.RunicHealingInjector },
-// 			{ actionId: ActionId.fromItemId(33448), value: Potions.RunicManaPotion },
-// 			{ actionId: ActionId.fromItemId(42545), value: Potions.RunicManaInjector },
-// 			{ actionId: ActionId.fromItemId(40093), value: Potions.IndestructiblePotion },
-// 			{ actionId: ActionId.fromItemId(40211), value: Potions.PotionOfSpeed },
-// 			{ actionId: ActionId.fromItemId(40212), value: Potions.PotionOfWildMagic },
-
-// 			{ actionId: ActionId.fromItemId(22839), value: Potions.DestructionPotion },
-// 			{ actionId: ActionId.fromItemId(22838), value: Potions.HastePotion },
-// 			{ actionId: ActionId.fromItemId(13442), value: Potions.MightyRagePotion },
-// 			{ actionId: ActionId.fromItemId(22832), value: Potions.SuperManaPotion },
-// 			{ actionId: ActionId.fromItemId(31677), value: Potions.FelManaPotion },
-// 			{ actionId: ActionId.fromItemId(22828), value: Potions.InsaneStrengthPotion },
-// 			{ actionId: ActionId.fromItemId(22849), value: Potions.IronshieldPotion },
-// 			{ actionId: ActionId.fromItemId(22837), value: Potions.HeroicPotion },
-// 		] as Array<IconEnumValueConfig<Player<any>, Potions>>,
-// 	});
-// }
+function makePotionInputFactory(consumesFieldName: keyof Consumes): (options: Array<Potions>, tooltip?: string) => InputHelpers.TypedIconEnumPickerConfig<Player<any>, Potions> {
+	return makeConsumeInputFactory({
+		consumesFieldName: consumesFieldName,
+		allOptions: [
+			{ actionId: ActionId.fromItemId(3385), value: Potions.LesserManaPotion },
+			{ actionId: ActionId.fromItemId(3827), value: Potions.ManaPotion },
+		] as Array<IconEnumValueConfig<Player<any>, Potions>>,
+	});
+}
+export const makePotionsInput = makePotionInputFactory('defaultPotion');
 
 // TODO: Classic? 
-// export const makeConjuredInput = makeConsumeInputFactory({
-// 	consumesFieldName: 'defaultConjured',
-// 	allOptions: [
-// 		{ actionId: ActionId.fromItemId(12662), value: Conjured.ConjuredDarkRune },
-// 		{ actionId: ActionId.fromItemId(22105), value: Conjured.ConjuredHealthstone },
-// 		{ actionId: ActionId.fromItemId(7676), value: Conjured.ConjuredRogueThistleTea },
-// 	] as Array<IconEnumValueConfig<Player<any>, Conjured>>
-// });
+export const makeConjuredInput = makeConsumeInputFactory({
+	consumesFieldName: 'defaultConjured',
+	allOptions: [
+		{ actionId: ActionId.fromItemId(4381), value: Conjured.ConjuredMinorRecombobulator, showWhen: (player: Player<any>) => player.getGear().hasTrinket(4381) },
+		{ actionId: ActionId.fromItemId(12662), value: Conjured.ConjuredDemonicRune },
+	] as Array<IconEnumValueConfig<Player<any>, Conjured>>
+});
 
 export const makeFlasksInput = makeConsumeInputFactory({
 	consumesFieldName: 'flask',
@@ -552,7 +540,7 @@ function makeConsumeInputFactory<T extends number>(args: ConsumeInputFactoryArgs
 			equals: (a: T, b: T) => a == b,
 			zeroValue: 0 as T,
 			showWhen: args.showWhen,
-			changedEvent: (player: Player<any>) => TypedEvent.onAny([player.consumesChangeEmitter, player.levelChangeEmitter]),
+			changedEvent: (player: Player<any>) => TypedEvent.onAny([player.consumesChangeEmitter, player.levelChangeEmitter, player.gearChangeEmitter]),
 			getValue: (player: Player<any>) => player.getConsumes()[args.consumesFieldName] as T,
 			setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
 				const newConsumes = player.getConsumes();

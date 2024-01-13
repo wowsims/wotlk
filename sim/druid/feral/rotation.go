@@ -73,6 +73,8 @@ func (cat *FeralDruid) shiftBearCat(sim *core.Simulation, powershift bool) bool 
 	toCat := !cat.InForm(druid.Cat)
 	if powershift {
 		toCat = !toCat
+		cat.ClearForm(sim)
+		cat.TryUseCooldowns(sim)
 	}
 
 	cat.lastShift = sim.CurrentTime
@@ -191,6 +193,28 @@ func (cat *FeralDruid) postRotation(sim *core.Simulation, nextAction time.Durati
 	}
 }
 
+func (cat *FeralDruid) shouldPoolMana(sim *core.Simulation, numShiftsToOom int32) bool {
+	if cat.Talents.Furor < 5 {
+		return true
+	}
+
+	effectiveFightDur := sim.GetRemainingDuration() - core.DurationFromSeconds(1.5) - cat.latency
+	numShiftsToFightEnd := int32(effectiveFightDur / (time.Second * 4))
+	canPoolMana := (numShiftsToOom < cat.maxShifts()) && (numShiftsToOom < numShiftsToFightEnd-1) && (sim.CurrentTime-cat.lastShift > time.Second*5)
+
+	if !canPoolMana {
+		return false
+	}
+
+	for _, cd := range cat.GetMajorCooldowns() {
+		if cd.IsEnabled() && cd.Type.Matches(core.CooldownTypeMana) && cd.IsReady(sim) {
+			return false
+		}
+	}
+
+	return true
+}
+
 func (cat *FeralDruid) doRotation(sim *core.Simulation) (bool, time.Duration) {
 	// Store state variables that will be used in calculations
 	rotation := &cat.Rotation
@@ -219,8 +243,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) (bool, time.Duration) {
 	}
 
 	// Then determine whether to cast vs. wait vs. shift
-	numShiftsToFightEnd := int32(effectiveFightDur / (time.Second * 4))
-	poolMana := (cat.Talents.Furor < 5) || ((numShiftsToOom < cat.maxShifts()) && (numShiftsToOom < numShiftsToFightEnd-1) && (sim.CurrentTime-cat.lastShift > time.Second*5))
+	poolMana := cat.shouldPoolMana(sim, numShiftsToOom)
 	poolEnergy := poolMana && (curCp == 5) && (nextEnergy < 100) && (nextAbility == cat.MangleCat)
 	nextAction := sim.CurrentTime
 

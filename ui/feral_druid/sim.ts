@@ -58,6 +58,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 		Stat.StatMeleeHaste,
 		Stat.StatArmorPenetration,
 		Stat.StatExpertise,
+		Stat.StatIntellect,
 	],
 	epPseudoStats: [
 		PseudoStat.PseudoStatMainHandDps,
