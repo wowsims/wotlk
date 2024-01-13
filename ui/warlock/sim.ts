@@ -132,6 +132,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 			OtherInputs.DistanceFromTarget,
 			OtherInputs.TankAssignment,
 			OtherInputs.ChannelClipDelay,
+			OtherInputs.InFrontOfTarget,
 		],
 	},
 	itemSwapSlots: [ItemSlot.ItemSlotMainHand, ItemSlot.ItemSlotOffHand, ItemSlot.ItemSlotRanged],

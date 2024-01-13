@@ -79,7 +79,9 @@ func NewPet(name string, owner *Character, baseStats stats.Stats, statInheritanc
 
 	pet.AddStats(baseStats)
 	pet.addUniversalStatDependencies()
-	pet.PseudoStats.InFrontOfTarget = owner.PseudoStats.InFrontOfTarget
+
+	// Pets can be behind even when the owner is not
+	pet.PseudoStats.InFrontOfTarget = false
 
 	return pet
 }

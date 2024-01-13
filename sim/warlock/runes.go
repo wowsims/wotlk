@@ -57,7 +57,6 @@ func (warlock *Warlock) applyDemonicPact() {
 	demonicPactAuras := warlock.NewAllyAuraArray(func(u *core.Unit) *core.Aura {
 		return core.DemonicPactAura(u, spellPower)
 	})
-	warlock.DemonicPactAura = demonicPactAuras[warlock.Index]
 
 	warlock.Pet.RegisterAura(core.Aura{
 		Label:    "Demonic Pact Hidden Aura",

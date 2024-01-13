@@ -164,6 +164,10 @@ export const WarchiefsBlessing = withLabel(
 	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(16609), fieldName: 'warchiefsBlessing'}),
 	`Warchief's Blessing`,
 );
+export const AshenvaleRallyingCry = withLabel(
+	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(430352), fieldName: 'ashenvalePvpBuff'}),
+	`Ashenvale Rallying Cry`,
+);
 
 export const SaygesDarkFortune = {
 	numColumns: 6,
@@ -207,16 +211,12 @@ export const BoonOfBlackfathom = withLabel(
 	'Boon of Blackfathom',
 );
 
-export const AshenvalePvpBuff = withLabel(
-	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(430352), fieldName: 'ashenvalePvpBuff'}),
-	'Ashenvale PvP Buff',
-);
-
 
 // Debuffs
 export const MajorArmorDebuff = InputHelpers.makeMultiIconInput([
 	makeBooleanDebuffInput({id: ActionId.fromSpellId(11597), fieldName: 'sunderArmor'}),
 	makeTristateDebuffInput(ActionId.fromSpellId(11198), ActionId.fromSpellId(14169), 'exposeArmor'),
+	makeBooleanDebuffInput({id: ActionId.fromSpellId(402818), fieldName: 'homunculi'}),
 ], 'Major ArP');
 
 export const CurseOfRecklessness = InputHelpers.makeMultiIconInput([

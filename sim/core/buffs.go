@@ -683,12 +683,6 @@ func applyPetBuffEffects(petAgent PetAgent, raidBuffs *proto.RaidBuffs, partyBuf
 		individualBuffs.BlessingOfWisdom = 0
 	}
 
-	// Only hunter pets get some buffs
-	if petAgent.GetPet().Owner.Class != proto.Class_ClassHunter {
-		raidBuffs.BattleShout = proto.TristateEffect_TristateEffectMissing
-		individualBuffs.BlessingOfMight = proto.TristateEffect_TristateEffectMissing
-	}
-
 	applyBuffEffects(petAgent, raidBuffs, partyBuffs, individualBuffs)
 }
 

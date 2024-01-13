@@ -146,7 +146,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 			OnGain: func(aura *core.Aura, _ *core.Simulation) {
 				switch warlock.Options.Summon {
 				case proto.Warlock_Options_Imp:
-					aura.Unit.PseudoStats.ThreatMultiplier *= 1 + 0.04*float64(warlock.Talents.MasterDemonologist)
+					aura.Unit.PseudoStats.ThreatMultiplier /= 1 + 0.04*float64(warlock.Talents.MasterDemonologist)
 				case proto.Warlock_Options_Succubus:
 					aura.Unit.PseudoStats.DamageDealtMultiplier *= 1 + 0.02*float64(warlock.Talents.MasterDemonologist)
 				}
@@ -154,7 +154,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 			OnExpire: func(aura *core.Aura, _ *core.Simulation) {
 				switch warlock.Options.Summon {
 				case proto.Warlock_Options_Imp:
-					aura.Unit.PseudoStats.ThreatMultiplier /= 1 + 0.04*float64(warlock.Talents.MasterDemonologist)
+					aura.Unit.PseudoStats.ThreatMultiplier *= 1 + 0.04*float64(warlock.Talents.MasterDemonologist)
 				case proto.Warlock_Options_Succubus:
 					aura.Unit.PseudoStats.DamageDealtMultiplier /= 1 + 0.02*float64(warlock.Talents.MasterDemonologist)
 				}

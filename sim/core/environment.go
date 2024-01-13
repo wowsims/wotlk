@@ -215,6 +215,13 @@ func (env *Environment) setupAttackTables() {
 		attacker.AttackTables = make([]*AttackTable, len(env.AllUnits))
 		for idx, defender := range env.AllUnits {
 			attacker.AttackTables[idx] = NewAttackTable(attacker, defender)
+
+			if attacker.Type == PlayerUnit {
+				character := env.Raid.GetPlayerFromUnit(attacker).GetCharacter()
+				if character.Class == proto.Class_ClassMage || character.Class == proto.Class_ClassPriest || character.Class == proto.Class_ClassWarlock {
+					ModNonMeleeAttackTable(attacker.AttackTables[idx], attacker, defender)
+				}
+			}
 		}
 	}
 }

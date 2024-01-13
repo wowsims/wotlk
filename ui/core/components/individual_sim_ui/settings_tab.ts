@@ -328,14 +328,7 @@ export class SettingsTab extends SimTab {
 					Stat.StatAttackPower
 				]
 			},
-		        { item: IconInputs.AshenvalePvpBuff,
-				stats: [
-					Stat.StatMeleeCrit,
-					// TODO: Stat.StatRangedCrit,
-					Stat.StatSpellCrit,
-					Stat.StatAttackPower
-				]
-			},
+			{ item: IconInputs.AshenvaleRallyingCry, stats: [Stat.StatAttackPower, Stat.StatSpellPower] },
 			{ item: IconInputs.FengusFerocity, stats: [Stat.StatAttackPower] },
 			{ item: IconInputs.MoldarsMoxie, stats: [Stat.StatStamina] },
 			{

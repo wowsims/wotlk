@@ -76,6 +76,10 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 				},
 			}, raid)
 		}
+
+		if debuffs.Homunculi {
+			MakePermanent(HomunculiArmorAura(target, level))
+		}
 	}
 
 	if debuffs.CurseOfRecklessness {
@@ -453,7 +457,6 @@ func SunderArmorAura(target *Unit, playerLevel int32) *Aura {
 	return aura
 }
 
-// TODO: Classic (Flat amount)
 func ExposeArmorAura(target *Unit, improvedEA int32, playerLevel int32) *Aura {
 	spellID := map[int32]int32{
 		25: 8647,
@@ -475,6 +478,33 @@ func ExposeArmorAura(target *Unit, improvedEA int32, playerLevel int32) *Aura {
 		Label:    "ExposeArmor",
 		ActionID: ActionID{SpellID: spellID},
 		Duration: time.Second * 30,
+	})
+
+	aura.NewExclusiveEffect(majorArmorReductionEffectCategory, true, ExclusiveEffect{
+		Priority: arpen,
+		OnGain: func(ee *ExclusiveEffect, sim *Simulation) {
+			aura.Unit.AddStatDynamic(sim, stats.Armor, -ee.Priority)
+		},
+		OnExpire: func(ee *ExclusiveEffect, sim *Simulation) {
+			aura.Unit.AddStatDynamic(sim, stats.Armor, ee.Priority)
+		},
+	})
+
+	return aura
+}
+
+func HomunculiArmorAura(target *Unit, playerLevel int32) *Aura {
+	arpen := map[int32]float64{
+		25: 1025,
+		40: 1025, // TODO:
+		50: 1025, // TODO:
+		60: 1025, // TODO:
+	}[playerLevel]
+
+	aura := target.GetOrRegisterAura(Aura{
+		Label:    "Homunculi",
+		ActionID: ActionID{SpellID: 402818},
+		Duration: time.Second * 15,
 	})
 
 	aura.NewExclusiveEffect(majorArmorReductionEffectCategory, true, ExclusiveEffect{

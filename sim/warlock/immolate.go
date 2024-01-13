@@ -36,7 +36,7 @@ func (warlock *Warlock) getImmolateConfig(rank int) core.SpellConfig {
 
 		BonusHitRating:   0,
 		BonusCritRating:  float64(warlock.Talents.Devastation) * core.SpellCritRatingPerCritChance,
-		DamageMultiplier: 1 + 0.05*float64(warlock.Talents.ImprovedImmolate) + 0.02*float64(warlock.Talents.Emberstorm),
+		DamageMultiplier: 1 + 0.02*float64(warlock.Talents.Emberstorm),
 		CritMultiplier:   warlock.SpellCritMultiplier(1, core.TernaryFloat64(warlock.Talents.Ruin, 1, 0)),
 		ThreatMultiplier: 1,
 
@@ -63,7 +63,7 @@ func (warlock *Warlock) getImmolateConfig(rank int) core.SpellConfig {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := baseDamage + directCoeff*spell.SpellPower()
+			baseDamage := (baseDamage + directCoeff*spell.SpellPower()) * (1 + 0.05*float64(warlock.Talents.ImprovedImmolate))
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 
 			if result.Landed() {

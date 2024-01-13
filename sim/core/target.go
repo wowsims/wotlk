@@ -252,3 +252,12 @@ func NewAttackTable(attacker *Unit, defender *Unit) *AttackTable {
 
 	return table
 }
+
+func ModNonMeleeAttackTable(table *AttackTable, attacker *Unit, defender *Unit) {
+	weaponSkill := float64(attacker.Level*5) + attacker.stats[stats.WeaponSkill]
+
+	table.BaseGlanceChance = 0.8 // min((float64(attacker.Level)-10)*0.03, 0.6)
+
+	table.GlanceMultiplierMin = max(min(1.3-0.05*(float64(defender.Level*5)-weaponSkill)-0.7, 0.6), 0.01)
+	table.GlanceMultiplierMax = max(min(1.2-0.03*(float64(defender.Level*5)-weaponSkill)-0.3, 0.99), 0.2)
+}

@@ -48,7 +48,6 @@ type Warlock struct {
 
 	DemonicEmpowerment      *core.Spell
 	DemonicEmpowermentAura  *core.Aura
-	DemonicPactAura         *core.Aura
 	DemonicSoulAura         *core.Aura
 	HauntDebuffAuras        core.AuraArray
 	ImmolationAura          *core.Spell
@@ -114,7 +113,7 @@ func (warlock *Warlock) Initialize() {
 	// warlock.registerDemonicEmpowermentSpell()
 	warlock.registerMetamorphosisSpell()
 	// warlock.registerDarkPactSpell()
-	// warlock.registerShadowBurnSpell()
+	warlock.registerShadowBurnSpell()
 	warlock.registerSearingPainSpell()
 	// warlock.registerInfernoSpell()
 	// warlock.registerBlackBook()
@@ -154,10 +153,12 @@ func NewWarlock(character *core.Character, options *proto.Player) *Warlock {
 
 	warlock.AddStatDependency(stats.Strength, stats.AttackPower, 1)
 
-	// TODO: Classic warlock pet
 	if warlock.Options.Summon != proto.Warlock_Options_NoSummon {
 		warlock.Pet = warlock.NewWarlockPet()
 	}
+
+	warlock.PseudoStats.CanParry = false
+	warlock.PseudoStats.CanBlock = false
 
 	warlock.EnableAutoAttacks(warlock, core.AutoAttackOptions{
 		MainHand:       warlock.WeaponFromMainHand(warlock.DefaultMeleeCritMultiplier()),
