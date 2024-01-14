@@ -124,19 +124,17 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHunter, {
 			arcaneBrilliance: true,
 			powerWordFortitude: TristateEffect.TristateEffectImproved,
 			giftOfTheWild: TristateEffect.TristateEffectImproved,
-			strengthOfEarthTotem: TristateEffect.TristateEffectRegular,
 			battleShout: TristateEffect.TristateEffectImproved,
-			moonkinAura: true,
 		}),
 		partyBuffs: PartyBuffs.create({
 		}),
 		individualBuffs: IndividualBuffs.create({
-			blessingOfKings: true,
+			aspectOfTheLion: true,
 			blessingOfWisdom: TristateEffect.TristateEffectImproved,
 			blessingOfMight: TristateEffect.TristateEffectImproved,
 		}),
 		debuffs: Debuffs.create({
-			sunderArmor: true,
+			homunculi: true,
 			faerieFire: true,
 			judgementOfWisdom: true,
 			curseOfElements: true,

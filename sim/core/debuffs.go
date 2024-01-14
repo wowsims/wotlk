@@ -494,12 +494,7 @@ func ExposeArmorAura(target *Unit, improvedEA int32, playerLevel int32) *Aura {
 }
 
 func HomunculiArmorAura(target *Unit, playerLevel int32) *Aura {
-	arpen := map[int32]float64{
-		25: 1025,
-		40: 1025, // TODO:
-		50: 1025, // TODO:
-		60: 1025, // TODO:
-	}[playerLevel]
+	arpen := float64(185 + 35*(playerLevel-1))
 
 	aura := target.GetOrRegisterAura(Aura{
 		Label:    "Homunculi",

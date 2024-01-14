@@ -23,7 +23,7 @@ func (warlock *Warlock) registerShadowBurnBaseConfig(rank int) core.SpellConfig 
 		Rank:          rank,
 
 		ManaCost: core.ManaCostOptions{
-			BaseCost: manaCost,
+			FlatCost: manaCost,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -58,7 +58,7 @@ func (warlock *Warlock) registerShadowBurnSpell() {
 		config := warlock.registerShadowBurnBaseConfig(i)
 
 		if config.RequiredLevel <= int(warlock.Level) {
-			warlock.ShadowBolt = warlock.GetOrRegisterSpell(config)
+			warlock.Shadowburn = warlock.GetOrRegisterSpell(config)
 		}
 	}
 }
