@@ -125,6 +125,7 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 							if (this.storedValue == valueConfig.value) {
 								this.restoreValue();
 							}
+							this.setImage(option, valueConfig);
 						}
 					} else if (isShown) {
 						if (this.getInputValue() == valueConfig.value){
