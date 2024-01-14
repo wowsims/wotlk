@@ -118,10 +118,16 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 			if (valueConfig.showWhen) {
 				config.changedEvent(this.modObject).on(_ => {
 					const show = valueConfig.showWhen && valueConfig.showWhen(this.modObject);
-					if (show){
-						optionContainer.classList.remove('hide');
-						this.restoreValue();
-					} else {
+					const isShown = !optionContainer.classList.contains('hide');
+					if (show) {
+						if (!isShown) {
+							optionContainer.classList.remove('hide');
+							if (this.storedValue == valueConfig.value) {
+								this.restoreValue();
+							}
+							this.setImage(option, valueConfig);
+						}
+					} else if (isShown) {
 						if (this.getInputValue() == valueConfig.value){
 							this.storeValue();
 						}
