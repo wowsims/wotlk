@@ -548,21 +548,4 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			}
 		});
 	}
-
-	splitRelevantOptions<T>(options: Array<StatOption<T> | null>): Array<T> {
-		return options
-			.filter(option => option != null)
-			.filter(option =>
-				this.individualConfig.includeBuffDebuffInputs.includes(option!.item) ||
-				option!.stats.length == 0 ||
-				option!.stats.some(stat => this.individualConfig.epStats.includes(stat)))
-			.filter(option =>
-				!this.individualConfig.excludeBuffDebuffInputs.includes(option!.item))
-			.map(option => option!.item);
-	}
-}
-
-export interface StatOption<T> {
-	stats: Array<Stat>,
-	item: T,
 }

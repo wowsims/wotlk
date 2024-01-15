@@ -107,7 +107,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecShadowPriest, {
 	rotationInputs: ShadowPriestInputs.ShadowPriestRotationConfig,
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
-		IconInputs.MP5Buff,
+		IconInputs.BlessingOfWisdom,
+		IconInputs.ManaSpringTotem,
 		IconInputs.StaminaBuff,
 	],
 	excludeBuffDebuffInputs: [

@@ -6,7 +6,7 @@ import { EventID, TypedEvent } from '../typed_event.js';
 import { SpecOptions, SpecRotation } from '../proto_utils/utils.js';
 import { CustomRotationPickerConfig } from './individual_sim_ui/custom_rotation_picker.js';
 import { IconPickerConfig } from './icon_picker.js';
-import { IconEnumPickerConfig, IconEnumValueConfig } from './icon_enum_picker.js';
+import { IconEnumPickerConfig, IconEnumPickerDirection, IconEnumValueConfig } from './icon_enum_picker.js';
 import { EnumPickerConfig, EnumValueConfig } from './enum_picker.js';
 import { BooleanPickerConfig } from './boolean_picker.js';
 import { NumberPickerConfig } from './number_picker.js';
@@ -380,19 +380,20 @@ export function makeMultistateIconInput<SpecType extends Spec, Message, ModObjec
 	return input;
 }
 
-
 export interface TypedIconEnumPickerConfig<ModObject, T> extends IconEnumPickerConfig<ModObject, T> {
 	type: 'iconEnum',
 }
 
-interface WrappedEnumIconInputConfig<SpecType extends Spec, ModObject, T> extends IconEnumPickerConfig<ModObject, T> {
+interface WrappedIconEnumInputConfig<SpecType extends Spec, ModObject, T> extends IconEnumPickerConfig<ModObject, T> {
 	getModObject: (player: Player<SpecType>) => ModObject,
 }
-function makeWrappedEnumIconInput<SpecType extends Spec, ModObject, T>(config: WrappedEnumIconInputConfig<SpecType, ModObject, T>): TypedIconEnumPickerConfig<Player<SpecType>, T> {
+
+function makeWrappedEnumIconInput<SpecType extends Spec, ModObject, T>(config: WrappedIconEnumInputConfig<SpecType, ModObject, T>): TypedIconEnumPickerConfig<Player<SpecType>, T> {
 	const getModObject = config.getModObject;
 	return {
 		type: 'iconEnum',
 		numColumns: config.numColumns,
+		direction: config.direction,
 		values: config.values.map(value => {
 			if (value.showWhen) {
 				const showWhen = value.showWhen;
@@ -410,46 +411,58 @@ function makeWrappedEnumIconInput<SpecType extends Spec, ModObject, T>(config: W
 	}
 }
 
+export function makeEnumIconInput<SpecType extends Spec, Message, ModObject, T>(
+	config: WrappedTypedInputConfig<Message, ModObject, T>,
+	fieldName: keyof Message, values: Array<IconEnumValueConfig<ModObject, T>>,
+	numColumns?: number,
+	direction?: IconEnumPickerDirection
+): TypedIconEnumPickerConfig<Player<SpecType>, T> {
+	return makeWrappedEnumIconInput<SpecType, ModObject, T>({
+		direction: direction || IconEnumPickerDirection.Vertical,
+		numColumns: numColumns || 1,
+		values: values,
+		zeroValue: 0 as unknown as T,
+		equals: (a: T, b: T) => a == b,
+		getModObject: config.getModObject,
+		changedEvent: config.changeEmitter,
+		showWhen: config.showWhen,
+		getValue: (modObj: ModObject) => config.getValue(modObj)[fieldName] as unknown as T,
+		setValue: (eventID: EventID, modObj: ModObject, newValue: T) => {
+			const newMessage = config.getValue(modObj);
+			(newMessage[fieldName] as unknown as T) = newValue;
+			config.setValue(eventID, modObj, newMessage);
+		},
+	});
+}
+
 export interface PlayerEnumIconInputConfig<SpecType extends Spec, Message, T> extends BasePlayerConfig<SpecType, T> {
 	fieldName: keyof Message,
 	values: Array<IconEnumValueConfig<Player<SpecType>, T>>;
 	numColumns?: number,
 }
 export function makeSpecOptionsEnumIconInput<SpecType extends Spec, T>(config: PlayerEnumIconInputConfig<SpecType, SpecOptions<SpecType>, T>): TypedIconEnumPickerConfig<Player<SpecType>, T> {
-	return makeWrappedEnumIconInput<SpecType, Player<SpecType>, T>({
-		numColumns: config.numColumns || 1,
-		values: config.values,
-		equals: (a: T, b: T) => a == b,
+	return makeEnumIconInput<SpecType, SpecOptions<SpecType>, Player<SpecType>, T>({
 		showWhen: config.showWhen,
-		zeroValue: 0 as unknown as T,
 		getModObject: (player: Player<SpecType>) => player,
-		getValue: config.getValue || ((player: Player<SpecType>) => player.getSpecOptions()[config.fieldName] as unknown as T),
-		setValue: config.setValue || ((eventID: EventID, player: Player<SpecType>, newVal: T) => {
-			const newMessage = player.getSpecOptions();
-			(newMessage[config.fieldName] as unknown as T) = newVal;
-			player.setSpecOptions(eventID, newMessage);
-		}),
-		changedEvent: config.changeEmitter || ((player: Player<SpecType>) => player.specOptionsChangeEmitter),
+		getValue: (player: Player<SpecType>) => player.getSpecOptions(),
+		setValue: (eventID: EventID, player: Player<SpecType>, newVal: SpecOptions<SpecType>) => player.setSpecOptions(eventID, newVal),
+		getFieldValue: config.getValue,
+		setFieldValue: config.setValue,
+		changeEmitter: config.changeEmitter || ((player: Player<SpecType>) => player.specOptionsChangeEmitter),
 		extraCssClasses: config.extraCssClasses,
-	});
+	}, config.fieldName, config.values, config.numColumns || 1);
 }
 export function makeRotationEnumIconInput<SpecType extends Spec, T>(config: PlayerEnumIconInputConfig<SpecType, SpecRotation<SpecType>, T>): TypedIconEnumPickerConfig<Player<SpecType>, T> {
-	return makeWrappedEnumIconInput<SpecType, Player<SpecType>, T>({
-		numColumns: config.numColumns || 1,
-		values: config.values,
-		equals: (a: T, b: T) => a == b,
+	return makeEnumIconInput<SpecType, SpecRotation<SpecType>, Player<SpecType>, T>({
 		showWhen: config.showWhen,
-		zeroValue: 0 as unknown as T,
 		getModObject: (player: Player<SpecType>) => player,
-		getValue: config.getValue || ((player: Player<SpecType>) => player.getRotation()[config.fieldName] as unknown as T),
-		setValue: config.setValue || ((eventID: EventID, player: Player<SpecType>, newVal: T) => {
-			const newMessage = player.getRotation();
-			(newMessage[config.fieldName] as unknown as T) = newVal;
-			player.setRotation(eventID, newMessage);
-		}),
-		changedEvent: config.changeEmitter || ((player: Player<SpecType>) => player.rotationChangeEmitter),
+		getValue: (player: Player<SpecType>) => player.getRotation(),
+		setValue: (eventID: EventID, player: Player<SpecType>, newVal: SpecRotation<SpecType>) => player.setRotation(eventID, newVal),
+		getFieldValue: config.getValue,
+		setFieldValue: config.setValue,
+		changeEmitter: config.changeEmitter || ((player: Player<SpecType>) => player.rotationChangeEmitter),
 		extraCssClasses: config.extraCssClasses,
-	});
+	}, config.fieldName, config.values, config.numColumns || 1);
 }
 
 export interface TypedCustomRotationPickerConfig<SpecType extends Spec, T> extends CustomRotationPickerConfig<SpecType, T> {

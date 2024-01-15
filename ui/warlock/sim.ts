@@ -110,7 +110,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
-		IconInputs.MP5Buff,
+		IconInputs.BlessingOfWisdom,
+		IconInputs.ManaSpringTotem,
 	],
 	excludeBuffDebuffInputs: [
 		IconInputs.FrostDamageBuff,

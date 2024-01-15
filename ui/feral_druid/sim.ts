@@ -140,7 +140,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
 		IconInputs.IntellectBuff,
-		IconInputs.MP5Buff,
+		IconInputs.BlessingOfWisdom,
+		IconInputs.ManaSpringTotem,
 		IconInputs.JudgementOfWisdom,
 	],
         excludeBuffDebuffInputs: [

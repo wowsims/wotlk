@@ -103,7 +103,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecMage, {
 	rotationInputs: MageInputs.MageRotationConfig,
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
-		IconInputs.MP5Buff,
+		IconInputs.BlessingOfWisdom,
+		IconInputs.ManaSpringTotem,
 		IconInputs.StaminaBuff,
 		IconInputs.JudgementOfWisdom,
 	],

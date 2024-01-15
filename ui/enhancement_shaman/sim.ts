@@ -125,7 +125,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecEnhancementShaman, {
 	rotationInputs: ShamanInputs.EnhancementShamanRotationConfig,
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
-		IconInputs.MP5Buff,
+		IconInputs.BlessingOfWisdom,
+		IconInputs.ManaSpringTotem,
 		IconInputs.SpiritBuff,
 	],
 	excludeBuffDebuffInputs: [

@@ -7,6 +7,11 @@ import { Input, InputConfig } from './input.js';
 // eslint-disable-next-line unused-imports/no-unused-imports
 import { element, fragment } from 'tsx-vanilla';
 
+export enum IconEnumPickerDirection {
+	Vertical = 'vertical',
+	Horizontal = 'Horizontal',
+}
+
 export interface IconEnumValueConfig<ModObject, T> {
 	value: T,
 	// One of these should be set.
@@ -33,7 +38,7 @@ export interface IconEnumPickerConfig<ModObject, T> extends InputConfig<ModObjec
 	// Tooltip that will be shown whne hovering over the icon-picker-button
 	tooltip?: string,
 	// The direction the menu will open in relative to the root element
-	direction?: string,
+	direction?: IconEnumPickerDirection,
 	equals: (a: T, b: T) => boolean,
 	backupIconUrl?: (value: T) => ActionId,
 	showWhen?: (obj: ModObject) => boolean,

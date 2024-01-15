@@ -16,6 +16,9 @@ import { IconEnumPicker } from "../icon_enum_picker";
 import * as IconInputs from '../icon_inputs.js';
 import { buildIconInput } from "../icon_inputs.js";
 import { SettingsTab } from "./settings_tab";
+import { relevantStatOptions } from "../inputs/stat_options";
+
+import * as PotionsConfig from "../inputs/consumables";
 
 export class ConsumesPicker extends Component {
 	protected settingsTab: SettingsTab;
@@ -26,14 +29,14 @@ export class ConsumesPicker extends Component {
 		this.settingsTab = settingsTab;
 		this.simUI = simUI;
 
-		this.buildPotionsPicker();
-		this.buildFlaskPicker();
-		this.buildWeaponImbuePicker();
-		this.buildFoodPicker();
-		this.buildPhysicalBuffPicker();
-		this.buildSpellPowerBuffPicker();
-		this.buildEngPicker();
-		this.buildPetPicker();
+		// this.buildPotionsPicker();
+		// this.buildFlaskPicker();
+		// this.buildWeaponImbuePicker();
+		// this.buildFoodPicker();
+		// this.buildPhysicalBuffPicker();
+		// this.buildSpellPowerBuffPicker();
+		// this.buildEngPicker();
+		// this.buildPetPicker();
 	}
 
 	private buildPotionsPicker() {
@@ -50,10 +53,7 @@ export class ConsumesPicker extends Component {
 
 		this.rootElem.appendChild(fragment.children[0] as HTMLElement);
 
-		const potionOptions = this.simUI.splitRelevantOptions([
-			{ item: Potions.LesserManaPotion, stats: [Stat.StatIntellect] },
-			{ item: Potions.ManaPotion, stats: [Stat.StatIntellect] },
-		]);
+		const potionOptions = relevantStatOptions(POTIONS_CONFIG, this.simUI);
 		if (potionOptions.length) {
 			const elem = this.rootElem.querySelector('.consumes-potions') as HTMLElement;
 			new IconEnumPicker(
@@ -289,3 +289,15 @@ export class ConsumesPicker extends Component {
 		}
 	}
 }
+
+const POTIONS_CONFIG = [
+	{ item: PotionsConfig.LesserManaPotion, stats: [Stat.StatIntellect] },
+	{ item: PotionsConfig.ManaPotion, stats: [Stat.StatIntellect] },
+]
+
+const FLASKS_CONFIG = [
+	{ item: Flask.FlaskOfTheTitans, stats: [Stat.StatStamina] },
+	{ item: Flask.FlaskOfDistilledWisdom, stats: [Stat.StatMP5, Stat.StatSpellPower] },
+	{ item: Flask.FlaskOfSupremePower, stats: [Stat.StatMP5, Stat.StatSpellPower] },
+	{ item: Flask.FlaskOfChromaticResistance, stats: [Stat.StatStamina] }
+]
