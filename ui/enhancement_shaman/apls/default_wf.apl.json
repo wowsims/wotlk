@@ -5,6 +5,7 @@
         {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
     ],
     "priorityList": [
+        {"action":{"castSpell":{"spellId":{"spellId":51533}}}},
         {"action":{"castSpell":{"spellId":{"spellId":2825,"tag":-1}}}},
         {"action":{"castSpell":{"spellId":{"spellId":2825}}}},
         {"action":{"autocastOtherCooldowns":{}}},
