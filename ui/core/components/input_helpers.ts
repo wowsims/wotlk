@@ -384,11 +384,11 @@ export interface TypedIconEnumPickerConfig<ModObject, T> extends IconEnumPickerC
 	type: 'iconEnum',
 }
 
-interface WrappedIconEnumInputConfig<SpecType extends Spec, ModObject, T> extends IconEnumPickerConfig<ModObject, T> {
+interface WrappedEnumIconInputConfig<SpecType extends Spec, ModObject, T> extends IconEnumPickerConfig<ModObject, T> {
 	getModObject: (player: Player<SpecType>) => ModObject,
 }
 
-function makeWrappedEnumIconInput<SpecType extends Spec, ModObject, T>(config: WrappedIconEnumInputConfig<SpecType, ModObject, T>): TypedIconEnumPickerConfig<Player<SpecType>, T> {
+function makeWrappedEnumIconInput<SpecType extends Spec, ModObject, T>(config: WrappedEnumIconInputConfig<SpecType, ModObject, T>): TypedIconEnumPickerConfig<Player<SpecType>, T> {
 	const getModObject = config.getModObject;
 	return {
 		type: 'iconEnum',
