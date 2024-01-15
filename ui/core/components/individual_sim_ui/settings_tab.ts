@@ -276,7 +276,7 @@ export class SettingsTab extends SimTab {
 		const buffOptions = relevantStatOptions(RAID_BUFFS_CONFIG, this.simUI);
 		this.configureIconSection(
 			contentBlock.bodyElement,
-			buffOptions.map(options => options.picker && new options.picker(contentBlock.bodyElement, this.simUI.player, options.item as any, this.simUI)),
+			buffOptions.map(options => options.picker && new options.picker(contentBlock.bodyElement, this.simUI.player, options.config as any, this.simUI)),
 		);
 	}
 
@@ -289,7 +289,7 @@ export class SettingsTab extends SimTab {
 
 		this.configureIconSection(
 			contentBlock.bodyElement,
-			worldBuffOptions.map(options => options.picker && new options.picker(contentBlock.bodyElement, this.simUI.player, options.item as any, this.simUI)),
+			worldBuffOptions.map(options => options.picker && new options.picker(contentBlock.bodyElement, this.simUI.player, options.config as any, this.simUI)),
 		);
 	}
 
@@ -301,7 +301,7 @@ export class SettingsTab extends SimTab {
 		const debuffOptions = relevantStatOptions(DEBUFFS_CONFIG, this.simUI);
 		this.configureIconSection(
 			contentBlock.bodyElement,
-			debuffOptions.map(options => options.picker && new options.picker(contentBlock.bodyElement, this.simUI.player, options.item as any, this.simUI))
+			debuffOptions.map(options => options.picker && new options.picker(contentBlock.bodyElement, this.simUI.player, options.config as any, this.simUI))
 		);
 	}
 
@@ -430,119 +430,119 @@ export class SettingsTab extends SimTab {
 const RAID_BUFFS_CONFIG = [
 	// Standard buffs
 	{
-		item: BuffDebuffInputs.AllStatsBuff,
+		config: BuffDebuffInputs.AllStatsBuff,
 		picker: IconPicker,
 		stats: []
 	},
 	{
-		item: BuffDebuffInputs.AllStatsPercentBuff,
+		config: BuffDebuffInputs.AllStatsPercentBuff,
 		picker: MultiIconPicker,
 		stats: []
 	},
 	{
-		item: BuffDebuffInputs.ArmorBuff,
+		config: BuffDebuffInputs.ArmorBuff,
 		picker: MultiIconPicker,
 		stats: [Stat.StatArmor]
 	},
 	{
-		item: BuffDebuffInputs.StaminaBuff,
+		config: BuffDebuffInputs.StaminaBuff,
 		picker: MultiIconPicker,
 		stats: [Stat.StatStamina]
 	},
 	{
-		item: BuffDebuffInputs.StrengthRaidBuff,
+		config: BuffDebuffInputs.StrengthRaidBuff,
 		picker: MultiIconPicker,
 		stats: [Stat.StatStrength]
 	},
 	{
-		item: BuffDebuffInputs.AgilityRaidBuff,
+		config: BuffDebuffInputs.AgilityRaidBuff,
 		picker: MultiIconPicker,
 		stats: [Stat.StatAgility]
 	},
 	{
-		item: BuffDebuffInputs.IntellectBuff,
+		config: BuffDebuffInputs.IntellectBuff,
 		picker: MultiIconPicker,
 		stats: [Stat.StatIntellect]
 	},
 	{
-		item: BuffDebuffInputs.SpiritBuff,
+		config: BuffDebuffInputs.SpiritBuff,
 		picker: MultiIconPicker,
 		stats: [Stat.StatSpirit]
 	},
 	{
-		item: BuffDebuffInputs.BattleShoutBuff,
+		config: BuffDebuffInputs.BattleShoutBuff,
 		picker: MultiIconPicker,
 		stats: [Stat.StatAttackPower]
 	},
 	{
-		item: BuffDebuffInputs.BlessingOfMightBuff,
+		config: BuffDebuffInputs.BlessingOfMightBuff,
 		picker: IconPicker,
 		stats: [Stat.StatAttackPower]
 	},
 	{
-		item: BuffDebuffInputs.TrueshotAuraBuff,
+		config: BuffDebuffInputs.TrueshotAuraBuff,
 		picker: IconPicker,
 		stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower]
 		},
 	{
-		item: BuffDebuffInputs.AttackPowerPercentBuff,
+		config: BuffDebuffInputs.AttackPowerPercentBuff,
 		picker: MultiIconPicker,
 		stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower]
 		},
 	{
-		item: BuffDebuffInputs.MeleeCritBuff,
+		config: BuffDebuffInputs.MeleeCritBuff,
 		picker: IconPicker,
 		stats: [Stat.StatMeleeCrit]
 	},
 	{
-		item: BuffDebuffInputs.SpellIncreaseBuff,
+		config: BuffDebuffInputs.SpellIncreaseBuff,
 		picker: IconPicker,
 		stats: [Stat.StatSpellPower]
 	},
 	{
-		item: BuffDebuffInputs.SpellCritBuff,
+		config: BuffDebuffInputs.SpellCritBuff,
 		picker: IconPicker,
 		stats: [Stat.StatSpellCrit]
 	},
 	{
-		item: BuffDebuffInputs.ResistanceBuff,
+		config: BuffDebuffInputs.ResistanceBuff,
 		picker: MultiIconPicker,
 		stats: [Stat.StatNatureResistance, Stat.StatShadowResistance, Stat.StatFrostResistance]
 		},
 	{
-		item: BuffDebuffInputs.DefensiveCooldownBuff,
+		config: BuffDebuffInputs.DefensiveCooldownBuff,
 		picker: MultiIconPicker,
 		stats: [Stat.StatArmor]
 	},
 	{
-		item: BuffDebuffInputs.BlessingOfWisdom,
+		config: BuffDebuffInputs.BlessingOfWisdom,
 		picker: IconPicker,
 		stats: [Stat.StatMP5]
 	},
 	{
-		item: BuffDebuffInputs.ManaSpringTotem,
+		config: BuffDebuffInputs.ManaSpringTotem,
 		picker: IconPicker,
 		stats: [Stat.StatMP5]
 	},
 
 	// Misc Buffs
 	{
-		item: BuffDebuffInputs.Thorns,
+		config: BuffDebuffInputs.Thorns,
 		picker: IconPicker,
 		stats: [Stat.StatArmor]
 	},
 	{
-		item: BuffDebuffInputs.RetributionAura,
+		config: BuffDebuffInputs.RetributionAura,
 		picker: IconPicker,
 		stats: [Stat.StatArmor]
 	},
 	{
-		item: BuffDebuffInputs.Innervate,
+		config: BuffDebuffInputs.Innervate,
 		picker: IconPicker,
 		stats: [Stat.StatMP5]
 	},
 	{
-		item: BuffDebuffInputs.PowerInfusion,
+		config: BuffDebuffInputs.PowerInfusion,
 		picker: IconPicker,
 		stats: [Stat.StatMP5, Stat.StatSpellPower]
 	},
@@ -550,7 +550,7 @@ const RAID_BUFFS_CONFIG = [
 
 const WORLD_BUFFS_CONFIG = [
 	{
-		item: BuffDebuffInputs.BoonOfBlackfathom,
+		config: BuffDebuffInputs.BoonOfBlackfathom,
 		picker: IconPicker,
 		stats: [
 			Stat.StatMeleeCrit,
@@ -560,17 +560,17 @@ const WORLD_BUFFS_CONFIG = [
 		]
 	},
 	{
-		item: BuffDebuffInputs.FengusFerocity,
+		config: BuffDebuffInputs.FengusFerocity,
 		picker: IconPicker,
 		stats: [Stat.StatAttackPower]
 	},
 	{
-		item: BuffDebuffInputs.MoldarsMoxie,
+		config: BuffDebuffInputs.MoldarsMoxie,
 		picker: IconPicker,
 		stats: [Stat.StatStamina]
 	},
 	{
-		item: BuffDebuffInputs.RallyingCryOfTheDragonslayer,
+		config: BuffDebuffInputs.RallyingCryOfTheDragonslayer,
 		picker: IconPicker,
 		stats: [
 			Stat.StatMeleeCrit,
@@ -580,22 +580,22 @@ const WORLD_BUFFS_CONFIG = [
 		]
 	},
 	{
-		item: BuffDebuffInputs.SaygesDarkFortune,
+		config: BuffDebuffInputs.SaygesDarkFortune,
 		picker: IconEnumPicker,
 		stats: [],
 	},
 	{
-		item: BuffDebuffInputs.SongflowerSerenade,
+		config: BuffDebuffInputs.SongflowerSerenade,
 		picker: IconPicker,
 		stats: []
 	},
 	{
-		item: BuffDebuffInputs.SpiritOfZandalar,
+		config: BuffDebuffInputs.SpiritOfZandalar,
 		picker: IconPicker,
 		stats: []
 	},
 	{
-		item: BuffDebuffInputs.WarchiefsBlessing,
+		config: BuffDebuffInputs.WarchiefsBlessing,
 		picker: IconPicker,
 		stats: [
 			Stat.StatHealth,
@@ -608,76 +608,76 @@ const WORLD_BUFFS_CONFIG = [
 const DEBUFFS_CONFIG = [
 	// Standard Debuffs
 	{ 
-		item: BuffDebuffInputs.MajorArmorDebuff,
+		config: BuffDebuffInputs.MajorArmorDebuff,
 		stats: [Stat.StatArmorPenetration],
 		picker: MultiIconPicker,
 	},
 	{ 
-		item: BuffDebuffInputs.CurseOfRecklessness,
+		config: BuffDebuffInputs.CurseOfRecklessness,
 		picker: IconPicker,
 		stats: [Stat.StatAttackPower]
 	},
 	{ 
-		item: BuffDebuffInputs.FaerieFire,
+		config: BuffDebuffInputs.FaerieFire,
 		picker: IconPicker,
 		stats: [Stat.StatAttackPower]
 	},
 	// { 
-	// 	item: BuffDebuffInputs.MinorArmorDebuff,
+	// 	config: BuffDebuffInputs.MinorArmorDebuff,
 	// picker: MultiIconPicker,
 	// 	stats: [Stat.StatArmorPenetration]
 	// },
 	{ 
-		item: BuffDebuffInputs.BleedDebuff,
+		config: BuffDebuffInputs.BleedDebuff,
 		picker: MultiIconPicker,
 		stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower]
 	},
 	{ 
-		item: BuffDebuffInputs.SpellISBDebuff,
+		config: BuffDebuffInputs.SpellISBDebuff,
 		picker: IconPicker,
 		stats: [Stat.StatShadowPower]
 	},
 	{ 
-		item: BuffDebuffInputs.SpellScorchDebuff,
+		config: BuffDebuffInputs.SpellScorchDebuff,
 		picker: IconPicker,
 		stats: [Stat.StatFirePower]
 	},
 	{ 
-		item: BuffDebuffInputs.SpellWintersChillDebuff,
+		config: BuffDebuffInputs.SpellWintersChillDebuff,
 		picker: IconPicker,
 		stats: [Stat.StatFrostPower]
 	},
 	{ 
-		item: BuffDebuffInputs.AttackPowerDebuff,
+		config: BuffDebuffInputs.AttackPowerDebuff,
 		picker: MultiIconPicker,
 		stats: [Stat.StatArmor]
 	},
 	{ 
-		item: BuffDebuffInputs.MeleeAttackSpeedDebuff,
+		config: BuffDebuffInputs.MeleeAttackSpeedDebuff,
 		picker: IconPicker,
 		stats: [Stat.StatArmor]
 	},
 	{ 
-		item: BuffDebuffInputs.MeleeHitDebuff,
+		config: BuffDebuffInputs.MeleeHitDebuff,
 		picker: IconPicker,
 		stats: [Stat.StatDodge]
 	},
 
 	// Other Debuffs
 	{
-		item: BuffDebuffInputs.JudgementOfWisdom,
+		config: BuffDebuffInputs.JudgementOfWisdom,
 		picker: IconPicker,
 		stats: [Stat.StatMP5, Stat.StatIntellect],
 	},
 	{
-		item: BuffDebuffInputs.HuntersMark,
+		config: BuffDebuffInputs.HuntersMark,
 		picker: IconPicker,
 		stats: [Stat.StatRangedAttackPower],
 	},
 
 	// Misc Debuffs
 	{
-		item: BuffDebuffInputs.JudgementOfLight,
+		config: BuffDebuffInputs.JudgementOfLight,
 		picker: IconPicker,
 		stats: [Stat.StatStamina]
 	},

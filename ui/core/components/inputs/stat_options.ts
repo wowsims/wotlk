@@ -7,7 +7,7 @@ import { IconEnumPicker, IconEnumPickerConfig } from "../icon_enum_picker";
 import { IndividualSimUI } from "ui/core/individual_sim_ui";
 
 export interface StatOption<PickerType, ConfigType> {
-	item: ConfigType,
+	config: ConfigType,
 	stats: Array<Stat>,
 	picker?: PickerType,
 }
