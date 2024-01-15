@@ -8,19 +8,10 @@ import {
 import { SavedTalents } from '../core/proto/ui.js';
 
 import {
-	RestorationShaman_Rotation as RestorationShamanRotation,
 	RestorationShaman_Options as RestorationShamanOptions,
 	ShamanShield,
 	ShamanMajorGlyph,
 	ShamanMinorGlyph,
-} from '../core/proto/shaman.js';
-
-import {
-	AirTotem,
-	EarthTotem,
-	FireTotem,
-	WaterTotem,
-	ShamanTotems,
 } from '../core/proto/shaman.js';
 
 import * as PresetUtils from '../core/preset_utils.js';
@@ -39,17 +30,6 @@ import P3Gear from './gear_sets/p3.gear.json';
 export const P3_PRESET = PresetUtils.makePresetGear('P3 Preset', P3Gear);
 import P4Gear from './gear_sets/p4.gear.json';
 export const P4_PRESET = PresetUtils.makePresetGear('P4 Preset', P4Gear);
-
-export const DefaultRotation = RestorationShamanRotation.create({
-	totems: ShamanTotems.create({
-		earth: EarthTotem.StrengthOfEarthTotem,
-		air: AirTotem.WrathOfAirTotem,
-		fire: FireTotem.FlametongueTotem,
-		water: WaterTotem.HealingStreamTotem,
-	}),
-	useEarthShield: true,
-	useRiptide: true,
-});
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
@@ -84,7 +64,6 @@ export const RaidHealingTalents = {
 
 export const DefaultOptions = RestorationShamanOptions.create({
 	shield: ShamanShield.WaterShield,
-	bloodlust: true,
 	earthShieldPPM: 0,
 });
 

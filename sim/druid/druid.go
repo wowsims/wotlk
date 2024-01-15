@@ -23,11 +23,9 @@ type Druid struct {
 	StartingForm DruidForm
 
 	RebirthUsed       bool
-	MaulRageThreshold float64
 	RebirthTiming     float64
 	BleedsActive      int
 	AssumeBleedActive bool
-	PrePopBerserk     bool
 
 	ReplaceBearMHFunc core.ReplaceMHSwing
 
@@ -226,7 +224,7 @@ func (druid *Druid) RegisterFeralCatSpells() {
 	druid.registerFerociousBiteSpell()
 	druid.registerMangleBearSpell()
 	druid.registerMangleCatSpell()
-	druid.registerMaulSpell(0)
+	druid.registerMaulSpell()
 	druid.registerLacerateSpell()
 	druid.registerRakeSpell()
 	druid.registerRipSpell()
@@ -237,7 +235,7 @@ func (druid *Druid) RegisterFeralCatSpells() {
 	druid.registerTigersFurySpell()
 }
 
-func (druid *Druid) RegisterFeralTankSpells(maulRageThreshold float64) {
+func (druid *Druid) RegisterFeralTankSpells() {
 	druid.registerBarkskinCD()
 	druid.registerBerserkCD()
 	druid.registerBearFormSpell()
@@ -245,7 +243,7 @@ func (druid *Druid) RegisterFeralTankSpells(maulRageThreshold float64) {
 	druid.registerEnrageSpell()
 	druid.registerFrenziedRegenerationCD()
 	druid.registerMangleBearSpell()
-	druid.registerMaulSpell(maulRageThreshold)
+	druid.registerMaulSpell()
 	druid.registerLacerateSpell()
 	druid.registerRakeSpell()
 	druid.registerRipSpell()

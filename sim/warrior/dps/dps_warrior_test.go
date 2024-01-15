@@ -110,15 +110,13 @@ var ArmsGlyphs = &proto.Glyphs{
 
 var PlayerOptionsArms = &proto.Player_Warrior{
 	Warrior: &proto.Warrior{
-		Options:  warriorOptions,
-		Rotation: &proto.Warrior_Rotation{},
+		Options: warriorOptions,
 	},
 }
 
 var PlayerOptionsFury = &proto.Player_Warrior{
 	Warrior: &proto.Warrior{
-		Options:  warriorOptions,
-		Rotation: &proto.Warrior_Rotation{},
+		Options: warriorOptions,
 	},
 }
 

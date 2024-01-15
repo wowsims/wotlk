@@ -102,8 +102,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarrior, {
 		}),
 		// Default consumes settings.
 		consumes: Presets.DefaultConsumes,
-		// Default rotation settings.
-		rotation: Presets.DefaultRotation,
 		// Default talents.
 		talents: Presets.FuryTalents.data,
 		// Default spec-specific settings.
@@ -145,8 +143,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarrior, {
 		WarriorInputs.Recklessness,
 		WarriorInputs.ShatteringThrow,
 	],
-	// Inputs to include in the 'Rotation' section on the settings tab.
-	rotationInputs: WarriorInputs.WarriorRotationConfig,
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
 		// just for Bryntroll

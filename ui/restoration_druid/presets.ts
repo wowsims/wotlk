@@ -15,7 +15,6 @@ import { SavedTalents } from '../core/proto/ui.js';
 
 import {
 	RestorationDruid_Options as RestorationDruidOptions,
-	RestorationDruid_Rotation as RestorationDruidRotation,
 	DruidMajorGlyph,
 	DruidMinorGlyph,
 } from '../core/proto/druid.js';
@@ -36,9 +35,6 @@ import P3Gear from './gear_sets/p3.gear.json';
 export const P3_PRESET = PresetUtils.makePresetGear('P3 Preset', P3Gear);
 import P4Gear from './gear_sets/p4.gear.json';
 export const P4_PRESET = PresetUtils.makePresetGear('P4 Preset', P4Gear);
-
-export const DefaultRotation = RestorationDruidRotation.create({
-});
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.

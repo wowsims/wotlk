@@ -91,8 +91,7 @@ var DefaultGlyphs = &proto.Glyphs{
 
 var PlayerOptionsBasic = &proto.Player_ProtectionWarrior{
 	ProtectionWarrior: &proto.ProtectionWarrior{
-		Options:  warriorOptions,
-		Rotation: &proto.ProtectionWarrior_Rotation{},
+		Options: warriorOptions,
 	},
 }
 

@@ -1,7 +1,5 @@
 import {
 	Consumes,
-	CustomRotation,
-	CustomSpell,
 	Flask,
 	Food,
 	Potions,
@@ -13,8 +11,6 @@ import {
 	PaladinMajorGlyph,
 	PaladinMinorGlyph,
 	PaladinJudgement as PaladinJudgement,
-	ProtectionPaladin_Rotation_SpellOption as SpellOption,
-	ProtectionPaladin_Rotation as ProtectionPaladinRotation,
 	ProtectionPaladin_Options as ProtectionPaladinOptions,
 } from '../core/proto/paladin.js';
 
@@ -36,25 +32,6 @@ import P3Gear from './gear_sets/p3.gear.json';
 export const P3_PRESET = PresetUtils.makePresetGear('P3 Preset', P3Gear);
 import P4Gear from './gear_sets/p4.gear.json';
 export const P4_PRESET = PresetUtils.makePresetGear('P4 Preset', P4Gear);
-
-export const DefaultRotation = ProtectionPaladinRotation.create({
-	hammerFirst: false,
-	squeezeHolyWrath: true,
-	waitSlack: 300,
-	useCustomPrio: false,
-	customRotation: CustomRotation.create({
-		spells: [
-			CustomSpell.create({ spell: SpellOption.ShieldOfRighteousness }),
-			CustomSpell.create({ spell: SpellOption.HammerOfTheRighteous }),
-			CustomSpell.create({ spell: SpellOption.HolyShield }),
-			CustomSpell.create({ spell: SpellOption.HammerOfWrath }),
-			CustomSpell.create({ spell: SpellOption.Consecration }),
-			CustomSpell.create({ spell: SpellOption.AvengersShield }),
-			CustomSpell.create({ spell: SpellOption.JudgementOfWisdom }),
-			CustomSpell.create({ spell: SpellOption.Exorcism })
-		],
-	}),
-});
 
 import DefaultApl from './apls/default.apl.json';
 export const ROTATION_DEFAULT = PresetUtils.makePresetAPLRotation('Default (969)', DefaultApl);

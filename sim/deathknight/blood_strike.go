@@ -60,7 +60,6 @@ func (dk *Deathknight) newBloodStrikeSpell(isMH bool) *core.Spell {
 			if isMH {
 				spell.SpendRefundableCostAndConvertBloodRune(sim, result, deathConvertChance)
 				dk.threatOfThassarianProc(sim, result, dk.BloodStrikeOhHit)
-				dk.LastOutcome = result.Outcome
 
 				if result.Landed() {
 					if dk.DesolationAura != nil {
@@ -116,9 +115,4 @@ func (dk *Deathknight) registerDrwBloodStrikeSpell() {
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
 		},
 	})
-
-	if !dk.Inputs.NewDrw {
-		dk.RuneWeapon.BloodStrike.DamageMultiplier *= 0.5
-		dk.RuneWeapon.BloodStrike.Flags |= core.SpellFlagIgnoreAttackerModifiers
-	}
 }

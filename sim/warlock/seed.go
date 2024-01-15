@@ -108,7 +108,7 @@ func (warlock *Warlock) registerSeedSpell() {
 					// seed is mutually exclusive with corruption
 					warlock.Corruption.Dot(target).Deactivate(sim)
 
-					if warlock.Rotation.DetonateSeed {
+					if warlock.Options.DetonateSeed {
 						seedExplosion.Cast(sim, target)
 					} else {
 						spell.Dot(target).Apply(sim)

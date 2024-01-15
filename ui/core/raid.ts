@@ -131,20 +131,6 @@ export class Raid {
 		// Make a defensive copy
 		this.buffs = RaidBuffs.clone(newBuffs);
 
-		if (newBuffs.demonicPact > 0 && newBuffs.demonicPactSp == 0) {
-			this.buffs.demonicPactSp = this.buffs.demonicPact;
-			if (this.buffs.demonicPactSp > 1000) {
-				this.buffs.demonicPactSp /= 10;
-			}
-			this.buffs.demonicPact = 0;
-		} else if (newBuffs.demonicPactOld > 0 && newBuffs.demonicPactSp == 0) {
-			this.buffs.demonicPactSp = this.buffs.demonicPactOld;
-			if (this.buffs.demonicPactSp > 1000) {
-				this.buffs.demonicPactSp /= 10;
-			}
-			this.buffs.demonicPactOld = 0;
-		}
-
 		// Special handle ToW since it crosses buffs/debuffs.
 		if (this.debuffs.totemOfWrath != this.buffs.totemOfWrath) {
 			var newDebuff = Debuffs.clone(this.debuffs);
@@ -234,25 +220,6 @@ export class Raid {
 
 	fromProto(eventID: EventID, proto: RaidProto) {
 		TypedEvent.freezeAllAndDo(() => {
-			if (proto.tanks) {
-				proto.tanks = proto.tanks.map(tank => (tank.type == 0 && tank.targetIndex != -1) ? UnitReference.create({type: UnitType.Player, index: tank.targetIndex}) : tank);
-			}
-
-			if (proto.buffs) {
-				if (proto.buffs.demonicPact > 0 && proto.buffs.demonicPactSp == 0) {
-					proto.buffs.demonicPactSp = proto.buffs.demonicPact;
-					if (proto.buffs.demonicPactSp > 1000) {
-						proto.buffs.demonicPactSp /= 10;
-					}
-					proto.buffs.demonicPact = 0;
-				} else if (proto.buffs.demonicPactOld > 0 && proto.buffs.demonicPactSp == 0) {
-					proto.buffs.demonicPactSp = proto.buffs.demonicPactOld;
-					if (proto.buffs.demonicPactSp > 1000) {
-						proto.buffs.demonicPactSp /= 10;
-					}
-					proto.buffs.demonicPactOld = 0;
-				}
-			}
 			this.setBuffs(eventID, proto.buffs || RaidBuffs.create());
 			this.setDebuffs(eventID, proto.debuffs || Debuffs.create());
 			this.setTanks(eventID, proto.tanks);

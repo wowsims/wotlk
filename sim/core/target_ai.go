@@ -57,12 +57,6 @@ func (target *Target) ApplyTalents()                     {}
 func (target *Target) GetCharacter() *Character          { return nil }
 func (target *Target) Initialize()                       {}
 
-func (target *Target) DoNothing() {
-	target.doNothing = true
-}
-
-func (target *Target) OnAutoAttack(sim *Simulation, _ *Spell) {}
-func (target *Target) OnGCDReady(sim *Simulation)             {}
 func (target *Target) ExecuteCustomRotation(sim *Simulation) {
 	if target.AI != nil {
 		target.AI.ExecuteCustomRotation(sim)

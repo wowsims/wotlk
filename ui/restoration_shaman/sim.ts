@@ -79,8 +79,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRestorationShaman, {
 		}),
 		// Default consumes settings.
 		consumes: Presets.DefaultConsumes,
-		// Default rotation settings.
-		rotation: Presets.DefaultRotation,
 		// Default talents.
 		talents: Presets.RaidHealingTalents.data,
 		// Default spec-specific settings.
@@ -112,8 +110,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRestorationShaman, {
 	playerIconInputs: [
 		ShamanInputs.ShamanShieldInput,
 	],
-	// Inputs to include in the 'Rotation' section on the settings tab.
-	rotationInputs: ShamanInputs.RestorationShamanRotationConfig,
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
 	],
@@ -122,6 +118,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRestorationShaman, {
 	// Inputs to include in the 'Other' section on the settings tab.
 	otherInputs: {
 		inputs: [
+			ShamanInputs.TriggerEarthShield,
 			OtherInputs.TankAssignment
 		],
 	},

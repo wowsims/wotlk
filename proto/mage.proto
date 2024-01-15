@@ -145,8 +145,6 @@ enum MageMinorGlyph {
 message Mage {
 	message Rotation {
 		// Arcane Options.
-		int32 extra_blasts_during_first_ap = 10 [deprecated = true];
-		int32 missile_barrage_below_arcane_blast_stacks = 14 [deprecated = true];
 		double missile_barrage_below_mana_percent = 15;
 		double blast_without_missile_barrage_above_mana_percent = 16;
 		double only_3_arcane_blast_stacks_below_mana_percent = 17;
@@ -164,9 +162,7 @@ message Mage {
 
 		// Frost Options.
 		bool use_ice_lance = 18;
-		double water_elemental_disobey_chance = 6 [deprecated = true];
 	}
-	Rotation rotation = 1;
 	
 	message Options {
 		enum ArmorType {

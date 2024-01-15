@@ -111,22 +111,18 @@ var FireElementalBasicTotems = &proto.ShamanTotems{
 var PlayerOptionsAdaptive = &proto.Player_ElementalShaman{
 	ElementalShaman: &proto.ElementalShaman{
 		Options: &proto.ElementalShaman_Options{
-			Shield:    proto.ShamanShield_WaterShield,
-			Bloodlust: true,
-			Totems:    BasicTotems,
+			Shield: proto.ShamanShield_WaterShield,
+			Totems: BasicTotems,
 		},
-		Rotation: &proto.ElementalShaman_Rotation{},
 	},
 }
 
 var PlayerOptionsAdaptiveFireElemental = &proto.Player_ElementalShaman{
 	ElementalShaman: &proto.ElementalShaman{
 		Options: &proto.ElementalShaman_Options{
-			Shield:    proto.ShamanShield_WaterShield,
-			Bloodlust: true,
-			Totems:    FireElementalBasicTotems,
+			Shield: proto.ShamanShield_WaterShield,
+			Totems: FireElementalBasicTotems,
 		},
-		Rotation: &proto.ElementalShaman_Rotation{},
 	},
 }
 

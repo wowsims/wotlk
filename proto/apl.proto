@@ -10,8 +10,6 @@ import "druid.proto";
 // Rotation options are based heavily on APL. See https://github.com/simulationcraft/simc/wiki/ActionLists.
 
 message APLRotation {
-    bool enabled = 20 [deprecated = true]; // If false, use old rotation options.
-
     enum Type {
         TypeUnknown = 0;
         TypeAuto = 1;
@@ -36,9 +34,6 @@ message APLPrepullAction {
     APLAction action = 1;
     APLValue do_at_value = 4; // When to perform this prepull action. Should be a negative value.
     bool hide = 3;            // Causes this item to be ignored.
-
-    // TODO: Remove after 1 month (on or after 8/30/2023).
-    string do_at = 2 [deprecated = true];
 }
 
 message APLListItem {
@@ -142,7 +137,6 @@ message APLValue {
         APLValueSpellIsReady spell_is_ready = 20;
         APLValueSpellTimeToReady spell_time_to_ready = 21;
         APLValueSpellCastTime spell_cast_time = 35;
-        APLValueSpellChannelTime spell_channel_time = 36;
         APLValueSpellTravelTime spell_travel_time = 37;
         APLValueSpellCPM spell_cpm = 42;
         APLValueSpellIsChanneling spell_is_channeling = 56;
@@ -446,9 +440,6 @@ message APLValueSpellTimeToReady {
     ActionID spell_id = 1;
 }
 message APLValueSpellCastTime {
-    ActionID spell_id = 1;
-}
-message APLValueSpellChannelTime {
     ActionID spell_id = 1;
 }
 message APLValueChannelClipDelay {

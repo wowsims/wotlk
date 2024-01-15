@@ -1,7 +1,6 @@
 import { IndividualSimUI, InputSection, StatOption } from "../../individual_sim_ui";
 import {
 	Consumes,
-	Cooldowns,
 	Debuffs,
 	HealingModel,
 	IndividualBuffs,
@@ -20,7 +19,6 @@ import { SavedEncounter, SavedSettings } from "../../proto/ui";
 import { EventID, TypedEvent } from "../../typed_event";
 import { getEnumValues } from "../../utils";
 import { Player } from "../../player";
-import { aplLaunchStatuses, LaunchStatus } from '../../launched_sims';
 
 import { ContentBlock } from "../content_block";
 import { EncounterPicker } from '../encounter_picker.js';
@@ -34,8 +32,6 @@ import { MultiIconPicker } from "../multi_icon_picker";
 import { IconPickerConfig } from "../icon_picker";
 import { TypedIconPickerConfig } from "../input_helpers";
 
-import { CustomRotationPicker } from "./custom_rotation_picker";
-import { CooldownsPicker } from "./cooldowns_picker";
 import { ConsumesPicker } from "./consumes_picker";
 
 import * as IconInputs from '../icon_inputs.js';
@@ -84,16 +80,9 @@ export class SettingsTab extends SimTab {
 			this.buildEncounterSettings();
 		}
 
-		if (aplLaunchStatuses[this.simUI.player.spec] == LaunchStatus.Unlaunched) {
-			this.buildRotationSettings();
-		}
-
 		this.buildPlayerSettings();
 		this.buildCustomSettingsSections();
 		this.buildConsumesSection();
-		if (aplLaunchStatuses[this.simUI.player.spec] == LaunchStatus.Unlaunched) {
-			this.buildCooldownSettings();
-		}
 		this.buildOtherSettings();
 
 		if (!this.simUI.isWithinRaidSim) {
@@ -114,32 +103,8 @@ export class SettingsTab extends SimTab {
 		new EncounterPicker(contentBlock.bodyElement, this.simUI.sim.encounter, this.simUI.individualConfig.encounterPicker, this.simUI);
 	}
 
-	private buildRotationSettings() {
-		const contentBlock = new ContentBlock(this.column1, 'rotation-settings', {
-			header: { title: 'Rotation' }
-		});
-
-		const rotationIconGroup = Input.newGroupContainer();
-		rotationIconGroup.classList.add('rotation-icon-group', 'icon-group');
-		contentBlock.bodyElement.appendChild(rotationIconGroup);
-
-		if (this.simUI.individualConfig.rotationIconInputs?.length) {
-			this.configureIconSection(
-				rotationIconGroup,
-				this.simUI.individualConfig.rotationIconInputs.map(iconInput => IconInputs.buildIconInput(rotationIconGroup, this.simUI.player, iconInput)),
-				true
-			);
-		}
-
-		this.configureInputSection(contentBlock.bodyElement, this.simUI.individualConfig.rotationInputs);
-
-		contentBlock.bodyElement.querySelectorAll('.input-root').forEach(elem => {
-			elem.classList.add('input-inline');
-		})
-	}
-
 	private buildPlayerSettings() {
-		const column = aplLaunchStatuses[this.simUI.player.spec] == LaunchStatus.Unlaunched ? this.column2 : this.column1;
+		const column = this.column1;
 		const contentBlock = new ContentBlock(column, 'player-settings', {
 			header: { title: 'Player' }
 		});
@@ -155,7 +120,7 @@ export class SettingsTab extends SimTab {
 		);
 
 		const races = specToEligibleRaces[this.simUI.player.spec];
-		const racePicker = new EnumPicker(contentBlock.bodyElement, this.simUI.player, {
+		const _racePicker = new EnumPicker(contentBlock.bodyElement, this.simUI.player, {
 			label: 'Race',
 			values: races.map(race => {
 				return {
@@ -176,7 +141,7 @@ export class SettingsTab extends SimTab {
 		contentBlock.bodyElement.appendChild(professionGroup);
 
 		const professions = getEnumValues(Profession) as Array<Profession>;
-		const profession1Picker = new EnumPicker(professionGroup, this.simUI.player, {
+		const _profession1Picker = new EnumPicker(professionGroup, this.simUI.player, {
 			label: 'Profession 1',
 			values: professions.map(p => {
 				return {
@@ -189,7 +154,7 @@ export class SettingsTab extends SimTab {
 			setValue: (eventID, sim, newValue) => sim.setProfession1(eventID, newValue),
 		});
 
-		const profession2Picker = new EnumPicker(professionGroup, this.simUI.player, {
+		const _profession2Picker = new EnumPicker(professionGroup, this.simUI.player, {
 			label: 'Profession 2',
 			values: professions.map(p => {
 				return {
@@ -219,17 +184,7 @@ export class SettingsTab extends SimTab {
 		new ConsumesPicker(contentBlock.bodyElement, this, this.simUI);
 	}
 
-	private buildCooldownSettings() {
-		const column = (this.simUI.isWithinRaidSim ? this.column4 : this.column2) as HTMLElement;
-		const contentBlock = new ContentBlock(column, 'cooldown-settings', {
-			header: { title: 'Cooldowns', tooltip: Tooltips.COOLDOWNS_SECTION }
-		});
-
-		new CooldownsPicker(contentBlock.bodyElement, this.simUI.player);
-	}
-
 	private buildOtherSettings() {
-		const column = this.simUI.isWithinRaidSim ? this.column4 : this.column2;
 		const settings = this.simUI.individualConfig.otherInputs?.inputs.filter(inputs =>
 			!inputs.extraCssClasses?.includes('within-raid-sim-hide') || true
 		)
@@ -412,8 +367,6 @@ export class SettingsTab extends SimTab {
 					distanceFromTarget: player.getDistanceFromTarget(),
 					healingModel: player.getHealingModel(),
 					nibelungAverageCasts: player.getNibelungAverageCasts(),
-					cooldowns: aplLaunchStatuses[simUI.player.spec] == LaunchStatus.Unlaunched ? player.getCooldowns() : undefined,
-					rotationJson: aplLaunchStatuses[simUI.player.spec] == LaunchStatus.Unlaunched ? JSON.stringify(player.specTypeFunctions.rotationToJson(player.getRotation())) : undefined,
 				});
 			},
 			setData: (eventID: EventID, simUI: IndividualSimUI<any>, newSettings: SavedSettings) => {
@@ -436,12 +389,6 @@ export class SettingsTab extends SimTab {
 					simUI.player.setDistanceFromTarget(eventID, newSettings.distanceFromTarget);
 					simUI.player.setHealingModel(eventID, newSettings.healingModel || HealingModel.create());
 					simUI.player.setNibelungAverageCasts(eventID, newSettings.nibelungAverageCasts)
-					if (aplLaunchStatuses[simUI.player.spec] == LaunchStatus.Unlaunched) {
-						simUI.player.setCooldowns(eventID, newSettings.cooldowns || Cooldowns.create());
-						if (newSettings.rotationJson) {
-							simUI.player.setRotation(eventID, simUI.player.specTypeFunctions.rotationFromJson(JSON.parse(newSettings.rotationJson)));
-						}
-					}
 				});
 			},
 			changeEmitters: [
@@ -457,10 +404,7 @@ export class SettingsTab extends SimTab {
 				this.simUI.player.inFrontOfTargetChangeEmitter,
 				this.simUI.player.distanceFromTargetChangeEmitter,
 				this.simUI.player.healingModelChangeEmitter,
-			].concat(aplLaunchStatuses[this.simUI.player.spec] == LaunchStatus.Unlaunched ? [
-				this.simUI.player.cooldownsChangeEmitter,
-				this.simUI.player.rotationChangeEmitter,
-			] : []),
+			],
 			equals: (a: SavedSettings, b: SavedSettings) => SavedSettings.equals(a, b),
 			toJson: (a: SavedSettings) => SavedSettings.toJson(a),
 			fromJson: (obj: any) => SavedSettings.fromJson(obj),
@@ -480,8 +424,6 @@ export class SettingsTab extends SimTab {
 				new BooleanPicker(sectionElem, this.simUI.player, { ...inputConfig, ...{ cssScheme: this.simUI.cssScheme } });
 			} else if (inputConfig.type == 'enum') {
 				new EnumPicker(sectionElem, this.simUI.player, inputConfig);
-			} else if (inputConfig.type == 'customRotation') {
-				new CustomRotationPicker(sectionElem, this.simUI, this.simUI.player, inputConfig);
 			}
 		});
 	};

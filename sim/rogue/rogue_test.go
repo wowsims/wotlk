@@ -238,79 +238,67 @@ var SubtletyGlyphs = &proto.Glyphs{
 
 var PlayerOptionsCombatDI = &proto.Player_Rogue{
 	Rogue: &proto.Rogue{
-		Options:  DeadlyInstant,
-		Rotation: &proto.Rogue_Rotation{},
+		Options: DeadlyInstant,
 	},
 }
 var PlayerOptionsCombatDD = &proto.Player_Rogue{
 	Rogue: &proto.Rogue{
-		Options:  DeadlyDeadly,
-		Rotation: &proto.Rogue_Rotation{},
+		Options: DeadlyDeadly,
 	},
 }
 var PlayerOptionsCombatID = &proto.Player_Rogue{
 	Rogue: &proto.Rogue{
-		Options:  InstantDeadly,
-		Rotation: &proto.Rogue_Rotation{},
+		Options: InstantDeadly,
 	},
 }
 var PlayerOptionsCombatII = &proto.Player_Rogue{
 	Rogue: &proto.Rogue{
-		Options:  InstantInstant,
-		Rotation: &proto.Rogue_Rotation{},
+		Options: InstantInstant,
 	},
 }
 
 var PlayerOptionsNoLethality = &proto.Player_Rogue{
 	Rogue: &proto.Rogue{
-		Options:  DeadlyInstant,
-		Rotation: &proto.Rogue_Rotation{},
+		Options: DeadlyInstant,
 	},
 }
 
 var PlayerOptionsNoPotW = &proto.Player_Rogue{
 	Rogue: &proto.Rogue{
-		Options:  DeadlyInstant,
-		Rotation: &proto.Rogue_Rotation{},
+		Options: DeadlyInstant,
 	},
 }
 
 var PlayerOptionsNoLethalityNoPotW = &proto.Player_Rogue{
 	Rogue: &proto.Rogue{
-		Options:  DeadlyInstant,
-		Rotation: &proto.Rogue_Rotation{},
+		Options: DeadlyInstant,
 	},
 }
 
 var PlayerOptionsAssassinationDI = &proto.Player_Rogue{
 	Rogue: &proto.Rogue{
-		Options:  DeadlyInstant,
-		Rotation: &proto.Rogue_Rotation{},
+		Options: DeadlyInstant,
 	},
 }
 var PlayerOptionsAssassinationDD = &proto.Player_Rogue{
 	Rogue: &proto.Rogue{
-		Options:  DeadlyDeadly,
-		Rotation: &proto.Rogue_Rotation{},
+		Options: DeadlyDeadly,
 	},
 }
 var PlayerOptionsAssassinationID = &proto.Player_Rogue{
 	Rogue: &proto.Rogue{
-		Options:  InstantDeadly,
-		Rotation: &proto.Rogue_Rotation{},
+		Options: InstantDeadly,
 	},
 }
 var PlayerOptionsAssassinationII = &proto.Player_Rogue{
 	Rogue: &proto.Rogue{
-		Options:  InstantInstant,
-		Rotation: &proto.Rogue_Rotation{},
+		Options: InstantInstant,
 	},
 }
 
 var PlayerOptionsSubtletyID = &proto.Player_Rogue{
 	Rogue: &proto.Rogue{
-		Options:  InstantDeadly,
-		Rotation: &proto.Rogue_Rotation{},
+		Options: InstantDeadly,
 	},
 }
 

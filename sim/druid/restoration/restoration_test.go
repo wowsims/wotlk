@@ -60,7 +60,6 @@ var PlayerOptionsStandard = &proto.Player_RestorationDruid{
 		Options: &proto.RestorationDruid_Options{
 			InnervateTarget: &proto.UnitReference{Type: proto.UnitReference_Player, Index: 0}, // self innervate
 		},
-		Rotation: &proto.RestorationDruid_Rotation{},
 	},
 }
 

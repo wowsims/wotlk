@@ -56,18 +56,6 @@ func (warlock *Warlock) registerInfernoSpell() {
 			summonInfernalAura.Activate(sim)
 		},
 	})
-
-	warlock.AddMajorCooldown(core.MajorCooldown{
-		Spell: warlock.Inferno,
-		Type:  core.CooldownTypeDPS,
-		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
-			if !warlock.Rotation.UseInfernal {
-				return false
-			}
-
-			return sim.GetRemainingDuration() <= 61*time.Second
-		},
-	})
 }
 
 type InfernalPet struct {

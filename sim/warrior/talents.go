@@ -812,8 +812,7 @@ func (warrior *Warrior) RegisterBladestormCD() {
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				ChannelTime: time.Second * 6,
-				GCD:         core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer:    warrior.NewTimer(),

@@ -31,7 +31,3 @@ func (warrior *Warrior) registerBerserkerRageSpell() {
 		},
 	})
 }
-
-func (warrior *Warrior) ShouldBerserkerRage(sim *core.Simulation) bool {
-	return warrior.Talents.ImprovedBerserkerRage > 0 && warrior.CurrentRage() < 80 && warrior.BerserkerRage.IsReady(sim)
-}

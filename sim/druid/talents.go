@@ -399,7 +399,7 @@ func (druid *Druid) applyOmenOfClarity() {
 
 			// https://github.com/JamminL/wotlk-classic-bugs/issues/66#issuecomment-1182017571
 			if druid.HurricaneTickSpell.IsEqual(spell) {
-				curCastTickSpeed := spell.CurCast.ChannelTime.Seconds() / 10
+				curCastTickSpeed := spell.CurDot().TickPeriod().Seconds() / 10
 				hurricaneCoeff := 1.0 - (7.0 / 9.0)
 				spellCoeff := hurricaneCoeff * curCastTickSpeed
 				chanceToProc := ((1.5 / 60) * 3.5) * spellCoeff

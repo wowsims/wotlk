@@ -7,8 +7,8 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-func (priest *Priest) RegisterHolyFireSpell(memeDream bool) {
-	hasGlyph := !memeDream && priest.HasMajorGlyph(proto.PriestMajorGlyph_GlyphOfSmite)
+func (priest *Priest) RegisterHolyFireSpell() {
+	hasGlyph := priest.HasMajorGlyph(proto.PriestMajorGlyph_GlyphOfSmite)
 
 	priest.HolyFire = priest.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48135},

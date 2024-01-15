@@ -62,7 +62,6 @@ func NewPet(name string, owner *Character, baseStats stats.Stats, statInheritanc
 				PseudoStats: stats.NewPseudoStats(),
 				auraTracker: newAuraTracker(),
 				Metrics:     NewUnitMetrics(),
-				IsUsingAPL:  true,
 
 				StatDependencyManager: stats.NewStatDependencyManager(),
 			},
@@ -238,7 +237,6 @@ func (pet *Pet) Disable(sim *Simulation) {
 	pet.focusBar.disable(sim)
 	pet.AutoAttacks.CancelAutoSwing(sim)
 	pet.enabled = false
-	pet.DoNothing() // mark it is as doing nothing now.
 
 	// If a pet is immediately re-summoned it might try to use GCD, so we need to clear it.
 	pet.Hardcast = Hardcast{}

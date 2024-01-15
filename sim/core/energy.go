@@ -13,9 +13,6 @@ import (
 const EnergyTickDuration = time.Millisecond * 100
 const EnergyPerTick = 1.0
 
-// OnEnergyGain is called any time energy is increased.
-type OnEnergyGain func(sim *Simulation)
-
 type energyBar struct {
 	unit *Unit
 
@@ -33,8 +30,6 @@ type energyBar struct {
 	// Increments by 1 at each value of energyDecisionThresholds.
 	cumulativeEnergyDecisionThresholds []int
 
-	onEnergyGain func(*Simulation, bool)
-
 	nextEnergyTick time.Duration
 
 	// Multiplies energy regen from ticks.
@@ -44,27 +39,12 @@ type energyBar struct {
 	EnergyRefundMetrics *ResourceMetrics
 }
 
-func (unit *Unit) EnableEnergyBar(maxEnergy float64, onEnergyGain OnEnergyGain) {
+func (unit *Unit) EnableEnergyBar(maxEnergy float64) {
 	unit.SetCurrentPowerBar(EnergyBar)
 
 	unit.energyBar = energyBar{
-		unit:      unit,
-		maxEnergy: max(100, maxEnergy),
-		onEnergyGain: func(sim *Simulation, crossedThreshold bool) {
-			if sim.CurrentTime < 0 {
-				return
-			}
-
-			if !sim.Options.Interactive && (!unit.IsWaitingForEnergy() || unit.DoneWaitingForEnergy(sim)) {
-				if unit.IsUsingAPL {
-					if crossedThreshold {
-						unit.Rotation.DoNextAction(sim)
-					}
-				} else {
-					onEnergyGain(sim)
-				}
-			}
-		},
+		unit:                 unit,
+		maxEnergy:            max(100, maxEnergy),
 		EnergyTickMultiplier: 1,
 		regenMetrics:         unit.NewEnergyMetrics(ActionID{OtherID: proto.OtherAction_OtherActionEnergyRegen}),
 		EnergyRefundMetrics:  unit.NewEnergyMetrics(ActionID{OtherID: proto.OtherAction_OtherActionRefund}),
@@ -74,9 +54,6 @@ func (unit *Unit) EnableEnergyBar(maxEnergy float64, onEnergyGain OnEnergyGain) 
 // Computes the energy thresholds.
 func (eb *energyBar) setupEnergyThresholds() {
 	if eb.unit == nil {
-		return
-	}
-	if !eb.unit.IsUsingAPL {
 		return
 	}
 	var energyThresholds []int
@@ -151,6 +128,16 @@ func (eb *energyBar) CurrentEnergy() float64 {
 
 func (eb *energyBar) NextEnergyTickAt() time.Duration {
 	return eb.nextEnergyTick
+}
+
+func (eb *energyBar) onEnergyGain(sim *Simulation, crossedThreshold bool) {
+	if sim.CurrentTime < 0 {
+		return
+	}
+
+	if !sim.Options.Interactive && crossedThreshold && (!eb.unit.IsWaitingForEnergy() || eb.unit.DoneWaitingForEnergy(sim)) {
+		eb.unit.Rotation.DoNextAction(sim)
+	}
 }
 
 func (eb *energyBar) addEnergyInternal(sim *Simulation, amount float64, metrics *ResourceMetrics) bool {

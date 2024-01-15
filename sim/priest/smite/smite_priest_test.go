@@ -60,6 +60,5 @@ var PlayerOptionsBasic = &proto.Player_SmitePriest{
 			UseInnerFire:   true,
 			UseShadowfiend: true,
 		},
-		Rotation: &proto.SmitePriest_Rotation{},
 	},
 }

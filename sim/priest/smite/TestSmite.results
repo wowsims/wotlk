@@ -855,7 +855,7 @@ dps_results: {
  key: "TestSmite-Settings-Undead-p1-Basic-default-NoBuffs-ShortSingleTarget"
  value: {
   dps: 2520.9093
-  tps: 2134.74022
+  tps: 2130.11373
  }
 }
 dps_results: {

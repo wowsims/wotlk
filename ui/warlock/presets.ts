@@ -10,17 +10,12 @@ import {
 	Debuffs,
 	TristateEffect,
 	Faction,
-	Spec, Profession,
+	Profession,
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
 import {
-	Warlock_Rotation as WarlockRotation,
 	Warlock_Options as WarlockOptions,
-	Warlock_Rotation_PrimarySpell as PrimarySpell,
-	Warlock_Rotation_SecondaryDot as SecondaryDot,
-	Warlock_Rotation_SpecSpell as SpecSpell,
-	Warlock_Rotation_Curse as Curse,
 	Warlock_Options_WeaponImbue as WeaponImbue,
 	Warlock_Options_Armor as Armor,
 	Warlock_Options_Summon as Summon,
@@ -65,43 +60,10 @@ export const P3_DESTRO_HORDE_PRESET = PresetUtils.makePresetGear('P3 Destro [H]'
 import P4DestroGear from './gear_sets/p4_destro.gear.json';
 export const P4_DESTRO_PRESET = PresetUtils.makePresetGear('P4 Destro', P4DestroGear, { tooltip: BIS_TOOLTIP, talentTree: 2 });
 
-export const AfflictionRotation = WarlockRotation.create({
-	primarySpell: PrimarySpell.ShadowBolt,
-	secondaryDot: SecondaryDot.UnstableAffliction,
-	specSpell: SpecSpell.Haunt,
-	curse: Curse.Agony,
-	corruption: true,
-	useInfernal: false,
-	detonateSeed: true,
-});
-
-export const DemonologyRotation = WarlockRotation.create({
-	primarySpell: PrimarySpell.ShadowBolt,
-	secondaryDot: SecondaryDot.Immolate,
-	specSpell: SpecSpell.NoSpecSpell,
-	curse: Curse.Doom,
-	corruption: true,
-	useInfernal: false,
-	detonateSeed: true,
-});
-
-export const DestructionRotation = WarlockRotation.create({
-	primarySpell: PrimarySpell.Incinerate,
-	secondaryDot: SecondaryDot.Immolate,
-	specSpell: SpecSpell.ChaosBolt,
-	curse: Curse.Doom,
-	corruption: false,
-	useInfernal: false,
-	detonateSeed: true,
-});
-
-export const APL_Affliction_Legacy = PresetUtils.makePresetLegacyRotation('Affliction Legacy', Spec.SpecWarlock, AfflictionRotation, { talentTree: 0 });
 import AfflictionApl from './apls/affliction.apl.json';
 export const APL_Affliction_Default = PresetUtils.makePresetAPLRotation('Affliction', AfflictionApl, { talentTree: 0 });
-export const APL_Demo_Legacy = PresetUtils.makePresetLegacyRotation('Demo Legacy', Spec.SpecWarlock, DemonologyRotation, { talentTree: 1 });
 import DemoApl from './apls/demo.apl.json';
 export const APL_Demo_Default = PresetUtils.makePresetAPLRotation('Demo', DemoApl, { talentTree: 1 });
-export const APL_Destro_Legacy = PresetUtils.makePresetLegacyRotation('Destro Legacy', Spec.SpecWarlock, DestructionRotation, { talentTree: 2 });
 import DestroApl from './apls/destro.apl.json';
 export const APL_Destro_Default = PresetUtils.makePresetAPLRotation('Destro', DestroApl, { talentTree: 2 });
 
@@ -157,18 +119,21 @@ export const AfflictionOptions = WarlockOptions.create({
 	armor: Armor.FelArmor,
 	summon: Summon.Felhunter,
 	weaponImbue: WeaponImbue.GrandSpellstone,
+	detonateSeed: true,
 });
 
 export const DemonologyOptions = WarlockOptions.create({
 	armor: Armor.FelArmor,
 	summon: Summon.Felguard,
 	weaponImbue: WeaponImbue.GrandSpellstone,
+	detonateSeed: true,
 });
 
 export const DestructionOptions = WarlockOptions.create({
 	armor: Armor.FelArmor,
 	summon: Summon.Imp,
 	weaponImbue: WeaponImbue.GrandFirestone,
+	detonateSeed: true,
 });
 
 export const DefaultConsumes = Consumes.create({
@@ -193,7 +158,7 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	wrathOfAirTotem: true,
 	sanctifiedRetribution: true,
 	bloodlust: true,
-	demonicPact: 500,
+	demonicPactSp: 500,
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({

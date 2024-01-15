@@ -47,9 +47,6 @@ type Cast struct {
 	// The amount of time between the call to spell.Cast() and when the spell
 	// effects are invoked.
 	CastTime time.Duration
-
-	// Additional GCD delay after the cast completes.
-	ChannelTime time.Duration
 }
 
 func (cast *Cast) EffectiveTime() time.Duration {
@@ -58,15 +55,14 @@ func (cast *Cast) EffectiveTime() time.Duration {
 		// TODO: isn't this wrong for spells like shadowfury, that have a reduced GCD?
 		gcd = max(GCDMin, gcd)
 	}
-	fullCastTime := cast.CastTime + cast.ChannelTime
-	return max(gcd, fullCastTime)
+	return max(gcd, cast.CastTime)
 }
 
 type CastFunc func(*Simulation, *Unit)
 type CastSuccessFunc func(*Simulation, *Unit) bool
 
 func (spell *Spell) castFailureHelper(sim *Simulation, message string, vals ...any) bool {
-	if sim.CurrentTime < 0 && spell.Unit.IsUsingAPL {
+	if sim.CurrentTime < 0 && spell.Unit.Rotation != nil {
 		spell.Unit.Rotation.ValidationWarning(fmt.Sprintf(spell.ActionID.String()+" failed to cast: "+message, vals...))
 	} else {
 		if sim.Log != nil && !spell.Flags.Matches(SpellFlagNoLogs) {
@@ -105,7 +101,6 @@ func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
 		if !config.IgnoreHaste {
 			spell.CurCast.GCD = spell.Unit.ApplyCastSpeed(spell.CurCast.GCD)
 			spell.CurCast.CastTime = spell.Unit.ApplyCastSpeedForSpell(spell.CurCast.CastTime, spell)
-			spell.CurCast.ChannelTime = spell.Unit.ApplyCastSpeedForSpell(spell.CurCast.ChannelTime, spell)
 		}
 
 		if config.CD.Timer != nil {
@@ -171,11 +166,6 @@ func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
 			}
 
 			return true
-		}
-
-		// Instants/Channels
-		if spell.CurCast.ChannelTime > 0 {
-			spell.Unit.Hardcast = Hardcast{Expires: sim.CurrentTime + spell.CurCast.ChannelTime, ActionID: spell.ActionID}
 		}
 
 		if sim.Log != nil && !spell.Flags.Matches(SpellFlagNoLogs) {

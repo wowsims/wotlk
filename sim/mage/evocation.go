@@ -18,8 +18,7 @@ func (mage *Mage) registerEvocation() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD:         core.GCDDefault,
-				ChannelTime: time.Duration(maxTicks) * time.Second * 2,
+				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer:    mage.NewTimer(),

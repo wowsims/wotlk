@@ -3,8 +3,6 @@ package proto;
 
 option go_package = "./proto";
 
- import "common.proto";
-
 message PaladinTalents {
 	// Holy
 	int32 spiritual_focus = 1;
@@ -163,40 +161,7 @@ enum PaladinJudgement {
 
 message RetributionPaladin {
 	message Rotation {
-		int32 exo_slack = 1;
-		int32 cons_slack = 2;
-		double divine_plea_percentage = 3;
-		int32 holy_wrath_threshold = 4;
-		int32 sov_targets = 5;
-
-		enum SpellOption {
-			NoSpell = 0;
-			JudgementOfWisdom = 1;
-			DivineStorm = 2;
-			HammerOfWrath = 3;
-			Consecration = 4;
-			HolyWrath = 5;
-			CrusaderStrike = 6;
-			Exorcism = 7;
-			DivinePlea = 8;
-		}
-		CustomRotation custom_rotation = 8;
-		CustomRotation custom_cast_sequence = 10;
-
-		enum RotationType {
-			UnknownType = 0;
-			Standard = 1;
-			Custom = 2;
-			CastSequence = 3;
-		}
-		RotationType type = 9;
-
-		bool use_divine_plea = 11;
-		bool avoid_clipping_consecration = 12;
-		bool hold_last_avenging_wrath_until_execution = 13;
-		bool cancel_chaos_bane = 14;
 	}
-	Rotation rotation = 1;
 	
 	message Options {
 		PaladinJudgement judgement = 1;
@@ -209,26 +174,7 @@ message RetributionPaladin {
 
 message ProtectionPaladin {
 	message Rotation {
-		bool hammer_first = 1;
-		bool use_custom_prio = 2;
-		bool squeeze_holy_wrath = 4;
-		double wait_slack = 5;
-
-		enum SpellOption {
-			NoSpell = 0;
-			JudgementOfWisdom = 1;
-			HammerOfWrath = 2;
-			Consecration = 3;
-			HolyWrath = 4;
-			Exorcism = 5;
-			ShieldOfRighteousness = 6;
-			AvengersShield = 7;
-			HammerOfTheRighteous = 8;
-			HolyShield = 9;
-		}
-		CustomRotation custom_rotation = 3;
 	}
-	Rotation rotation = 1;
 
 	message Options {
 		PaladinJudgement judgement = 1;
@@ -242,7 +188,6 @@ message ProtectionPaladin {
 message HolyPaladin {
 	message Rotation {
 	}
-	Rotation rotation = 1;
 
 	message Options {
 		PaladinJudgement judgement = 1;

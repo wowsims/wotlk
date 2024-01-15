@@ -1,9 +1,6 @@
 import { Spec } from '../core/proto/common.js';
 
 import {
-	DeathknightTalents as DeathknightTalents,
-	Deathknight_Rotation as DeathknightRotation,
-	Deathknight_Options as DeathknightOptions,
 	TankDeathknight_Rotation_OptimizationSetting as OptimizationSetting,
 	TankDeathknight_Rotation_Opener as Opener,
 	TankDeathknight_Rotation_BloodSpell as BloodSpell,

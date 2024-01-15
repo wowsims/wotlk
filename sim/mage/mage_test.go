@@ -128,7 +128,6 @@ var PlayerOptionsFire = &proto.Player_Mage{
 		Options: &proto.Mage_Options{
 			Armor: proto.Mage_Options_MoltenArmor,
 		},
-		Rotation: &proto.Mage_Rotation{},
 	},
 }
 
@@ -137,7 +136,6 @@ var PlayerOptionsFrost = &proto.Player_Mage{
 		Options: &proto.Mage_Options{
 			Armor: proto.Mage_Options_MageArmor,
 		},
-		Rotation: &proto.Mage_Rotation{},
 	},
 }
 
@@ -146,7 +144,6 @@ var PlayerOptionsArcane = &proto.Player_Mage{
 		Options: &proto.Mage_Options{
 			Armor: proto.Mage_Options_MoltenArmor,
 		},
-		Rotation: &proto.Mage_Rotation{},
 	},
 }
 

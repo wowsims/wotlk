@@ -1,7 +1,6 @@
 package rogue
 
 import (
-	"math"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -39,20 +38,13 @@ const RogueBleedTag = "RogueBleed"
 type Rogue struct {
 	core.Character
 
-	Talents  *proto.RogueTalents
-	Options  *proto.Rogue_Options
-	Rotation *proto.Rogue_Rotation
-
-	rotation rotation
+	Talents *proto.RogueTalents
+	Options *proto.Rogue_Options
 
 	bleedCategory *core.ExclusiveCategory
 
 	sliceAndDiceDurations [6]time.Duration
 	exposeArmorDurations  [6]time.Duration
-
-	allMCDsDisabled bool
-
-	maxEnergy float64
 
 	Backstab         *core.Spell
 	BladeFlurry      *core.Spell
@@ -185,13 +177,6 @@ func (rogue *Rogue) Initialize() {
 	rogue.registerVanishSpell()
 
 	rogue.finishingMoveEffectApplier = rogue.makeFinishingMoveEffectApplier()
-
-	if !rogue.IsUsingAPL && rogue.Rotation.TricksOfTheTradeFrequency != proto.Rogue_Rotation_Never && !rogue.HasSetBonus(Tier10, 2) {
-		rogue.RegisterPrepullAction(-10*time.Second, func(sim *core.Simulation) {
-			rogue.TricksOfTheTrade.Cast(sim, nil)
-			rogue.UpdateMajorCooldowns()
-		})
-	}
 }
 
 func (rogue *Rogue) ApplyEnergyTickMultiplier(multiplier float64) {
@@ -202,30 +187,6 @@ func (rogue *Rogue) Reset(sim *core.Simulation) {
 	for _, mcd := range rogue.GetMajorCooldowns() {
 		mcd.Disable()
 	}
-	rogue.allMCDsDisabled = true
-
-	if !rogue.IsUsingAPL {
-		// Stealth triggered effects (Overkill and Master of Subtlety) pre-pull activation
-		if rogue.Rotation.OpenWithGarrote || rogue.Rotation.OpenWithPremeditation {
-			rogue.AutoAttacks.CancelAutoSwing(sim)
-			rogue.StealthAura.Activate(sim)
-		} else {
-			if rogue.Options.StartingOverkillDuration > 0 {
-				if rogue.Talents.Overkill {
-					duration := time.Second * time.Duration(math.Min(float64(rogue.Options.StartingOverkillDuration), 20))
-					rogue.OverkillAura.Activate(sim)
-					rogue.OverkillAura.UpdateExpires(duration)
-				}
-				if rogue.Talents.MasterOfSubtlety > 0 {
-					duration := time.Second * time.Duration(math.Min(float64(rogue.Options.StartingOverkillDuration), 6))
-					rogue.MasterOfSubtletyAura.Activate(sim)
-					rogue.MasterOfSubtletyAura.UpdateExpires(duration)
-				}
-			}
-		}
-	}
-
-	rogue.setupRotation(sim)
 }
 
 func (rogue *Rogue) MeleeCritMultiplier(applyLethality bool) float64 {
@@ -248,13 +209,13 @@ func NewRogue(character *core.Character, options *proto.Player) *Rogue {
 		Character: *character,
 		Talents:   &proto.RogueTalents{},
 		Options:   rogueOptions.Options,
-		Rotation:  rogueOptions.Rotation,
 	}
 	core.FillTalentsProto(rogue.Talents.ProtoReflect(), options.TalentsString, TalentTreeSizes)
 
 	// Passive rogue threat reduction: https://wotlk.wowhead.com/spell=21184/rogue-passive-dnd
 	rogue.PseudoStats.ThreatMultiplier *= 0.71
 	rogue.PseudoStats.CanParry = true
+
 	maxEnergy := 100.0
 	if rogue.Talents.Vigor {
 		maxEnergy += 10
@@ -265,8 +226,7 @@ func NewRogue(character *core.Character, options *proto.Player) *Rogue {
 	if rogue.HasSetBonus(Arena, 4) {
 		maxEnergy += 10
 	}
-	rogue.maxEnergy = maxEnergy
-	rogue.EnableEnergyBar(maxEnergy, rogue.OnEnergyGain)
+	rogue.EnableEnergyBar(maxEnergy)
 	rogue.ApplyEnergyTickMultiplier([]float64{0, 0.08, 0.16, 0.25}[rogue.Talents.Vitality])
 
 	rogue.EnableAutoAttacks(rogue, core.AutoAttackOptions{
@@ -301,11 +261,6 @@ func (rogue *Rogue) BreakStealth(sim *core.Simulation) {
 		rogue.StealthAura.Deactivate(sim)
 		rogue.AutoAttacks.EnableAutoSwing(sim)
 	}
-}
-
-// Can the rogue fulfil the weapon equipped requirement for Mutilate?
-func (rogue *Rogue) CanMutilate() bool {
-	return rogue.Talents.Mutilate && rogue.HasDagger(core.MainHand) && rogue.HasDagger(core.OffHand)
 }
 
 // Does the rogue have a dagger equipped in the specified hand (main or offhand)?

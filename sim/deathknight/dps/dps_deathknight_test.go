@@ -126,39 +126,33 @@ var UnholyDefaultGlyphs = &proto.Glyphs{
 
 var PlayerOptionsBlood = &proto.Player_Deathknight{
 	Deathknight: &proto.Deathknight{
-		Options:  deathKnightOptions,
-		Rotation: &proto.Deathknight_Rotation{},
+		Options: deathKnightOptions,
 	},
 }
 
 var PlayerOptionsUnholy = &proto.Player_Deathknight{
 	Deathknight: &proto.Deathknight{
-		Options:  deathKnightOptions,
-		Rotation: &proto.Deathknight_Rotation{},
+		Options: deathKnightOptions,
 	},
 }
 
 var PlayerOptionsFrost = &proto.Player_Deathknight{
 	Deathknight: &proto.Deathknight{
-		Options:  deathKnightOptions,
-		Rotation: &proto.Deathknight_Rotation{},
+		Options: deathKnightOptions,
 	},
 }
 
 var PlayerOptionsDesyncFrost = &proto.Player_Deathknight{
 	Deathknight: &proto.Deathknight{
-		Options:  deathKnightOptions,
-		Rotation: &proto.Deathknight_Rotation{},
+		Options: deathKnightOptions,
 	},
 }
 
 var deathKnightOptions = &proto.Deathknight_Options{
-	UnholyFrenzyTarget:  &proto.UnitReference{Type: proto.UnitReference_Player, Index: 0},
-	DrwPestiApply:       true,
-	StartingRunicPower:  0,
-	PetUptime:           1,
-	PrecastGhoulFrenzy:  false,
-	PrecastHornOfWinter: true,
+	UnholyFrenzyTarget: &proto.UnitReference{Type: proto.UnitReference_Player, Index: 0},
+	DrwPestiApply:      true,
+	StartingRunicPower: 0,
+	PetUptime:          1,
 }
 
 var FullConsumes = &proto.Consumes{

@@ -116,13 +116,7 @@ func (runeWeapon *RuneWeaponPet) Initialize() {
 }
 
 func (dk *Deathknight) DrwWeaponDamage(sim *core.Simulation, spell *core.Spell) float64 {
-	if dk.Inputs.NewDrw {
-		return spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +
-			spell.BonusWeaponDamage()
-	} else {
-		return spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
-			spell.BonusWeaponDamage()
-	}
+	return spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) + spell.BonusWeaponDamage()
 }
 
 func (dk *Deathknight) NewRuneWeapon() *RuneWeaponPet {
@@ -163,11 +157,9 @@ func (dk *Deathknight) NewRuneWeapon() *RuneWeaponPet {
 
 	mhWeapon := dk.WeaponFromMainHand(dk.DefaultMeleeCritMultiplier())
 
-	if dk.Inputs.NewDrw {
-		baseDamage := mhWeapon.AverageDamage() / mhWeapon.SwingSpeed * 3.5
-		mhWeapon.BaseDamageMin = baseDamage - 150
-		mhWeapon.BaseDamageMax = baseDamage + 150
-	}
+	baseDamage := mhWeapon.AverageDamage() / mhWeapon.SwingSpeed * 3.5
+	mhWeapon.BaseDamageMin = baseDamage - 150
+	mhWeapon.BaseDamageMax = baseDamage + 150
 
 	mhWeapon.SwingSpeed = 3.5
 	mhWeapon.NormalizedSwingSpeed = 3.3
@@ -200,13 +192,8 @@ func (runeWeapon *RuneWeaponPet) enable(sim *core.Simulation) {
 	runeWeapon.PseudoStats.MeleeSpeedMultiplier = 1
 	runeWeapon.MultiplyMeleeSpeed(sim, runeWeapon.dkOwner.PseudoStats.MeleeSpeedMultiplier)
 
-	if runeWeapon.dkOwner.Inputs.NewDrw {
-		runeWeapon.dkOwner.drwDmgSnapshot = runeWeapon.dkOwner.PseudoStats.DamageDealtMultiplier * 0.5
-		runeWeapon.dkOwner.RuneWeapon.PseudoStats.DamageDealtMultiplier *= runeWeapon.dkOwner.drwDmgSnapshot
-	} else {
-		runeWeapon.dkOwner.drwDmgSnapshot = runeWeapon.dkOwner.PseudoStats.DamageDealtMultiplier - 0.5
-		runeWeapon.dkOwner.RuneWeapon.PseudoStats.DamageDealtMultiplier *= runeWeapon.dkOwner.drwDmgSnapshot
-	}
+	runeWeapon.dkOwner.drwDmgSnapshot = runeWeapon.dkOwner.PseudoStats.DamageDealtMultiplier * 0.5
+	runeWeapon.dkOwner.RuneWeapon.PseudoStats.DamageDealtMultiplier *= runeWeapon.dkOwner.drwDmgSnapshot
 
 	runeWeapon.dkOwner.drwPhysSnapshot = runeWeapon.dkOwner.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical]
 	runeWeapon.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= runeWeapon.dkOwner.drwPhysSnapshot

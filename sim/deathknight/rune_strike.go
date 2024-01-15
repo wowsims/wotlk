@@ -137,9 +137,4 @@ func (dk *Deathknight) registerDrwRuneStrikeSpell() {
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialNoBlockDodgeParry)
 		},
 	})
-
-	if !dk.Inputs.NewDrw {
-		dk.RuneWeapon.RuneStrike.DamageMultiplier *= 0.5
-		dk.RuneWeapon.RuneStrike.Flags |= core.SpellFlagIgnoreAttackerModifiers
-	}
 }

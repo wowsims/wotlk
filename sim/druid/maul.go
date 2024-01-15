@@ -5,7 +5,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-func (druid *Druid) registerMaulSpell(rageThreshold float64) {
+func (druid *Druid) registerMaulSpell() {
 	flatBaseDamage := 578.0
 	if druid.Ranged().ID == 23198 { // Idol of Brutality
 		flatBaseDamage += 50
@@ -87,11 +87,6 @@ func (druid *Druid) registerMaulSpell(rageThreshold float64) {
 			druid.MaulQueueAura.Activate(sim)
 		},
 	})
-
-	druid.MaulRageThreshold = max(druid.Maul.DefaultCast.Cost, rageThreshold)
-	if druid.IsUsingAPL {
-		druid.MaulRageThreshold = 0
-	}
 }
 
 func (druid *Druid) QueueMaul(sim *core.Simulation) {
@@ -106,19 +101,10 @@ func (druid *Druid) MaulReplaceMH(sim *core.Simulation, mhSwingSpell *core.Spell
 		return mhSwingSpell
 	}
 
-	if druid.CurrentRage() < druid.MaulRageThreshold {
-		druid.MaulQueueAura.Deactivate(sim)
-		return mhSwingSpell
-	}
-
 	if !druid.Maul.Spell.CanCast(sim, druid.CurrentTarget) {
 		druid.MaulQueueAura.Deactivate(sim)
 		return mhSwingSpell
 	}
 
 	return druid.Maul.Spell
-}
-
-func (druid *Druid) ShouldQueueMaul(_ *core.Simulation) bool {
-	return druid.CurrentRage() >= druid.MaulRageThreshold
 }

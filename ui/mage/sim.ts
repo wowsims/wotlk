@@ -75,8 +75,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecMage, {
 		}),
 		// Default consumes settings.
 		consumes: Presets.DefaultFireConsumes,
-		// Default rotation settings.
-		rotation: Presets.DefaultSimpleRotation,
 		// Default talents.
 		talents: Presets.Phase3FireTalents.data,
 		// Default spec-specific settings.
@@ -91,7 +89,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecMage, {
 			divineSpirit: true,
 			swiftRetribution: true,
 			sanctifiedRetribution: true,
-			demonicPact: 500,
+			demonicPactSp: 500,
 			moonkinAura: TristateEffect.TristateEffectImproved,
 			arcaneBrilliance: true,
 		}),

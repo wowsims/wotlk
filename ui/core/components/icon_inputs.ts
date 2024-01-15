@@ -20,11 +20,10 @@ import { Player } from '../player.js';
 import { Raid } from '../raid.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 
-import { IconPicker, IconPickerConfig } from './icon_picker.js';
-import { IconEnumPicker, IconEnumPickerConfig, IconEnumValueConfig } from './icon_enum_picker.js';
+import { IconPicker, } from './icon_picker.js';
+import { IconEnumPicker, IconEnumValueConfig } from './icon_enum_picker.js';
 
 import * as InputHelpers from './input_helpers.js';
-import { Tooltip } from 'bootstrap';
 
 // Component Functions
 

@@ -72,11 +72,9 @@ type GargoylePet struct {
 	dkOwner *Deathknight
 
 	GargoyleStrike *core.Spell
-
-	isNerfedGargoyle bool
 }
 
-func (dk *Deathknight) NewGargoyle(nerfedGargoyle bool) *GargoylePet {
+func (dk *Deathknight) NewGargoyle() *GargoylePet {
 	// Remove any hit that would be given by NocS as it does not translate to pets
 	var nocsHit float64
 	if dk.nervesOfColdSteelActive() {
@@ -97,8 +95,7 @@ func (dk *Deathknight) NewGargoyle(nerfedGargoyle bool) *GargoylePet {
 				stats.SpellHaste:  ownerStats[stats.MeleeHaste] * PetSpellHasteScale,
 			}
 		}, false, true),
-		dkOwner:          dk,
-		isNerfedGargoyle: nerfedGargoyle,
+		dkOwner: dk,
 	}
 
 	// NightOfTheDead
@@ -109,17 +106,15 @@ func (dk *Deathknight) NewGargoyle(nerfedGargoyle bool) *GargoylePet {
 		gargoyle.MultiplyCastSpeed(dk.PseudoStats.MeleeSpeedMultiplier)
 
 		// "Nerfed Gargoyle" dynamically updates with owner's haste and melee speed
-		if gargoyle.isNerfedGargoyle {
-			gargoyle.EnableDynamicMeleeSpeed(func(amount float64) {
-				gargoyle.MultiplyCastSpeed(amount)
-			})
+		gargoyle.EnableDynamicMeleeSpeed(func(amount float64) {
+			gargoyle.MultiplyCastSpeed(amount)
+		})
 
-			gargoyle.EnableDynamicStats(func(ownerStats stats.Stats) stats.Stats {
-				return stats.Stats{
-					stats.SpellHaste: ownerStats[stats.MeleeHaste] * PetSpellHasteScale,
-				}
-			})
-		}
+		gargoyle.EnableDynamicStats(func(ownerStats stats.Stats) stats.Stats {
+			return stats.Stats{
+				stats.SpellHaste: ownerStats[stats.MeleeHaste] * PetSpellHasteScale,
+			}
+		})
 	}
 
 	dk.AddPet(gargoyle)

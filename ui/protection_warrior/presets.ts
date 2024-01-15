@@ -1,8 +1,6 @@
 import {
 	BattleElixir,
 	Consumes,
-	CustomRotation,
-	CustomSpell,
 	Explosive,
 	Food,
 	Glyphs,
@@ -15,10 +13,7 @@ import { SavedTalents } from '../core/proto/ui.js';
 import {
 	WarriorShout,
 	ProtectionWarrior_Rotation as ProtectionWarriorRotation,
-	ProtectionWarrior_Rotation_DemoShoutChoice as DemoShoutChoice,
-	ProtectionWarrior_Rotation_ThunderClapChoice as ThunderClapChoice,
 	ProtectionWarrior_Options as ProtectionWarriorOptions,
-	ProtectionWarrior_Rotation_SpellOption as SpellOption,
 	WarriorMajorGlyph,
 	WarriorMinorGlyph,
 } from '../core/proto/warrior.js';
@@ -42,29 +37,9 @@ export const P3_PRESET = PresetUtils.makePresetGear('P3 Preset', P3Gear);
 import P4Gear from './gear_sets/p4.gear.json';
 export const P4_PRESET = PresetUtils.makePresetGear('P4 Preset', P4Gear);
 
-export const DefaultRotation = ProtectionWarriorRotation.create({
-	customRotation: CustomRotation.create({
-		spells: [
-			CustomSpell.create({ spell: SpellOption.ShieldSlam }),
-			CustomSpell.create({ spell: SpellOption.Revenge }),
-			CustomSpell.create({ spell: SpellOption.Shout }),
-			CustomSpell.create({ spell: SpellOption.ThunderClap }),
-			CustomSpell.create({ spell: SpellOption.DemoralizingShout }),
-			CustomSpell.create({ spell: SpellOption.MortalStrike }),
-			CustomSpell.create({ spell: SpellOption.Devastate }),
-			CustomSpell.create({ spell: SpellOption.SunderArmor }),
-			CustomSpell.create({ spell: SpellOption.ConcussionBlow }),
-			CustomSpell.create({ spell: SpellOption.Shockwave }),
-		],
-	}),
-	demoShoutChoice: DemoShoutChoice.DemoShoutChoiceNone,
-	thunderClapChoice: ThunderClapChoice.ThunderClapChoiceNone,
-	hsRageThreshold: 30,
-});
-
 import DefaultApl from './apls/default.apl.json';
 export const ROTATION_DEFAULT = PresetUtils.makePresetAPLRotation('Default APL', DefaultApl);
-export const ROTATION_PRESET_SIMPLE = PresetUtils.makePresetSimpleRotation('Simple Cooldowns', Spec.SpecProtectionWarrior, DefaultRotation);
+export const ROTATION_PRESET_SIMPLE = PresetUtils.makePresetSimpleRotation('Simple Cooldowns', Spec.SpecProtectionWarrior, ProtectionWarriorRotation.create());
 
 
 // Default talents. Uses the wowhead calculator format, make the talents on

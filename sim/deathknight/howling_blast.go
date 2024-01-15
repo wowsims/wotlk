@@ -44,8 +44,6 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			dk.AoESpellNumTargetsHit = 0
-
 			for _, aoeTarget := range sim.Encounter.TargetUnits {
 				baseDamage := (sim.Roll(518, 562) + 0.2*dk.getImpurityBonus(spell)) *
 					dk.glacielRotBonus(aoeTarget) *
@@ -55,13 +53,8 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 
 				result := spell.CalcDamage(sim, aoeTarget, baseDamage, spell.OutcomeMagicHitAndCrit)
 
-				if result.Landed() {
-					dk.AoESpellNumTargetsHit++
-				}
-
 				if aoeTarget == target {
 					spell.SpendRefundableCost(sim, result)
-					dk.LastOutcome = result.Outcome
 				}
 				if rpBonus > 0 && result.Landed() {
 					dk.AddRunicPower(sim, rpBonus, spell.RunicPowerMetrics())

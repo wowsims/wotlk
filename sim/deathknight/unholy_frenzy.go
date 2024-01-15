@@ -13,7 +13,7 @@ func (dk *Deathknight) registerUnholyFrenzyCD() {
 
 	actionID := core.ActionID{SpellID: 49016, Tag: dk.Index}
 	unholyFrenzyTarget := dk.GetUnit(dk.Inputs.UnholyFrenzyTarget)
-	if unholyFrenzyTarget == nil && dk.IsUsingAPL {
+	if unholyFrenzyTarget == nil {
 		unholyFrenzyTarget = &dk.Unit
 	}
 

@@ -10,16 +10,11 @@ const MaxRage = 100.0
 const RageFactor = 453.3
 const ThreatPerRageGained = 5
 
-// OnRageGain is called any time rage is increased.
-type OnRageGain func(sim *Simulation)
-
 type rageBar struct {
 	unit *Unit
 
 	startingRage float64
 	currentRage  float64
-
-	onRageGain OnRageGain
 
 	RageRefundMetrics *ResourceMetrics
 }
@@ -31,7 +26,7 @@ type RageBarOptions struct {
 	OHSwingSpeed   float64
 }
 
-func (unit *Unit) EnableRageBar(options RageBarOptions, onRageGain OnRageGain) {
+func (unit *Unit) EnableRageBar(options RageBarOptions) {
 	rageFromDamageTakenMetrics := unit.NewRageMetrics(ActionID{OtherID: proto.OtherAction_OtherActionDamageTaken})
 
 	unit.SetCurrentPowerBar(RageBar)
@@ -102,10 +97,8 @@ func (unit *Unit) EnableRageBar(options RageBarOptions, onRageGain OnRageGain) {
 	})
 
 	unit.rageBar = rageBar{
-		unit:         unit,
-		startingRage: max(0, min(options.StartingRage, MaxRage)),
-		onRageGain:   onRageGain,
-
+		unit:              unit,
+		startingRage:      max(0, min(options.StartingRage, MaxRage)),
 		RageRefundMetrics: unit.NewRageMetrics(ActionID{OtherID: proto.OtherAction_OtherActionRefund}),
 	}
 }
@@ -132,11 +125,7 @@ func (rb *rageBar) AddRage(sim *Simulation, amount float64, metrics *ResourceMet
 
 	rb.currentRage = newRage
 	if !sim.Options.Interactive {
-		if rb.unit.IsUsingAPL {
-			rb.unit.Rotation.DoNextAction(sim)
-		} else {
-			rb.onRageGain(sim)
-		}
+		rb.unit.Rotation.DoNextAction(sim)
 	}
 }
 

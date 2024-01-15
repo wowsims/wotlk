@@ -1,7 +1,6 @@
 package protection
 
 import (
-	"github.com/wowsims/wotlk/sim/common"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/warrior"
@@ -27,21 +26,15 @@ func RegisterProtectionWarrior() {
 type ProtectionWarrior struct {
 	*warrior.Warrior
 
-	Rotation *proto.ProtectionWarrior_Rotation
-	Options  *proto.ProtectionWarrior_Options
-
-	CustomRotation *common.CustomRotation
+	Options *proto.ProtectionWarrior_Options
 }
 
 func NewProtectionWarrior(character *core.Character, options *proto.Player) *ProtectionWarrior {
 	warOptions := options.GetProtectionWarrior()
 
 	war := &ProtectionWarrior{
-		Warrior: warrior.NewWarrior(character, options.TalentsString, warrior.WarriorInputs{
-			ShoutType: warOptions.Options.Shout,
-		}),
-		Rotation: warOptions.Rotation,
-		Options:  warOptions.Options,
+		Warrior: warrior.NewWarrior(character, options.TalentsString, warrior.WarriorInputs{}),
+		Options: warOptions.Options,
 	}
 
 	rbo := core.RageBarOptions{
@@ -55,14 +48,7 @@ func NewProtectionWarrior(character *core.Character, options *proto.Player) *Pro
 		rbo.OHSwingSpeed = oh.SwingSpeed
 	}
 
-	war.EnableRageBar(rbo, func(sim *core.Simulation) {
-		if war.GCD.IsReady(sim) {
-			war.TryUseCooldowns(sim)
-			if war.GCD.IsReady(sim) {
-				war.doRotation(sim)
-			}
-		}
-	})
+	war.EnableRageBar(rbo)
 	war.EnableAutoAttacks(war, core.AutoAttackOptions{
 		MainHand:       war.WeaponFromMainHand(war.DefaultMeleeCritMultiplier()),
 		OffHand:        war.WeaponFromOffHand(war.DefaultMeleeCritMultiplier()),
@@ -87,8 +73,6 @@ func (war *ProtectionWarrior) GetWarrior() *warrior.Warrior {
 func (war *ProtectionWarrior) Initialize() {
 	war.Warrior.Initialize()
 
-	war.RegisterHSOrCleave(false, war.Rotation.HsRageThreshold)
-	war.RegisterRendSpell(0, 0)
 	war.RegisterShieldWallCD()
 	war.RegisterShieldBlockCD()
 	war.DefensiveStanceAura.BuildPhase = core.CharacterBuildPhaseTalents

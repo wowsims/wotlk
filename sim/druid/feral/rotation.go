@@ -9,28 +9,9 @@ import (
 	"github.com/wowsims/wotlk/sim/druid"
 )
 
-func (cat *FeralDruid) OnEnergyGain(sim *core.Simulation) {
-	if cat.IsUsingAPL && !cat.usingHardcodedAPL {
-		return
-	}
-
-	if sim.CurrentTime < 0 {
-		return
-	}
-
-	cat.TryUseCooldowns(sim)
-	if cat.InForm(druid.Cat) && !cat.readyToShift {
-		cat.doTigersFury(sim)
-	}
-}
-
 func (cat *FeralDruid) OnGCDReady(sim *core.Simulation) {
-	if cat.IsUsingAPL && !cat.usingHardcodedAPL {
+	if !cat.usingHardcodedAPL {
 		return
-	}
-
-	if !cat.IsUsingAPL {
-		cat.TryUseCooldowns(sim)
 	}
 
 	if !cat.GCD.IsReady(sim) {
@@ -56,30 +37,9 @@ func (cat *FeralDruid) OnGCDReady(sim *core.Simulation) {
 	// Replace gcd event with our own if we casted a spell
 	if !cat.GCD.IsReady(sim) {
 		nextGcd := cat.NextGCDAt()
-		cat.DoNothing()
 		cat.CancelGCDTimer(sim)
 
 		cat.NextRotationAction(sim, nextGcd)
-	}
-}
-
-func (cat *FeralDruid) OnAutoAttack(sim *core.Simulation, _ *core.Spell) {
-	if cat.IsUsingAPL {
-		return
-	}
-
-	if cat.InForm(druid.Humanoid) {
-		panic("auto attack out of form?")
-	}
-
-	// If the swing resulted in an Omen proc, then schedule the
-	// next player decision based on latency.
-
-	if cat.Talents.OmenOfClarity && cat.ClearcastingAura.RemainingDuration(sim) == cat.ClearcastingAura.Duration {
-		// Kick gcd loop, also need to account for any gcd 'left'
-		// otherwise it breaks gcd logic
-		kickTime := max(cat.NextGCDAt(), sim.CurrentTime+cat.latency)
-		cat.NextRotationAction(sim, kickTime)
 	}
 }
 
@@ -97,62 +57,8 @@ func (cat *FeralDruid) NextRotationAction(sim *core.Simulation, kickAt time.Dura
 	sim.AddPendingAction(cat.rotationAction)
 }
 
-// Ported from https://github.com/NerdEgghead/WOTLK_cat_sim
-
 func (cat *FeralDruid) checkReplaceMaul(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
-	if cat.IsUsingAPL {
-		return mhSwingSpell
-	}
-
-	// If we have enough time and Energy leeway to stay in
-	// Dire Bear Form once the GCD expires, then only Maul if we
-	// will be left with enough Rage to cast Mangle or Lacerate
-	// on that global.
-
-	ripDot := cat.Rip.CurDot()
-
-	furorCap := min(20.0*float64(cat.Talents.Furor), 85.0)
-	ripRefreshPending := ripDot.IsActive() && (ripDot.RemainingDuration(sim) < sim.GetRemainingDuration()-time.Second*10)
-	gcdTimeToRdy := cat.GCD.TimeToReady(sim)
-	energyLeeway := furorCap - 15.0 - float64((gcdTimeToRdy+cat.latency)/core.EnergyTickDuration)
-	shiftNext := cat.CurrentEnergy() > energyLeeway
-
-	if ripRefreshPending {
-		shiftNext = shiftNext || (ripDot.RemainingDuration(sim) < (gcdTimeToRdy + time.Second*3))
-	}
-
-	lacerateNext := false
-	emergencyLacerateNext := false
-	mangleNext := false
-
-	lacerateDot := cat.Lacerate.CurDot()
-	if cat.Rotation.BearweaveType == proto.FeralDruid_Rotation_Lacerate {
-		lacerateLeeway := cat.Rotation.LacerateTime + gcdTimeToRdy
-		lacerateNext = !lacerateDot.IsActive() || (lacerateDot.GetStacks() < 5) || (lacerateDot.RemainingDuration(sim) <= lacerateLeeway)
-		emergencyLeeway := gcdTimeToRdy + (3 * time.Second) + (2 * cat.latency)
-		emergencyLacerateNext = lacerateDot.IsActive() && (lacerateDot.RemainingDuration(sim) <= emergencyLeeway)
-		mangleNext = cat.MangleBear != nil && !lacerateNext && (!cat.bleedAura.IsActive() || (cat.bleedAura.RemainingDuration(sim) < gcdTimeToRdy+time.Second*3) || (sim.CurrentTime-cat.lastShift < time.Duration(1500*time.Millisecond)))
-	} else {
-		mangleNext = cat.MangleBear != nil && cat.MangleBear.TimeToReady(sim) < gcdTimeToRdy
-		lacerateNext = lacerateDot.IsActive() && (lacerateDot.GetStacks() < 5 || lacerateDot.RemainingDuration(sim) < gcdTimeToRdy+(time.Second*4))
-	}
-
-	maulRageThresh := 10.0
-	if emergencyLacerateNext {
-		maulRageThresh += cat.Lacerate.DefaultCast.Cost
-	} else if shiftNext {
-		maulRageThresh = 10.0
-	} else if mangleNext {
-		maulRageThresh += cat.MangleBear.DefaultCast.Cost
-	} else if lacerateNext {
-		maulRageThresh += cat.Lacerate.DefaultCast.Cost
-	}
-
-	if cat.CurrentRage() >= maulRageThresh {
-		return cat.Maul.Spell
-	} else {
-		return mhSwingSpell
-	}
+	return mhSwingSpell
 }
 
 func (cat *FeralDruid) shiftBearCat(sim *core.Simulation, powershift bool) bool {

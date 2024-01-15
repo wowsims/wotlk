@@ -49,8 +49,7 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD:         core.GCDDefault,
-				ChannelTime: time.Second * 5,
+				GCD: core.GCDDefault,
 			},
 		},
 		Dot: core.DotConfig{

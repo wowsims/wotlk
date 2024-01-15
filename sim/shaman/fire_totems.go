@@ -4,23 +4,9 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 func (shaman *Shaman) registerSearingTotemSpell() {
-	var extraCastCondition core.CanCastCondition
-	if !shaman.IsUsingAPL && shaman.Totems.Fire == proto.FireTotem_SearingTotem && shaman.Totems.UseFireMcd {
-		extraCastCondition = func(sim *core.Simulation, target *core.Unit) bool {
-			if shaman.Totems.Fire != proto.FireTotem_SearingTotem {
-				return false
-			}
-			if shaman.SearingTotem.Dot(shaman.CurrentTarget).IsActive() || shaman.FireElemental.IsEnabled() || shaman.FireElementalTotem.IsReady(sim) {
-				return false
-			}
-			return true
-		}
-	}
-
 	shaman.SearingTotem = shaman.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 58704},
 		SpellSchool: core.SpellSchoolFire,
@@ -38,7 +24,6 @@ func (shaman *Shaman) registerSearingTotemSpell() {
 				GCD: time.Second,
 			},
 		},
-		ExtraCastCondition: extraCastCondition,
 
 		BonusHitRating:   float64(shaman.Talents.ElementalPrecision) * core.SpellHitRatingPerHitChance,
 		DamageMultiplier: 1 + float64(shaman.Talents.CallOfFlame)*0.05,
@@ -66,37 +51,13 @@ func (shaman *Shaman) registerSearingTotemSpell() {
 			shaman.MagmaTotem.AOEDot().Cancel(sim)
 			shaman.FireElemental.Disable(sim)
 			spell.Dot(sim.GetTargetUnit(0)).Apply(sim)
-			if !shaman.Totems.UseFireMcd {
-				// +1 needed because of rounding issues with totem tick time.
-				shaman.NextTotemDrops[FireTotem] = sim.CurrentTime + time.Second*60 + 1
-			}
+			// +1 needed because of rounding issues with totem tick time.
+			shaman.TotemExpirations[FireTotem] = sim.CurrentTime + time.Second*60 + 1
 		},
-	})
-
-	if extraCastCondition == nil {
-		return
-	}
-	shaman.AddMajorCooldown(core.MajorCooldown{
-		Spell:    shaman.SearingTotem,
-		Priority: core.CooldownPriorityDefault, // TODO needs to be altered due to snap shotting.
-		Type:     core.CooldownTypeDPS,
 	})
 }
 
 func (shaman *Shaman) registerMagmaTotemSpell() {
-	var extraCastCondition core.CanCastCondition
-	if !shaman.IsUsingAPL && shaman.Totems.Fire == proto.FireTotem_MagmaTotem && shaman.Totems.UseFireMcd {
-		extraCastCondition = func(sim *core.Simulation, target *core.Unit) bool {
-			if shaman.Totems.Fire != proto.FireTotem_MagmaTotem {
-				return false
-			}
-			if shaman.MagmaTotem.AOEDot().IsActive() || shaman.FireElemental.IsEnabled() || shaman.FireElementalTotem.IsReady(sim) {
-				return false
-			}
-			return true
-		}
-	}
-
 	shaman.MagmaTotem = shaman.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 58734},
 		SpellSchool: core.SpellSchoolFire,
@@ -114,7 +75,6 @@ func (shaman *Shaman) registerMagmaTotemSpell() {
 				GCD: time.Second,
 			},
 		},
-		ExtraCastCondition: extraCastCondition,
 
 		BonusHitRating:   float64(shaman.Talents.ElementalPrecision) * core.SpellHitRatingPerHitChance,
 		DamageMultiplier: 1 + float64(shaman.Talents.CallOfFlame)*0.05,
@@ -141,19 +101,8 @@ func (shaman *Shaman) registerMagmaTotemSpell() {
 			shaman.SearingTotem.Dot(shaman.CurrentTarget).Cancel(sim)
 			shaman.FireElemental.Disable(sim)
 			spell.AOEDot().Apply(sim)
-			if !shaman.Totems.UseFireMcd {
-				// +1 needed because of rounding issues with totem tick time.
-				shaman.NextTotemDrops[FireTotem] = sim.CurrentTime + time.Second*20 + 1
-			}
+			// +1 needed because of rounding issues with totem tick time.
+			shaman.TotemExpirations[FireTotem] = sim.CurrentTime + time.Second*20 + 1
 		},
-	})
-
-	if extraCastCondition == nil {
-		return
-	}
-	shaman.AddMajorCooldown(core.MajorCooldown{
-		Spell:    shaman.MagmaTotem,
-		Priority: core.CooldownPriorityDefault, // TODO needs to be altered due to snap shotting.
-		Type:     core.CooldownTypeDPS,
 	})
 }

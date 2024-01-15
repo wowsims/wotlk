@@ -90,8 +90,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecDeathknight, {
 		}),
 		// Default consumes settings.
 		consumes: Presets.DefaultConsumes,
-		// Default rotation settings.
-		rotation: Presets.DefaultUnholyRotation,
 		// Default talents.
 		talents: Presets.UnholyDualWieldTalents.data,
 		// Default spec-specific settings.
@@ -168,8 +166,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecDeathknight, {
 	// IconInputs to include in the 'Player' section on the settings tab.
 	playerIconInputs: [
 	],
-	// Inputs to include in the 'Rotation' section on the settings tab.
-	rotationInputs: DeathKnightInputs.DeathKnightRotationConfig,
 	petConsumeInputs: [
 		IconInputs.SpicedMammothTreats,
 	],
@@ -186,17 +182,13 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecDeathknight, {
 	// Inputs to include in the 'Other' section on the settings tab.
 	otherInputs: {
 		inputs: [
-			DeathKnightInputs.DiseaseDowntime,
-			DeathKnightInputs.DrwPestiApply,
 			DeathKnightInputs.SelfUnholyFrenzy,
 			DeathKnightInputs.StartingRunicPower,
 			DeathKnightInputs.PetUptime,
+			DeathKnightInputs.DrwPestiApply,
 			DeathKnightInputs.UseAMSInput,
 			DeathKnightInputs.AvgAMSSuccessRateInput,
 			DeathKnightInputs.AvgAMSHitInput,
-
-			DeathKnightInputs.PrecastGhoulFrenzy,
-			DeathKnightInputs.PrecastHornOfWinter,
 
 			OtherInputs.TankAssignment,
 			OtherInputs.InFrontOfTarget,
@@ -221,9 +213,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecDeathknight, {
 		],
 		// Preset rotations that the user can quickly select.
 		rotations: [
-			Presets.BLOOD_ROTATION_PRESET_LEGACY_DEFAULT,
-			Presets.FROST_ROTATION_PRESET_LEGACY_DEFAULT,
-			Presets.UNHOLY_DW_ROTATION_PRESET_LEGACY_DEFAULT,
 			Presets.BLOOD_DPS_ROTATION_PRESET_DEFAULT,
 			Presets.BLOOD_PESTI_AOE_ROTATION_PRESET_DEFAULT,
 			Presets.FROST_BL_PESTI_ROTATION_PRESET_DEFAULT,

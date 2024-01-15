@@ -1,24 +1,19 @@
-import { BooleanPicker } from '../components/boolean_picker.js';
-import { EnumPicker } from '../components/enum_picker.js';
-import { IconEnumPicker, IconEnumPickerConfig } from '../components/icon_enum_picker.js';
+import { IconEnumPicker } from '../components/icon_enum_picker.js';
 import { IconPicker } from '../components/icon_picker.js';
-import { IconPickerConfig } from '../components/icon_picker.js';
 import {
 	AirTotem,
 	EarthTotem,
 	FireTotem,
 	WaterTotem,
 	ShamanTotems,
-	EnhancementShaman,
 } from '../proto/shaman.js';
 import { Spec } from '../proto/common.js';
 import { ActionId } from '../proto_utils/action_id.js';
 import { Player } from '../player.js';
-import { Sim } from '../sim.js';
 import { IndividualSimUI } from '../individual_sim_ui.js';
-import { EventID, TypedEvent } from '../typed_event.js';
+import { EventID } from '../typed_event.js';
 import * as InputHelpers from '../components/input_helpers.js';
-import { SpecRotation, ShamanSpecs } from '../proto_utils/utils.js';
+import { ShamanSpecs } from '../proto_utils/utils.js';
 import { ContentBlock } from './content_block.js';
 import { Input } from './input.js';
 

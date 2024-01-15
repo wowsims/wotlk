@@ -18,11 +18,6 @@ import { SavedTalents } from '../core/proto/ui.js';
 
 import {
 	BalanceDruid_Options as BalanceDruidOptions,
-	BalanceDruid_Rotation as BalanceDruidRotation,
-	BalanceDruid_Rotation_IsUsage,
-	BalanceDruid_Rotation_MfUsage,
-	BalanceDruid_Rotation_Type as RotationType,
-	BalanceDruid_Rotation_WrathUsage,
 	DruidMajorGlyph,
 	DruidMinorGlyph,
 } from '../core/proto/druid.js';
@@ -117,18 +112,6 @@ export const Phase4Talents = {
 	}),
 };
 
-export const DefaultRotation = BalanceDruidRotation.create({
-	type: RotationType.Default,
-	maintainFaerieFire: true,
-	useSmartCooldowns: true,
-	mfUsage: BalanceDruid_Rotation_MfUsage.BeforeLunar,
-	isUsage: BalanceDruid_Rotation_IsUsage.OptimizeIs,
-	wrathUsage: BalanceDruid_Rotation_WrathUsage.RegularWrath,
-	useStarfire: true,
-	useBattleRes: false,
-	playerLatency: 200,
-});
-
 export const DefaultOptions = BalanceDruidOptions.create({
 	innervateTarget: UnitReference.create(),
 });
@@ -154,7 +137,7 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
 	trueshotAura: true,
 	wrathOfAirTotem: true,
-	demonicPact: 500,
+	demonicPactSp: 500,
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({

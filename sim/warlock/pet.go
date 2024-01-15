@@ -120,7 +120,6 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 	}
 
 	wp.EnableManaBarWithModifier(cfg.PowerModifier)
-	wp.EnableResumeAfterManaWait(wp.OnGCDReady)
 
 	wp.AddStatDependency(stats.Strength, stats.AttackPower, 2)
 	wp.AddStat(stats.AttackPower, -20)

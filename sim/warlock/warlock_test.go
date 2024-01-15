@@ -92,91 +92,44 @@ var DestructionGlyphs = &proto.Glyphs{
 	Major3: int32(proto.WarlockMajorGlyph_GlyphOfIncinerate),
 }
 
-var defaultDestroRotation = &proto.Warlock_Rotation{
-	Type:         proto.Warlock_Rotation_Destruction,
-	PrimarySpell: proto.Warlock_Rotation_Incinerate,
-	SecondaryDot: proto.Warlock_Rotation_Immolate,
-	SpecSpell:    proto.Warlock_Rotation_ChaosBolt,
-	Curse:        proto.Warlock_Rotation_Doom,
-	Corruption:   false,
-	DetonateSeed: true,
-}
-
 var defaultDestroOptions = &proto.Warlock_Options{
-	Armor:       proto.Warlock_Options_FelArmor,
-	Summon:      proto.Warlock_Options_Imp,
-	WeaponImbue: proto.Warlock_Options_GrandFirestone,
+	Armor:        proto.Warlock_Options_FelArmor,
+	Summon:       proto.Warlock_Options_Imp,
+	WeaponImbue:  proto.Warlock_Options_GrandFirestone,
+	DetonateSeed: true,
 }
 
 var DefaultDestroWarlock = &proto.Player_Warlock{
 	Warlock: &proto.Warlock{
-		Options:  defaultDestroOptions,
-		Rotation: defaultDestroRotation,
+		Options: defaultDestroOptions,
 	},
 }
 
 // ---------------------------------------
 var DefaultAfflictionWarlock = &proto.Player_Warlock{
 	Warlock: &proto.Warlock{
-		Options:  defaultAfflictionOptions,
-		Rotation: defaultAfflictionRotation,
+		Options: defaultAfflictionOptions,
 	},
 }
 
 var defaultAfflictionOptions = &proto.Warlock_Options{
-	Armor:       proto.Warlock_Options_FelArmor,
-	Summon:      proto.Warlock_Options_Felhunter,
-	WeaponImbue: proto.Warlock_Options_GrandSpellstone,
-}
-
-var defaultAfflictionRotation = &proto.Warlock_Rotation{
-	Type:         proto.Warlock_Rotation_Affliction,
-	PrimarySpell: proto.Warlock_Rotation_ShadowBolt,
-	SecondaryDot: proto.Warlock_Rotation_UnstableAffliction,
-	SpecSpell:    proto.Warlock_Rotation_Haunt,
-	Curse:        proto.Warlock_Rotation_Agony,
-	Corruption:   true,
+	Armor:        proto.Warlock_Options_FelArmor,
+	Summon:       proto.Warlock_Options_Felhunter,
+	WeaponImbue:  proto.Warlock_Options_GrandSpellstone,
 	DetonateSeed: true,
-}
-
-var afflictionItemSwapRotation = &proto.Warlock_Rotation{
-	Type:             proto.Warlock_Rotation_Affliction,
-	PrimarySpell:     proto.Warlock_Rotation_ShadowBolt,
-	SecondaryDot:     proto.Warlock_Rotation_UnstableAffliction,
-	SpecSpell:        proto.Warlock_Rotation_Haunt,
-	Curse:            proto.Warlock_Rotation_Agony,
-	Corruption:       true,
-	DetonateSeed:     true,
-	EnableWeaponSwap: true,
-	WeaponSwap: &proto.ItemSwap{
-		MhItem: &proto.ItemSpec{
-			Id:      45457,
-			Enchant: 3790,
-			Gems:    []int32{40013, 40013},
-		},
-	},
 }
 
 // ---------------------------------------
 var DefaultDemonologyWarlock = &proto.Player_Warlock{
 	Warlock: &proto.Warlock{
-		Options:  defaultDemonologyOptions,
-		Rotation: defaultDemonologyRotation,
+		Options: defaultDemonologyOptions,
 	},
 }
 
 var defaultDemonologyOptions = &proto.Warlock_Options{
-	Armor:       proto.Warlock_Options_FelArmor,
-	Summon:      proto.Warlock_Options_Felguard,
-	WeaponImbue: proto.Warlock_Options_GrandSpellstone,
-}
-
-var defaultDemonologyRotation = &proto.Warlock_Rotation{
-	Type:         proto.Warlock_Rotation_Demonology,
-	PrimarySpell: proto.Warlock_Rotation_ShadowBolt,
-	SecondaryDot: proto.Warlock_Rotation_Immolate,
-	Curse:        proto.Warlock_Rotation_Doom,
-	Corruption:   true,
+	Armor:        proto.Warlock_Options_FelArmor,
+	Summon:       proto.Warlock_Options_Felguard,
+	WeaponImbue:  proto.Warlock_Options_GrandSpellstone,
 	DetonateSeed: true,
 }
 

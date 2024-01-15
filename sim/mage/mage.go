@@ -1,8 +1,6 @@
 package mage
 
 import (
-	"time"
-
 	"github.com/wowsims/wotlk/sim/common/wotlk"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -38,12 +36,8 @@ func RegisterMage() {
 type Mage struct {
 	core.Character
 
-	Talents  *proto.MageTalents
-	Options  *proto.Mage_Options
-	Rotation *proto.Mage_Rotation
-
-	arcaneBlastStreak int32
-	arcanePowerMCD    *core.MajorCooldown
+	Talents *proto.MageTalents
+	Options *proto.Mage_Options
 
 	waterElemental *WaterElemental
 	mirrorImage    *MirrorImage
@@ -137,20 +131,9 @@ func (mage *Mage) Initialize() {
 	mage.registerMirrorImageCD()
 	mage.registerBlastWaveSpell()
 	mage.registerDragonsBreathSpell()
-
-	mage.RegisterPrepullAction(-2000*time.Millisecond, func(sim *core.Simulation) {
-		if mirrorImageMCD := mage.GetMajorCooldownIgnoreTag(mage.MirrorImage.ActionID); !mage.IsUsingAPL && mirrorImageMCD != nil {
-			if len(mirrorImageMCD.GetTimings()) == 0 {
-				mage.MirrorImage.Cast(sim, nil)
-				mage.UpdateMajorCooldowns()
-			}
-		}
-	})
 }
 
 func (mage *Mage) Reset(sim *core.Simulation) {
-	mage.arcaneBlastStreak = 0
-	mage.arcanePowerMCD = mage.GetMajorCooldown(core.ActionID{SpellID: 12042})
 }
 
 func NewMage(character *core.Character, options *proto.Player) *Mage {
@@ -160,20 +143,11 @@ func NewMage(character *core.Character, options *proto.Player) *Mage {
 		Character: *character,
 		Talents:   &proto.MageTalents{},
 		Options:   mageOptions.Options,
-		Rotation:  mageOptions.Rotation,
 	}
 	core.FillTalentsProto(mage.Talents.ProtoReflect(), options.TalentsString, TalentTreeSizes)
 
 	mage.bonusCritDamage = .25*float64(mage.Talents.SpellPower) + .1*float64(mage.Talents.Burnout)
 	mage.EnableManaBar()
-	mage.EnableResumeAfterManaWait(mage.tryUseGCD)
-
-	if !mage.Talents.ArcaneBarrage {
-		mage.Rotation.UseArcaneBarrage = false
-	}
-	if mage.Talents.ImprovedScorch == 0 {
-		mage.Rotation.MaintainImprovedScorch = false
-	}
 
 	if mage.Options.Armor == proto.Mage_Options_MageArmor {
 		mage.PseudoStats.SpiritRegenRateCasting += .5

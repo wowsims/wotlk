@@ -41,12 +41,4 @@ func (priest *Priest) registerShadowfiendSpell() {
 			priest.ShadowfiendAura.Activate(sim)
 		},
 	})
-
-	if !priest.IsUsingAPL {
-		priest.AddMajorCooldown(core.MajorCooldown{
-			Spell:    priest.Shadowfiend,
-			Priority: 1,
-			Type:     core.CooldownTypeMana,
-		})
-	}
 }

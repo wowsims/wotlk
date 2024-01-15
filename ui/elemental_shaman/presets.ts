@@ -6,13 +6,10 @@ import {
 	Glyphs,
 	Potions,
   Profession,
-	Spec,
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
 import {
-  ElementalShaman_Rotation_RotationType as RotationType,
-  ElementalShaman_Rotation as ElementalShamanRotation,
   ElementalShaman_Options as ElementalShamanOptions,
   ShamanShield,
   ShamanMajorGlyph,
@@ -43,23 +40,6 @@ export const P3_PRESET_HORDE = PresetUtils.makePresetGear('P3 Preset [H]', P3Hor
 import P4Gear from './gear_sets/p4.gear.json';
 export const P4_PRESET = PresetUtils.makePresetGear('P4 Preset', P4Gear);
 
-export const DefaultRotation = ElementalShamanRotation.create({
-  totems: ShamanTotems.create({
-    earth: EarthTotem.StrengthOfEarthTotem,
-    air: AirTotem.WrathOfAirTotem,
-    fire: FireTotem.TotemOfWrath,
-    water: WaterTotem.ManaSpringTotem,
-    useFireElemental: true,
-  }),
-  type: RotationType.Adaptive,
-  fnMinManaPer: 66,
-  clMinManaPer: 33,
-  useChainLightning: false,
-  useFireNova: false,
-  useThunderstorm: true,
-});
-
-export const ROTATION_PRESET_LEGACY = PresetUtils.makePresetLegacyRotation('Legacy', Spec.SpecElementalShaman, DefaultRotation);
 import DefaultApl from './apls/default.apl.json';
 export const ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Default', DefaultApl);
 import AdvancedApl from './apls/advanced.apl.json';
@@ -84,7 +64,6 @@ export const StandardTalents = {
 
 export const DefaultOptions = ElementalShamanOptions.create({
   shield: ShamanShield.WaterShield,
-  bloodlust: true,
   totems: ShamanTotems.create({
     earth: EarthTotem.StrengthOfEarthTotem,
     air: AirTotem.WrathOfAirTotem,

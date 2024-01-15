@@ -40,7 +40,6 @@ func (dk *Deathknight) registerIcyTouchSpell() {
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			spell.SpendRefundableCost(sim, result)
 
-			dk.LastOutcome = result.Outcome
 			if result.Landed() {
 				dk.FrostFeverExtended[target.Index] = 0
 				dk.FrostFeverSpell.Cast(sim, target)
@@ -74,9 +73,4 @@ func (dk *Deathknight) registerDrwIcyTouchSpell() {
 			spell.DealDamage(sim, result)
 		},
 	})
-
-	if !dk.Inputs.NewDrw {
-		dk.RuneWeapon.IcyTouch.DamageMultiplier *= 0.5
-		dk.RuneWeapon.IcyTouch.Flags |= core.SpellFlagIgnoreAttackerModifiers
-	}
 }

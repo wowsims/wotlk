@@ -106,10 +106,6 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 			ChannelClipDelay:     max(0, time.Duration(player.ChannelClipDelayMs)*time.Millisecond),
 			DistanceFromTarget:   player.DistanceFromTarget,
 			NibelungAverageCasts: player.NibelungAverageCasts,
-			IsUsingAPL: player.Rotation != nil &&
-				(player.Rotation.Type == proto.APLRotation_TypeAPL ||
-					player.Rotation.Type == proto.APLRotation_TypeAuto ||
-					player.Rotation.Type == proto.APLRotation_TypeSimple),
 		},
 
 		Name:  player.Name,
@@ -439,7 +435,6 @@ func (character *Character) initialize(agent Agent) {
 			if sim.Options.Interactive {
 				if character.GCD.IsReady(sim) {
 					sim.NeedsInput = true
-					character.doNothing = false
 				}
 				return
 			}
@@ -447,17 +442,6 @@ func (character *Character) initialize(agent Agent) {
 			if character.Rotation != nil {
 				character.Rotation.DoNextAction(sim)
 				return
-			}
-
-			character.TryUseCooldowns(sim)
-			if character.GCD.IsReady(sim) {
-				agent.OnGCDReady(sim)
-
-				if !character.doNothing && character.GCD.IsReady(sim) && (!character.IsWaiting() && !character.IsWaitingForMana()) {
-					msg := fmt.Sprintf("Character `%s` did not perform any actions. Either this is a bug or agent should use 'WaitUntil' or 'WaitForMana' to explicitly wait.\n\tIf character has no action to perform use 'DoNothing'.", character.Label)
-					panic(msg)
-				}
-				character.doNothing = false
 			}
 		},
 	}

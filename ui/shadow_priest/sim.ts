@@ -77,8 +77,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecShadowPriest, {
 		}),
 		// Default consumes settings.
 		consumes: Presets.DefaultConsumes,
-		// Default rotation settings.
-		rotation: Presets.DefaultRotation,
 		// Default talents.
 		talents: Presets.StandardTalents.data,
 		// Default spec-specific settings.
@@ -99,13 +97,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecShadowPriest, {
 	playerIconInputs: [
 		ShadowPriestInputs.ArmorInput,
 	],
-	rotationIconInputs: [
-		ShadowPriestInputs.MindBlastInput,
-		ShadowPriestInputs.ShadowWordDeathInput,
-		ShadowPriestInputs.ShadowfiendInput,
-	],
-	// Inputs to include in the 'Rotation' section on the settings tab.
-	rotationInputs: ShadowPriestInputs.ShadowPriestRotationConfig,
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
 		IconInputs.ReplenishmentBuff,

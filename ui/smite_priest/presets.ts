@@ -7,14 +7,12 @@ import {
 	IndividualBuffs,
 	Potions,
 	RaidBuffs,
-	Spec,
 	TristateEffect,
 	UnitReference,
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
 import {
-	SmitePriest_Rotation as Rotation,
 	SmitePriest_Options as Options,
 	PriestMajorGlyph as MajorGlyph,
 	PriestMinorGlyph as MinorGlyph,
@@ -31,12 +29,6 @@ export const PRERAID_PRESET = PresetUtils.makePresetGear('Preraid Preset', Prera
 import P1Gear from './gear_sets/p1.gear.json';
 export const P1_PRESET = PresetUtils.makePresetGear('P1 Preset', P1Gear);
 
-export const DefaultRotation = Rotation.create({
-	useDevouringPlague: true,
-	useShadowWordDeath: false,
-	useMindBlast: false,
-});
-export const ROTATION_PRESET_LEGACY_DEFAULT = PresetUtils.makePresetLegacyRotation('Legacy Default', Spec.SpecSmitePriest, DefaultRotation);
 import DefaultApl from './apls/default.apl.json'
 export const ROTATION_PRESET_APL = PresetUtils.makePresetAPLRotation('Default', DefaultApl);
 

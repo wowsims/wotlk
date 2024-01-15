@@ -53,7 +53,7 @@ var FullRaidBuffs = &proto.RaidBuffs{
 	ArcaneEmpowerment:     true,
 	BattleShout:           proto.TristateEffect_TristateEffectImproved,
 	Bloodlust:             true,
-	DemonicPact:           500,
+	DemonicPactSp:         500,
 	DevotionAura:          proto.TristateEffect_TristateEffectImproved,
 	DivineSpirit:          true,
 	ElementalOath:         true,

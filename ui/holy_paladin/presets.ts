@@ -11,7 +11,6 @@ import {
 	PaladinMajorGlyph,
 	PaladinMinorGlyph,
 	PaladinJudgement,
-	HolyPaladin_Rotation as HolyPaladinRotation,
 	HolyPaladin_Options as HolyPaladinOptions,
 } from '../core/proto/paladin.js';
 
@@ -49,9 +48,6 @@ export const StandardTalents = {
 		}
 	}),
 };
-
-export const DefaultRotation = HolyPaladinRotation.create({
-});
 
 export const DefaultOptions = HolyPaladinOptions.create({
 	aura: PaladinAura.DevotionAura,

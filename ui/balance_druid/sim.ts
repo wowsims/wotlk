@@ -65,8 +65,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecBalanceDruid, {
 		}),
 		// Default consumes settings.
 		consumes: Presets.DefaultConsumes,
-		// Default rotation settings.
-		rotation: Presets.DefaultRotation,
 		// Default talents.
 		talents: Presets.Phase3Talents.data,
 		// Default spec-specific settings.
@@ -83,8 +81,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecBalanceDruid, {
 	playerIconInputs: [
 		DruidInputs.SelfInnervate,
 	],
-	// Inputs to include in the 'Rotation' section on the settings tab.
-	rotationInputs: DruidInputs.BalanceDruidRotationConfig,
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
 		IconInputs.MeleeHasteBuff,

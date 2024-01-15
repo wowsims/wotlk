@@ -23,12 +23,6 @@ import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.j
 
 import {
 	Rogue_Options_PoisonImbue,
-	Rogue_Rotation_AssassinationPriority as AssassinationPriority,
-	Rogue_Rotation_CombatBuilder as CombatBuilder,
-	Rogue_Rotation_CombatPriority as CombatPriority,
-	Rogue_Rotation_Frequency as Frequency,
-	Rogue_Rotation_SubtletyPriority as SubtletyPriority,
-	RogueMajorGlyph,
 } from '../core/proto/rogue.js';
 
 import * as IconInputs from '../core/components/icon_inputs.js';
@@ -36,7 +30,6 @@ import * as OtherInputs from '../core/components/other_inputs.js';
 
 import * as RogueInputs from './inputs.js';
 import * as Presets from './presets.js';
-import { DefaultOptions } from './presets.js';
 
 const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 	cssClass: 'rogue-sim-ui',
@@ -75,19 +68,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 							simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.weaponType != WeaponType.WeaponTypeDagger)
 					) {
 						return '"Mutilate" talent selected, but daggers not equipped in both hands.';
-					} else {
-						return '';
-					}
-				},
-			};
-		},
-		(simUI: IndividualSimUI<Spec.SpecRogue>) => {
-			return {
-				updateOn: simUI.player.changeEmitter,
-				getContent: () => {
-					if (simUI.player.getRotation().combatBuilder == CombatBuilder.Backstab &&
-						simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.weaponType != WeaponType.WeaponTypeDagger) {
-						return 'Builder "Backstab" selected, but no dagger equipped.';
 					} else {
 						return '';
 					}
@@ -143,67 +123,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 						} else {
 							return '"Mace Specialization" talent selected, but maces not equipped.';
 						}
-					} else {
-						return '';
-					}
-				},
-			};
-		},
-		(simUI: IndividualSimUI<Spec.SpecRogue>) => {
-			return {
-				updateOn: simUI.player.changeEmitter,
-				getContent: () => {
-					if (simUI.player.getInFrontOfTarget() && (simUI.player.getRotation().combatBuilder == CombatBuilder.Backstab ||
-						simUI.player.getRotation().openWithGarrote)) {
-						return 'Option "In Front of Target" selected, but using Backstab or Garrote as builder or opener.';
-					} else {
-						return '';
-					}
-				},
-			};
-		},
-		(simUI: IndividualSimUI<Spec.SpecRogue>) => {
-			return {
-				updateOn: simUI.player.changeEmitter,
-				getContent: () => {
-					if (simUI.player.getRotation().combatBuilder == CombatBuilder.HemorrhageCombat && !simUI.player.getTalents().hemorrhage) {
-						return 'Builder "Hemorrhage" selected, but Hemorrhage is not talented.';
-					} else {
-						return '';
-					}
-				},
-			};
-		},
-		(simUI: IndividualSimUI<Spec.SpecRogue>) => {
-			return {
-				updateOn: simUI.player.changeEmitter,
-				getContent: () => {
-					if (simUI.player.getRotation().useGhostlyStrike && !simUI.player.getMajorGlyphs().includes(RogueMajorGlyph.GlyphOfGhostlyStrike)) {
-						return '"Use Ghostly Strike" selected, but missing Glyph of Ghostly Strike.';
-					} else {
-						return '';
-					}
-				},
-			};
-		},
-		(simUI: IndividualSimUI<Spec.SpecRogue>) => {
-			return {
-				updateOn: simUI.player.changeEmitter,
-				getContent: () => {
-					if (simUI.player.getRotation().useFeint && !simUI.player.getMajorGlyphs().includes(RogueMajorGlyph.GlyphOfFeint)) {
-						return '"Use Feint" selected, but missing Glyph of Feint.';
-					} else {
-						return '';
-					}
-				},
-			};
-		},
-		(simUI: IndividualSimUI<Spec.SpecRogue>) => {
-			return {
-				updateOn: simUI.player.changeEmitter,
-				getContent: () => {
-					if (simUI.player.getRotation().exposeArmorFrequency == 2 && !simUI.player.getMajorGlyphs().includes(RogueMajorGlyph.GlyphOfExposeArmor) && simUI.player.getTalentTree() == 1) {
-						return '"Maintain Expose Armor" selected, but missing Glyph of Expose Armor.';
 					} else {
 						return '';
 					}
@@ -289,8 +208,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 		}),
 		// Default consumes settings.
 		consumes: Presets.DefaultConsumes,
-		// Default rotation settings.
-		rotation: Presets.DefaultRotation,
 		// Default talents.
 		talents: Presets.AssassinationTalents137.data,
 		// Default spec-specific settings.
@@ -334,8 +251,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 		RogueInputs.MainHandImbue,
 		RogueInputs.OffHandImbue,
 	],
-	// Inputs to include in the 'Rotation' section on the settings tab.
-	rotationInputs: RogueInputs.RogueRotationConfig,
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
 		IconInputs.SpellCritBuff,
@@ -488,37 +403,8 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecRogue>) {
 		super(parentElem, player, SPEC_CONFIG);
 		this.player.changeEmitter.on((c) => {
-			const rotation = this.player.getRotation()
 			const options = this.player.getSpecOptions()
 			const encounter = this.sim.encounter
-			if (this.player.getTalentTree() == 0) {
-				if (rotation.assassinationFinisherPriority == AssassinationPriority.AssassinationPriorityUnknown) {
-					rotation.assassinationFinisherPriority = Presets.DefaultRotation.assassinationFinisherPriority;
-				}
-				rotation.combatFinisherPriority = CombatPriority.CombatPriorityUnknown;
-				rotation.combatBuilder = CombatBuilder.SinisterStrike;
-				rotation.subtletyFinisherPriority = SubtletyPriority.SubtletyPriorityUnknown;
-				options.honorOfThievesCritRate = -1;
-			} else if (this.player.getTalentTree() == 1) {
-				if (rotation.combatFinisherPriority == CombatPriority.CombatPriorityUnknown) {
-					rotation.combatFinisherPriority = Presets.DefaultRotation.combatFinisherPriority;
-					rotation.combatBuilder = Presets.DefaultRotation.combatBuilder;
-				}
-				rotation.assassinationFinisherPriority = AssassinationPriority.AssassinationPriorityUnknown;
-				rotation.subtletyFinisherPriority = SubtletyPriority.SubtletyPriorityUnknown;
-				options.honorOfThievesCritRate = -1;
-			} else {
-				if (rotation.subtletyFinisherPriority == SubtletyPriority.SubtletyPriorityUnknown) {
-					rotation.subtletyFinisherPriority = Presets.DefaultRotation.subtletyFinisherPriority;
-				}
-				rotation.assassinationFinisherPriority = AssassinationPriority.AssassinationPriorityUnknown;
-				rotation.combatFinisherPriority = CombatPriority.CombatPriorityUnknown;
-				rotation.combatBuilder = CombatBuilder.SinisterStrike;
-				if (options.honorOfThievesCritRate == -1) {
-					options.honorOfThievesCritRate = DefaultOptions.honorOfThievesCritRate
-				}
-			}
-			this.player.setRotation(c, rotation)
 			if (!options.applyPoisonsManually) {
 				const mhWeaponSpeed = this.player.getGear().getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.weaponSpeed;
 				const ohWeaponSpeed = this.player.getGear().getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.weaponSpeed;
@@ -541,17 +427,8 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 			this.player.setSpecOptions(c, options)
 		});
 		this.sim.encounter.changeEmitter.on((c) => {
-			const rotation = this.player.getRotation()
 			const options = this.player.getSpecOptions()
 			const encounter = this.sim.encounter
-			if (this.sim.encounter.targets.length >= 3) {
-				if (rotation.multiTargetSliceFrequency == Frequency.FrequencyUnknown) {
-					rotation.multiTargetSliceFrequency = Presets.DefaultRotation.multiTargetSliceFrequency;
-				}
-			} else {
-				rotation.multiTargetSliceFrequency = Frequency.FrequencyUnknown;
-			}
-			this.player.setRotation(c, rotation)
 			if (!options.applyPoisonsManually) {
 				const mhWeaponSpeed = this.player.getGear().getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.weaponSpeed;
 				const ohWeaponSpeed = this.player.getGear().getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.weaponSpeed;

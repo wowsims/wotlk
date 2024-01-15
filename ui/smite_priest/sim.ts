@@ -76,8 +76,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecSmitePriest, {
 		}),
 		// Default consumes settings.
 		consumes: Presets.DefaultConsumes,
-		// Default rotation settings.
-		rotation: Presets.DefaultRotation,
 		// Default talents.
 		talents: Presets.StandardTalents.data,
 		// Default spec-specific settings.
@@ -95,8 +93,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecSmitePriest, {
 		SmitePriestInputs.InnerFire,
 		SmitePriestInputs.Shadowfiend,
 	],
-	// Inputs to include in the 'Rotation' section on the settings tab.
-	rotationInputs: SmitePriestInputs.SmitePriestRotationConfig,
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
 	],
@@ -120,7 +116,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecSmitePriest, {
 		],
 		// Preset rotations that the user can quickly select.
 		rotations: [
-			Presets.ROTATION_PRESET_LEGACY_DEFAULT,
 			Presets.ROTATION_PRESET_APL,
 		],
 		// Preset gear configurations that the user can quickly select.

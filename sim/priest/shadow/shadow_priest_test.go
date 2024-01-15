@@ -65,41 +65,21 @@ var FullConsumes = &proto.Consumes{
 var PlayerOptionsBasic = &proto.Player_ShadowPriest{
 	ShadowPriest: &proto.ShadowPriest{
 		Options: &proto.ShadowPriest_Options{
-			Armor:              proto.ShadowPriest_Options_InnerFire,
-			UseShadowfiend:     true,
-			UseMindBlast:       true,
-			UseShadowWordDeath: true,
-		},
-		Rotation: &proto.ShadowPriest_Rotation{
-			RotationType: proto.ShadowPriest_Rotation_Basic,
+			Armor: proto.ShadowPriest_Options_InnerFire,
 		},
 	},
 }
 var PlayerOptionsClipping = &proto.Player_ShadowPriest{
 	ShadowPriest: &proto.ShadowPriest{
 		Options: &proto.ShadowPriest_Options{
-			Armor:              proto.ShadowPriest_Options_InnerFire,
-			UseShadowfiend:     true,
-			UseMindBlast:       true,
-			UseShadowWordDeath: true,
-		},
-		Rotation: &proto.ShadowPriest_Rotation{
-			RotationType: proto.ShadowPriest_Rotation_Clipping,
-			PrecastType:  1,
+			Armor: proto.ShadowPriest_Options_InnerFire,
 		},
 	},
 }
 var PlayerOptionsIdeal = &proto.Player_ShadowPriest{
 	ShadowPriest: &proto.ShadowPriest{
 		Options: &proto.ShadowPriest_Options{
-			Armor:              proto.ShadowPriest_Options_InnerFire,
-			UseShadowfiend:     true,
-			UseMindBlast:       true,
-			UseShadowWordDeath: true,
-		},
-		Rotation: &proto.ShadowPriest_Rotation{
-			RotationType: proto.ShadowPriest_Rotation_Ideal,
-			PrecastType:  1,
+			Armor: proto.ShadowPriest_Options_InnerFire,
 		},
 	},
 }

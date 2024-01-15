@@ -495,6 +495,8 @@ func (dk *Deathknight) registerItems() {
 		IcyTouchActionID,
 	}
 
+	targetsHit := 0
+
 	dk.RegisterAura(core.Aura{
 		ActionID:  core.ActionID{SpellID: 53386},
 		Label:     "Cinderglacier",
@@ -513,9 +515,15 @@ func (dk *Deathknight) registerItems() {
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell.ActionID == HowlingBlastActionID || spell.ActionID == BloodBoilActionID {
+				if result.Target.Index == 0 {
+					targetsHit = 0
+				}
+				if result.Landed() {
+					targetsHit++
+				}
 				if result.Target.Index == sim.GetNumTargets()-1 {
 					// Last target, consume a stack for every target hit
-					for i := int32(0); i < dk.AoESpellNumTargetsHit; i++ {
+					for i := 0; i < targetsHit; i++ {
 						if aura.IsActive() {
 							aura.RemoveStack(sim)
 						}
@@ -524,7 +532,7 @@ func (dk *Deathknight) registerItems() {
 				return
 			}
 
-			if !result.Outcome.Matches(core.OutcomeLanded) {
+			if !result.Landed() {
 				return
 			}
 

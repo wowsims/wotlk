@@ -87,8 +87,7 @@ var defaultProtOptions = &proto.HolyPaladin_Options{
 
 var BasicOptions = &proto.Player_HolyPaladin{
 	HolyPaladin: &proto.HolyPaladin{
-		Options:  defaultProtOptions,
-		Rotation: &proto.HolyPaladin_Rotation{},
+		Options: defaultProtOptions,
 	},
 }
 
