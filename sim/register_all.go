@@ -20,6 +20,7 @@ import (
 	// "github.com/wowsims/sod/sim/shaman/enhancement"
 	// restoShaman "github.com/wowsims/sod/sim/shaman/restoration"
 	dpsWarlock "github.com/wowsims/sod/sim/warlock/dps"
+	tankWarlock "github.com/wowsims/sod/sim/warlock/tank"
 	dpsWarrior "github.com/wowsims/sod/sim/warrior/dps"
 	// protectionWarrior "github.com/wowsims/sod/sim/warrior/protection"
 )
@@ -50,4 +51,5 @@ func RegisterAll() {
 	// protectionPaladin.RegisterProtectionPaladin()
 	// retribution.RegisterRetributionPaladin()
 	dpsWarlock.RegisterDpsWarlock()
+	tankWarlock.RegisterTankWarlock()
 }

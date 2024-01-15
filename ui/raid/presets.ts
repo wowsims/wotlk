@@ -27,6 +27,7 @@ import { ShadowPriestSimUI } from '../shadow_priest/sim.js';
 import { WarriorSimUI } from '../warrior/sim.js';
 import { ProtectionWarriorSimUI } from '../protection_warrior/sim.js';
 import { WarlockSimUI } from '../warlock/sim.js';
+import { TankWarlockSimUI } from '../tank_warlock/sim.js';
 
 export const specSimFactories: Record<Spec, (parentElem: HTMLElement, player: Player<any>) => IndividualSimUI<any>> = {
 	[Spec.SpecBalanceDruid]: (parentElem: HTMLElement, player: Player<any>) => new BalanceDruidSimUI(parentElem, player),
@@ -47,6 +48,7 @@ export const specSimFactories: Record<Spec, (parentElem: HTMLElement, player: Pl
 	[Spec.SpecWarrior]: (parentElem: HTMLElement, player: Player<any>) => new WarriorSimUI(parentElem, player),
 	[Spec.SpecProtectionWarrior]: (parentElem: HTMLElement, player: Player<any>) => new ProtectionWarriorSimUI(parentElem, player),
 	[Spec.SpecWarlock]: (parentElem: HTMLElement, player: Player<any>) => new WarlockSimUI(parentElem, player),
+	[Spec.SpecTankWarlock]: (parentElem: HTMLElement, player: Player<any>) => new TankWarlockSimUI(parentElem, player),
 };
 
 export const playerPresets: Array<RaidSimPreset<any>> = naturalSpecOrder

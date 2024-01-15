@@ -77,39 +77,40 @@ enum WarlockRune {
 	RuneLegsIncinerate			  = 412758;
 }
 
+message WarlockRotation {
+}
+
+message WarlockOptions {
+	enum Summon {
+		NoSummon = 0;
+		Imp = 1;
+		Voidwalker = 2;
+		Succubus = 3;
+		Felhunter = 4;
+	}
+
+	enum Armor {
+		NoArmor = 0;
+		DemonArmor = 1;
+	}
+
+	enum WeaponImbue {
+		NoWeaponImbue = 0;
+		Spellstone = 1;
+		Firestone = 2;
+	}
+
+	Armor armor = 1;
+	Summon summon = 2;
+	WeaponImbue weaponImbue = 3;
+}
+
 message Warlock {
-	message Rotation {
-		enum Preset {
-			Manual = 0;
-			Automatic = 1;
-		}
-		Preset preset = 1;
-	}
-	Rotation rotation = 1;
-	
-	message Options {
-		enum Summon {
-			NoSummon = 0;
-			Imp = 1;
-			Voidwalker = 2;
-			Succubus = 3;
-			Felhunter = 4;
-		}
+	WarlockRotation rotation = 1;
+	WarlockOptions options = 2;
+}
 
-		enum Armor {
-			NoArmor = 0;
-			DemonArmor = 1;
-		}
-
-		enum WeaponImbue {
-			NoWeaponImbue = 0;
-			Spellstone = 1;
-			Firestone = 2;
-		}
-
-		Armor armor = 1;
-		Summon summon = 2;
-		WeaponImbue weaponImbue = 3;
-	}
-	Options options = 3;
+message TankWarlock {
+	WarlockRotation rotation = 1;
+	WarlockOptions options = 2;
 }

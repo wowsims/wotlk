@@ -33,7 +33,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 
 	switch warlock.Options.Summon {
 	// TODO: revisit base damage once blizzard fixes JamminL/wotlk-classic-bugs#328
-	case proto.Warlock_Options_Imp:
+	case proto.WarlockOptions_Imp:
 		cfg.Name = "Imp"
 		cfg.PowerModifier = 0.33 // GetUnitPowerModifier("pet")
 		cfg.Stats = stats.Stats{
@@ -47,7 +47,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 			stats.MeleeCrit: 3.454 * core.CritRatingPerCritChance,
 			stats.SpellCrit: 0.9075 * core.CritRatingPerCritChance,
 		}
-	case proto.Warlock_Options_Succubus:
+	case proto.WarlockOptions_Succubus:
 		cfg.Name = "Succubus"
 		cfg.PowerModifier = 0.77 // GetUnitPowerModifier("pet")
 		cfg.Stats = stats.Stats{
@@ -70,7 +70,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 			},
 			AutoSwingMelee: true,
 		}
-	case proto.Warlock_Options_Felhunter:
+	case proto.WarlockOptions_Felhunter:
 		cfg.Name = "Felhunter"
 		cfg.PowerModifier = 0.77 // GetUnitPowerModifier("pet")
 		cfg.Stats = stats.Stats{
@@ -105,7 +105,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 	wp.AddStatDependency(stats.Strength, stats.AttackPower, 2)
 	wp.AddStat(stats.AttackPower, -20)
 
-	if warlock.Options.Summon == proto.Warlock_Options_Imp {
+	if warlock.Options.Summon == proto.WarlockOptions_Imp {
 		// imp has a slightly different agi crit scaling coef for some reason
 		wp.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance*1/51.0204)
 
@@ -135,7 +135,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 
 	wp.AutoAttacks.MHConfig().DamageMultiplier *= 1.0 + 0.04*float64(warlock.Talents.UnholyPower)
 
-	if warlock.Options.Summon != proto.Warlock_Options_Imp { // imps generally don't melee
+	if warlock.Options.Summon != proto.WarlockOptions_Imp { // imps generally don't melee
 		wp.EnableAutoAttacks(wp, cfg.AutoAttacks)
 	}
 
@@ -146,17 +146,17 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 			Duration: core.NeverExpires,
 			OnGain: func(aura *core.Aura, _ *core.Simulation) {
 				switch warlock.Options.Summon {
-				case proto.Warlock_Options_Imp:
+				case proto.WarlockOptions_Imp:
 					aura.Unit.PseudoStats.ThreatMultiplier /= 1 + 0.04*float64(warlock.Talents.MasterDemonologist)
-				case proto.Warlock_Options_Succubus:
+				case proto.WarlockOptions_Succubus:
 					aura.Unit.PseudoStats.DamageDealtMultiplier *= 1 + 0.02*float64(warlock.Talents.MasterDemonologist)
 				}
 			},
 			OnExpire: func(aura *core.Aura, _ *core.Simulation) {
 				switch warlock.Options.Summon {
-				case proto.Warlock_Options_Imp:
+				case proto.WarlockOptions_Imp:
 					aura.Unit.PseudoStats.ThreatMultiplier *= 1 + 0.04*float64(warlock.Talents.MasterDemonologist)
-				case proto.Warlock_Options_Succubus:
+				case proto.WarlockOptions_Succubus:
 					aura.Unit.PseudoStats.DamageDealtMultiplier /= 1 + 0.02*float64(warlock.Talents.MasterDemonologist)
 				}
 			},
@@ -190,11 +190,11 @@ func (wp *WarlockPet) GetPet() *core.Pet {
 // TODO: Classic warlock pet abilities
 func (wp *WarlockPet) Initialize() {
 	switch wp.owner.Options.Summon {
-	case proto.Warlock_Options_Succubus:
+	case proto.WarlockOptions_Succubus:
 		wp.registerLashOfPainSpell()
-	case proto.Warlock_Options_Felhunter:
+	case proto.WarlockOptions_Felhunter:
 		// wp.registerShadowBiteSpell()
-	case proto.Warlock_Options_Imp:
+	case proto.WarlockOptions_Imp:
 		wp.registerFireboltSpell()
 	}
 }
@@ -263,7 +263,7 @@ func (warlock *Warlock) makeStatInheritance() core.PetStatInheritance {
 
 		// TODO: Classic warlock pet stat deps
 		return stats.Stats{
-			stats.Stamina:          ownerStats[stats.Stamina] * core.Ternary(warlock.Options.Summon == proto.Warlock_Options_Imp, 0.66, 0.75),
+			stats.Stamina:          ownerStats[stats.Stamina] * core.Ternary(warlock.Options.Summon == proto.WarlockOptions_Imp, 0.66, 0.75),
 			stats.Intellect:        ownerStats[stats.Intellect] * 0.3,
 			stats.Armor:            ownerStats[stats.Armor] * 0.35,
 			stats.AttackPower:      ownerStats[stats.SpellPower] * 0.57,

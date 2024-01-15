@@ -20,6 +20,7 @@ enum Spec {
 	SpecHealingPriest = 17;
 	SpecShadowPriest = 4;
 	SpecWarlock = 5;
+	SpecTankWarlock = 21;
 	SpecWarrior = 6;
 	SpecProtectionWarrior = 11;
 }

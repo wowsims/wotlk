@@ -1,4 +1,5 @@
 import {
+	AgilityElixir,
 	Conjured,
 	Consumes,
 	Debuffs,
@@ -9,6 +10,7 @@ import {
 	Potions,
 	Profession,
 	RaidBuffs,
+	StrengthBuff,
 	TristateEffect,
 	WeaponImbue
 } from '../core/proto/common.js';
@@ -21,19 +23,34 @@ import {
 } from '../core/proto/warlock.js';
 import * as PresetUtils from '../core/preset_utils.js';
 
-import DestructionGear from './gear_sets/destruction.gear.json';
-import DestructionAPL from './apls/destruction.apl.json';
+import AfflictionTankGear from './gear_sets/affi.tank.gear.json';
+import DestroTankGear from './gear_sets/destro.tank.gear.json';
 
-export const GearAfflictionDefault = PresetUtils.makePresetGear('Affliction', DestructionGear);
-export const GearDemonologyDefault = PresetUtils.makePresetGear('Demonology', DestructionGear);
-export const GearDestructionDefault = PresetUtils.makePresetGear('Destruction', DestructionGear);
+export const GearAfflictionTankDefault = PresetUtils.makePresetGear('Affliction Tank', AfflictionTankGear);
+export const GearDestructionTankDefault = PresetUtils.makePresetGear('Destruction Tank', DestroTankGear);
 
-export const RotationAfflictionDefault = PresetUtils.makePresetAPLRotation('Affliction', DestructionAPL);
-export const RotationDemonologyDefault = PresetUtils.makePresetAPLRotation('Demonology', DestructionAPL);
-export const RotationDestructionDefault = PresetUtils.makePresetAPLRotation('Destruction', DestructionAPL);
+import AfflictionTankAPL from './apls/affi.tank.apl.json';
+import DestroTankAPL from './apls/destro.tank.apl.json';
+
+export const RotationAfflictionTankDefault = PresetUtils.makePresetAPLRotation('Affliction Tank', AfflictionTankAPL);
+export const RotationDestructionTankDefault = PresetUtils.makePresetAPLRotation('Destruction Tank', DestroTankAPL);
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/classic/talent-calc and copy the numbers in the url.
+
+export const DefaultTalents = {
+	name: 'Default',
+	data: SavedTalents.create({
+		talentsString: '25002-2050300142301-52500051020001',
+	}),
+};
+
+export const AfflictionTankTalents = {
+	name: 'Affliction Tank',
+	data: SavedTalents.create({
+		talentsString: '050025001-003',
+	}),
+};
 
 export const DestroTalents = {
 	name: 'Destruction',
@@ -44,7 +61,7 @@ export const DestroTalents = {
 
 export const DefaultOptions = WarlockOptions.create({
 	armor: Armor.DemonArmor,
-	summon: Summon.Imp,
+	summon: Summon.Succubus,
 	weaponImbue: WarlockWeaponImbue.NoWeaponImbue,
 });
 
@@ -54,6 +71,8 @@ export const DefaultConsumes = Consumes.create({
 	defaultPotion: Potions.ManaPotion,
 	mainHandImbue: WeaponImbue.BlackfathomManaOil,
 	firePowerBuff: FirePowerBuff.ElixirOfFirepower,
+	agilityElixir: AgilityElixir.ElixirOfLesserAgility,
+	strengthBuff: StrengthBuff.ElixirOfOgresStrength,
 });
 
 export const DefaultRaidBuffs = RaidBuffs.create({
@@ -75,7 +94,7 @@ export const DefaultDebuffs = Debuffs.create({
 });
 
 export const OtherDefaults = {
-	distanceFromTarget: 25,
+	distanceFromTarget: 5,
 	profession1: Profession.Engineering,
 	profession2: Profession.Tailoring,
 	channelClipDelay: 150,

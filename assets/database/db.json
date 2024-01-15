@@ -8763,9 +8763,9 @@
 {"id":425169,"name":"Icy Veins","icon":"spell_frost_coldhearted","requiresLevel":1}
 ],
 "encounters":[
-{"path":"SoD/Level 25","targets":[{"path":"SoD/Level 25","target":{"id":213334,"name":"Level 25","level":27,"mobType":8,"stats":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,574,0,0,0,0,0,0,0,0,1104,0,0,0,0,0,0,0,127393,0,0,0,0,0,0,0,0,0,0],"minBaseDamage":14135,"damageSpread":0.3333,"swingSpeed":2,"parryHaste":true}}]},
-{"path":"SoD/Level 40","targets":[{"path":"SoD/Level 40","target":{"id":213334,"name":"Level 40","level":42,"mobType":8,"stats":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,574,0,0,0,0,0,0,0,0,2053,0,0,0,0,0,0,0,127393,0,0,0,0,0,0,0,0,0,0],"minBaseDamage":14135,"damageSpread":0.3333,"swingSpeed":2,"parryHaste":true}}]},
-{"path":"SoD/Level 50","targets":[{"path":"SoD/Level 50","target":{"id":213334,"name":"Level 50","level":52,"mobType":8,"stats":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,574,0,0,0,0,0,0,0,0,2053,0,0,0,0,0,0,0,127393,0,0,0,0,0,0,0,0,0,0],"minBaseDamage":14135,"damageSpread":0.3333,"swingSpeed":2,"parryHaste":true}}]},
-{"path":"SoD/Level 60","targets":[{"path":"SoD/Level 60","target":{"id":213334,"name":"Level 60","level":63,"mobType":8,"stats":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,805,0,0,0,0,0,0,0,0,3731,0,0,0,0,0,0,0,127393,0,0,0,0,0,0,0,0,0,0],"minBaseDamage":14135,"damageSpread":0.3333,"swingSpeed":2,"parryHaste":true}}]}
+{"path":"SoD/Level 25","targets":[{"path":"SoD/Level 25","target":{"id":213334,"name":"Level 25","level":27,"mobType":8,"stats":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,574,0,0,0,0,0,0,0,0,1104,0,0,0,0,0,0,0,127393,0,0,0,0,0,0,0,0,0,0],"minBaseDamage":400,"damageSpread":0.3333,"swingSpeed":2,"parryHaste":true}}]},
+{"path":"SoD/Level 40","targets":[{"path":"SoD/Level 40","target":{"id":213334,"name":"Level 40","level":42,"mobType":8,"stats":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,574,0,0,0,0,0,0,0,0,2053,0,0,0,0,0,0,0,127393,0,0,0,0,0,0,0,0,0,0],"minBaseDamage":1000,"damageSpread":0.3333,"swingSpeed":2,"parryHaste":true}}]},
+{"path":"SoD/Level 50","targets":[{"path":"SoD/Level 50","target":{"id":213334,"name":"Level 50","level":52,"mobType":8,"stats":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,574,0,0,0,0,0,0,0,0,2053,0,0,0,0,0,0,0,127393,0,0,0,0,0,0,0,0,0,0],"minBaseDamage":2000,"damageSpread":0.3333,"swingSpeed":2,"parryHaste":true}}]},
+{"path":"SoD/Level 60","targets":[{"path":"SoD/Level 60","target":{"id":213334,"name":"Level 60","level":63,"mobType":8,"stats":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,805,0,0,0,0,0,0,0,0,3731,0,0,0,0,0,0,0,127393,0,0,0,0,0,0,0,0,0,0],"minBaseDamage":3000,"damageSpread":0.3333,"swingSpeed":2,"parryHaste":true}}]}
 ]
 }

@@ -12,9 +12,8 @@ var TalentTreeSizes = [3]int{17, 17, 16}
 
 type Warlock struct {
 	core.Character
-	Talents  *proto.WarlockTalents
-	Options  *proto.Warlock_Options
-	Rotation *proto.Warlock_Rotation
+	Talents *proto.WarlockTalents
+	Options *proto.WarlockOptions
 
 	Pet *WarlockPet
 
@@ -124,7 +123,7 @@ func (warlock *Warlock) Initialize() {
 
 func (warlock *Warlock) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	raidBuffs.BloodPact = max(raidBuffs.BloodPact, core.MakeTristateValue(
-		warlock.Options.Summon == proto.Warlock_Options_Imp,
+		warlock.Options.Summon == proto.WarlockOptions_Imp,
 		warlock.Talents.ImprovedImp == 3,
 	))
 }
@@ -139,32 +138,20 @@ func (warlock *Warlock) Reset(sim *core.Simulation) {
 	// warlock.setupCooldowns(sim)
 }
 
-func NewWarlock(character *core.Character, options *proto.Player) *Warlock {
-	warlockOptions := options.GetWarlock()
-
+func NewWarlock(character *core.Character, options *proto.Player, warlockOptions *proto.WarlockOptions) *Warlock {
 	warlock := &Warlock{
 		Character: *character,
 		Talents:   &proto.WarlockTalents{},
-		Options:   warlockOptions.Options,
-		Rotation:  warlockOptions.Rotation,
+		Options:   warlockOptions,
 	}
 	core.FillTalentsProto(warlock.Talents.ProtoReflect(), options.TalentsString, TalentTreeSizes)
 	warlock.EnableManaBar()
 
 	warlock.AddStatDependency(stats.Strength, stats.AttackPower, 1)
 
-	if warlock.Options.Summon != proto.Warlock_Options_NoSummon {
+	if warlock.Options.Summon != proto.WarlockOptions_NoSummon {
 		warlock.Pet = warlock.NewWarlockPet()
 	}
-
-	warlock.PseudoStats.CanParry = false
-	warlock.PseudoStats.CanBlock = false
-
-	warlock.EnableAutoAttacks(warlock, core.AutoAttackOptions{
-		MainHand:       warlock.WeaponFromMainHand(warlock.DefaultMeleeCritMultiplier()),
-		OffHand:        warlock.WeaponFromOffHand(warlock.DefaultMeleeCritMultiplier()),
-		AutoSwingMelee: true,
-	})
 
 	warlock.applyWeaponImbue()
 

@@ -13,7 +13,7 @@ import * as InputHelpers from '../core/components/input_helpers.js';
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
 
-export const ArmorInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecWarlock, Armor>({
+export const ArmorInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecTankWarlock, Armor>({
 	fieldName: 'armor',
 	values: [
 		{ value: Armor.NoArmor, tooltip: 'No Armor' },
@@ -21,7 +21,7 @@ export const ArmorInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecWar
 	],
 });
 
-export const WeaponImbueInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecWarlock, WeaponImbue>({
+export const WeaponImbueInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecTankWarlock, WeaponImbue>({
 	fieldName: 'weaponImbue',
 	values: [
 		{ value: WeaponImbue.NoWeaponImbue, tooltip: 'No Weapon Stone' },
@@ -31,7 +31,7 @@ export const WeaponImbueInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.S
 	],
 });
 
-export const PetInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecWarlock, Summon>({
+export const PetInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecTankWarlock, Summon>({
 	fieldName: 'summon',
 	values: [
 		{ value: Summon.NoSummon, tooltip: 'No Pet' },
@@ -39,7 +39,7 @@ export const PetInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecWarlo
 		{ actionId: ActionId.fromSpellId(712), value: Summon.Succubus },
 		{ actionId: ActionId.fromSpellId(691), value: Summon.Felhunter },
 	],
-	changeEmitter: (player: Player<Spec.SpecWarlock>) => player.changeEmitter,
+	changeEmitter: (player: Player<Spec.SpecTankWarlock>) => player.changeEmitter,
 });
 
 export const WarlockRotationConfig = {

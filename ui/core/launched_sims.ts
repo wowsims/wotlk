@@ -31,6 +31,7 @@ export const simLaunchStatuses: Record<Spec, LaunchStatus> = {
 	[Spec.SpecHealingPriest]: LaunchStatus.Unlaunched,
 	[Spec.SpecShadowPriest]: LaunchStatus.Alpha,
 	[Spec.SpecWarlock]: LaunchStatus.Alpha,
+	[Spec.SpecTankWarlock]: LaunchStatus.Alpha,
 	[Spec.SpecWarrior]: LaunchStatus.Unlaunched,
 	[Spec.SpecProtectionWarrior]: LaunchStatus.Unlaunched,
 };
@@ -53,6 +54,7 @@ export const aplLaunchStatuses: Record<Spec, LaunchStatus> = {
 	[Spec.SpecHealingPriest]: LaunchStatus.Launched,
 	[Spec.SpecShadowPriest]: LaunchStatus.Launched,
 	[Spec.SpecWarlock]: LaunchStatus.Beta,
+	[Spec.SpecTankWarlock]: LaunchStatus.Beta,
 	[Spec.SpecWarrior]: LaunchStatus.Alpha,
 	[Spec.SpecProtectionWarrior]: LaunchStatus.Launched,
 };

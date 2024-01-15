@@ -27,10 +27,10 @@ func (warlock *Warlock) applyImprovedShadowBolt() {
 
 func (warlock *Warlock) applyWeaponImbue() {
 	level := warlock.GetCharacter().Level
-	if warlock.Options.WeaponImbue == proto.Warlock_Options_Firestone {
+	if warlock.Options.WeaponImbue == proto.WarlockOptions_Firestone {
 		warlock.applyFirestone()
 	}
-	if warlock.Options.WeaponImbue == proto.Warlock_Options_Spellstone {
+	if warlock.Options.WeaponImbue == proto.WarlockOptions_Spellstone {
 		if level >= 55 {
 			warlock.AddStat(stats.SpellCrit, 1*core.SpellCritRatingPerCritChance)
 		}

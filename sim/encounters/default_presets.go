@@ -24,7 +24,7 @@ func addLevel25(bossPrefix string) {
 
 			SpellSchool:      proto.SpellSchool_SpellSchoolPhysical,
 			SwingSpeed:       2,      // TODO:
-			MinBaseDamage:    14135,  // TODO:
+			MinBaseDamage:    400,    // TODO:
 			DamageSpread:     0.3333, // TODO:
 			ParryHaste:       true,
 			DualWield:        false,
@@ -55,7 +55,7 @@ func addLevel40(bossPrefix string) {
 
 			SpellSchool:      proto.SpellSchool_SpellSchoolPhysical,
 			SwingSpeed:       2,      // TODO:
-			MinBaseDamage:    14135,  // TODO:
+			MinBaseDamage:    1000,   // TODO:
 			DamageSpread:     0.3333, // TODO:
 			ParryHaste:       true,
 			DualWield:        false,
@@ -86,7 +86,7 @@ func addLevel50(bossPrefix string) {
 
 			SpellSchool:      proto.SpellSchool_SpellSchoolPhysical,
 			SwingSpeed:       2,      // TODO:
-			MinBaseDamage:    14135,  // TODO:
+			MinBaseDamage:    2000,   // TODO:
 			DamageSpread:     0.3333, // TODO:
 			ParryHaste:       true,
 			DualWield:        false,
@@ -117,7 +117,7 @@ func addLevel60(bossPrefix string) {
 
 			SpellSchool:      proto.SpellSchool_SpellSchoolPhysical,
 			SwingSpeed:       2,      // TODO:
-			MinBaseDamage:    14135,  // TODO:
+			MinBaseDamage:    3000,   // TODO:
 			DamageSpread:     0.3333, // TODO:
 			ParryHaste:       true,
 			DualWield:        false,

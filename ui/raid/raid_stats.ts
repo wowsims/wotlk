@@ -23,7 +23,7 @@ import { Hunter_Rotation_StingType as HunterStingType, Hunter_Options_PetType as
 import { PaladinAura } from '../core/proto/paladin.js';
 import { Rogue_Rotation_Frequency as ExposeFrequency } from '../core/proto/rogue.js';
 import { EarthTotem, WaterTotem } from '../core/proto/shaman.js';
-import { Warlock_Options_Summon as WarlockSummon } from '../core/proto/warlock.js';
+import { WarlockOptions_Summon as WarlockSummon } from '../core/proto/warlock.js';
 import { WarriorShout, Warrior_Rotation_SunderArmor as SunderArmor } from '../core/proto/warrior.js';
 
 import { RaidSimUI } from './raid_sim_ui.js';

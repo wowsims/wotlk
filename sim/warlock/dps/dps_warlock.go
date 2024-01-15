@@ -1,7 +1,6 @@
 package dps
 
 import (
-	"github.com/wowsims/sod/sim/common"
 	"github.com/wowsims/sod/sim/core"
 	"github.com/wowsims/sod/sim/core/proto"
 	"github.com/wowsims/sod/sim/warlock"
@@ -26,19 +25,11 @@ func RegisterDpsWarlock() {
 
 type DpsWarlock struct {
 	*warlock.Warlock
-
-	Options        *proto.Warlock_Options
-	Rotation       *proto.Warlock_Rotation
-	CustomRotation *common.CustomRotation
 }
 
 func NewDpsWarlock(character *core.Character, options *proto.Player) *DpsWarlock {
-	warlockOptions := options.GetWarlock()
-
 	warlock := &DpsWarlock{
-		Warlock:  warlock.NewWarlock(character, options),
-		Rotation: warlockOptions.Rotation,
-		Options:  warlockOptions.Options,
+		Warlock: warlock.NewWarlock(character, options, options.GetWarlock().Options),
 	}
 
 	return warlock

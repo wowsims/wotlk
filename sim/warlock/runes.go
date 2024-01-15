@@ -44,7 +44,7 @@ func (warlock *Warlock) applyDemonicPact() {
 		return
 	}
 
-	if warlock.Options.Summon == proto.Warlock_Options_NoSummon {
+	if warlock.Options.Summon == proto.WarlockOptions_NoSummon {
 		return
 	}
 

@@ -1,0 +1,8 @@
+// Set color variables which control the site theme.
+.tank-warlock-sim-ui {
+	@include theme-color(
+		$warlock,
+		.90,
+		'/sod/assets/img/tank_warlock_background.jpg'
+	);
+}

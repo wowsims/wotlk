@@ -20,8 +20,8 @@ import * as OtherInputs from '../core/components/other_inputs.js';
 import * as WarlockInputs from './inputs.js';
 import * as Presets from './presets.js';
 
-const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
-	cssClass: 'warlock-sim-ui',
+const SPEC_CONFIG = registerSpecConfig(Spec.SpecTankWarlock, {
+	cssClass: 'tank-warlock-sim-ui',
 	cssScheme: 'warlock',
 	// List any known bugs / issues here and they'll be shown on the site.
 	knownIssues: [
@@ -39,12 +39,14 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 		Stat.StatFirePower,
 		Stat.StatShadowPower,
 
-		// Pet Related Stats
+		// Tank stats
 		Stat.StatStrength,
 		Stat.StatStamina,
 		Stat.StatAttackPower,
 		Stat.StatArmorPenetration,
 		Stat.StatAgility,
+		Stat.StatArmor,
+		Stat.StatBonusArmor,
 		Stat.StatMeleeCrit,
 		Stat.StatMeleeHit,
 		Stat.StatMeleeHaste,
@@ -64,12 +66,16 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 		Stat.StatSpellCrit,
 		Stat.StatSpellHaste,
 		Stat.StatMP5,
+		// Tank stats
 		Stat.StatStamina,
+		Stat.StatAgility,
+		Stat.StatArmor,
+		Stat.StatBonusArmor,
 	],
 
 	defaults: {
 		// Default equipped gear.
-		gear: Presets.GearDestructionDefault.gear,
+		gear: Presets.GearAfflictionTankDefault.gear,
 
 		// Default EP weights for sorting gear in the gear picker.
 		epWeights: Stats.fromMap({
@@ -84,7 +90,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 		// Default consumes settings.
 		consumes: Presets.DefaultConsumes,
 		// Default talents.
-		talents: Presets.DestroTalents.data,
+		talents: Presets.AfflictionTankTalents.data,
 		// Default spec-specific settings.
 		specOptions: Presets.DefaultOptions,
 
@@ -115,18 +121,19 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 	excludeBuffDebuffInputs: [
 		IconInputs.FrostDamageBuff,
 		IconInputs.BleedDebuff,
-		IconInputs.StaminaBuff,
-		IconInputs.ArmorBuff,
-		IconInputs.DefensiveCooldownBuff,
-		IconInputs.AttackPowerDebuff,
-		IconInputs.MeleeAttackSpeedDebuff,
 	],
 	petConsumeInputs: [
 	],
 	// Inputs to include in the 'Other' section on the settings tab.
 	otherInputs: {
 		inputs: [
-			OtherInputs.DistanceFromTarget,
+			OtherInputs.TankAssignment,
+			OtherInputs.IncomingHps,
+			OtherInputs.HealingCadence,
+			OtherInputs.HealingCadenceVariation,
+			OtherInputs.BurstWindow,
+			OtherInputs.HpPercentForDefensives,
+			OtherInputs.InspirationUptime,
 			OtherInputs.ChannelClipDelay,
 		],
 	},
@@ -139,38 +146,41 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 	presets: {
 		// Preset talents that the user can quickly select.
 		talents: [
+			Presets.AfflictionTankTalents,
 			Presets.DestroTalents,
 		],
 		// Preset rotations that the user can quickly select.
 		rotations: [
-			Presets.RotationDestructionDefault,
+			Presets.RotationAfflictionTankDefault,
+			Presets.RotationDestructionTankDefault,
 		],
 
 		// Preset gear configurations that the user can quickly select.
 		gear: [
-			Presets.GearDestructionDefault,
+			Presets.GearAfflictionTankDefault,
+			Presets.GearDestructionTankDefault,
 		],
 	},
 
-	autoRotation: (player: Player<Spec.SpecWarlock>): APLRotation => {
+	autoRotation: (player: Player<Spec.SpecTankWarlock>): APLRotation => {
 		const talentTree = player.getTalentTree();
 		if (talentTree == 0) {
-			return Presets.RotationAfflictionDefault.rotation.rotation!;
+			return Presets.RotationAfflictionTankDefault.rotation.rotation!;
 		} else if (talentTree == 1) {
-			return Presets.RotationDemonologyDefault.rotation.rotation!;
+			return Presets.RotationAfflictionTankDefault.rotation.rotation!;
 		} else {
-			return Presets.RotationDestructionDefault.rotation.rotation!;
+			return Presets.RotationDestructionTankDefault.rotation.rotation!;
 		}
 	},
 
 	raidSimPresets: [
 		{
-			spec: Spec.SpecWarlock,
-			tooltip: 'Affliction Warlock',
+			spec: Spec.SpecTankWarlock,
+			tooltip: 'Affliction Tank',
 			defaultName: 'Affliction',
 			iconUrl: getSpecIcon(Class.ClassWarlock, 0),
 
-			talents: Presets.DestroTalents.data,
+			talents: Presets.DefaultTalents.data,
 			specOptions: Presets.DefaultOptions,
 			consumes: Presets.DefaultConsumes,
 			defaultFactionRaces: {
@@ -181,46 +191,21 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 			defaultGear: {
 				[Faction.Unknown]: {},
 				[Faction.Alliance]: {
-					1: Presets.GearAfflictionDefault.gear,
+					1: Presets.GearAfflictionTankDefault.gear,
 				},
 				[Faction.Horde]: {
-					1: Presets.GearAfflictionDefault.gear,
+					1: Presets.GearAfflictionTankDefault.gear,
 				},
 			},
 			otherDefaults: Presets.OtherDefaults,
 		},
 		{
-			spec: Spec.SpecWarlock,
-			tooltip: 'Demonology Warlock',
-			defaultName: 'Demonology',
-			iconUrl: getSpecIcon(Class.ClassWarlock, 1),
-
-			talents: Presets.DestroTalents.data,
-			specOptions: Presets.DefaultOptions,
-			consumes: Presets.DefaultConsumes,
-			defaultFactionRaces: {
-				[Faction.Unknown]: Race.RaceUnknown,
-				[Faction.Alliance]: Race.RaceHuman,
-				[Faction.Horde]: Race.RaceOrc,
-			},
-			defaultGear: {
-				[Faction.Unknown]: {},
-				[Faction.Alliance]: {
-					1: Presets.GearDemonologyDefault.gear,
-				},
-				[Faction.Horde]: {
-					1: Presets.GearDemonologyDefault.gear,
-				},
-			},
-			otherDefaults: Presets.OtherDefaults,
-		},
-		{
-			spec: Spec.SpecWarlock,
-			tooltip: 'Destruction Warlock',
+			spec: Spec.SpecTankWarlock,
+			tooltip: 'Destruction Tank',
 			defaultName: 'Destruction',
 			iconUrl: getSpecIcon(Class.ClassWarlock, 2),
 
-			talents: Presets.DestroTalents.data,
+			talents: Presets.DefaultTalents.data,
 			specOptions: Presets.DefaultOptions,
 			consumes: Presets.DefaultConsumes,
 			defaultFactionRaces: {
@@ -231,10 +216,10 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 			defaultGear: {
 				[Faction.Unknown]: {},
 				[Faction.Alliance]: {
-					1: Presets.GearDestructionDefault.gear,
+					1: Presets.GearDestructionTankDefault.gear,
 				},
 				[Faction.Horde]: {
-					1: Presets.GearDestructionDefault.gear,
+					1: Presets.GearDestructionTankDefault.gear,
 				},
 			},
 			otherDefaults: Presets.OtherDefaults,
@@ -242,8 +227,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 	],
 });
 
-export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
-	constructor(parentElem: HTMLElement, player: Player<Spec.SpecWarlock>) {
+export class TankWarlockSimUI extends IndividualSimUI<Spec.SpecTankWarlock> {
+	constructor(parentElem: HTMLElement, player: Player<Spec.SpecTankWarlock>) {
 		super(parentElem, player, SPEC_CONFIG);
 	}
 }

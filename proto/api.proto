@@ -67,6 +67,7 @@ message Player {
 		Warlock warlock = 36;
 		Warrior warrior = 37;
 		ProtectionWarrior protection_warrior = 38;
+		TankWarlock tank_warlock = 39;
 	}
 }
 
