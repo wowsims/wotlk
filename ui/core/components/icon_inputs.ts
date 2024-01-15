@@ -74,12 +74,12 @@ export const StaminaBuff = InputHelpers.makeMultiIconInput([
 
 export const StrengthRaidBuff = InputHelpers.makeMultiIconInput([
 	makeTristateRaidBuffInput({id: ActionId.fromSpellId(25361), impId: ActionId.fromSpellId(16295), fieldName: 'strengthOfEarthTotem'}),
-	makeBooleanRaidBuffInput({id: ActionId.fromItemId(10310), fieldName: 'scrollOfStrength'}),
+	makeBooleanRaidBuffInput({id: ActionId.fromSpellId(425600), fieldName: 'hornOfLordaeron'}),
 ], 'Str');
 
 export const AgilityRaidBuff = InputHelpers.makeMultiIconInput([
 	makeTristateRaidBuffInput({id: ActionId.fromSpellId(25359), impId: ActionId.fromSpellId(16295), fieldName: 'graceOfAirTotem', minLevel: 42}),
-	makeBooleanRaidBuffInput({id: ActionId.fromItemId(10309), fieldName: 'scrollOfAgility'}),
+	makeBooleanRaidBuffInput({id: ActionId.fromSpellId(425600), fieldName: 'hornOfLordaeron'}),
 ], 'Agi');
 
 export const IntellectBuff = InputHelpers.makeMultiIconInput([
@@ -439,7 +439,7 @@ export const makeConjuredInput = makeConsumeInputFactory({
 	consumesFieldName: 'defaultConjured',
 	allOptions: [
 		{ actionId: ActionId.fromItemId(4381), value: Conjured.ConjuredMinorRecombobulator, showWhen: (player: Player<any>) => player.getGear().hasTrinket(4381) },
-		{ actionId: ActionId.fromItemId(12662), value: Conjured.ConjuredDemonicRune },
+		{ actionId: ActionId.fromItemId(12662), value: Conjured.ConjuredDemonicRune, showWhen: (p) => p.getLevel() >= 40 },
 	] as Array<IconEnumValueConfig<Player<any>, Conjured>>
 });
 
@@ -486,9 +486,9 @@ export const makeOffHandImbuesInput = makeConsumeInputFactory({
 export const makeFoodInput = makeConsumeInputFactory({
 	consumesFieldName: 'food',
 	allOptions: [
-		{ actionId: ActionId.fromItemId(15856), value: Food.FoodHotWolfRibs, showWhen: (p) => p.getLevel() >= 25 },
+		{ actionId: ActionId.fromItemId(21072), value: Food.FoodSmokedSagefish, showWhen: (p) => p.getLevel() >= 10 },
+		{ actionId: ActionId.fromItemId(13851), value: Food.FoodHotWolfRibs, showWhen: (p) => p.getLevel() >= 25 },
 		{ actionId: ActionId.fromItemId(22480), value: Food.FoodTenderWolfSteak, showWhen: (p) => p.getLevel() >= 40 },
-		{ actionId: ActionId.fromItemId(13931), value: Food.FoodNightfinSoup, showWhen: (p) => p.getLevel() >= 35 },
 		{ actionId: ActionId.fromItemId(13931), value: Food.FoodNightfinSoup, showWhen: (p) => p.getLevel() >= 35 },
 		{ actionId: ActionId.fromItemId(13928), value: Food.FoodGrilledSquid, showWhen: (p) => p.getLevel() >= 35 },
 		{ actionId: ActionId.fromItemId(20452), value: Food.FoodSmokedDesertDumpling, showWhen: (p) => p.getLevel() >= 45 },
@@ -503,12 +503,14 @@ export const AgilityBuffInput = makeConsumeInput('agilityElixir', [
 	{ actionId: ActionId.fromItemId(13452), value: AgilityElixir.ElixirOfTheMongoose, showWhen: (p) => p.getLevel() >= 46 },
 	{ actionId: ActionId.fromItemId(9187), value: AgilityElixir.ElixirOfGreaterAgility, showWhen: (p) => p.getLevel() >= 38},
         { actionId: ActionId.fromItemId(3390), value: AgilityElixir.ElixirOfLesserAgility, showWhen: (p) => p.getLevel() >= 18},
+	{ actionId: ActionId.fromItemId(10309), value: AgilityElixir.ScrollOfAgility},
 ] as Array<IconEnumValueConfig<Player<any>, AgilityElixir>>, (p) => p.getLevel() >= 18);
 
 export const StrengthBuffInput = makeConsumeInput('strengthBuff', [
 	{ actionId: ActionId.fromItemId(12451), value: StrengthBuff.JujuPower, showWhen: (p) => p.getLevel() >= 46 },
 	{ actionId: ActionId.fromItemId(9206), value: StrengthBuff.ElixirOfGiants, showWhen: (p) => p.getLevel() >= 46 },
         { actionId: ActionId.fromItemId(3391), value: StrengthBuff.ElixirOfOgresStrength, showWhen: (p) => p.getLevel() >= 20},
+	{ actionId: ActionId.fromItemId(10310), value: StrengthBuff.ScrollOfStrength },
 ] as Array<IconEnumValueConfig<Player<any>, StrengthBuff>>, (p) => p.getLevel() >= 20);
 
 export const SpellDamageBuff = makeConsumeInput('spellPowerBuff', [

@@ -5,7 +5,10 @@ import {
 	Profession,
 	Spec,
 	Potions,
-	Conjured
+	Conjured,
+	WeaponImbue,
+	AgilityElixir,
+	StrengthBuff
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
@@ -54,9 +57,12 @@ export const DefaultOptions = FeralDruidOptions.create({
 
 export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskUnknown,
-	food: Food.FoodUnknown,
+	food: Food.FoodSmokedSagefish,
 	defaultPotion: Potions.ManaPotion,
 	defaultConjured: Conjured.ConjuredMinorRecombobulator,
+	mainHandImbue: WeaponImbue.BlackfathomSharpeningStone,
+	agilityElixir: AgilityElixir.ElixirOfLesserAgility,
+	strengthBuff: StrengthBuff.ElixirOfOgresStrength,
 });
 
 export const OtherDefaults = {

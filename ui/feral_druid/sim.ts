@@ -57,8 +57,9 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 		Stat.StatMeleeCrit,
 		Stat.StatMeleeHaste,
 		Stat.StatArmorPenetration,
-		Stat.StatExpertise,
 		Stat.StatIntellect,
+		Stat.StatSpirit,
+		Stat.StatMP5,
 	],
 	epPseudoStats: [
 		PseudoStat.PseudoStatMainHandDps,
@@ -74,9 +75,10 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 		Stat.StatMeleeHit,
 		Stat.StatMeleeCrit,
 		Stat.StatMeleeHaste,
-		Stat.StatArmorPenetration,
-		Stat.StatExpertise,
 		Stat.StatMana,
+		Stat.StatIntellect,
+		Stat.StatSpirit,
+		Stat.StatMP5,
 	],
 
 	defaults: {
@@ -106,28 +108,25 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 		// Default raid/party buffs settings.
 		raidBuffs: RaidBuffs.create({
 			arcaneBrilliance: true,
-			giftOfTheWild: TristateEffect.TristateEffectImproved,
-			manaSpringTotem: TristateEffect.TristateEffectRegular,
-			strengthOfEarthTotem: TristateEffect.TristateEffectRegular,
-			battleShout: TristateEffect.TristateEffectImproved,
+			giftOfTheWild: TristateEffect.TristateEffectRegular,
+			battleShout: TristateEffect.TristateEffectRegular,
 		}),
 
-		partyBuffs: PartyBuffs.create({
-			heroicPresence: true,
-		}),
+		partyBuffs: PartyBuffs.create({}),
 
 		individualBuffs: IndividualBuffs.create({
-			blessingOfKings: true,
+			aspectOfTheLion: true,
 			blessingOfMight: TristateEffect.TristateEffectImproved,
 		}),
 
 		debuffs: Debuffs.create({
 			judgementOfWisdom: true,
 			giftOfArthas: true,
-			exposeArmor: TristateEffect.TristateEffectImproved,
-			faerieFire: true,
-			sunderArmor: true,
-			curseOfWeakness: TristateEffect.TristateEffectRegular,
+			exposeArmor: TristateEffect.TristateEffectMissing,
+			faerieFire: false,
+			sunderArmor: false,
+			curseOfRecklessness: false,
+			homunculi: true,
 		}),
 
 		other: Presets.OtherDefaults,
@@ -153,7 +152,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 	otherInputs: {
 		inputs: [
 			DruidInputs.LatencyMs,
-			DruidInputs.AssumeBleedActive,
+			// DruidInputs.AssumeBleedActive,
 			OtherInputs.TankAssignment,
 			OtherInputs.InFrontOfTarget,
 		],
