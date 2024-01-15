@@ -25,11 +25,11 @@ export type IconInputConfig<ModObject, T> = (
 	InputHelpers.TypedIconEnumPickerConfig<ModObject, T>
 );
 
-export const buildIconInput = (parent: HTMLElement, p: Player<Spec>, inputConfig: IconInputConfig<Player<Spec>, any>) => {
+export const buildIconInput = (parent: HTMLElement, player: Player<Spec>, inputConfig: IconInputConfig<Player<Spec>, any>) => {
 	if (inputConfig.type == 'icon') {
-		return new IconPicker<Player<Spec>, any>(parent, p, inputConfig);
+		return new IconPicker<Player<Spec>, any>(parent, player, inputConfig);
 	} else if (inputConfig.type == 'iconEnum') {
-		return new IconEnumPicker<Player<Spec>, any>(parent, p, inputConfig);
+		return new IconEnumPicker<Player<Spec>, any>(parent, player, inputConfig);
 	}
 };
 
@@ -65,57 +65,57 @@ interface BooleanInputConfig<T> {
 	faction?: Faction
 }
 
-export function makeBooleanRaidBuffInput<SpecType extends Spec>(config: BooleanInputConfig<RaidBuffs>): InputHelpers.TypedIconPickerConfig<Player<any>, boolean> {
+export function makeBooleanRaidBuffInput<SpecType extends Spec>(config: BooleanInputConfig<RaidBuffs>): InputHelpers.TypedIconPickerConfig<Player<SpecType>, boolean> {
 	return InputHelpers.makeBooleanIconInput<any, RaidBuffs, Player<SpecType>>({
-		getModObject: (p: Player<any>) => p,
-		showWhen: (p) =>
-			(config.minLevel || 0) <= p.getLevel() &&
-			p.getLevel() <= (config.maxLevel || MAX_CHARACTER_LEVEL) &&
-			(!config.faction || config.faction == p.getFaction()),
-		getValue: (p) => p.getRaid()!.getBuffs(),
-		setValue: (eventID: EventID, p: Player<SpecType>, newVal: RaidBuffs) => p.getRaid()!.setBuffs(eventID, newVal),
-		changeEmitter: (p) => TypedEvent.onAny([p.getRaid()!.buffsChangeEmitter, p.levelChangeEmitter, p.raceChangeEmitter]),
+		getModObject: (player: Player<SpecType>) => player,
+		showWhen: (player: Player<SpecType>) =>
+			(config.minLevel || 0) <= player.getLevel() &&
+			player.getLevel() <= (config.maxLevel || MAX_CHARACTER_LEVEL) &&
+			(!config.faction || config.faction == player.getFaction()),
+		getValue: (player: Player<SpecType>) => player.getRaid()!.getBuffs(),
+		setValue: (eventID: EventID, player: Player<SpecType>, newVal: RaidBuffs) => player.getRaid()!.setBuffs(eventID, newVal),
+		changeEmitter: (player: Player<SpecType>) => TypedEvent.onAny([player.getRaid()!.buffsChangeEmitter, player.levelChangeEmitter, player.raceChangeEmitter]),
 	}, config.id, config.fieldName, config.value);
 }
-// function makeBooleanPartyBuffInput(id: ActionId, fieldName: keyof PartyBuffs, value?: number): InputHelpers.TypedIconPickerConfig<Player<any>, boolean> {
+// function makeBooleanPartyBuffInput(id: ActionId, fieldName: keyof PartyBuffs, value?: number): InputHelpers.TypedIconPickerConfig<Player<SpecType>, boolean> {
 // 	return InputHelpers.makeBooleanIconInput<any, PartyBuffs, Party>({
-// 		getModObject: (p: Player<any>) => p.getParty()!,
+// 		getModObject: (player: Player<SpecType>) => player.getParty()!,
 // 		getValue: (party: Party) => party.getBuffs(),
 // 		setValue: (eventID: EventID, party: Party, newVal: PartyBuffs) => party.setBuffs(eventID, newVal),
 // 		changeEmitter: (party: Party) => party.buffsChangeEmitter,
 // 	}, id, fieldName, value);
 // }
 
-export function makeBooleanIndividualBuffInput(config: BooleanInputConfig<IndividualBuffs>): InputHelpers.TypedIconPickerConfig<Player<any>, boolean> {
-	return InputHelpers.makeBooleanIconInput<any, IndividualBuffs, Player<any>>({
-		getModObject: (p: Player<any>) => p,
-		showWhen: (p) =>
-			(config.minLevel || 0) <= p.getLevel() &&
-			p.getLevel() <= (config.maxLevel || MAX_CHARACTER_LEVEL) &&
-			(!config.faction || config.faction == p.getFaction()),
-		getValue: (p: Player<any>) => p.getBuffs(),
-		setValue: (eventID: EventID, p: Player<any>, newVal: IndividualBuffs) => p.setBuffs(eventID, newVal),
-		changeEmitter: (p: Player<any>) => TypedEvent.onAny([p.buffsChangeEmitter, p.levelChangeEmitter, p.raceChangeEmitter]),
+export function makeBooleanIndividualBuffInput<SpecType extends Spec>(config: BooleanInputConfig<IndividualBuffs>): InputHelpers.TypedIconPickerConfig<Player<SpecType>, boolean> {
+	return InputHelpers.makeBooleanIconInput<any, IndividualBuffs, Player<SpecType>>({
+		getModObject: (player: Player<SpecType>) => player,
+		showWhen: (player: Player<SpecType>) =>
+			(config.minLevel || 0) <= player.getLevel() &&
+			player.getLevel() <= (config.maxLevel || MAX_CHARACTER_LEVEL) &&
+			(!config.faction || config.faction == player.getFaction()),
+		getValue: (player: Player<SpecType>) => player.getBuffs(),
+		setValue: (eventID: EventID, player: Player<SpecType>, newVal: IndividualBuffs) => player.setBuffs(eventID, newVal),
+		changeEmitter: (player: Player<SpecType>) => TypedEvent.onAny([player.buffsChangeEmitter, player.levelChangeEmitter, player.raceChangeEmitter]),
 	}, config.id, config.fieldName, config.value);
 }
 
 // eslint-disable-next-line unused-imports/no-unused-vars
 export function makeBooleanConsumeInput<SpecType extends Spec>(config: BooleanInputConfig<Consumes>): InputHelpers.TypedIconPickerConfig<Player<SpecType>, boolean> {
-	return InputHelpers.makeBooleanIconInput<any, Consumes, Player<any>>({
-		getModObject: (p: Player<SpecType>) => p,
-		showWhen: (p) => p.getLevel() >= (config.minLevel || 0),
-		getValue: (p: Player<any>) => p.getConsumes(),
-		setValue: (eventID: EventID, p: Player<any>, newVal: Consumes) => p.setConsumes(eventID, newVal),
-		changeEmitter: (p: Player<any>) => TypedEvent.onAny([p.consumesChangeEmitter, p.levelChangeEmitter])
+	return InputHelpers.makeBooleanIconInput<any, Consumes, Player<SpecType>>({
+		getModObject: (player: Player<SpecType>) => player,
+		showWhen: (player: Player<SpecType>) => player.getLevel() >= (config.minLevel || 0),
+		getValue: (player: Player<SpecType>) => player.getConsumes(),
+		setValue: (eventID: EventID, player: Player<SpecType>, newVal: Consumes) => player.setConsumes(eventID, newVal),
+		changeEmitter: (player: Player<SpecType>) => TypedEvent.onAny([player.consumesChangeEmitter, player.levelChangeEmitter])
 	}, config.id, config.fieldName, config.value);
 }
-export function makeBooleanDebuffInput<SpecType extends Spec>(config: BooleanInputConfig<Debuffs>): InputHelpers.TypedIconPickerConfig<Player<any>, boolean> {
+export function makeBooleanDebuffInput<SpecType extends Spec>(config: BooleanInputConfig<Debuffs>): InputHelpers.TypedIconPickerConfig<Player<SpecType>, boolean> {
 	return InputHelpers.makeBooleanIconInput<any, Debuffs, Player<SpecType>>({
-		getModObject: (p: Player<SpecType>) => p,
-		showWhen: (p) => (config.minLevel || 0) <= p.getLevel() && p.getLevel() <= (config.maxLevel || MAX_CHARACTER_LEVEL),
-		getValue: (p) => p.getRaid()!.getDebuffs(),
-		setValue: (eventID: EventID, p: Player<SpecType>, newVal: Debuffs) => p.getRaid()!.setDebuffs(eventID, newVal),
-		changeEmitter: (p) => TypedEvent.onAny([p.getRaid()!.debuffsChangeEmitter, p.levelChangeEmitter]),
+		getModObject: (player: Player<SpecType>) => player,
+		showWhen: (player: Player<SpecType>) => (config.minLevel || 0) <= player.getLevel() && player.getLevel() <= (config.maxLevel || MAX_CHARACTER_LEVEL),
+		getValue: (player: Player<SpecType>) => player.getRaid()!.getDebuffs(),
+		setValue: (eventID: EventID, player: Player<SpecType>, newVal: Debuffs) => player.getRaid()!.setDebuffs(eventID, newVal),
+		changeEmitter: (player: Player<SpecType>) => TypedEvent.onAny([player.getRaid()!.debuffsChangeEmitter, player.levelChangeEmitter]),
 	}, config.id, config.fieldName, config.value);
 }
 
@@ -128,43 +128,43 @@ interface TristateInputConfig<T> {
 	faction?: Faction
 }
 
-export function makeTristateRaidBuffInput<SpecType extends Spec>(config: TristateInputConfig<RaidBuffs>): InputHelpers.TypedIconPickerConfig<Player<any>, number> {
+export function makeTristateRaidBuffInput<SpecType extends Spec>(config: TristateInputConfig<RaidBuffs>): InputHelpers.TypedIconPickerConfig<Player<SpecType>, number> {
 	return InputHelpers.makeTristateIconInput<any, RaidBuffs, Player<SpecType>>({
-		getModObject: (p: Player<SpecType>) => p,
-		showWhen: (p: Player<SpecType>) =>
-			(config.minLevel || 0) <= p.getLevel() &&
-			p.getLevel() <= (config.maxLevel || MAX_CHARACTER_LEVEL) &&
-			(!config.faction || config.faction == p.getFaction()),
-		getValue: (p: Player<SpecType>) => p.getRaid()!.getBuffs(),
-		setValue: (eventID: EventID, p: Player<SpecType>, newVal: RaidBuffs) => p.getRaid()!.setBuffs(eventID, newVal),
-		changeEmitter: (p: Player<SpecType>) => TypedEvent.onAny([p.getRaid()!.buffsChangeEmitter, p.levelChangeEmitter, p.raceChangeEmitter]),
+		getModObject: (player: Player<SpecType>) => player,
+		showWhen: (player: Player<SpecType>) =>
+			(config.minLevel || 0) <= player.getLevel() &&
+			player.getLevel() <= (config.maxLevel || MAX_CHARACTER_LEVEL) &&
+			(!config.faction || config.faction == player.getFaction()),
+		getValue: (player: Player<SpecType>) => player.getRaid()!.getBuffs(),
+		setValue: (eventID: EventID, player: Player<SpecType>, newVal: RaidBuffs) => player.getRaid()!.setBuffs(eventID, newVal),
+		changeEmitter: (player: Player<SpecType>) => TypedEvent.onAny([player.getRaid()!.buffsChangeEmitter, player.levelChangeEmitter, player.raceChangeEmitter]),
 	}, config.id, config.impId, config.fieldName);
 }
 
-export function makeTristateIndividualBuffInput(config: TristateInputConfig<IndividualBuffs>): InputHelpers.TypedIconPickerConfig<Player<any>, number> {
-	return InputHelpers.makeTristateIconInput<any, IndividualBuffs, Player<any>>({
-		getModObject: (p: Player<any>) => p,
-		showWhen: (p: Player<any>) =>
-			(config.minLevel || 0) <= p.getLevel() &&
-			p.getLevel() <= (config.maxLevel || MAX_CHARACTER_LEVEL) &&
-			(!config.faction || config.faction == p.getFaction()),
-		getValue: (p: Player<any>) => p.getBuffs(),
-		setValue: (eventID: EventID, p: Player<any>, newVal: IndividualBuffs) => p.setBuffs(eventID, newVal),
-		changeEmitter: (p: Player<any>) => TypedEvent.onAny([p.buffsChangeEmitter, p.levelChangeEmitter, p.raceChangeEmitter])
+export function makeTristateIndividualBuffInput<SpecType extends Spec>(config: TristateInputConfig<IndividualBuffs>): InputHelpers.TypedIconPickerConfig<Player<SpecType>, number> {
+	return InputHelpers.makeTristateIconInput<any, IndividualBuffs, Player<SpecType>>({
+		getModObject: (player: Player<SpecType>) => player,
+		showWhen: (player: Player<SpecType>) =>
+			(config.minLevel || 0) <= player.getLevel() &&
+			player.getLevel() <= (config.maxLevel || MAX_CHARACTER_LEVEL) &&
+			(!config.faction || config.faction == player.getFaction()),
+		getValue: (player: Player<SpecType>) => player.getBuffs(),
+		setValue: (eventID: EventID, player: Player<SpecType>, newVal: IndividualBuffs) => player.setBuffs(eventID, newVal),
+		changeEmitter: (player: Player<SpecType>) => TypedEvent.onAny([player.buffsChangeEmitter, player.levelChangeEmitter, player.raceChangeEmitter])
 	}, config.id, config.impId, config.fieldName);
 }
 
-export function makeTristateDebuffInput(id: ActionId, impId: ActionId, fieldName: keyof Debuffs): InputHelpers.TypedIconPickerConfig<Player<any>, number> {
+export function makeTristateDebuffInput<SpecType extends Spec>(id: ActionId, impId: ActionId, fieldName: keyof Debuffs): InputHelpers.TypedIconPickerConfig<Player<SpecType>, number> {
 	return InputHelpers.makeTristateIconInput<any, Debuffs, Raid>({
-		getModObject: (p: Player<any>) => p.getRaid()!,
+		getModObject: (player: Player<SpecType>) => player.getRaid()!,
 		getValue: (raid: Raid) => raid.getDebuffs(),
 		setValue: (eventID: EventID, raid: Raid, newVal: Debuffs) => raid.setDebuffs(eventID, newVal),
 		changeEmitter: (raid: Raid) => raid.debuffsChangeEmitter,
 	}, id, impId, fieldName);
 }
-// function makeQuadstateDebuffInput(id: ActionId, impId: ActionId, impId2: ActionId, fieldName: keyof Debuffs): InputHelpers.TypedIconPickerConfig<Player<any>, number> {
+// function makeQuadstateDebuffInput(id: ActionId, impId: ActionId, impId2: ActionId, fieldName: keyof Debuffs): InputHelpers.TypedIconPickerConfig<Player<SpecType>, number> {
 // 	return InputHelpers.makeQuadstateIconInput<any, Debuffs, Raid>({
-// 		getModObject: (p: Player<any>) => p.getRaid()!,
+// 		getModObject: (player: Player<SpecType>) => player.getRaid()!,
 // 		getValue: (raid: Raid) => raid.getDebuffs(),
 // 		setValue: (eventID: EventID, raid: Raid, newVal: Debuffs) => raid.setDebuffs(eventID, newVal),
 // 		changeEmitter: (raid: Raid) => raid.debuffsChangeEmitter,
@@ -181,44 +181,44 @@ interface MultiStateInputConfig<T> {
 	faction?: Faction
 }
 
-export function makeMultistateRaidBuffInput<SpecType extends Spec>(config: MultiStateInputConfig<RaidBuffs>): InputHelpers.TypedIconPickerConfig<Player<any>, number> {
+export function makeMultistateRaidBuffInput<SpecType extends Spec>(config: MultiStateInputConfig<RaidBuffs>): InputHelpers.TypedIconPickerConfig<Player<SpecType>, number> {
 	return InputHelpers.makeMultistateIconInput<any, RaidBuffs, Player<SpecType>>({
-		getModObject: (p: Player<SpecType>) => p,
-		showWhen: (p: Player<SpecType>) =>
-			(config.minLevel || 0) <= p.getLevel() &&
-			p.getLevel() <= (config.maxLevel || MAX_CHARACTER_LEVEL) &&
-			(!config.faction || config.faction == p.getFaction()),
-		getValue: (p: Player<SpecType>) => p.getRaid()!.getBuffs(),
-		setValue: (eventID: EventID, p: Player<SpecType>, newVal: RaidBuffs) => p.getRaid()!.setBuffs(eventID, newVal),
-		changeEmitter: (p: Player<SpecType>) => TypedEvent.onAny([p.getRaid()!.buffsChangeEmitter, p.levelChangeEmitter, p.raceChangeEmitter]),
+		getModObject: (player: Player<SpecType>) => player,
+		showWhen: (player: Player<SpecType>) =>
+			(config.minLevel || 0) <= player.getLevel() &&
+			player.getLevel() <= (config.maxLevel || MAX_CHARACTER_LEVEL) &&
+			(!config.faction || config.faction == player.getFaction()),
+		getValue: (player: Player<SpecType>) => player.getRaid()!.getBuffs(),
+		setValue: (eventID: EventID, player: Player<SpecType>, newVal: RaidBuffs) => player.getRaid()!.setBuffs(eventID, newVal),
+		changeEmitter: (player: Player<SpecType>) => TypedEvent.onAny([player.getRaid()!.buffsChangeEmitter, player.levelChangeEmitter, player.raceChangeEmitter]),
 	}, config.id, config.numStates, config.fieldName, config.multiplier);
 }
-// function makeMultistatePartyBuffInput(id: ActionId, numStates: number, fieldName: keyof PartyBuffs): InputHelpers.TypedIconPickerConfig<Player<any>, number> {
+// function makeMultistatePartyBuffInput(id: ActionId, numStates: number, fieldName: keyof PartyBuffs): InputHelpers.TypedIconPickerConfig<Player<SpecType>, number> {
 // 	return InputHelpers.makeMultistateIconInput<any, PartyBuffs, Party>({
-// 		getModObject: (p: Player<any>) => p.getParty()!,
+// 		getModObject: (player: Player<SpecType>) => player.getParty()!,
 // 		getValue: (party: Party) => party.getBuffs(),
 // 		setValue: (eventID: EventID, party: Party, newVal: PartyBuffs) => party.setBuffs(eventID, newVal),
 // 		changeEmitter: (party: Party) => party.buffsChangeEmitter,
 // 	}, id, numStates, fieldName);
 // }
-export function makeMultistateIndividualBuffInput<SpecType extends Spec>(config: MultiStateInputConfig<IndividualBuffs>): InputHelpers.TypedIconPickerConfig<Player<any>, number> {
+export function makeMultistateIndividualBuffInput<SpecType extends Spec>(config: MultiStateInputConfig<IndividualBuffs>): InputHelpers.TypedIconPickerConfig<Player<SpecType>, number> {
 	return InputHelpers.makeMultistateIconInput<any, IndividualBuffs, Player<SpecType>>({
-		getModObject: (p: Player<SpecType>) => p,
-		showWhen: (p: Player<SpecType>) =>
-			(config.minLevel || 0) <= p.getLevel() &&
-			p.getLevel() <= (config.maxLevel || MAX_CHARACTER_LEVEL) &&
-			(!config.faction || config.faction == p.getFaction()),
-		getValue: (p: Player<SpecType>) => p.getBuffs(),
-		setValue: (eventID: EventID, p: Player<SpecType>, newVal: IndividualBuffs) => p.setBuffs(eventID, newVal),
-		changeEmitter: (p: Player<SpecType>) => TypedEvent.onAny([p.buffsChangeEmitter, p.levelChangeEmitter, p.raceChangeEmitter]),
+		getModObject: (player: Player<SpecType>) => player,
+		showWhen: (player: Player<SpecType>) =>
+			(config.minLevel || 0) <= player.getLevel() &&
+			player.getLevel() <= (config.maxLevel || MAX_CHARACTER_LEVEL) &&
+			(!config.faction || config.faction == player.getFaction()),
+		getValue: (player: Player<SpecType>) => player.getBuffs(),
+		setValue: (eventID: EventID, player: Player<SpecType>, newVal: IndividualBuffs) => player.setBuffs(eventID, newVal),
+		changeEmitter: (player: Player<SpecType>) => TypedEvent.onAny([player.buffsChangeEmitter, player.levelChangeEmitter, player.raceChangeEmitter]),
 	}, config.id, config.numStates, config.fieldName, config.multiplier);
 }
-// function makeMultistateMultiplierIndividualBuffInput(id: ActionId, numStates: number, multiplier: number, fieldName: keyof IndividualBuffs): InputHelpers.TypedIconPickerConfig<Player<any>, number> {
-// 	return InputHelpers.makeMultistateIconInput<any, IndividualBuffs, Player<any>>({
-// 		getModObject: (p: Player<any>) => p,
-// 		getValue: (p: Player<any>) => p.getBuffs(),
-// 		setValue: (eventID: EventID, p: Player<any>, newVal: IndividualBuffs) => p.setBuffs(eventID, newVal),
-// 		changeEmitter: (p: Player<any>) => p.buffsChangeEmitter,
+// function makeMultistateMultiplierIndividualBuffInput(id: ActionId, numStates: number, multiplier: number, fieldName: keyof IndividualBuffs): InputHelpers.TypedIconPickerConfig<Player<SpecType>, number> {
+// 	return InputHelpers.makeMultistateIconInput<any, IndividualBuffs, Player<SpecType>>({
+// 		getModObject: (player: Player<SpecType>) => player,
+// 		getValue: (player: Player<SpecType>) => player.getBuffs(),
+// 		setValue: (eventID: EventID, player: Player<SpecType>, newVal: IndividualBuffs) => player.setBuffs(eventID, newVal),
+// 		changeEmitter: (player: Player<SpecType>) => player.buffsChangeEmitter,
 // 	}, id, numStates, fieldName, multiplier);
 // }
 
@@ -232,15 +232,15 @@ interface EnumInputConfig<ModObject, Message, T> {
 	faction?: Faction
 }
 
-export function makeEnumIndividualBuffInput<SpecType extends Spec>(config: EnumInputConfig<Player<any>, IndividualBuffs, number>): InputHelpers.TypedIconEnumPickerConfig<Player<any>, number> {
+export function makeEnumIndividualBuffInput<SpecType extends Spec>(config: EnumInputConfig<Player<SpecType>, IndividualBuffs, number>): InputHelpers.TypedIconEnumPickerConfig<Player<SpecType>, number> {
 	return InputHelpers.makeEnumIconInput<any, IndividualBuffs, Player<SpecType>, number>({
-		getModObject: (p: Player<SpecType>) => p,
-		showWhen: (p: Player<SpecType>) =>
-			(config.minLevel || 0) <= p.getLevel() &&
-			p.getLevel() <= (config.maxLevel || MAX_CHARACTER_LEVEL) &&
-			(!config.faction || config.faction == p.getFaction()),
-		getValue: (p: Player<SpecType>) => p.getBuffs(),
-		setValue: (eventID: EventID, p: Player<SpecType>, newVal: IndividualBuffs) => p.setBuffs(eventID, newVal),
-		changeEmitter: (p: Player<SpecType>) => TypedEvent.onAny([p.buffsChangeEmitter, p.levelChangeEmitter, p.raceChangeEmitter]),
+		getModObject: (player: Player<SpecType>) => player,
+		showWhen: (player: Player<SpecType>) =>
+			(config.minLevel || 0) <= player.getLevel() &&
+			player.getLevel() <= (config.maxLevel || MAX_CHARACTER_LEVEL) &&
+			(!config.faction || config.faction == player.getFaction()),
+		getValue: (player: Player<SpecType>) => player.getBuffs(),
+		setValue: (eventID: EventID, player: Player<SpecType>, newVal: IndividualBuffs) => player.setBuffs(eventID, newVal),
+		changeEmitter: (player: Player<SpecType>) => TypedEvent.onAny([player.buffsChangeEmitter, player.levelChangeEmitter, player.raceChangeEmitter]),
 	}, config.fieldName, config.values, config.numColumns || 1, config.direction || IconEnumPickerDirection.Vertical)
 };
