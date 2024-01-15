@@ -295,6 +295,7 @@ enum AgilityElixir {
 	ElixirOfTheMongoose = 1;
 	ElixirOfGreaterAgility = 2;
 	ElixirOfLesserAgility = 3;
+	ScrollOfAgility = 4;
 }
 
 enum ManaRegenElixir {
@@ -307,6 +308,7 @@ enum StrengthBuff {
 	JujuPower = 1;
 	ElixirOfGiants = 2;
 	ElixirOfOgresStrength = 3;
+	ScrollOfStrength = 4;
 }
 
 enum AttackPowerBuff {
@@ -359,6 +361,7 @@ enum Food {
 	FoodBlessSunfruit = 7;
 	FoodHotWolfRibs = 8;
 	FoodTenderWolfSteak = 9;
+	FoodSmokedSagefish = 10;
 }
 
 enum SaygesFortune {
@@ -431,6 +434,7 @@ message RaidBuffs {
 
 	// SoD Runes
 	int32 demonic_pact = 32;
+	bool horn_of_lordaeron = 33;
 }
 
 // Buffs that affect a single party.

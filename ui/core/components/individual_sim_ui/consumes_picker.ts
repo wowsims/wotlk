@@ -160,6 +160,8 @@ export class ConsumesPicker extends Component {
 		this.rootElem.appendChild(fragment.children[0] as HTMLElement);
 
 		const foodOptions = this.simUI.splitRelevantOptions([
+			{ item: Food.FoodHotWolfRibs, stats: [Stat.StatSpirit] },
+			{ item: Food.FoodSmokedSagefish, stats: [Stat.StatMP5] },
 			{ item: Food.FoodNightfinSoup, stats: [Stat.StatMP5, Stat.StatSpellPower] },
 			{ item: Food.FoodGrilledSquid, stats: [Stat.StatAgility] },
 			{ item: Food.FoodSmokedDesertDumpling, stats: [Stat.StatStrength] },
@@ -200,12 +202,14 @@ export class ConsumesPicker extends Component {
 	}
 
 	private buildSpellPowerBuffPicker() {
-		const includeSpellPower = !this.simUI.individualConfig.excludeBuffDebuffInputs.includes(IconInputs.SpellDamageBuff);
-		const includeShadowPower = !this.simUI.individualConfig.excludeBuffDebuffInputs.includes(IconInputs.ShadowDamageBuff);
-		const includeFirePower = !this.simUI.individualConfig.excludeBuffDebuffInputs.includes(IconInputs.FireDamageBuff);
-		const includeFrostPower = !this.simUI.individualConfig.excludeBuffDebuffInputs.includes(IconInputs.FrostDamageBuff);
+		const config = this.simUI.individualConfig;
+		const includeSpellPower = config.epStats.includes(Stat.StatSpellPower) && !config.excludeBuffDebuffInputs.includes(IconInputs.SpellDamageBuff);
 
-		if (!includeSpellPower && !includeShadowPower && !includeFirePower && !includeFrostPower) return;
+		if (!includeSpellPower) return;
+
+		const includeShadowPower = !config.excludeBuffDebuffInputs.includes(IconInputs.ShadowDamageBuff);
+		const includeFirePower = !config.excludeBuffDebuffInputs.includes(IconInputs.FireDamageBuff);
+		const includeFrostPower = !config.excludeBuffDebuffInputs.includes(IconInputs.FrostDamageBuff);
 
 		let fragment = document.createElement('fragment');
 		fragment.innerHTML = `

@@ -26,6 +26,7 @@ const (
 	PowerWordFortitude
 	StrengthOfEarth
 	TrueshotAura
+	HornOfLordaeron
 
 	// Resistance
 	AspectOfTheWild
@@ -170,6 +171,24 @@ var BuffSpellByLevel = map[BuffName]map[int32]stats.Stats{
 		},
 		60: stats.Stats{
 			stats.Stamina: 60,
+		},
+	},
+	HornOfLordaeron: {
+		25: stats.Stats{
+			stats.Strength: 17,
+			stats.Agility:  17,
+		},
+		40: stats.Stats{
+			stats.Strength: 26,
+			stats.Agility:  26,
+		},
+		50: stats.Stats{
+			stats.Strength: 45,
+			stats.Agility:  45,
+		},
+		60: stats.Stats{
+			stats.Strength: 89,
+			stats.Agility:  89,
 		},
 	},
 	ManaSpring: {
@@ -504,7 +523,10 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 	if raidBuffs.BattleShout != proto.TristateEffect_TristateEffectMissing {
 		MakePermanent(BattleShoutAura(&character.Unit, GetTristateValueInt32(raidBuffs.BattleShout, 0, 5), 0, level))
 	}
-	if individualBuffs.BlessingOfMight != proto.TristateEffect_TristateEffectMissing {
+
+	if raidBuffs.HornOfLordaeron {
+		character.AddStats(BuffSpellByLevel[HornOfLordaeron][level])
+	} else if individualBuffs.BlessingOfMight != proto.TristateEffect_TristateEffectMissing {
 		MakePermanent(BlessingOfMightAura(&character.Unit, GetTristateValueInt32(individualBuffs.BlessingOfMight, 0, 5), level))
 	}
 

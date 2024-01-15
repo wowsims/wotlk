@@ -50,6 +50,15 @@ func applyConsumeEffects(agent Agent) {
 
 	if consumes.Food != proto.Food_FoodUnknown {
 		switch consumes.Food {
+		case proto.Food_FoodHotWolfRibs:
+			character.AddStats(stats.Stats{
+				stats.Stamina: 8,
+				stats.Spirit:  8,
+			})
+		case proto.Food_FoodSmokedSagefish:
+			character.AddStats(stats.Stats{
+				stats.MP5: 3,
+			})
 		case proto.Food_FoodGrilledSquid:
 			character.AddStats(stats.Stats{
 				stats.Agility: 10,
@@ -96,6 +105,8 @@ func applyConsumeEffects(agent Agent) {
 			character.AddStats(stats.Stats{
 				stats.Agility: 8,
 			})
+		case proto.AgilityElixir_ScrollOfAgility:
+			character.AddStats(BuffSpellByLevel[ScrollOfAgility][character.Level])
 		}
 	}
 
@@ -113,6 +124,8 @@ func applyConsumeEffects(agent Agent) {
 			character.AddStats(stats.Stats{
 				stats.Strength: 8,
 			})
+		case proto.StrengthBuff_ScrollOfStrength:
+			character.AddStats(BuffSpellByLevel[ScrollOfStrength][character.Level])
 		}
 	}
 
