@@ -2,6 +2,7 @@ package warlock
 
 import (
 	"math"
+	"time"
 
 	"github.com/wowsims/sod/sim/core"
 	"github.com/wowsims/sod/sim/core/proto"
@@ -205,12 +206,16 @@ func (wp *WarlockPet) OnGCDReady(sim *core.Simulation) {
 	if wp.manaPooling {
 		maxPossibleCasts := sim.GetRemainingDuration().Seconds() / wp.primaryAbility.CurCast.CastTime.Seconds()
 
-		if wp.CurrentMana() > (maxPossibleCasts*wp.primaryAbility.CurCast.Cost)*0.5 {
+		if wp.CurrentMana() > (maxPossibleCasts*wp.primaryAbility.CurCast.Cost)*0.75 {
 			wp.manaPooling = false
+			wp.WaitUntil(sim, sim.CurrentTime+10*time.Millisecond)
+			return
 		}
 
-		if wp.CurrentMana() >= wp.MaxMana()*0.9 {
+		if wp.CurrentMana() >= wp.MaxMana()*0.94 {
 			wp.manaPooling = false
+			wp.WaitUntil(sim, sim.CurrentTime+10*time.Millisecond)
+			return
 		}
 
 		if wp.manaPooling {

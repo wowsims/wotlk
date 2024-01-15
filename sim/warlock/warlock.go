@@ -171,23 +171,6 @@ func NewWarlock(character *core.Character, options *proto.Player) *Warlock {
 	return warlock
 }
 
-func RegisterWarlock() {
-	core.RegisterAgentFactory(
-		proto.Player_Warlock{},
-		proto.Spec_SpecWarlock,
-		func(character *core.Character, options *proto.Player) core.Agent {
-			return NewWarlock(character, options)
-		},
-		func(player *proto.Player, spec interface{}) {
-			playerSpec, ok := spec.(*proto.Player_Warlock)
-			if !ok {
-				panic("Invalid spec value for Warlock!")
-			}
-			player.Spec = playerSpec
-		},
-	)
-}
-
 func (warlock *Warlock) HasRune(rune proto.WarlockRune) bool {
 	return warlock.HasRuneById(int32(rune))
 }

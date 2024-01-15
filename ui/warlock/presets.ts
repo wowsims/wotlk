@@ -1,24 +1,40 @@
 import {
+	Conjured,
 	Consumes,
 	Debuffs,
+	FirePowerBuff,
 	Flask,
 	Food,
 	IndividualBuffs,
+	Potions,
 	Profession,
 	RaidBuffs,
-	TristateEffect
+	TristateEffect,
+	WeaponImbue
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 import {
 	Warlock_Options_Armor as Armor,
 	Warlock_Options_Summon as Summon,
 	Warlock_Options as WarlockOptions,
-	Warlock_Options_WeaponImbue as WeaponImbue,
+	Warlock_Options_WeaponImbue as WarlockWeaponImbue,
 } from '../core/proto/warlock.js';
 import * as PresetUtils from '../core/preset_utils.js';
 
 import DefaultGear from './gear_sets/blank.gear.json';
 import DefaultAPL from './apls/default.apl.json';
+
+import AfflictionTankGear from './gear_sets/affi.tank.gear.json';
+import DestroTankGear from './gear_sets/destro.tank.gear.json';
+
+export const GearAfflictionTankDefault = PresetUtils.makePresetGear('Affliction Tank', AfflictionTankGear);
+export const GearDestructionTankDefault = PresetUtils.makePresetGear('Destruction Tank', DestroTankGear);
+
+import AfflictionTankAPL from './apls/affi.tank.apl.json';
+import DestroTankAPL from './apls/destro.tank.apl.json';
+
+export const RotationAfflictionTankDefault = PresetUtils.makePresetAPLRotation('Affliction Tank', AfflictionTankAPL);
+export const RotationDestructionTankDefault = PresetUtils.makePresetAPLRotation('Destruction Tank', DestroTankAPL);
 
 export const GearAfflictionDefault = PresetUtils.makePresetGear('Blank', DefaultGear);
 export const GearDemonologyDefault = PresetUtils.makePresetGear('Blank', DefaultGear);
@@ -38,39 +54,50 @@ export const DefaultTalents = {
 	}),
 };
 
+export const AfflictionTankTalents = {
+	name: 'Affliction Tank',
+	data: SavedTalents.create({
+		talentsString: '050025001-003',
+	}),
+};
+
+export const DestroTalents = {
+	name: 'Destruction',
+	data: SavedTalents.create({
+		talentsString: '-03-0550201',
+	}),
+};
+
 export const DefaultOptions = WarlockOptions.create({
 	armor: Armor.DemonArmor,
 	summon: Summon.Imp,
-	weaponImbue: WeaponImbue.Spellstone,
+	weaponImbue: WarlockWeaponImbue.NoWeaponImbue,
 });
 
 export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskUnknown,
-	food: Food.FoodUnknown,
+	food: Food.FoodSmokedSagefish,
+	defaultPotion: Potions.ManaPotion,
+	mainHandImbue: WeaponImbue.BlackfathomManaOil,
+	firePowerBuff: FirePowerBuff.ElixirOfFirepower,
 });
 
 export const DefaultRaidBuffs = RaidBuffs.create({
+	powerWordFortitude: TristateEffect.TristateEffectImproved,
 	giftOfTheWild: TristateEffect.TristateEffectImproved,
-	strengthOfEarthTotem: TristateEffect.TristateEffectRegular,
 	arcaneBrilliance: true,
 	divineSpirit: true,
-	trueshotAura: true,
-	leaderOfThePack: true,
-	moonkinAura: false,
-	windfuryTotem: true,
-	battleShout: TristateEffect.TristateEffectImproved,
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({
-	blessingOfKings: true,
+	aspectOfTheLion: true,
 	blessingOfWisdom: TristateEffect.TristateEffectImproved,
 	blessingOfMight: TristateEffect.TristateEffectImproved,
 });
 
 export const DefaultDebuffs = Debuffs.create({
-	sunderArmor: true,
+	homunculi: true,
 	faerieFire: true,
-	judgementOfWisdom: true,
 });
 
 export const OtherDefaults = {
@@ -78,5 +105,4 @@ export const OtherDefaults = {
 	profession1: Profession.Engineering,
 	profession2: Profession.Tailoring,
 	channelClipDelay: 150,
-	nibelungAverageCasts: 11,
 };

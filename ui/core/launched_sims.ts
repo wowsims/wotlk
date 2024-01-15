@@ -52,7 +52,7 @@ export const aplLaunchStatuses: Record<Spec, LaunchStatus> = {
 	[Spec.SpecRetributionPaladin]: LaunchStatus.Beta,
 	[Spec.SpecHealingPriest]: LaunchStatus.Launched,
 	[Spec.SpecShadowPriest]: LaunchStatus.Launched,
-	[Spec.SpecWarlock]: LaunchStatus.Alpha,
+	[Spec.SpecWarlock]: LaunchStatus.Beta,
 	[Spec.SpecWarrior]: LaunchStatus.Alpha,
 	[Spec.SpecProtectionWarrior]: LaunchStatus.Launched,
 };

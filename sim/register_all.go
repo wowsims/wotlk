@@ -19,7 +19,7 @@ import (
 	// "github.com/wowsims/sod/sim/shaman/elemental"
 	// "github.com/wowsims/sod/sim/shaman/enhancement"
 	// restoShaman "github.com/wowsims/sod/sim/shaman/restoration"
-	"github.com/wowsims/sod/sim/warlock"
+	dpsWarlock "github.com/wowsims/sod/sim/warlock/dps"
 	dpsWarrior "github.com/wowsims/sod/sim/warrior/dps"
 	// protectionWarrior "github.com/wowsims/sod/sim/warrior/protection"
 )
@@ -49,5 +49,5 @@ func RegisterAll() {
 	// holyPaladin.RegisterHolyPaladin()
 	// protectionPaladin.RegisterProtectionPaladin()
 	// retribution.RegisterRetributionPaladin()
-	warlock.RegisterWarlock()
+	dpsWarlock.RegisterDpsWarlock()
 }

@@ -1,4 +1,4 @@
-package warlock
+package dps
 
 import (
 	"testing"
@@ -9,7 +9,7 @@ import (
 )
 
 func init() {
-	RegisterWarlock()
+	RegisterDpsWarlock()
 }
 
 func TestAffliction(t *testing.T) {
@@ -80,20 +80,12 @@ var AfflictionTalents = "2350002030023510253500331151--550000051"
 var DemonologyTalents = "-203203301035012530135201351-550000052"
 var DestructionTalents = "-03310030003-05203205210331051335230351"
 
-var defaultDestroRotation = &proto.Warlock_Rotation{
-	Type:         proto.Warlock_Rotation_Destruction,
-	PrimarySpell: proto.Warlock_Rotation_Incinerate,
-	SecondaryDot: proto.Warlock_Rotation_Immolate,
-	SpecSpell:    proto.Warlock_Rotation_ChaosBolt,
-	Curse:        proto.Warlock_Rotation_Doom,
-	Corruption:   false,
-	DetonateSeed: true,
-}
+var defaultDestroRotation = &proto.Warlock_Rotation{}
 
 var defaultDestroOptions = &proto.Warlock_Options{
-	Armor:       proto.Warlock_Options_FelArmor,
+	Armor:       proto.Warlock_Options_DemonArmor,
 	Summon:      proto.Warlock_Options_Imp,
-	WeaponImbue: proto.Warlock_Options_GrandFirestone,
+	WeaponImbue: proto.Warlock_Options_NoWeaponImbue,
 }
 
 var DefaultDestroWarlock = &proto.Player_Warlock{
@@ -119,37 +111,14 @@ var afflictionItemSwap = &proto.Player_Warlock{
 }
 
 var defaultAfflictionOptions = &proto.Warlock_Options{
-	Armor:       proto.Warlock_Options_FelArmor,
-	Summon:      proto.Warlock_Options_Felhunter,
-	WeaponImbue: proto.Warlock_Options_GrandSpellstone,
+	Armor:       proto.Warlock_Options_DemonArmor,
+	Summon:      proto.Warlock_Options_Imp,
+	WeaponImbue: proto.Warlock_Options_NoWeaponImbue,
 }
 
-var defaultAfflictionRotation = &proto.Warlock_Rotation{
-	Type:         proto.Warlock_Rotation_Affliction,
-	PrimarySpell: proto.Warlock_Rotation_ShadowBolt,
-	SecondaryDot: proto.Warlock_Rotation_UnstableAffliction,
-	SpecSpell:    proto.Warlock_Rotation_Haunt,
-	Curse:        proto.Warlock_Rotation_Agony,
-	Corruption:   true,
-	DetonateSeed: true,
-}
+var defaultAfflictionRotation = &proto.Warlock_Rotation{}
 
-var afflictionItemSwapRotation = &proto.Warlock_Rotation{
-	Type:             proto.Warlock_Rotation_Affliction,
-	PrimarySpell:     proto.Warlock_Rotation_ShadowBolt,
-	SecondaryDot:     proto.Warlock_Rotation_UnstableAffliction,
-	SpecSpell:        proto.Warlock_Rotation_Haunt,
-	Curse:            proto.Warlock_Rotation_Agony,
-	Corruption:       true,
-	DetonateSeed:     true,
-	EnableWeaponSwap: true,
-	WeaponSwap: &proto.ItemSwap{
-		MhItem: &proto.ItemSpec{
-			Id:      45457,
-			Enchant: 3790,
-		},
-	},
-}
+var afflictionItemSwapRotation = &proto.Warlock_Rotation{}
 
 // ---------------------------------------
 var DefaultDemonologyWarlock = &proto.Player_Warlock{
@@ -160,25 +129,17 @@ var DefaultDemonologyWarlock = &proto.Player_Warlock{
 }
 
 var defaultDemonologyOptions = &proto.Warlock_Options{
-	Armor:       proto.Warlock_Options_FelArmor,
-	Summon:      proto.Warlock_Options_Felguard,
-	WeaponImbue: proto.Warlock_Options_GrandSpellstone,
+	Armor:       proto.Warlock_Options_DemonArmor,
+	Summon:      proto.Warlock_Options_Imp,
+	WeaponImbue: proto.Warlock_Options_NoWeaponImbue,
 }
 
-var defaultDemonologyRotation = &proto.Warlock_Rotation{
-	Type:         proto.Warlock_Rotation_Demonology,
-	PrimarySpell: proto.Warlock_Rotation_ShadowBolt,
-	SecondaryDot: proto.Warlock_Rotation_Immolate,
-	Curse:        proto.Warlock_Rotation_Doom,
-	Corruption:   true,
-	DetonateSeed: true,
-}
+var defaultDemonologyRotation = &proto.Warlock_Rotation{}
 
 // ---------------------------------------------------------
 
 var FullConsumes = &proto.Consumes{
-	Flask:         proto.Flask_FlaskOfTheFrostWyrm,
-	DefaultPotion: proto.Potions_PotionOfWildMagic,
-	PrepopPotion:  proto.Potions_PotionOfWildMagic,
-	Food:          proto.Food_FoodFishFeast,
+	Flask:         proto.Flask_FlaskOfSupremePower,
+	DefaultPotion: proto.Potions_ManaPotion,
+	Food:          proto.Food_FoodBlessSunfruit,
 }

@@ -144,27 +144,41 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 	presets: {
 		// Preset talents that the user can quickly select.
 		talents: [
-			Presets.DefaultTalents,
+			Presets.AfflictionTankTalents,
+			Presets.DestroTalents,
 		],
 		// Preset rotations that the user can quickly select.
 		rotations: [
-			Presets.RotationDemonologyDefault,
+			Presets.RotationAfflictionTankDefault,
+			Presets.RotationDestructionTankDefault,
 		],
 
 		// Preset gear configurations that the user can quickly select.
 		gear: [
-			Presets.GearDemonologyDefault,
+			Presets.GearAfflictionTankDefault,
+			Presets.GearDestructionTankDefault,
 		],
 	},
 
 	autoRotation: (player: Player<Spec.SpecWarlock>): APLRotation => {
 		const talentTree = player.getTalentTree();
-		if (talentTree == 0) {
-			return Presets.RotationAfflictionDefault.rotation.rotation!;
-		} else if (talentTree == 1) {
-			return Presets.RotationDemonologyDefault.rotation.rotation!;
+		const isTank = player.getGear().getEquippedItem(ItemSlot.ItemSlotHands)?.rune?.id == 403789
+		if (isTank) {
+			if (talentTree == 0) {
+				return Presets.RotationAfflictionTankDefault.rotation.rotation!;
+			} else if (talentTree == 1) {
+				return Presets.RotationAfflictionTankDefault.rotation.rotation!;
+			} else {
+				return Presets.RotationDestructionTankDefault.rotation.rotation!;
+			}
 		} else {
-			return Presets.RotationDestructionDefault.rotation.rotation!;
+			if (talentTree == 0) {
+				return Presets.RotationAfflictionDefault.rotation.rotation!;
+			} else if (talentTree == 1) {
+				return Presets.RotationDemonologyDefault.rotation.rotation!;
+			} else {
+				return Presets.RotationDestructionDefault.rotation.rotation!;
+			}
 		}
 	},
 

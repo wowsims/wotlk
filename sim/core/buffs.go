@@ -705,6 +705,13 @@ func applyPetBuffEffects(petAgent PetAgent, raidBuffs *proto.RaidBuffs, partyBuf
 		individualBuffs.BlessingOfWisdom = 0
 	}
 
+	// Pets no longer get world buffs
+	individualBuffs.BoonOfBlackfathom = false
+	individualBuffs.AshenvalePvpBuff = false
+	individualBuffs.RallyingCryOfTheDragonslayer = false
+	individualBuffs.WarchiefsBlessing = false
+	individualBuffs.SpiritOfZandalar = false
+
 	applyBuffEffects(petAgent, raidBuffs, partyBuffs, individualBuffs)
 }
 

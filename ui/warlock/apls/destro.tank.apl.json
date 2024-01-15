@@ -1,0 +1,14 @@
+{
+  "type": "TypeAPL",
+  "prepullActions": [
+    {"action":{"castSpell":{"spellId":{"spellId":403789}}},"doAtValue":{"const":{"val":"-100s"}}},
+    {"action":{"castSpell":{"spellId":{"spellId":412758}}},"doAtValue":{"const":{"val":"-2.0s"}}}
+  ],
+  "priorityList": [
+    {"action":{"condition":{"not":{"val":{"auraIsActive":{"sourceUnit":{"type":"CurrentTarget"},"auraId":{"spellId":403650}}}}},"channelSpell":{"spellId":{"spellId":5740,"rank":1},"interruptIf":{"gcdIsReady":{}}}}},
+    {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"currentMana":{}},"rhs":{"const":{"val":"240"}}}},"castSpell":{"spellId":{"spellId":1455,"rank":2}}}},
+    {"action":{"condition":{"cmp":{"op":"OpGe","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"24s"}}}},"multidot":{"spellId":{"spellId":1014,"rank":2},"maxDots":1,"maxOverlap":{"const":{"val":"0ms"}}}}},
+    {"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpLe","lhs":{"auraRemainingTime":{"auraId":{"spellId":412758}}},"rhs":{"const":{"val":"2s"}}}},{"cmp":{"op":"OpGe","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"8s"}}}}]}},"castSpell":{"spellId":{"spellId":412758}}}},
+    {"action":{"castSpell":{"spellId":{"spellId":5676,"rank":1}}}}
+  ]
+}
