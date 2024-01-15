@@ -1368,6 +1368,11 @@ export class Player<SpecType extends Spec> {
 				|| includeCategories.length == 0
 				|| includeCategories.includes(cat);
 
+		// For backwards compatibility with legacy rotations (removed on 2024/01/15).
+		if (proto.rotation?.type == APLRotationType.TypeLegacy) {
+			proto.rotation.type = APLRotationType.TypeAuto;
+		}
+
 		TypedEvent.freezeAllAndDo(() => {
 			if (loadCategory(SimSettingCategories.Gear)) {
 				this.setGear(eventID, proto.equipment ? this.sim.db.lookupEquipmentSpec(proto.equipment) : new Gear({}));

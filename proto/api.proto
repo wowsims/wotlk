@@ -65,6 +65,9 @@ message Player {
 
 	APLRotation rotation = 40;
 
+	// TODO: Move most of the remaining fields into a 'MiscellaneousPlayerOptions' message.
+	// This will remove a lot of the boilerplate code in the UI for each new field.
+
 	int32 reaction_time_ms = 41;
 	int32 channel_clip_delay_ms = 42;
 	bool in_front_of_target = 23;
