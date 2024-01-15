@@ -883,8 +883,8 @@ dps_results: {
 dps_results: {
  key: "TestMM-Average-Default"
  value: {
-  dps: 7326.34916
-  tps: 6407.8235
+  dps: 7326.34911
+  tps: 6407.82346
  }
 }
 dps_results: {
