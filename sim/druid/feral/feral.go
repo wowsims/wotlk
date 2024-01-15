@@ -41,8 +41,6 @@ func NewFeralDruid(character *core.Character, options *proto.Player) *FeralDruid
 
 	cat.AssumeBleedActive = feralOptions.Options.AssumeBleedActive
 	cat.maxRipTicks = cat.MaxRipTicks()
-	cat.prepopOoc = feralOptions.Rotation.PrePopOoc
-	cat.setupRotation(feralOptions.Rotation)
 
 	cat.EnableEnergyBar(100.0)
 
