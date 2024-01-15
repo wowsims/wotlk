@@ -695,6 +695,7 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 		AoeMangleBuilder: equipedIdol == 45509 || equipedIdol == 47668,
 		RakeDpeCheck:     equipedIdol != 50456,
 	}
+	cat.prepopOoc = rotation.PrePopOoc
 
 	// Use automatic values unless specified
 	if rotation.ManualParams {
