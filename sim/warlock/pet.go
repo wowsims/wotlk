@@ -109,9 +109,6 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 		// imp has a slightly different agi crit scaling coef for some reason
 		wp.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance*1/51.0204)
 
-		// Imp gets 0.1mp5 casting regen per int
-		//wp.AddStatDependency(stats.Intellect, stats.MP5, 0.1)
-
 		// Imp gets 1mp/5 non casting regen per spirit
 		wp.PseudoStats.SpiritRegenMultiplier = 1
 		wp.PseudoStats.SpiritRegenRateCasting = 0
@@ -122,16 +119,6 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 	} else {
 		wp.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance*1/52.0833)
 	}
-
-	wp.AddStats(stats.Stats{
-		// stats.MeleeCrit: float64(warlock.Talents.DemonicTactics) * 2 * core.CritRatingPerCritChance,
-		// stats.SpellCrit: float64(warlock.Talents.DemonicTactics) * 2 * core.CritRatingPerCritChance,
-
-		// Fix pet stats resulting from gaining the incorrect amount of stats from suppression/hit debuff
-		// see makeStatInheritance() below for a more details about these values
-		//stats.MeleeHit: -float64(warlock.Talents.Suppression) * core.MeleeHitRatingPerHitChance,
-		//stats.SpellHit: (-5.0 * float64(warlock.Talents.Suppression)) / 12.0 * core.SpellHitRatingPerHitChance,
-	})
 
 	wp.AutoAttacks.MHConfig().DamageMultiplier *= 1.0 + 0.04*float64(warlock.Talents.UnholyPower)
 

@@ -419,6 +419,7 @@ func (unit *Unit) finalize() {
 
 	unit.defaultTarget = unit.CurrentTarget
 	unit.applyParryHaste()
+	unit.applySpellPushback()
 	unit.updateCastSpeed()
 
 	// All stats added up to this point are part of the 'initial' stats.

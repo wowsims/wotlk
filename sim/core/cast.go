@@ -78,6 +78,65 @@ func (spell *Spell) castFailureHelper(sim *Simulation, gracefulFailure bool, mes
 	return false
 }
 
+func (unit *Unit) applySpellPushback() {
+	unit.RegisterAura(Aura{
+		Label:    "Spell Pushback",
+		Duration: NeverExpires,
+		OnReset: func(aura *Aura, sim *Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitTaken: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
+			if !result.Landed() {
+				return
+			}
+
+			if result.Damage <= 0 {
+				return
+			}
+
+			if !spell.ProcMask.Matches(ProcMaskDirect) {
+				return
+			}
+
+			if hc := aura.Unit.Hardcast; hc.Expires > sim.CurrentTime {
+				// Do spell pushback
+				pushback := time.Millisecond * 500
+
+				hcSpell := aura.Unit.GetSpell(hc.ActionID)
+
+				if hcSpell.Flags.Matches(SpellFlagChanneled) {
+					newExpires := max(sim.CurrentTime, hc.Expires-pushback)
+					if sim.Log != nil {
+						aura.Unit.Log(sim, "Unit Hardcast shortened by %s due to spell hit taken, will now occur at %s", pushback, newExpires)
+					}
+
+					// Update Dot if present
+					if hcDot := hcSpell.CurDot(); hcDot != nil {
+						hcDot.UpdateExpires(newExpires)
+					}
+
+					aura.Unit.Hardcast.Expires = newExpires
+					hcSpell.SpellMetrics[aura.Unit.CurrentTarget.UnitIndex].TotalCastTime -= pushback
+
+				} else {
+					if sim.Log != nil {
+						aura.Unit.Log(sim, "Unit Hardcast extended by %s due to spell hit taken, will now occur at %s", pushback, hc.Expires+pushback)
+					}
+
+					aura.Unit.Hardcast.Expires += pushback
+					hcSpell.SpellMetrics[aura.Unit.CurrentTarget.UnitIndex].TotalCastTime += pushback
+				}
+
+				// Update GCDTimer
+				aura.Unit.SetGCDTimer(sim, aura.Unit.Hardcast.Expires)
+
+				// Update Swing timer
+				aura.Unit.AutoAttacks.StopMeleeUntil(sim, aura.Unit.Hardcast.Expires, false)
+			}
+		},
+	})
+}
+
 func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
 	return func(sim *Simulation, target *Unit) bool {
 		spell.CurCast = spell.DefaultCast
@@ -142,8 +201,8 @@ func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
 
 		// Non melee casts
 		if spell.Flags.Matches(SpellFlagResetAttackSwing) && spell.Unit.AutoAttacks.enabled {
-			minCastTime := max(spell.CurCast.CastTime, spell.CurCast.ChannelTime)
-			spell.Unit.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime+minCastTime, false)
+			restartMeleeAt := sim.CurrentTime + spell.CurCast.CastTime + spell.CurCast.ChannelTime
+			spell.Unit.AutoAttacks.StopMeleeUntil(sim, restartMeleeAt, false)
 		}
 
 		// Hardcasts
