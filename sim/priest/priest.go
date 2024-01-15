@@ -3,6 +3,7 @@ package priest
 import (
 	"github.com/wowsims/sod/sim/core"
 	"github.com/wowsims/sod/sim/core/proto"
+	"github.com/wowsims/sod/sim/core/stats"
 )
 
 var TalentTreeSizes = [3]int{15, 16, 16}
@@ -111,6 +112,11 @@ func New(char *core.Character, talents string) *Priest {
 	core.FillTalentsProto(priest.Talents.ProtoReflect(), talents, TalentTreeSizes)
 
 	priest.EnableManaBar()
+
+	// Set mana regen to 12.5 + Spirit/4 each 2s tick
+	priest.SpiritManaRegenPerSecond = func() float64 {
+		return 6.25 + priest.GetStat(stats.Spirit)/8
+	}
 
 	return priest
 }
