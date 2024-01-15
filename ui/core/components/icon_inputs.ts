@@ -33,24 +33,6 @@ export const buildIconInput = (parent: HTMLElement, player: Player<Spec>, inputC
 	}
 };
 
-// TODO: These should be moved to consumes
-export const GiftOfArthas = withLabel(
-	makeBooleanDebuffInput({id: ActionId.fromSpellId(11374), fieldName: 'giftOfArthas'}),
-	'Gift of Arthas',
-);
-export const CrystalYield = withLabel(
-	makeBooleanDebuffInput({id: ActionId.fromSpellId(15235), fieldName: 'crystalYield'}),
-	'Crystal Yield',
-);
-
-// Consumes
-export const Sapper = makeBooleanConsumeInput({id: ActionId.fromItemId(10646), fieldName: 'sapper', minLevel: 40});
-
-// TODO: Classic
-// export const PetScrollOfAgilityV = makeBooleanConsumeInput(ActionId.fromItemId(27498), 'petScrollOfAgility', 5);
-// export const PetScrollOfStrengthV = makeBooleanConsumeInput(ActionId.fromItemId(27503), 'petScrollOfStrength', 5);
-
-// eslint-disable-next-line unused-imports/no-unused-vars
 export function withLabel<ModObject, T>(config: InputHelpers.TypedIconPickerConfig<ModObject, T>, label: string): InputHelpers.TypedIconPickerConfig<ModObject, T> {
 	config.label = label;
 	return config;
@@ -99,7 +81,6 @@ export function makeBooleanIndividualBuffInput<SpecType extends Spec>(config: Bo
 	}, config.id, config.fieldName, config.value);
 }
 
-// eslint-disable-next-line unused-imports/no-unused-vars
 export function makeBooleanConsumeInput<SpecType extends Spec>(config: BooleanInputConfig<Consumes>): InputHelpers.TypedIconPickerConfig<Player<SpecType>, boolean> {
 	return InputHelpers.makeBooleanIconInput<any, Consumes, Player<SpecType>>({
 		getModObject: (player: Player<SpecType>) => player,
@@ -162,6 +143,7 @@ export function makeTristateDebuffInput<SpecType extends Spec>(id: ActionId, imp
 		changeEmitter: (raid: Raid) => raid.debuffsChangeEmitter,
 	}, id, impId, fieldName);
 }
+
 // function makeQuadstateDebuffInput(id: ActionId, impId: ActionId, impId2: ActionId, fieldName: keyof Debuffs): InputHelpers.TypedIconPickerConfig<Player<SpecType>, number> {
 // 	return InputHelpers.makeQuadstateIconInput<any, Debuffs, Raid>({
 // 		getModObject: (player: Player<SpecType>) => player.getRaid()!,

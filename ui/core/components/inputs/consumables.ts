@@ -112,6 +112,23 @@
 // 	{ actionId: ActionId.fromItemId(15993), value: Explosive.ExplosiveThoriumGrenade, showWhen: (p) => p.getLevel() >= 40 },
 // ] as Array<IconEnumValueConfig<Player<any>, Explosive>>);
 
+// TODO: These should be moved to consumes
+// export const GiftOfArthas = withLabel(
+// 	makeBooleanDebuffInput({id: ActionId.fromSpellId(11374), fieldName: 'giftOfArthas'}),
+// 	'Gift of Arthas',
+// );
+// export const CrystalYield = withLabel(
+// 	makeBooleanDebuffInput({id: ActionId.fromSpellId(15235), fieldName: 'crystalYield'}),
+// 	'Crystal Yield',
+// );
+
+// Consumes
+// export const Sapper = makeBooleanConsumeInput({id: ActionId.fromItemId(10646), fieldName: 'sapper', minLevel: 40});
+
+// TODO: Classic
+// export const PetScrollOfAgilityV = makeBooleanConsumeInput(ActionId.fromItemId(27498), 'petScrollOfAgility', 5);
+// export const PetScrollOfStrengthV = makeBooleanConsumeInput(ActionId.fromItemId(27503), 'petScrollOfStrength', 5);
+
 // export interface ConsumeInputFactoryArgs<T extends number> {
 // 	consumesFieldName: keyof Consumes,
 // 	allOptions: Array<IconEnumValueConfig<Player<any>, T>>,
