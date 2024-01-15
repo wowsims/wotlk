@@ -618,14 +618,10 @@ func BloodlustAura(character *Character, actionTag int32) *Aura {
 				}
 			}
 
-			if character.HasActiveAura(SatedAuraLabel) {
-				aura.Deactivate(sim) // immediately remove it person already has sated.
-				return
-			}
+			sated.Activate(sim)
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			character.MultiplyAttackSpeed(sim, 1.0/1.3)
-			sated.Activate(sim)
 		},
 	})
 	multiplyCastSpeedEffect(aura, 1.3)

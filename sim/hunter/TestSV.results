@@ -111,8 +111,8 @@ dps_results: {
 dps_results: {
  key: "TestSV-AllItems-Beast-tamer'sShoulders-30892"
  value: {
-  dps: 7443.16613
-  tps: 6405.93074
+  dps: 7443.15682
+  tps: 6405.92143
  }
 }
 dps_results: {
@@ -125,15 +125,15 @@ dps_results: {
 dps_results: {
  key: "TestSV-AllItems-BlackBruise-50035"
  value: {
-  dps: 7230.33019
-  tps: 6199.47865
+  dps: 7230.3098
+  tps: 6199.45826
  }
 }
 dps_results: {
  key: "TestSV-AllItems-BlackBruise-50692"
  value: {
-  dps: 7219.82063
-  tps: 6189.30907
+  dps: 7219.80024
+  tps: 6189.28868
  }
 }
 dps_results: {
@@ -399,8 +399,8 @@ dps_results: {
 dps_results: {
  key: "TestSV-AllItems-Gladiator'sPursuit"
  value: {
-  dps: 7426.45191
-  tps: 6435.2872
+  dps: 7426.46195
+  tps: 6435.29724
  }
 }
 dps_results: {
@@ -764,8 +764,8 @@ dps_results: {
 dps_results: {
  key: "TestSV-AllItems-TheFistsofFury"
  value: {
-  dps: 7288.48909
-  tps: 6256.72859
+  dps: 7288.47905
+  tps: 6256.71854
  }
 }
 dps_results: {
@@ -785,8 +785,8 @@ dps_results: {
 dps_results: {
  key: "TestSV-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 7463.85835
-  tps: 6413.40655
+  dps: 7463.84904
+  tps: 6413.39724
  }
 }
 dps_results: {
@@ -876,15 +876,15 @@ dps_results: {
 dps_results: {
  key: "TestSV-AllItems-Zod'sRepeatingLongbow-50638"
  value: {
-  dps: 8036.87789
-  tps: 6995.38282
+  dps: 8036.85899
+  tps: 6995.36392
  }
 }
 dps_results: {
  key: "TestSV-Average-Default"
  value: {
-  dps: 7613.10031
-  tps: 6565.75152
+  dps: 7613.10025
+  tps: 6565.75145
  }
 }
 dps_results: {
@@ -897,8 +897,8 @@ dps_results: {
 dps_results: {
  key: "TestSV-Settings-Dwarf-p1_sv-Basic-aoe-FullBuffs-LongSingleTarget"
  value: {
-  dps: 3520.28498
-  tps: 2532.13458
+  dps: 3520.28427
+  tps: 2532.13387
  }
 }
 dps_results: {
@@ -981,8 +981,8 @@ dps_results: {
 dps_results: {
  key: "TestSV-Settings-Dwarf-p1_sv-Basic-sv_advanced-FullBuffs-LongSingleTarget"
  value: {
-  dps: 7741.21864
-  tps: 6753.20808
+  dps: 7741.22067
+  tps: 6753.2101
  }
 }
 dps_results: {
@@ -1023,8 +1023,8 @@ dps_results: {
 dps_results: {
  key: "TestSV-Settings-Orc-p1_sv-Basic-aoe-FullBuffs-LongSingleTarget"
  value: {
-  dps: 3570.49709
-  tps: 2528.70106
+  dps: 3570.51617
+  tps: 2528.72015
  }
 }
 dps_results: {
@@ -1100,15 +1100,15 @@ dps_results: {
 dps_results: {
  key: "TestSV-Settings-Orc-p1_sv-Basic-sv_advanced-FullBuffs-LongMultiTarget"
  value: {
-  dps: 20278.06925
-  tps: 20384.31888
+  dps: 20278.25535
+  tps: 20384.50498
  }
 }
 dps_results: {
  key: "TestSV-Settings-Orc-p1_sv-Basic-sv_advanced-FullBuffs-LongSingleTarget"
  value: {
-  dps: 7793.73043
-  tps: 6750.69395
+  dps: 7793.73246
+  tps: 6750.69598
  }
 }
 dps_results: {
@@ -1142,7 +1142,7 @@ dps_results: {
 dps_results: {
  key: "TestSV-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 7546.32952
-  tps: 6577.29598
+  dps: 7546.32188
+  tps: 6577.28834
  }
 }
