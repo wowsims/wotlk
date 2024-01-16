@@ -57,9 +57,14 @@ export const FeralDruidRotationConfig = {
 		InputHelpers.makeRotationNumberInput<Spec.SpecFeralDruid>({
 			fieldName: 'preroarDuration',
 			label: 'Pre-Roar Duration',
-			labelTooltip: 'Seconds remaining on a prior Savage Roar buff at the start of the pull.',
+			labelTooltip: 'Seconds remaining on a prior Savage Roar buff at the start of the pull',
 			float: true,
 			positive: true,
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
+			fieldName: 'maintainFaerieFire',
+			label: 'Maintain Faerie Fire',
+			labelTooltip: 'If checked, bundle Faerie Fire refreshes with powershifts. Ignored if an external Faerie Fire debuff is selected in settings.',
 		}),
 	],
 };

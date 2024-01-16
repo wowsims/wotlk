@@ -187,7 +187,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 
 		const preroarDuration = Math.min(simple.preroarDuration, 33.0);
 		const preRoar = APLPrepullAction.fromJsonString(`{"action":{"activateAura":{"auraId":{"spellId":407988}}},"doAtValue":{"const":{"val":"-${(34.0 - preroarDuration).toFixed(2)}s"}}}`);
-		const doRotation = APLAction.fromJsonString(`{"catOptimalRotationAction":{"maxWaitTime":${simple.maxWaitTime.toFixed(2)},"minCombosForRip":${simple.minCombosForRip.toFixed(0)}}}`);
+		const doRotation = APLAction.fromJsonString(`{"catOptimalRotationAction":{"maxWaitTime":${simple.maxWaitTime.toFixed(2)},"minCombosForRip":${simple.minCombosForRip.toFixed(0)}, "maintainFaerieFire":${simple.maintainFaerieFire}}}`);
 
 		prepullActions.push(...[
 			preroarDuration > 0 ? preRoar: null,
