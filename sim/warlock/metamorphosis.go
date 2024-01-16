@@ -17,14 +17,14 @@ func (warlock *Warlock) registerMetamorphosisSpell() {
 		ActionID: actionID,
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			warlock.ApplyDynamicEquipScaling(sim, stats.Armor, 5)
-			warlock.ApplyDynamicEquipScaling(sim, stats.BonusArmor, 5)
+			warlock.ApplyDynamicEquipScaling(sim, stats.Armor, 6)
+			warlock.ApplyDynamicEquipScaling(sim, stats.BonusArmor, 6)
 			warlock.PseudoStats.ReducedCritTakenChance += 6
 			warlock.PseudoStats.ThreatMultiplier *= 1.5
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			warlock.RemoveDynamicEquipScaling(sim, stats.Armor, 5)
-			warlock.RemoveDynamicEquipScaling(sim, stats.BonusArmor, 5)
+			warlock.RemoveDynamicEquipScaling(sim, stats.Armor, 6)
+			warlock.RemoveDynamicEquipScaling(sim, stats.BonusArmor, 6)
 			warlock.PseudoStats.ReducedCritTakenChance -= 6
 			warlock.PseudoStats.ThreatMultiplier /= 1.5
 		},
