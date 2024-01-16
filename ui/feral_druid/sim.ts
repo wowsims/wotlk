@@ -13,6 +13,7 @@ import {
 	Stat,
         TristateEffect,
     	WeaponImbue,
+	SaygesFortune
 } from '../core/proto/common.js';
 
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
@@ -117,11 +118,15 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 		individualBuffs: IndividualBuffs.create({
 			aspectOfTheLion: true,
 			blessingOfMight: TristateEffect.TristateEffectImproved,
+			blessingOfWisdom: TristateEffect.TristateEffectRegular,
+			boonOfBlackfathom: true,
+			ashenvalePvpBuff: true,
+			saygesFortune: SaygesFortune.SaygesDamage,
 		}),
 
 		debuffs: Debuffs.create({
-			judgementOfWisdom: true,
-			giftOfArthas: true,
+			judgementOfWisdom: false,
+			giftOfArthas: false,
 			exposeArmor: TristateEffect.TristateEffectMissing,
 			faerieFire: false,
 			sunderArmor: false,
@@ -147,6 +152,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 	    WeaponImbue.ElementalSharpeningStone,
 	    WeaponImbue.DenseSharpeningStone,
 	    WeaponImbue.WildStrikes,
+	    IconInputs.BleedDebuff,
 	],
 	// Inputs to include in the 'Other' section on the settings tab.
 	otherInputs: {
