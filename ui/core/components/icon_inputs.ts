@@ -88,7 +88,7 @@ export const IntellectBuff = InputHelpers.makeMultiIconInput([
 ], 'Int');
 
 export const SpiritBuff = InputHelpers.makeMultiIconInput([
-	makeBooleanRaidBuffInput({id: ActionId.fromSpellId(27841), fieldName: 'divineSpirit'}),
+	makeBooleanRaidBuffInput({id: ActionId.fromSpellId(27841), fieldName: 'divineSpirit', minLevel: 30}),
 	makeBooleanRaidBuffInput({id: ActionId.fromItemId(10306), fieldName: 'scrollOfSpirit'}),
 ], 'Spirit');
 

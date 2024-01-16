@@ -361,6 +361,20 @@ var BuffSpellByLevel = map[BuffName]map[int32]stats.Stats{
 			stats.Intellect: 16,
 		},
 	},
+	ScrollOfSpirit: {
+		25: stats.Stats{
+			stats.Spirit: 7,
+		},
+		40: stats.Stats{
+			stats.Spirit: 11,
+		},
+		50: stats.Stats{
+			stats.Spirit: 15,
+		},
+		60: stats.Stats{
+			stats.Spirit: 15,
+		},
+	},
 	ScrollOfStamina: {
 		25: stats.Stats{
 			stats.Stamina: 8,
