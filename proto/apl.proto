@@ -251,6 +251,7 @@ message APLActionItemSwap {
 message APLActionCatOptimalRotationAction {
     int32 min_combos_for_rip = 1;
     float max_wait_time = 2;
+    bool maintain_faerie_fire = 3;
 }
 
 ///////////////////////////////////////////////////////////////////////////
