@@ -95,6 +95,59 @@ var RaceOffsets = map[proto.Race]stats.Stats{
 	},
 }
 
+var ClassBaseCrit = map[proto.Class]stats.Stats{
+	proto.Class_ClassUnknown: {},
+	proto.Class_ClassWarrior: {
+		stats.SpellCrit: 0.0000 * CritRatingPerCritChance,
+		stats.MeleeCrit: 0.0000 * CritRatingPerCritChance,
+	},
+	proto.Class_ClassPaladin: {
+		stats.SpellCrit: 3.3355 * CritRatingPerCritChance, // TODO
+		stats.MeleeCrit: 3.2685 * CritRatingPerCritChance, // TODO
+	},
+	proto.Class_ClassHunter: {
+		stats.SpellCrit: 3.6020 * CritRatingPerCritChance,  // TODO
+		stats.MeleeCrit: -1.5320 * CritRatingPerCritChance, // TODO
+	},
+	proto.Class_ClassRogue: {
+		stats.SpellCrit: 0.0000 * CritRatingPerCritChance,  // TODO
+		stats.MeleeCrit: -0.2950 * CritRatingPerCritChance, // TODO
+	},
+	proto.Class_ClassPriest: {
+		stats.SpellCrit: 1.2375 * CritRatingPerCritChance, // TODO
+		stats.MeleeCrit: 3.0000 * CritRatingPerCritChance,
+	},
+	proto.Class_ClassShaman: {
+		stats.SpellCrit: 2.2010 * CritRatingPerCritChance, // TODO
+		stats.MeleeCrit: 2.9220 * CritRatingPerCritChance, // TODO
+	},
+	proto.Class_ClassMage: {
+		stats.SpellCrit: 0.9075 * CritRatingPerCritChance,
+		stats.MeleeCrit: 3.2000 * CritRatingPerCritChance,
+	},
+	proto.Class_ClassWarlock: {
+		stats.SpellCrit: 1.7000 * CritRatingPerCritChance, // TODO
+		stats.MeleeCrit: 2.0000 * CritRatingPerCritChance,
+	},
+	proto.Class_ClassDruid: {
+		stats.SpellCrit: 1.8515 * CritRatingPerCritChance, // TODO
+		stats.MeleeCrit: 0.9000 * CritRatingPerCritChance,
+	},
+}
+
+var CritPerAgiAtLevel = map[proto.Class]map[int]float64{
+	proto.Class_ClassUnknown: {25: 0.0, 45: 0.0, 50: 0.0, 60: 0.0},
+	proto.Class_ClassWarrior: {25: 0.1132, 40: 0.0755, 50: 0.0604, 60: 0.0503}, // TODO
+	proto.Class_ClassPaladin: {25: 0.1082, 40: 0.0753, 50: 0.0618, 60: 0.0509}, // TODO
+	proto.Class_ClassHunter:  {25: 0.0797, 40: 0.0481, 50: 0.0373, 60: 0.0301}, // TODO
+	proto.Class_ClassRogue:   {25: 0.0980, 40: 0.0572, 50: 0.0440, 60: 0.0355}, // TODO
+	proto.Class_ClassPriest:  {25: 0.0769, 40: 0.0588, 50: 0.0521, 60: 0.0456}, // TODO >25
+	proto.Class_ClassShaman:  {25: 0.0611, 40: 0.0452, 50: 0.0378, 60: 0.0320}, // TODO
+	proto.Class_ClassMage:    {25: 0.0720, 40: 0.0533, 50: 0.0483, 60: 0.0442}, // TODO >25
+	proto.Class_ClassWarlock: {25: 0.0909, 40: 0.0639, 50: 0.0551, 60: 0.0476}, // TODO >25
+	proto.Class_ClassDruid:   {25: 0.1025, 40: 0.0443, 50: 0.0366, 60: 0.0308}, // TODO >25
+}
+
 // TODO: Classic base stats
 var ClassBaseStats = map[proto.Class]map[int]stats.Stats{
 	proto.Class_ClassUnknown: {},
@@ -490,5 +543,5 @@ func getBaseStatsCombo(r proto.Race, c proto.Class, level int) stats.Stats {
 
 	starting := ClassBaseStats[c][level]
 
-	return starting.Add(RaceOffsets[r]).Add(ExtraClassBaseStats[c][level])
+	return starting.Add(RaceOffsets[r]).Add(ClassBaseCrit[c])
 }
