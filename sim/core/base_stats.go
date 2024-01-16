@@ -114,7 +114,7 @@ var ClassBaseCrit = map[proto.Class]stats.Stats{
 		stats.MeleeCrit: -0.2950 * CritRatingPerCritChance, // TODO
 	},
 	proto.Class_ClassPriest: {
-		stats.SpellCrit: 1.2375 * CritRatingPerCritChance, // TODO
+		stats.SpellCrit: 0.8000 * CritRatingPerCritChance,
 		stats.MeleeCrit: 3.0000 * CritRatingPerCritChance,
 	},
 	proto.Class_ClassShaman: {
@@ -122,19 +122,20 @@ var ClassBaseCrit = map[proto.Class]stats.Stats{
 		stats.MeleeCrit: 2.9220 * CritRatingPerCritChance, // TODO
 	},
 	proto.Class_ClassMage: {
-		stats.SpellCrit: 0.9075 * CritRatingPerCritChance,
+		stats.SpellCrit: 0.2000 * CritRatingPerCritChance,
 		stats.MeleeCrit: 3.2000 * CritRatingPerCritChance,
 	},
 	proto.Class_ClassWarlock: {
-		stats.SpellCrit: 1.7000 * CritRatingPerCritChance, // TODO
+		stats.SpellCrit: 1.7000 * CritRatingPerCritChance,
 		stats.MeleeCrit: 2.0000 * CritRatingPerCritChance,
 	},
 	proto.Class_ClassDruid: {
-		stats.SpellCrit: 1.8515 * CritRatingPerCritChance, // TODO
+		stats.SpellCrit: 1.8000 * CritRatingPerCritChance,
 		stats.MeleeCrit: 0.9000 * CritRatingPerCritChance,
 	},
 }
 
+// Melee/Ranged crit agi scaling
 var CritPerAgiAtLevel = map[proto.Class]map[int]float64{
 	proto.Class_ClassUnknown: {25: 0.0, 45: 0.0, 50: 0.0, 60: 0.0},
 	proto.Class_ClassWarrior: {25: 0.1132, 40: 0.0755, 50: 0.0604, 60: 0.0503}, // TODO
@@ -146,6 +147,20 @@ var CritPerAgiAtLevel = map[proto.Class]map[int]float64{
 	proto.Class_ClassMage:    {25: 0.0720, 40: 0.0533, 50: 0.0483, 60: 0.0442}, // TODO >25
 	proto.Class_ClassWarlock: {25: 0.0909, 40: 0.0639, 50: 0.0551, 60: 0.0476}, // TODO >25
 	proto.Class_ClassDruid:   {25: 0.1025, 40: 0.0443, 50: 0.0366, 60: 0.0308}, // TODO >25
+}
+
+// Spell crit int scaling
+var CritPerIntAtLevel = map[proto.Class]map[int]float64{
+	proto.Class_ClassUnknown: {25: 0.0, 45: 0.0, 50: 0.0, 60: 0.0},
+	proto.Class_ClassWarrior: {25: 0.0, 40: 0.0, 50: 0.0, 60: 0.0},
+	proto.Class_ClassPaladin: {25: 0.0, 40: 0.0, 50: 0.0, 60: 0.0},    // TODO
+	proto.Class_ClassHunter:  {25: 0.0, 40: 0.0, 50: 0.0, 60: 0.0},    // TODO
+	proto.Class_ClassRogue:   {25: 0.0, 40: 0.0, 50: 0.0, 60: 0.0},    // TODO
+	proto.Class_ClassPriest:  {25: 0.0457, 40: 0.0, 50: 0.0, 60: 0.0}, // TODO >25
+	proto.Class_ClassShaman:  {25: 0.0, 40: 0.0, 50: 0.0, 60: 0.0},    // TODO
+	proto.Class_ClassMage:    {25: 0.0475, 40: 0.0, 50: 0.0, 60: 0.0}, // TODO >25
+	proto.Class_ClassWarlock: {25: 0.0429, 40: 0.0, 50: 0.0, 60: 0.0}, // TODO >25
+	proto.Class_ClassDruid:   {25: 0.0427, 40: 0.0, 50: 0.0, 60: 0.0}, // TODO >25
 }
 
 // TODO: Classic base stats
