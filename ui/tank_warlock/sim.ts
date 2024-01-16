@@ -163,11 +163,12 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecTankWarlock, {
 	},
 
 	autoRotation: (player: Player<Spec.SpecTankWarlock>): APLRotation => {
-		const talentTree = player.getTalentTree();
-		if (talentTree == 0) {
+		const hasMasterChanneler = player.getEquippedItem(ItemSlot.ItemSlotChest)?.rune?.id == 403668
+		const hasLakeOfFire = player.getEquippedItem(ItemSlot.ItemSlotChest)?.rune?.id == 403666
+		if (hasMasterChanneler) {
 			return Presets.RotationAfflictionTankDefault.rotation.rotation!;
-		} else if (talentTree == 1) {
-			return Presets.RotationAfflictionTankDefault.rotation.rotation!;
+		} else if (hasLakeOfFire) {
+			return Presets.RotationDestructionTankDefault.rotation.rotation!;
 		} else {
 			return Presets.RotationDestructionTankDefault.rotation.rotation!;
 		}
