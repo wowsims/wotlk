@@ -3,6 +3,7 @@ package mage
 import (
 	"github.com/wowsims/sod/sim/core"
 	"github.com/wowsims/sod/sim/core/proto"
+	"github.com/wowsims/sod/sim/core/stats"
 )
 
 const (
@@ -114,6 +115,11 @@ func NewMage(character *core.Character, options *proto.Player) *Mage {
 
 	if mage.Options.Armor == proto.Mage_Options_MageArmor {
 		mage.PseudoStats.SpiritRegenRateCasting += .3
+	}
+
+	// Set mana regen to 12.5 + Spirit/4 each 2s tick
+	mage.SpiritManaRegenPerSecond = func() float64 {
+		return 6.25 + mage.GetStat(stats.Spirit)/8
 	}
 
 	return mage

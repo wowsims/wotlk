@@ -156,8 +156,10 @@ func (unit *Unit) MP5ManaRegenPerSecond() float64 {
 }
 
 // Returns the rate of mana regen per second from spirit.
+// All classes except Priest and Mage use this.
 func (unit *Unit) SpiritManaRegenPerSecondDefault() float64 {
-	return 15.001 + unit.stats[stats.Spirit]/15
+	// 15 + Spirit/5 every 2s tick
+	return 7.5 + unit.stats[stats.Spirit]/10
 }
 
 // Returns the rate of mana regen per second, assuming this unit is
