@@ -102,8 +102,8 @@ var ClassBaseCrit = map[proto.Class]stats.Stats{
 		stats.MeleeCrit: 0.0000 * CritRatingPerCritChance,
 	},
 	proto.Class_ClassPaladin: {
-		stats.SpellCrit: 3.3355 * CritRatingPerCritChance, // TODO
-		stats.MeleeCrit: 3.2685 * CritRatingPerCritChance, // TODO
+		stats.SpellCrit: 3.5000 * CritRatingPerCritChance,
+		stats.MeleeCrit: 0.7000 * CritRatingPerCritChance,
 	},
 	proto.Class_ClassHunter: {
 		stats.SpellCrit: 3.6020 * CritRatingPerCritChance,  // TODO
@@ -139,7 +139,7 @@ var ClassBaseCrit = map[proto.Class]stats.Stats{
 var CritPerAgiAtLevel = map[proto.Class]map[int]float64{
 	proto.Class_ClassUnknown: {25: 0.0, 45: 0.0, 50: 0.0, 60: 0.0},
 	proto.Class_ClassWarrior: {25: 0.1132, 40: 0.0755, 50: 0.0604, 60: 0.0503}, // TODO
-	proto.Class_ClassPaladin: {25: 0.1082, 40: 0.0753, 50: 0.0618, 60: 0.0509}, // TODO
+	proto.Class_ClassPaladin: {25: 0.1075, 40: 0.0753, 50: 0.0618, 60: 0.0509}, // TODO >25
 	proto.Class_ClassHunter:  {25: 0.0797, 40: 0.0481, 50: 0.0373, 60: 0.0301}, // TODO
 	proto.Class_ClassRogue:   {25: 0.0980, 40: 0.0572, 50: 0.0440, 60: 0.0355}, // TODO
 	proto.Class_ClassPriest:  {25: 0.0769, 40: 0.0588, 50: 0.0521, 60: 0.0456}, // TODO >25
@@ -153,7 +153,7 @@ var CritPerAgiAtLevel = map[proto.Class]map[int]float64{
 var CritPerIntAtLevel = map[proto.Class]map[int]float64{
 	proto.Class_ClassUnknown: {25: 0.0, 45: 0.0, 50: 0.0, 60: 0.0},
 	proto.Class_ClassWarrior: {25: 0.0, 40: 0.0, 50: 0.0, 60: 0.0},
-	proto.Class_ClassPaladin: {25: 0.0, 40: 0.0, 50: 0.0, 60: 0.0},    // TODO
+	proto.Class_ClassPaladin: {25: 0.0357, 40: 0.0, 50: 0.0, 60: 0.0}, // TODO >25
 	proto.Class_ClassHunter:  {25: 0.0, 40: 0.0, 50: 0.0, 60: 0.0},    // TODO
 	proto.Class_ClassRogue:   {25: 0.0, 40: 0.0, 50: 0.0, 60: 0.0},    // TODO
 	proto.Class_ClassPriest:  {25: 0.0457, 40: 0.0, 50: 0.0, 60: 0.0}, // TODO >25
