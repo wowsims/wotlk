@@ -216,7 +216,7 @@ export const BoonOfBlackfathom = withLabel(
 export const MajorArmorDebuff = InputHelpers.makeMultiIconInput([
 	makeBooleanDebuffInput({id: ActionId.fromSpellId(11597), fieldName: 'sunderArmor'}),
 	makeTristateDebuffInput(ActionId.fromSpellId(11198), ActionId.fromSpellId(14169), 'exposeArmor'),
-	makeBooleanDebuffInput({id: ActionId.fromSpellId(402818), fieldName: 'homunculi'}),
+	makeMultistateMultiplierDebuffInput(ActionId.fromSpellId(402818), 101, 10, 'homunculi'),
 ], 'Major ArP');
 
 export const CurseOfRecklessness = InputHelpers.makeMultiIconInput([
@@ -377,6 +377,14 @@ function makeTristateDebuffInput(id: ActionId, impId: ActionId, fieldName: keyof
 		setValue: (eventID: EventID, raid: Raid, newVal: Debuffs) => raid.setDebuffs(eventID, newVal),
 		changeEmitter: (raid: Raid) => raid.debuffsChangeEmitter,
 	}, id, impId, fieldName);
+}
+function makeMultistateMultiplierDebuffInput(id: ActionId, numStates: number, multiplier: number, fieldName: keyof Debuffs): InputHelpers.TypedIconPickerConfig<Player<any>, number> {
+	return InputHelpers.makeMultistateIconInput<any, Debuffs, Raid>({
+		getModObject: (player: Player<any>) => player.getRaid()!,
+		getValue: (raid: Raid) => raid.getDebuffs(),
+		setValue: (eventID: EventID, raid: Raid, newVal: Debuffs) => raid.setDebuffs(eventID, newVal),
+		changeEmitter: (raid: Raid) => raid.debuffsChangeEmitter,
+	}, id, numStates, fieldName, multiplier);
 }
 // function makeQuadstateDebuffInput(id: ActionId, impId: ActionId, impId2: ActionId, fieldName: keyof Debuffs): InputHelpers.TypedIconPickerConfig<Player<any>, number> {
 // 	return InputHelpers.makeQuadstateIconInput<any, Debuffs, Raid>({

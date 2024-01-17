@@ -531,7 +531,7 @@ message Debuffs {
 
 	bool crystal_yield = 21;
 	
-	bool homunculi = 22;
+	int32 homunculi = 22;
 }
 
 enum MobType {

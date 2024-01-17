@@ -130,9 +130,9 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 			giftOfArthas: false,
 			exposeArmor: TristateEffect.TristateEffectMissing,
 			faerieFire: false,
-			sunderArmor: false,
+			sunderArmor: true,
 			curseOfRecklessness: false,
-			homunculi: true,
+			homunculi: 0,
 		}),
 
 		other: Presets.OtherDefaults,

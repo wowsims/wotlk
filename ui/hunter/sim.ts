@@ -134,7 +134,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHunter, {
 			blessingOfMight: TristateEffect.TristateEffectImproved,
 		}),
 		debuffs: Debuffs.create({
-			homunculi: true,
+			homunculi: 70, // 70% average uptime default
 			faerieFire: true,
 			judgementOfWisdom: true,
 			curseOfElements: true,

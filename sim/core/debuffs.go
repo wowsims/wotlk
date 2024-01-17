@@ -77,8 +77,11 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 			}, raid)
 		}
 
-		if debuffs.Homunculi {
-			MakePermanent(HomunculiArmorAura(target, level))
+		if debuffs.Homunculi > 0 {
+			// Calculate desired downtime based on selected uptimeCount (1 count = 10% uptime, 0%-100%)
+			totalDuration := time.Second * 15
+			uptimePercent := float64(debuffs.Homunculi) / 100.0
+			ApplyFixedUptimeAura(HomunculiArmorAura(target, level), uptimePercent, totalDuration, 1)
 		}
 	}
 
