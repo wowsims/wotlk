@@ -711,17 +711,18 @@ enum OtherAction {
 	OtherActionNone = 0;
 	OtherActionWait = 1;
 	OtherActionManaRegen = 2;
-	OtherActionEnergyRegen = 5;
-	OtherActionFocusRegen = 6;
-	OtherActionManaGain = 10; // For threat generated from mana gains.
-	OtherActionRageGain = 11; // For threat generated from rage gains.
-	OtherActionAttack = 3; // A white hit, can be main hand or off hand.
-	OtherActionShoot = 4; // Default shoot action using a wand/bow/gun.
-	OtherActionPet = 7; // Represents a grouping of all pet actions. Only used by the UI.
-	OtherActionRefund = 8; // Refund of a resource like Energy or Rage, when the ability didn't land.
-	OtherActionDamageTaken = 9; // Indicates damage taken; used for rage gen.
+	OtherActionEnergyRegen = 3;
+	OtherActionFocusRegen = 4;
+	OtherActionManaGain = 5; // For threat generated from mana gains.
+	OtherActionRageGain = 6; // For threat generated from rage gains.
+	OtherActionAttack = 7; // A white hit, can be main hand or off hand.
+	OtherActionShoot = 8; // Default shoot action using a wand/bow/gun.
+	OtherActionPet = 9; // Represents a grouping of all pet actions. Only used by the UI.
+	OtherActionRefund = 10; // Refund of a resource like Energy or Rage, when the ability didn't land.
+	OtherActionDamageTaken = 11; // Indicates damage taken; used for rage gen.
 	OtherActionHealingModel = 12; // Indicates healing received from healing model.
-	OtherActionPotion = 17; // Used by APL to generically refer to either the prepull or combat potion.
+	OtherActionPotion = 13; // Used by APL to generically refer to either the prepull or combat potion.
+	OtherActionMove = 14; // Used by movement to be able to show it in timeline
 }
 
 message ActionID {

@@ -200,6 +200,10 @@ func (aa *AutoAttacks) RangedAuto() *Spell {
 	return aa.ranged.spell
 }
 
+func (aa *AutoAttacks) MainhandSwingAt() time.Duration {
+	return aa.mh.swingAt
+}
+
 func (aa *AutoAttacks) OffhandSwingAt() time.Duration {
 	return aa.oh.swingAt
 }
@@ -390,10 +394,11 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 	}
 
 	unit.AutoAttacks.ranged.config = SpellConfig{
-		ActionID:    ActionID{OtherID: proto.OtherAction_OtherActionShoot},
-		SpellSchool: options.Ranged.GetSpellSchool(),
-		ProcMask:    ProcMaskRangedAuto,
-		Flags:       SpellFlagMeleeMetrics | SpellFlagIncludeTargetBonusDamage,
+		ActionID:     ActionID{OtherID: proto.OtherAction_OtherActionShoot},
+		SpellSchool:  options.Ranged.GetSpellSchool(),
+		ProcMask:     ProcMaskRangedAuto,
+		Flags:        SpellFlagMeleeMetrics | SpellFlagIncludeTargetBonusDamage,
+		MissileSpeed: 24,
 
 		DamageMultiplier: 1,
 		CritMultiplier:   options.Ranged.CritMultiplier,
@@ -402,7 +407,12 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 		ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
 			baseDamage := spell.Unit.RangedWeaponDamage(sim, spell.RangedAttackPower(target)) +
 				spell.BonusWeaponDamage()
-			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeRangedHitAndCrit)
+
+			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeRangedHitAndCrit)
+
+			spell.WaitTravelTime(sim, func(sim *Simulation) {
+				spell.DealDamage(sim, result)
+			})
 		},
 	}
 
@@ -446,7 +456,7 @@ func (aa *AutoAttacks) reset(sim *Simulation) {
 	aa.mh.swingAt = NeverExpires
 	aa.oh.swingAt = NeverExpires
 
-	if aa.AutoSwingMelee && aa.mh.unit.DistanceFromTarget <= 5 {
+	if aa.AutoSwingMelee {
 		aa.mh.updateSwingDuration(aa.mh.unit.SwingSpeed())
 		aa.mh.swingAt = 0
 
@@ -494,7 +504,7 @@ func (aa *AutoAttacks) startPull(sim *Simulation) {
 		}
 	}
 
-	if aa.AutoSwingRanged {
+	if aa.AutoSwingRanged && aa.mh.unit.DistanceFromTarget >= 8 {
 		aa.ranged.addWeaponAttack(sim, aa.ranged.unit.RangedSwingSpeed())
 	}
 }
@@ -545,7 +555,7 @@ func (aa *AutoAttacks) EnableAutoSwing(sim *Simulation) {
 		}
 	}
 
-	if aa.AutoSwingRanged {
+	if aa.AutoSwingRanged && aa.mh.unit.DistanceFromTarget >= 8 {
 		aa.ranged.swingAt = max(aa.ranged.swingAt, sim.CurrentTime, 0)
 		aa.ranged.addWeaponAttack(sim, aa.ranged.unit.RangedSwingSpeed())
 	}
@@ -655,9 +665,19 @@ func (aa *AutoAttacks) DelayRangedUntil(sim *Simulation, readyAt time.Duration) 
 	sim.rescheduleWeaponAttack(aa.ranged.swingAt)
 }
 
-// Returns the time at which the next attack will occur.
+// Returns the time at which the next melee attack will occur.
 func (aa *AutoAttacks) NextAttackAt() time.Duration {
 	return min(aa.mh.swingAt, aa.oh.swingAt)
+}
+
+// Returns the time at which the next attack will occur.
+func (aa *AutoAttacks) NextAnyAttackAt() time.Duration {
+	return min(min(aa.mh.swingAt, aa.oh.swingAt), aa.ranged.swingAt)
+}
+
+// Returns the time at which the next ranged attack will occur.
+func (aa *AutoAttacks) NextRangedAttackAt() time.Duration {
+	return aa.ranged.swingAt
 }
 
 type PPMManager struct {

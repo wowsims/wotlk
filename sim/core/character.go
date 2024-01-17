@@ -102,9 +102,10 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 
 			StatDependencyManager: stats.NewStatDependencyManager(),
 
-			ReactionTime:       max(0, time.Duration(player.ReactionTimeMs)*time.Millisecond),
-			ChannelClipDelay:   max(0, time.Duration(player.ChannelClipDelayMs)*time.Millisecond),
-			DistanceFromTarget: player.DistanceFromTarget,
+			ReactionTime:            max(0, time.Duration(player.ReactionTimeMs)*time.Millisecond),
+			ChannelClipDelay:        max(0, time.Duration(player.ChannelClipDelayMs)*time.Millisecond),
+			DistanceFromTarget:      player.DistanceFromTarget,
+			StartDistanceFromTarget: player.DistanceFromTarget,
 			IsUsingAPL: player.Rotation != nil &&
 				(player.Rotation.Type == proto.APLRotation_TypeAPL ||
 					player.Rotation.Type == proto.APLRotation_TypeAuto ||

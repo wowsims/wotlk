@@ -13,8 +13,7 @@ type HunterPet struct {
 
 	hunterOwner *Hunter
 
-	CobraStrikesAura *core.Aura
-	KillCommandAura  *core.Aura
+	KillCommandAura *core.Aura
 
 	specialAbility *core.Spell
 	focusDump      *core.Spell
@@ -37,20 +36,20 @@ func (hunter *Hunter) NewHunterPet() *HunterPet {
 		config:      petConfig,
 		hunterOwner: hunter,
 
-		hasOwnerCooldown: petConfig.SpecialAbility == FuriousHowl || petConfig.SpecialAbility == SavageRend,
+		hasOwnerCooldown: petConfig.SpecialAbility == FuriousHowl,
 	}
 
-	hp.EnableFocusBar(1.0+0.5*float64(hunter.Talents.BestialDiscipline), func(sim *core.Simulation) {
+	hp.EnableFocusBar(1.0+0.1*float64(hunter.Talents.BestialDiscipline), func(sim *core.Simulation) {
 		if hp.GCD.IsReady(sim) {
 			hp.OnGCDReady(sim)
 		}
 	})
 
-	atkSpd := 2 / (1 + 0.15*float64(hp.Talents().CobraReflexes))
+	atkSpd := 2.0 // / (1 + 0.15*float64(hp.Talents().CobraReflexes))
 	hp.EnableAutoAttacks(hp, core.AutoAttackOptions{
 		MainHand: core.Weapon{
-			BaseDamageMin:  50,
-			BaseDamageMax:  78,
+			BaseDamageMin:  27,
+			BaseDamageMax:  37,
 			SwingSpeed:     atkSpd,
 			CritMultiplier: 2,
 		},
@@ -60,12 +59,15 @@ func (hunter *Hunter) NewHunterPet() *HunterPet {
 	// Happiness
 	hp.PseudoStats.DamageDealtMultiplier *= 1.25
 
-	// Pet family bonus is now the same for all pets.
-	hp.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= 1.05
+	hp.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= hp.config.Damage
+	hp.PseudoStats.ArmorMultiplier *= hp.config.Armor
+
+	hp.MultiplyStat(stats.Health, hp.config.Health)
 
 	hp.AddStatDependency(stats.Strength, stats.AttackPower, 2)
 	hp.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/62.77)
-	core.ApplyPetConsumeEffects(&hp.Character, hunter.Consumes)
+
+	//core.ApplyPetConsumeEffects(&hp.Character, hunter.Consumes)
 
 	hunter.AddPet(hp)
 
@@ -147,12 +149,15 @@ func (hp *HunterPet) OnGCDReady(sim *core.Simulation) {
 }
 
 func (hp *HunterPet) killCommandMult() float64 {
+	if hp.KillCommandAura == nil {
+		return 1
+	}
 	return 1 + 0.2*float64(hp.KillCommandAura.GetStacks())
 }
 
 var hunterPetBaseStats = stats.Stats{
-	stats.Agility:     113,
-	stats.Strength:    331,
+	stats.Agility:     45,
+	stats.Strength:    53,
 	stats.AttackPower: -20, // Apparently pets and warriors have a AP penalty.
 
 	// Add 1.8% because pets aren't affected by that component of crit suppression.
@@ -162,14 +167,6 @@ var hunterPetBaseStats = stats.Stats{
 const PetExpertiseScale = 3.25
 
 func (hunter *Hunter) makeStatInheritance() core.PetStatInheritance {
-	hvw := hunter.Talents.HunterVsWild
-
-	petTalents := hunter.Options.PetTalents
-	var wildHunt int32
-	if petTalents != nil {
-		wildHunt = petTalents.WildHunt
-	}
-
 	return func(ownerStats stats.Stats) stats.Stats {
 		// EJ posts claim this value is passed through math.Floor, but in-game testing
 		// shows pets benefit from each point of owner hit rating in WotLK Classic.
@@ -178,9 +175,9 @@ func (hunter *Hunter) makeStatInheritance() core.PetStatInheritance {
 		hitRatingFromOwner := ownerHitChance * core.MeleeHitRatingPerHitChance
 
 		return stats.Stats{
-			stats.Stamina:     ownerStats[stats.Stamina] * 0.3 * (1 + 0.2*float64(wildHunt)),
+			stats.Stamina:     ownerStats[stats.Stamina] * 0.3,
 			stats.Armor:       ownerStats[stats.Armor] * 0.35,
-			stats.AttackPower: ownerStats[stats.RangedAttackPower]*0.22*(1+0.15*float64(wildHunt)) + ownerStats[stats.Stamina]*0.1*float64(hvw),
+			stats.AttackPower: ownerStats[stats.RangedAttackPower] * 0.22,
 
 			stats.MeleeHit:  hitRatingFromOwner,
 			stats.SpellHit:  hitRatingFromOwner * 2,
@@ -195,6 +192,10 @@ type PetConfig struct {
 	SpecialAbility PetAbilityType
 	FocusDump      PetAbilityType
 
+	Health float64
+	Armor  float64
+	Damage float64
+
 	// Randomly select between abilities instead of using a prio.
 	RandomSelection bool
 }
@@ -203,163 +204,219 @@ type PetConfig struct {
 // https://wotlk.wowhead.com/guides/hunter-dps-best-pets-taming-loyalty-burning-crusade-classic
 var PetConfigs = map[proto.Hunter_Options_PetType]PetConfig{
 	proto.Hunter_Options_Bat: {
-		Name:           "Bat",
-		SpecialAbility: SonicBlast,
-		FocusDump:      Claw,
+		Name: "Bat",
+		//SpecialAbility: SonicBlast,
+		FocusDump: Claw,
+
+		Health: 1.0,
+		Armor:  1.0,
+		Damage: 1.0,
 	},
 	proto.Hunter_Options_Bear: {
 		Name:           "Bear",
 		SpecialAbility: Swipe,
 		FocusDump:      Claw,
-	},
-	proto.Hunter_Options_BirdOfPrey: {
-		Name:           "Bird of Prey",
-		SpecialAbility: Snatch,
-		FocusDump:      Claw,
+
+		Health: 1.0,
+		Armor:  1.0,
+		Damage: 1.0,
 	},
 	proto.Hunter_Options_Boar: {
-		Name:           "Boar",
-		SpecialAbility: Gore,
-		FocusDump:      Bite,
+		Name: "Boar",
+		//SpecialAbility: Gore,
+		FocusDump: Bite,
+
+		Health: 1.0,
+		Armor:  1.0,
+		Damage: 1.0,
 	},
 	proto.Hunter_Options_CarrionBird: {
 		Name:           "Carrion Bird",
 		SpecialAbility: DemoralizingScreech,
 		FocusDump:      Bite,
+
+		Health: 1.0,
+		Armor:  1.0,
+		Damage: 1.0,
 	},
 	proto.Hunter_Options_Cat: {
 		Name:           "Cat",
-		SpecialAbility: Rake,
+		SpecialAbility: Unknown,
 		FocusDump:      Claw,
+
+		Health: 1.0,
+		Armor:  1.0,
+		Damage: 1.0,
 	},
 	proto.Hunter_Options_Chimaera: {
-		Name:           "Chimaera",
-		SpecialAbility: FroststormBreath,
-		FocusDump:      Bite,
+		Name: "Chimaera",
+		//SpecialAbility: FroststormBreath,
+		FocusDump: Bite,
+
+		Health: 1.0,
+		Armor:  1.0,
+		Damage: 1.0,
 	},
 	proto.Hunter_Options_CoreHound: {
-		Name:           "Core Hound",
-		SpecialAbility: LavaBreath,
-		FocusDump:      Bite,
+		Name: "Core Hound",
+		//SpecialAbility: LavaBreath,
+		FocusDump: Bite,
+
+		Health: 1.0,
+		Armor:  1.0,
+		Damage: 1.0,
 	},
 	proto.Hunter_Options_Crab: {
-		Name:           "Crab",
-		SpecialAbility: Pin,
-		FocusDump:      Claw,
+		Name: "Crab",
+		//SpecialAbility: Pin,
+		FocusDump: Claw,
+
+		Health: 1.0,
+		Armor:  1.0,
+		Damage: 1.0,
 	},
 	proto.Hunter_Options_Crocolisk: {
 		Name: "Crocolisk",
 		//SpecialAbility: BadAttitude,
 		FocusDump: Bite,
+
+		Health: 1.0,
+		Armor:  1.0,
+		Damage: 1.0,
 	},
 	proto.Hunter_Options_Devilsaur: {
-		Name:           "Devilsaur",
-		SpecialAbility: MonstrousBite,
-		FocusDump:      Bite,
+		Name: "Devilsaur",
+		//SpecialAbility: MonstrousBite,
+		FocusDump: Bite,
+
+		Health: 1.0,
+		Armor:  1.0,
+		Damage: 1.0,
 	},
 	proto.Hunter_Options_Dragonhawk: {
-		Name:           "Dragonhawk",
-		SpecialAbility: FireBreath,
-		FocusDump:      Bite,
+		Name: "Dragonhawk",
+		//SpecialAbility: FireBreath,
+		FocusDump: Bite,
+
+		Health: 1.0,
+		Armor:  1.0,
+		Damage: 1.0,
 	},
 	proto.Hunter_Options_Gorilla: {
 		Name: "Gorilla",
 		//SpecialAbility: Pummel,
-		FocusDump: Smack,
+		//FocusDump: Smack,
+
+		Health: 1.0,
+		Armor:  1.0,
+		Damage: 1.0,
 	},
 	proto.Hunter_Options_Hyena: {
-		Name:           "Hyena",
-		SpecialAbility: TendonRip,
-		FocusDump:      Bite,
-	},
-	proto.Hunter_Options_Moth: {
-		Name: "Moth",
-		//SpecialAbility:   SerentiyDust,
-		FocusDump: Smack,
-	},
-	proto.Hunter_Options_NetherRay: {
-		Name:           "Nether Ray",
-		SpecialAbility: NetherShock,
-		FocusDump:      Bite,
+		Name: "Hyena",
+		//SpecialAbility: TendonRip,
+		FocusDump: Bite,
+
+		Health: 1.0,
+		Armor:  1.0,
+		Damage: 1.0,
 	},
 	proto.Hunter_Options_Raptor: {
-		Name:           "Raptor",
-		SpecialAbility: SavageRend,
-		FocusDump:      Claw,
-	},
-	proto.Hunter_Options_Ravager: {
-		Name:           "Ravager",
-		SpecialAbility: Ravage,
-		FocusDump:      Bite,
-	},
-	proto.Hunter_Options_Rhino: {
-		Name:           "Rhino",
-		SpecialAbility: Stampede,
-		FocusDump:      Bite,
+		Name: "Raptor",
+		//SpecialAbility: SavageRend,
+		FocusDump: Claw,
+
+		Health: 1.0,
+		Armor:  1.0,
+		Damage: 1.0,
 	},
 	proto.Hunter_Options_Scorpid: {
 		Name:           "Scorpid",
 		SpecialAbility: ScorpidPoison,
 		FocusDump:      Bite,
+
+		Health: 1.0,
+		Armor:  1.0,
+		Damage: 1.0,
 	},
 	proto.Hunter_Options_Serpent: {
-		Name:           "Serpent",
-		SpecialAbility: PoisonSpit,
-		FocusDump:      Bite,
+		Name: "Serpent",
+		//SpecialAbility: PoisonSpit,
+		FocusDump: Bite,
+
+		Health: 1.0,
+		Armor:  1.0,
+		Damage: 1.0,
 	},
 	proto.Hunter_Options_Silithid: {
-		Name:           "Silithid",
-		SpecialAbility: VenomWebSpray,
-		FocusDump:      Claw,
+		Name: "Silithid",
+		//SpecialAbility: VenomWebSpray,
+		FocusDump: Claw,
+
+		Health: 1.0,
+		Armor:  1.0,
+		Damage: 1.0,
 	},
 	proto.Hunter_Options_Spider: {
 		Name: "Spider",
 		//SpecialAbility:   Web,
 		FocusDump: Bite,
+
+		Health: 1.0,
+		Armor:  1.0,
+		Damage: 1.0,
 	},
 	proto.Hunter_Options_SpiritBeast: {
-		Name:           "Spirit Beast",
-		SpecialAbility: SpiritStrike,
-		FocusDump:      Claw,
+		Name: "Spirit Beast",
+		//SpecialAbility: SpiritStrike,
+		FocusDump: Claw,
+
+		Health: 1.0,
+		Armor:  1.0,
+		Damage: 1.0,
 	},
 	proto.Hunter_Options_SporeBat: {
-		Name:           "Spore Bat",
-		SpecialAbility: SporeCloud,
-		FocusDump:      Smack,
+		Name: "Spore Bat",
+		//SpecialAbility: SporeCloud,
+		//FocusDump:      Smack,
+
+		Health: 1.0,
+		Armor:  1.0,
+		Damage: 1.0,
 	},
 	proto.Hunter_Options_Tallstrider: {
 		Name: "Tallstrider",
 		//SpecialAbility:   DustCloud,
 		FocusDump: Claw,
+
+		Health: 1.0,
+		Armor:  1.0,
+		Damage: 1.0,
 	},
 	proto.Hunter_Options_Turtle: {
 		Name: "Turtle",
 		//SpecialAbility: ShellShield,
 		FocusDump: Bite,
-	},
-	proto.Hunter_Options_WarpStalker: {
-		Name: "Warp Stalker",
-		//SpecialAbility:   Warp,
-		FocusDump: Bite,
-	},
-	proto.Hunter_Options_Wasp: {
-		Name:           "Wasp",
-		SpecialAbility: Sting,
-		FocusDump:      Smack,
+
+		Health: 1.0,
+		Armor:  1.0,
+		Damage: 1.0,
 	},
 	proto.Hunter_Options_WindSerpent: {
 		Name:           "Wind Serpent",
 		SpecialAbility: LightningBreath,
 		FocusDump:      Bite,
+
+		Health: 1.0,
+		Armor:  1.0,
+		Damage: 1.0,
 	},
 	proto.Hunter_Options_Wolf: {
 		Name:           "Wolf",
 		SpecialAbility: FuriousHowl,
 		FocusDump:      Bite,
-	},
-	proto.Hunter_Options_Worm: {
-		Name:           "Worm",
-		SpecialAbility: AcidSpit,
-		FocusDump:      Bite,
+
+		Health: 1.0,
+		Armor:  1.0,
+		Damage: 1.0,
 	},
 }

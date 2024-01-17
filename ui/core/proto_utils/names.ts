@@ -232,7 +232,7 @@ export function getClassStatName(stat: Stat, playerClass: Class): string {
 	if (!statName)
 		return 'UnknownStat';
 	if (playerClass == Class.ClassHunter) {
-		return statName.replace('Melee', 'Ranged');
+		return statName.replace('Melee', 'Physical');
 	} else {
 		return statName;
 	}

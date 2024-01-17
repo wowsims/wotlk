@@ -578,11 +578,6 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 							actionId: ActionId.fromSpellId(8647),
 							playerData: playerClass(Class.ClassRogue, player => player.getRotation().exposeArmorFrequency == ExposeFrequency.Maintain),
 						},
-						{
-							label: 'Acid Spit',
-							actionId: ActionId.fromSpellId(55754),
-							playerData: playerClass(Class.ClassHunter, player => player.getSpecOptions().petType == HunterPetType.Worm),
-						},
 					],
 				},
 				{
@@ -599,11 +594,6 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 						// 	actionId: ActionId.fromSpellId(50511),
 						// 	playerData: playerClass(Class.ClassWarlock, player => player.getRotation().curse == WarlockCurse.Weakness),
 						// },
-						{
-							label: 'Sting',
-							actionId: ActionId.fromSpellId(56631),
-							playerData: playerClass(Class.ClassHunter, player => player.getSpecOptions().petType == HunterPetType.Wasp),
-						},
 						{
 							label: 'Spore Cloud',
 							actionId: ActionId.fromSpellId(53598),

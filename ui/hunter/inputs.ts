@@ -1,7 +1,7 @@
 import { Spec } from '../core/proto/common.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
 import { Player } from '../core/player.js';
-import { TypedEvent } from '../core/typed_event.js';
+import { EventID, TypedEvent } from '../core/typed_event.js';
 import { makePetTypeInputConfig } from '../core/talents/hunter_pet.js';
 
 import * as InputHelpers from '../core/components/input_helpers.js';
@@ -10,6 +10,7 @@ import {
 	Hunter_Rotation_RotationType as RotationType,
 	Hunter_Rotation_StingType as StingType,
 	Hunter_Options_Ammo as Ammo,
+	Hunter_Options_QuiverBonus as QuiverBonus,
 } from '../core/proto/hunter.js';
 
 // Configuration for spec-specific UI elements on the settings tab.
@@ -17,16 +18,38 @@ import {
 
 export const WeaponAmmo = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecHunter, Ammo>({
 	fieldName: 'ammo',
-	numColumns: 2,
+	numColumns: 6,
 	values: [
 		{ value: Ammo.AmmoNone, tooltip: 'No Ammo' },
-		{ actionId: ActionId.fromItemId(52021), value: Ammo.IcebladeArrow },
-		{ actionId: ActionId.fromItemId(41165), value: Ammo.SaroniteRazorheads },
-		{ actionId: ActionId.fromItemId(41586), value: Ammo.TerrorshaftArrow },
-		{ actionId: ActionId.fromItemId(31737), value: Ammo.TimelessArrow },
-		{ actionId: ActionId.fromItemId(34581), value: Ammo.MysteriousArrow },
-		{ actionId: ActionId.fromItemId(33803), value: Ammo.AdamantiteStinger },
-		{ actionId: ActionId.fromItemId(28056), value: Ammo.BlackflightArrow },
+		{ actionId: ActionId.fromItemId(3030), value: Ammo.RazorArrow },
+		{ actionId: ActionId.fromItemId(11285), value: Ammo.JaggedArrow },
+		{ actionId: ActionId.fromItemId(19316), value: Ammo.IceThreadedArrow },
+		{ actionId: ActionId.fromItemId(18042), value: Ammo.ThoriumHeadedArrow },
+		{ actionId: ActionId.fromItemId(12654), value: Ammo.Doomshot },
+		{ actionId: ActionId.fromItemId(3033), value: Ammo.SolidShot },
+		{ actionId: ActionId.fromItemId(11284), value: Ammo.AccurateSlugs },
+		{ actionId: ActionId.fromItemId(19317), value: Ammo.IceThreadedBullet },
+		{ actionId: ActionId.fromItemId(10513), value: Ammo.MithrilGyroShot },
+		{ actionId: ActionId.fromItemId(11630), value: Ammo.RockshardPellets },
+		{ actionId: ActionId.fromItemId(15997), value: Ammo.ThoriumShells },
+		{ actionId: ActionId.fromItemId(13377), value: Ammo.MiniatureCannonBalls },
+	],
+});
+
+export const QuiverInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecHunter, QuiverBonus>({
+	extraCssClasses: [
+		'quiver-picker',
+	],
+	fieldName: 'quiverBonus',
+	numColumns: 2,
+	values: [
+		{ color: '82e89d', value: QuiverBonus.QuiverNone },
+		{ actionId: ActionId.fromItemId(18714), value: QuiverBonus.Speed15 },
+		{ actionId: ActionId.fromItemId(2662), value: QuiverBonus.Speed14 },
+		{ actionId: ActionId.fromItemId(8217), value: QuiverBonus.Speed13 },
+		{ actionId: ActionId.fromItemId(7371), value: QuiverBonus.Speed12 },
+		{ actionId: ActionId.fromItemId(3605), value: QuiverBonus.Speed11 },
+		{ actionId: ActionId.fromItemId(3573), value: QuiverBonus.Speed10 },
 	],
 });
 
@@ -37,17 +60,6 @@ export const PetUptime = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecHunter
 	label: 'Pet Uptime (%)',
 	labelTooltip: 'Percent of the fight duration for which your pet will be alive.',
 	percent: true,
-});
-
-export const UseHuntersMark = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.SpecHunter>({
-	fieldName: 'useHuntersMark',
-	id: ActionId.fromSpellId(53338),
-});
-
-export const TimeToTrapWeaveMs = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecHunter>({
-	fieldName: 'timeToTrapWeaveMs',
-	label: 'Weave Time',
-	labelTooltip: 'Amount of time for Explosive Trap, in milliseconds, between when you start moving towards the boss and when you re-engage your ranged autos.',
 });
 
 export const HunterRotationConfig = {
@@ -72,27 +84,10 @@ export const HunterRotationConfig = {
 			showWhen: (player: Player<Spec.SpecHunter>) => player.getRotation().type == RotationType.SingleTarget,
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecHunter>({
-			fieldName: 'trapWeave',
-			label: 'Trap Weave',
-			labelTooltip: 'Uses Explosive Trap at appropriate times. Note that selecting this will disable Black Arrow because they share a CD.',
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecHunter>({
 			fieldName: 'multiDotSerpentSting',
 			label: 'Multi-Dot Serpent Sting',
 			labelTooltip: 'Casts Serpent Sting on multiple targets',
 			changeEmitter: (player: Player<Spec.SpecHunter>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-		}),
-		InputHelpers.makeRotationNumberInput<Spec.SpecHunter>({
-			fieldName: 'viperStartManaPercent',
-			label: 'Viper Start Mana %',
-			labelTooltip: 'Switch to Aspect of the Viper when mana goes below this amount.',
-			percent: true,
-		}),
-		InputHelpers.makeRotationNumberInput<Spec.SpecHunter>({
-			fieldName: 'viperStopManaPercent',
-			label: 'Viper Stop Mana %',
-			labelTooltip: 'Switch back to Aspect of the Hawk when mana goes above this amount.',
-			percent: true,
 		}),
 	],
 };

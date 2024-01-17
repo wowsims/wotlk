@@ -74,6 +74,10 @@ export class ActionId {
 				name = 'Shoot';
 				iconUrl = 'https://wow.zamimg.com/images/wow/icons/large/ability_marksmanship.jpg';
 				break;
+			case OtherAction.OtherActionMove:
+				name = 'Move';
+				iconUrl = 'https://wow.zamimg.com/images/wow/icons/large/inv_boots_02.jpg';
+				break;
 			case OtherAction.OtherActionPet:
 				break;
 			case OtherAction.OtherActionRefund:
