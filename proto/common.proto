@@ -509,11 +509,14 @@ message Debuffs {
 	bool improved_shadow_bolt = 7;
 	bool improved_scorch = 8;
 
+	// Bonus physical damage
 	bool gift_of_arthas = 9;
+	bool curse_of_vulnerability = 23;
 
 	// Major armor
 	TristateEffect expose_armor = 10;
 	bool sunder_armor = 11;
+	int32 homunculi = 22; // between 0 and 100, represents average uptime percentage
 
 	TristateEffect curse_of_weakness = 12;
 	bool curse_of_recklessness = 13;
@@ -529,9 +532,9 @@ message Debuffs {
 
 	TristateEffect hunters_mark = 20;
 
+	// ArP items
 	bool crystal_yield = 21;
-	
-	int32 homunculi = 22;
+	int32 ancient_corrosive_poison = 24; // between 0 and 100, represents average uptime percentage
 }
 
 enum MobType {

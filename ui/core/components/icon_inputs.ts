@@ -273,8 +273,10 @@ export const SpellWintersChillDebuff = InputHelpers.makeMultiIconInput([
 export const HuntersMark = withLabel(makeTristateDebuffInput(ActionId.fromSpellId(14325), ActionId.fromSpellId(19425), 'huntersMark'), 'Mark');
 export const JudgementOfWisdom = withLabel(makeBooleanDebuffInput({id: ActionId.fromSpellId(20355), fieldName: 'judgementOfWisdom', minLevel: 38}), 'JoW');
 export const JudgementOfLight = makeBooleanDebuffInput({id: ActionId.fromSpellId(20346), fieldName: 'judgementOfLight', minLevel: 30});
-export const GiftOfArthas = makeBooleanDebuffInput({id: ActionId.fromSpellId(11374), fieldName: 'giftOfArthas'});
-export const CrystalYield = makeBooleanDebuffInput({id: ActionId.fromSpellId(15235), fieldName: 'crystalYield'});
+export const CurseOfVulnerability = makeBooleanDebuffInput({id: ActionId.fromSpellId(427143), fieldName: 'curseOfVulnerability', minLevel: 25});
+export const GiftOfArthas = makeBooleanDebuffInput({id: ActionId.fromSpellId(11374), fieldName: 'giftOfArthas', minLevel: 38});
+export const CrystalYield = makeBooleanDebuffInput({id: ActionId.fromSpellId(15235), fieldName: 'crystalYield', minLevel: 47});
+export const AncientCorrosivePoison = makeMultistateMultiplierDebuffInput(ActionId.fromSpellId(422996), 101, 10, 'ancientCorrosivePoison');
 
 // Consumes
 export const Sapper = makeBooleanConsumeInput({id: ActionId.fromItemId(10646), fieldName: 'sapper', minLevel: 40});

@@ -402,7 +402,9 @@ export class SettingsTab extends SimTab {
 
 		const miscDebuffOptions = this.simUI.splitRelevantOptions([
 			{ item: IconInputs.JudgementOfLight, stats: [Stat.StatStamina] },
+			{ item: IconInputs.CurseOfVulnerability, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
 			{ item: IconInputs.GiftOfArthas, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
+			{ item: IconInputs.AncientCorrosivePoison, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
 			{ item: IconInputs.CrystalYield, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
 		] as Array<StatOption<IconPickerConfig<Player<any>, any>>>);
 		if (miscDebuffOptions.length > 0) {
