@@ -106,20 +106,20 @@ var ClassBaseCrit = map[proto.Class]stats.Stats{
 		stats.MeleeCrit: 0.7000 * CritRatingPerCritChance,
 	},
 	proto.Class_ClassHunter: {
-		stats.SpellCrit: 3.6020 * CritRatingPerCritChance,  // TODO
-		stats.MeleeCrit: -1.5320 * CritRatingPerCritChance, // TODO
+		stats.SpellCrit: 3.6000 * CritRatingPerCritChance,
+		stats.MeleeCrit: 0.0000 * CritRatingPerCritChance,
 	},
 	proto.Class_ClassRogue: {
-		stats.SpellCrit: 0.0000 * CritRatingPerCritChance,  // TODO
-		stats.MeleeCrit: -0.2950 * CritRatingPerCritChance, // TODO
+		stats.SpellCrit: 0.0000 * CritRatingPerCritChance,
+		stats.MeleeCrit: 0.0000 * CritRatingPerCritChance,
 	},
 	proto.Class_ClassPriest: {
 		stats.SpellCrit: 0.8000 * CritRatingPerCritChance,
 		stats.MeleeCrit: 3.0000 * CritRatingPerCritChance,
 	},
 	proto.Class_ClassShaman: {
-		stats.SpellCrit: 2.2010 * CritRatingPerCritChance, // TODO
-		stats.MeleeCrit: 2.9220 * CritRatingPerCritChance, // TODO
+		stats.SpellCrit: 2.3000 * CritRatingPerCritChance,
+		stats.MeleeCrit: 1.7000 * CritRatingPerCritChance,
 	},
 	proto.Class_ClassMage: {
 		stats.SpellCrit: 0.2000 * CritRatingPerCritChance,
