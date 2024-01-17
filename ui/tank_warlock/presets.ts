@@ -89,7 +89,7 @@ export const DefaultIndividualBuffs = IndividualBuffs.create({
 });
 
 export const DefaultDebuffs = Debuffs.create({
-	homunculi: true,
+	homunculi: 70, // 70% average uptime default
 	faerieFire: true,
 });
 

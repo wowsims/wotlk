@@ -1286,14 +1286,7 @@ export class Player<SpecType extends Spec> {
 			}
 
 			if (this.spec == Spec.SpecHunter) {
-				const rot = this.getRotation() as SpecRotation<Spec.SpecHunter>;
-				if (rot.timeToTrapWeaveMs) {
-					const options = this.getSpecOptions() as SpecOptions<Spec.SpecHunter>;
-					options.timeToTrapWeaveMs = rot.timeToTrapWeaveMs;
-					this.setSpecOptions(eventID, options as SpecOptions<SpecType>);
-					rot.timeToTrapWeaveMs = 0;
-					this.setRotation(eventID, rot as SpecRotation<SpecType>);
-				}
+				// no-op
 			}
 
 			if (this.spec == Spec.SpecShadowPriest) {

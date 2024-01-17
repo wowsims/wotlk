@@ -13,6 +13,7 @@ import {
 	Stat,
         TristateEffect,
     	WeaponImbue,
+	SaygesFortune
 } from '../core/proto/common.js';
 
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
@@ -53,16 +54,16 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 		Stat.StatStrength,
 		Stat.StatAgility,
 		Stat.StatAttackPower,
+		Stat.StatFeralAttackPower,
 		Stat.StatMeleeHit,
 		Stat.StatMeleeCrit,
 		Stat.StatMeleeHaste,
-		Stat.StatArmorPenetration,
+		Stat.StatMana,
 		Stat.StatIntellect,
 		Stat.StatSpirit,
 		Stat.StatMP5,
 	],
 	epPseudoStats: [
-		PseudoStat.PseudoStatMainHandDps,
 	],
 	// Reference stat against which to calculate EP. I think all classes use either spell power or attack power.
 	epReferenceStat: Stat.StatAttackPower,
@@ -72,6 +73,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 		Stat.StatStrength,
 		Stat.StatAgility,
 		Stat.StatAttackPower,
+		Stat.StatFeralAttackPower,
 		Stat.StatMeleeHit,
 		Stat.StatMeleeCrit,
 		Stat.StatMeleeHaste,
@@ -86,16 +88,18 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 		gear: Presets.DefaultGear.gear,
 		// Default EP weights for sorting gear in the gear picker.
 		epWeights: Stats.fromMap({
-			[Stat.StatStrength]: 2.40,
-			[Stat.StatAgility]: 2.39,
+			[Stat.StatStrength]: 2.20,
+			[Stat.StatAgility]: 2.02,
 			[Stat.StatAttackPower]: 1,
-			[Stat.StatMeleeHit]: 2.51,
-			[Stat.StatMeleeCrit]: 2.23,
-			[Stat.StatMeleeHaste]: 1.83,
-			[Stat.StatArmorPenetration]: 2.08,
-			[Stat.StatExpertise]: 2.44,
+			[Stat.StatFeralAttackPower]: 1,
+			[Stat.StatMeleeHit]: 8.21,
+			[Stat.StatMeleeCrit]: 8.19,
+			[Stat.StatMeleeHaste]: 4.17,
+			[Stat.StatMana]: 0.04,
+			[Stat.StatIntellect]: 0.67,
+			[Stat.StatSpirit]: 0.08,
+			[Stat.StatMP5]: 0.46,
 		}, {
-			[PseudoStat.PseudoStatMainHandDps]: 16.5,
 		}),
 		// Default consumes settings.
 		consumes: Presets.DefaultConsumes,
@@ -117,16 +121,22 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 		individualBuffs: IndividualBuffs.create({
 			aspectOfTheLion: true,
 			blessingOfMight: TristateEffect.TristateEffectImproved,
+			blessingOfWisdom: TristateEffect.TristateEffectRegular,
+			boonOfBlackfathom: true,
+			ashenvalePvpBuff: true,
+			saygesFortune: SaygesFortune.SaygesDamage,
 		}),
 
 		debuffs: Debuffs.create({
-			judgementOfWisdom: true,
-			giftOfArthas: true,
+			judgementOfWisdom: false,
+			giftOfArthas: false,
 			exposeArmor: TristateEffect.TristateEffectMissing,
 			faerieFire: false,
-			sunderArmor: false,
+			sunderArmor: true,
 			curseOfRecklessness: false,
-			homunculi: true,
+			homunculi: 0,
+			curseOfVulnerability: true,
+			ancientCorrosivePoison: 30,
 		}),
 
 		other: Presets.OtherDefaults,
@@ -147,6 +157,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 	    WeaponImbue.ElementalSharpeningStone,
 	    WeaponImbue.DenseSharpeningStone,
 	    WeaponImbue.WildStrikes,
+	    IconInputs.BleedDebuff,
 	],
 	// Inputs to include in the 'Other' section on the settings tab.
 	otherInputs: {
@@ -187,7 +198,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 
 		const preroarDuration = Math.min(simple.preroarDuration, 33.0);
 		const preRoar = APLPrepullAction.fromJsonString(`{"action":{"activateAura":{"auraId":{"spellId":407988}}},"doAtValue":{"const":{"val":"-${(34.0 - preroarDuration).toFixed(2)}s"}}}`);
-		const doRotation = APLAction.fromJsonString(`{"catOptimalRotationAction":{"maxWaitTime":${simple.maxWaitTime.toFixed(2)},"minCombosForRip":${simple.minCombosForRip.toFixed(0)}}}`);
+		const doRotation = APLAction.fromJsonString(`{"catOptimalRotationAction":{"maxWaitTime":${simple.maxWaitTime.toFixed(2)},"minCombosForRip":${simple.minCombosForRip.toFixed(0)}, "maintainFaerieFire":${simple.maintainFaerieFire}}}`);
 
 		prepullActions.push(...[
 			preroarDuration > 0 ? preRoar: null,

@@ -42,8 +42,16 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 		MakePermanent(GiftOfArthasAura(target))
 	}
 
+	if debuffs.CurseOfVulnerability {
+		MakePermanent(CurseOfVulnerabilityAura(target))
+	}
+
 	if debuffs.CrystalYield {
 		MakePermanent(CrystalYieldAura(target))
+	}
+
+	if debuffs.AncientCorrosivePoison > 0 {
+		ApplyFixedUptimeAura(AncientCorrosivePoisonAura(target), float64(debuffs.AncientCorrosivePoison)/100.0, GCDDefault, 1)
 	}
 
 	// Major Armor Debuffs
@@ -77,8 +85,11 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 			}, raid)
 		}
 
-		if debuffs.Homunculi {
-			MakePermanent(HomunculiArmorAura(target, level))
+		if debuffs.Homunculi > 0 {
+			// Calculate desired downtime based on selected uptimeCount (1 count = 10% uptime, 0%-100%)
+			totalDuration := time.Second * 15
+			uptimePercent := float64(debuffs.Homunculi) / 100.0
+			ApplyFixedUptimeAura(HomunculiArmorAura(target, level), uptimePercent, totalDuration, 1)
 		}
 	}
 
@@ -313,6 +324,20 @@ func GiftOfArthasAura(target *Unit) *Aura {
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.BonusPhysicalDamageTaken -= 8
+		},
+	})
+}
+
+func CurseOfVulnerabilityAura(target *Unit) *Aura {
+	return target.GetOrRegisterAura(Aura{
+		Label:    "Curse of Vulnerability",
+		ActionID: ActionID{SpellID: 427143},
+		Duration: time.Second * 15,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			aura.Unit.PseudoStats.BonusPhysicalDamageTaken += 2
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			aura.Unit.PseudoStats.BonusPhysicalDamageTaken -= 2
 		},
 	})
 }
@@ -737,6 +762,20 @@ func CrystalYieldAura(target *Unit) *Aura {
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			aura.Unit.stats[stats.Armor] += 200
+		},
+	})
+}
+
+func AncientCorrosivePoisonAura(target *Unit) *Aura {
+	return target.GetOrRegisterAura(Aura{
+		Label:    "Ancient Corrosive Poison",
+		ActionID: ActionID{SpellID: 422996},
+		Duration: 15 * time.Second,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			aura.Unit.stats[stats.Armor] -= 150
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			aura.Unit.stats[stats.Armor] += 150
 		},
 	})
 }

@@ -129,6 +129,10 @@ func applyConsumeEffects(agent Agent) {
 		}
 	}
 
+	if consumes.BoglingRoot {
+		character.PseudoStats.BonusDamage += 1
+	}
+
 	if consumes.SpellPowerBuff != proto.SpellPowerBuff_SpellPowerBuffUnknown {
 		switch consumes.SpellPowerBuff {
 		case proto.SpellPowerBuff_ArcaneElixir:

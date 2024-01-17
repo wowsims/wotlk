@@ -218,7 +218,7 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, referenceStat stats.Stat, pro
 		tickets <- struct{}{}
 	}
 
-	const defaultStatMod = 20.0
+	const defaultStatMod = 1.0 // lowered for SoD
 	statModsLow := make([]float64, stats.UnitStatsLen)
 	statModsHigh := make([]float64, stats.UnitStatsLen)
 
@@ -232,8 +232,8 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, referenceStat stats.Stat, pro
 		statMod := defaultStatMod
 		if stat.EqualsStat(stats.Expertise) {
 			statMod = ExpertisePerQuarterPercentReduction
-		} else if stat.EqualsStat(stats.Armor) || stat.EqualsStat(stats.BonusArmor) {
-			statMod = defaultStatMod * 10
+		} else if stat.EqualsStat(stats.Armor) || stat.EqualsStat(stats.BonusArmor) || stat.EqualsStat(stats.Mana) {
+			statMod = defaultStatMod * 20
 		}
 		statModsHigh[stat] = statMod
 		statModsLow[stat] = -statMod

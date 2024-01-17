@@ -88,7 +88,7 @@ export const IntellectBuff = InputHelpers.makeMultiIconInput([
 ], 'Int');
 
 export const SpiritBuff = InputHelpers.makeMultiIconInput([
-	makeBooleanRaidBuffInput({id: ActionId.fromSpellId(27841), fieldName: 'divineSpirit'}),
+	makeBooleanRaidBuffInput({id: ActionId.fromSpellId(27841), fieldName: 'divineSpirit', minLevel: 30}),
 	makeBooleanRaidBuffInput({id: ActionId.fromItemId(10306), fieldName: 'scrollOfSpirit'}),
 ], 'Spirit');
 
@@ -216,7 +216,7 @@ export const BoonOfBlackfathom = withLabel(
 export const MajorArmorDebuff = InputHelpers.makeMultiIconInput([
 	makeBooleanDebuffInput({id: ActionId.fromSpellId(11597), fieldName: 'sunderArmor'}),
 	makeTristateDebuffInput(ActionId.fromSpellId(11198), ActionId.fromSpellId(14169), 'exposeArmor'),
-	makeBooleanDebuffInput({id: ActionId.fromSpellId(402818), fieldName: 'homunculi'}),
+	makeMultistateMultiplierDebuffInput(ActionId.fromSpellId(402818), 101, 10, 'homunculi'),
 ], 'Major ArP');
 
 export const CurseOfRecklessness = InputHelpers.makeMultiIconInput([
@@ -273,8 +273,10 @@ export const SpellWintersChillDebuff = InputHelpers.makeMultiIconInput([
 export const HuntersMark = withLabel(makeTristateDebuffInput(ActionId.fromSpellId(14325), ActionId.fromSpellId(19425), 'huntersMark'), 'Mark');
 export const JudgementOfWisdom = withLabel(makeBooleanDebuffInput({id: ActionId.fromSpellId(20355), fieldName: 'judgementOfWisdom', minLevel: 38}), 'JoW');
 export const JudgementOfLight = makeBooleanDebuffInput({id: ActionId.fromSpellId(20346), fieldName: 'judgementOfLight', minLevel: 30});
-export const GiftOfArthas = makeBooleanDebuffInput({id: ActionId.fromSpellId(11374), fieldName: 'giftOfArthas'});
-export const CrystalYield = makeBooleanDebuffInput({id: ActionId.fromSpellId(15235), fieldName: 'crystalYield'});
+export const CurseOfVulnerability = makeBooleanDebuffInput({id: ActionId.fromSpellId(427143), fieldName: 'curseOfVulnerability', minLevel: 25});
+export const GiftOfArthas = makeBooleanDebuffInput({id: ActionId.fromSpellId(11374), fieldName: 'giftOfArthas', minLevel: 38});
+export const CrystalYield = makeBooleanDebuffInput({id: ActionId.fromSpellId(15235), fieldName: 'crystalYield', minLevel: 47});
+export const AncientCorrosivePoison = makeMultistateMultiplierDebuffInput(ActionId.fromSpellId(422996), 101, 10, 'ancientCorrosivePoison');
 
 // Consumes
 export const Sapper = makeBooleanConsumeInput({id: ActionId.fromItemId(10646), fieldName: 'sapper', minLevel: 40});
@@ -377,6 +379,14 @@ function makeTristateDebuffInput(id: ActionId, impId: ActionId, fieldName: keyof
 		setValue: (eventID: EventID, raid: Raid, newVal: Debuffs) => raid.setDebuffs(eventID, newVal),
 		changeEmitter: (raid: Raid) => raid.debuffsChangeEmitter,
 	}, id, impId, fieldName);
+}
+function makeMultistateMultiplierDebuffInput(id: ActionId, numStates: number, multiplier: number, fieldName: keyof Debuffs): InputHelpers.TypedIconPickerConfig<Player<any>, number> {
+	return InputHelpers.makeMultistateIconInput<any, Debuffs, Raid>({
+		getModObject: (player: Player<any>) => player.getRaid()!,
+		getValue: (raid: Raid) => raid.getDebuffs(),
+		setValue: (eventID: EventID, raid: Raid, newVal: Debuffs) => raid.setDebuffs(eventID, newVal),
+		changeEmitter: (raid: Raid) => raid.debuffsChangeEmitter,
+	}, id, numStates, fieldName, multiplier);
 }
 // function makeQuadstateDebuffInput(id: ActionId, impId: ActionId, impId2: ActionId, fieldName: keyof Debuffs): InputHelpers.TypedIconPickerConfig<Player<any>, number> {
 // 	return InputHelpers.makeQuadstateIconInput<any, Debuffs, Raid>({
@@ -512,6 +522,8 @@ export const StrengthBuffInput = makeConsumeInput('strengthBuff', [
         { actionId: ActionId.fromItemId(3391), value: StrengthBuff.ElixirOfOgresStrength, showWhen: (p) => p.getLevel() >= 20},
 	{ actionId: ActionId.fromItemId(10310), value: StrengthBuff.ScrollOfStrength },
 ] as Array<IconEnumValueConfig<Player<any>, StrengthBuff>>, (p) => p.getLevel() >= 20);
+
+export const BoglingRootInput = makeBooleanConsumeInput({id: ActionId.fromItemId(5206), fieldName: 'boglingRoot' });
 
 export const SpellDamageBuff = makeConsumeInput('spellPowerBuff', [
 	{ actionId: ActionId.fromItemId(9155), value: SpellPowerBuff.ArcaneElixir, showWhen: (p) => p.getLevel() >= 37 },

@@ -161,3 +161,30 @@ func (action *APLActionItemSwap) Execute(sim *Simulation) {
 func (action *APLActionItemSwap) String() string {
 	return fmt.Sprintf("Item Swap(%s)", action.swapSet)
 }
+
+type APLActionMove struct {
+	defaultAPLActionImpl
+	unit      *Unit
+	moveRange APLValue
+}
+
+func (rot *APLRotation) newActionMove(config *proto.APLActionMove) APLActionImpl {
+	return &APLActionMove{
+		unit:      rot.unit,
+		moveRange: rot.newAPLValue(config.RangeFromTarget),
+	}
+}
+func (action *APLActionMove) IsReady(sim *Simulation) bool {
+	return !action.unit.Moving && action.moveRange.GetFloat(sim) != action.unit.DistanceFromTarget
+}
+func (action *APLActionMove) Execute(sim *Simulation) {
+	moveRange := action.moveRange.GetFloat(sim)
+	if sim.Log != nil {
+		action.unit.Log(sim, "Moving to %s", moveRange)
+	}
+
+	action.unit.MoveTo(moveRange, sim)
+}
+func (action *APLActionMove) String() string {
+	return fmt.Sprintf("Move(%s)", action.moveRange)
+}

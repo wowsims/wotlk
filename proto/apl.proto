@@ -74,9 +74,10 @@ message APLAction {
         APLActionCancelAura cancel_aura = 10;
         APLActionTriggerICD trigger_icd = 11;
         APLActionItemSwap item_swap = 17;
+        APLActionMove move = 18;
 
-	// Class or Spec-specific actions
-	APLActionCatOptimalRotationAction cat_optimal_rotation_action = 18;
+        // Class or Spec-specific actions
+        APLActionCatOptimalRotationAction cat_optimal_rotation_action = 19;
     }
 }
 
@@ -251,6 +252,11 @@ message APLActionItemSwap {
 message APLActionCatOptimalRotationAction {
     int32 min_combos_for_rip = 1;
     float max_wait_time = 2;
+    bool maintain_faerie_fire = 3;
+}
+
+message APLActionMove {
+    APLValue range_from_target = 1;
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -348,7 +354,17 @@ message APLValueCurrentComboPoints {}
 message APLValueGCDIsReady {}
 message APLValueGCDTimeToReady {}
 
-message APLValueAutoTimeToNext {}
+message APLValueAutoTimeToNext {
+    enum AutoType {
+        Unknown = 0;
+        Any = 1;
+        Melee = 2;
+        MainHand = 3;
+        OffHand = 4;
+        Ranged = 5;
+    }
+    AutoType auto_type = 1;
+}
 
 message APLValueSpellCanCast {
     ActionID spell_id = 1;

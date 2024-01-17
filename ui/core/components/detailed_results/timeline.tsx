@@ -1080,8 +1080,9 @@ const DEFAULT_ACTION_CATEGORY = 3;
 
 // Hard-coded spell categories for controlling rotation ordering.
 const idToCategoryMap: Record<number, number> = {
-	[OtherAction.OtherActionAttack]: 0,
-	[OtherAction.OtherActionShoot]: 0.5,
+	[OtherAction.OtherActionShoot]: 0,
+	[OtherAction.OtherActionMove]: 0.33,
+	[OtherAction.OtherActionAttack]: 0.66,
 
 	// Druid
 	[48480]: 0.1, // Maul

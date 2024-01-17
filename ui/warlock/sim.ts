@@ -166,7 +166,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 	raidSimPresets: [
 		{
 			spec: Spec.SpecWarlock,
-			tooltip: 'Affliction Warlock',
+			tooltip: 'Affliction DPS',
 			defaultName: 'Affliction',
 			iconUrl: getSpecIcon(Class.ClassWarlock, 0),
 
@@ -191,7 +191,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 		},
 		{
 			spec: Spec.SpecWarlock,
-			tooltip: 'Demonology Warlock',
+			tooltip: 'Demonology DPS',
 			defaultName: 'Demonology',
 			iconUrl: getSpecIcon(Class.ClassWarlock, 1),
 
@@ -216,7 +216,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 		},
 		{
 			spec: Spec.SpecWarlock,
-			tooltip: 'Destruction Warlock',
+			tooltip: 'Destruction DPS',
 			defaultName: 'Destruction',
 			iconUrl: getSpecIcon(Class.ClassWarlock, 2),
 

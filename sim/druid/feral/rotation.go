@@ -11,8 +11,9 @@ import (
 type FeralDruidRotation struct {
 	// RotationType proto.FeralDruid_Rotation_AplType
 
-	MinCombosForRip int32
-	MaxWaitTime     time.Duration
+	MinCombosForRip    int32
+	MaxWaitTime        time.Duration
+	MaintainFaerieFire bool
 }
 
 func (cat *FeralDruid) OnGCDReady(sim *core.Simulation) {
@@ -61,32 +62,18 @@ func (cat *FeralDruid) NextRotationAction(sim *core.Simulation, kickAt time.Dura
 	sim.AddPendingAction(cat.rotationAction)
 }
 
-func (cat *FeralDruid) shiftBearCat(sim *core.Simulation, powershift bool) bool {
-	// If we have just now decided to shift, then we do not execute the
-	// shift immediately, but instead trigger an input delay for realism.
-	if !cat.readyToShift {
-		cat.readyToShift = true
-		return false
-	}
-	cat.readyToShift = false
-
-	toCat := !cat.InForm(druid.Cat)
-	if powershift {
-		toCat = !toCat
+func (cat *FeralDruid) tryPowershift(sim *core.Simulation) {
+	if cat.InForm(druid.Cat) {
 		cat.ClearForm(sim)
 		cat.TryUseCooldowns(sim)
 	}
 
-	cat.lastShift = sim.CurrentTime
-	if toCat {
-		return cat.CatForm.Cast(sim, nil)
+	if cat.Rotation.MaintainFaerieFire && cat.ShouldFaerieFire(sim, cat.CurrentTarget) && (cat.CurrentMana() >= cat.CatForm.DefaultCast.Cost+cat.FaerieFire.DefaultCast.Cost) {
+		cat.FaerieFire.Cast(sim, cat.CurrentTarget)
 	} else {
-		cat.BearForm.Cast(sim, nil)
-		// Bundle Enrage if available
-		if cat.Enrage.IsReady(sim) {
-			cat.Enrage.Cast(sim, nil)
-		}
-		return true
+		cat.CatForm.Cast(sim, nil)
+		cat.readyToShift = false
+		cat.lastShift = sim.CurrentTime
 	}
 }
 
@@ -176,7 +163,7 @@ func (cat *FeralDruid) preRotationCleanup(sim *core.Simulation) bool {
 	// If we previously decided to shift, then execute the shift now once
 	// the input delay is over.
 	if cat.readyToShift {
-		cat.shiftBearCat(sim, true)
+		cat.tryPowershift(sim)
 		return false
 	}
 
@@ -194,7 +181,7 @@ func (cat *FeralDruid) postRotation(sim *core.Simulation, nextAction time.Durati
 }
 
 func (cat *FeralDruid) shouldPoolMana(sim *core.Simulation, numShiftsToOom int32) bool {
-	if cat.Talents.Furor < 5 {
+	if cat.Talents.Furor < 3 {
 		return true
 	}
 
@@ -706,7 +693,8 @@ type FeralDruidRotation struct {
 
 func (cat *FeralDruid) setupRotation(config *proto.APLActionCatOptimalRotationAction) {
 	cat.Rotation = FeralDruidRotation{
-		MinCombosForRip: config.MinCombosForRip,
-		MaxWaitTime:     core.DurationFromSeconds(float64(config.MaxWaitTime)),
+		MinCombosForRip:    config.MinCombosForRip,
+		MaxWaitTime:        core.DurationFromSeconds(float64(config.MaxWaitTime)),
+		MaintainFaerieFire: config.MaintainFaerieFire,
 	}
 }

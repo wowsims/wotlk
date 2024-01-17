@@ -5,9 +5,9 @@ package core
 // **************************************
 
 const ExpertisePerQuarterPercentReduction = 2.500000
-const HasteRatingPerHastePercent = 10.000000
 
-// Crit/Hit ratings are straight percentage values in classic
+// Crit/Hit/Haste ratings are straight percentage values in classic
+const HasteRatingPerHastePercent = 1
 const CritRatingPerCritChance = 1
 const SpellCritRatingPerCritChance = 1
 const MeleeHitRatingPerHitChance = 1

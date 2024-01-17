@@ -49,7 +49,9 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHunter, {
 	epStats: [
 		Stat.StatStamina,
 		Stat.StatIntellect,
+		Stat.StatStrength,
 		Stat.StatAgility,
+		Stat.StatAttackPower,
 		Stat.StatRangedAttackPower,
 		Stat.StatMeleeHit,
 		Stat.StatMeleeCrit,
@@ -66,8 +68,10 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHunter, {
 	displayStats: [
 		Stat.StatHealth,
 		Stat.StatStamina,
+		Stat.StatStrength,
 		Stat.StatAgility,
 		Stat.StatIntellect,
+		Stat.StatAttackPower,
 		Stat.StatRangedAttackPower,
 		Stat.StatMeleeHit,
 		Stat.StatMeleeCrit,
@@ -134,10 +138,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHunter, {
 			blessingOfMight: TristateEffect.TristateEffectImproved,
 		}),
 		debuffs: Debuffs.create({
-			homunculi: true,
+			homunculi: 70, // 70% average uptime default
 			faerieFire: true,
-			judgementOfWisdom: true,
-			curseOfElements: true,
 		}),
 	},
 
@@ -145,7 +147,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHunter, {
 	playerIconInputs: [
 		HunterInputs.PetTypeInput,
 		HunterInputs.WeaponAmmo,
-		HunterInputs.UseHuntersMark,
+		HunterInputs.QuiverInput,
 	],
 	// Inputs to include in the 'Rotation' section on the settings tab.
 	rotationInputs: HunterInputs.HunterRotationConfig,
@@ -154,7 +156,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHunter, {
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
 		IconInputs.StaminaBuff,
-		IconInputs.SpellISBDebuff,
 	],
 	excludeBuffDebuffInputs: [
 	],
@@ -162,7 +163,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHunter, {
 	otherInputs: {
 		inputs: [
 			HunterInputs.PetUptime,
-			HunterInputs.TimeToTrapWeaveMs,
+			OtherInputs.DistanceFromTarget,
 			OtherInputs.TankAssignment,
 			OtherInputs.InFrontOfTarget,
 		],
@@ -229,25 +230,16 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHunter, {
 		const explosiveShot3 = APLAction.fromJsonString(`{"condition":{"dotIsActive":{"spellId":{"spellId":60053}}},"castSpell":{"spellId":{"spellId":60052}}}`);
 		//const arcaneShot = APLAction.fromJsonString(`{"castSpell":{"spellId":{"spellId":49045}}}`);
 
-		if (simple.viperStartManaPercent != 0) {
-			actions.push(APLAction.fromJsonString(`{"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":34074}}}}},{"cmp":{"op":"OpLt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"${(simple.viperStartManaPercent * 100).toFixed(0)}%"}}}}]}},"castSpell":{"spellId":{"spellId":34074}}}`));
-		}
-		if (simple.viperStopManaPercent != 0) {
-			actions.push(APLAction.fromJsonString(`{"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":61847}}}}},{"cmp":{"op":"OpGt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"${(simple.viperStopManaPercent * 100).toFixed(0)}%"}}}}]}},"castSpell":{"spellId":{"spellId":61847}}}`));
-		}
-
 		const talentTree = player.getTalentTree();
 		if (simple.type == Hunter_Rotation_RotationType.Aoe) {
 			actions.push(...[
 				simple.sting == StingType.ScorpidSting ? scorpidSting : null,
 				simple.sting == StingType.SerpentSting ? serpentSting : null,
-				simple.trapWeave ? trapWeave : null,
 				volley,
 			].filter(a => a) as Array<APLAction>)
 		} else if (talentTree == 0) { // BM
 			actions.push(...[
 				killShot,
-				simple.trapWeave ? trapWeave : null,
 				simple.sting == StingType.ScorpidSting ? scorpidSting : null,
 				simple.sting == StingType.SerpentSting ? serpentSting : null,
 				aimedShot,
@@ -260,7 +252,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHunter, {
 				killShot,
 				simple.sting == StingType.ScorpidSting ? scorpidSting : null,
 				simple.sting == StingType.SerpentSting ? serpentSting : null,
-				simple.trapWeave ? trapWeave : null,
 				chimeraShot,
 				aimedShot,
 				multiShot,
@@ -270,8 +261,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHunter, {
 			actions.push(...[
 				killShot,
 				explosiveShot4,
-				simple.allowExplosiveShotDownrank ? explosiveShot3 : null,
-				simple.trapWeave ? trapWeave : null,
 				simple.sting == StingType.ScorpidSting ? scorpidSting : null,
 				simple.sting == StingType.SerpentSting ? serpentSting : null,
 				blackArrow,
