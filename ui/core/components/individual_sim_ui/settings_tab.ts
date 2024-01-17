@@ -376,7 +376,7 @@ export class SettingsTab extends SimTab {
 		});
 
 		const debuffOptions = this.simUI.splitRelevantOptions([
-			{ item: IconInputs.MajorArmorDebuff, stats: [Stat.StatArmorPenetration] },
+			{ item: IconInputs.MajorArmorDebuff, stats: [Stat.StatAttackPower] },
 			{ item: IconInputs.CurseOfRecklessness, stats: [Stat.StatAttackPower] },
 			{ item: IconInputs.FaerieFire, stats: [Stat.StatAttackPower] },
 			//{ item: IconInputs.MinorArmorDebuff, stats: [Stat.StatArmorPenetration] },
@@ -403,7 +403,7 @@ export class SettingsTab extends SimTab {
 		const miscDebuffOptions = this.simUI.splitRelevantOptions([
 			{ item: IconInputs.JudgementOfLight, stats: [Stat.StatStamina] },
 			{ item: IconInputs.GiftOfArthas, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
-			{ item: IconInputs.CrystalYield, stats: [Stat.StatArmorPenetration] },
+			{ item: IconInputs.CrystalYield, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
 		] as Array<StatOption<IconPickerConfig<Player<any>, any>>>);
 		if (miscDebuffOptions.length > 0) {
 			new MultiIconPicker(contentBlock.bodyElement, this.simUI.player, {
