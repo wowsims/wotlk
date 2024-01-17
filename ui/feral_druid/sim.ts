@@ -133,6 +133,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 			sunderArmor: true,
 			curseOfRecklessness: false,
 			homunculi: 0,
+			curseOfVulnerability: true,
+			ancientCorrosivePoison: 30,
 		}),
 
 		other: Presets.OtherDefaults,
