@@ -88,15 +88,17 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 		gear: Presets.DefaultGear.gear,
 		// Default EP weights for sorting gear in the gear picker.
 		epWeights: Stats.fromMap({
-			[Stat.StatStrength]: 2.40,
-			[Stat.StatAgility]: 2.39,
+			[Stat.StatStrength]: 2.20,
+			[Stat.StatAgility]: 2.02,
 			[Stat.StatAttackPower]: 1,
 			[Stat.StatFeralAttackPower]: 1,
-			[Stat.StatMeleeHit]: 2.51,
-			[Stat.StatMeleeCrit]: 2.23,
-			[Stat.StatMeleeHaste]: 1.83,
-			[Stat.StatArmorPenetration]: 2.08,
-			[Stat.StatExpertise]: 2.44,
+			[Stat.StatMeleeHit]: 8.21,
+			[Stat.StatMeleeCrit]: 8.19,
+			[Stat.StatMeleeHaste]: 4.17,
+			[Stat.StatMana]: 0.04,
+			[Stat.StatIntellect]: 0.67,
+			[Stat.StatSpirit]: 0.08,
+			[Stat.StatMP5]: 0.46,
 		}, {
 		}),
 		// Default consumes settings.
