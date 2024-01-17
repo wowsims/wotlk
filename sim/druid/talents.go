@@ -23,6 +23,7 @@ func (druid *Druid) BearArmorMultiplier() float64 {
 }
 
 func (druid *Druid) ApplyTalents() {
+	druid.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= 1 + 0.02*float64(druid.Talents.NaturalWeapons)
 	druid.ApplyEquipScaling(stats.Armor, druid.ThickHideMultiplier())
 
 	if druid.Talents.HeartOfTheWild > 0 {

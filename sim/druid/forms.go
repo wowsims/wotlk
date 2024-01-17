@@ -209,7 +209,7 @@ func (druid *Druid) registerCatFormSpell() {
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.55,
-			Multiplier: 1,
+			Multiplier: 1.0 - 0.1*float64(druid.Talents.NaturalShapeshifter),
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{

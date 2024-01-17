@@ -343,11 +343,7 @@
           16943,
           16944
         ],
-        "maxPoints": 3,
-        "prereqLocation": {
-          "rowIdx": 2,
-          "colIdx": 2
-        }
+        "maxPoints": 3
       },
       {
         "fieldName": "improvedShred",
