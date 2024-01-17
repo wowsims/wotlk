@@ -260,7 +260,7 @@ var ClassBaseStats = map[proto.Class]map[int]stats.Stats{
 			stats.Spirit:            37,
 			stats.Stamina:           43,
 			stats.AttackPower:       25*2 - 20,
-			stats.RangedAttackPower: 25*2 - 10,
+			stats.RangedAttackPower: 25*2 - 20,
 		},
 		40: {
 			stats.Health:            667,
@@ -271,7 +271,7 @@ var ClassBaseStats = map[proto.Class]map[int]stats.Stats{
 			stats.Spirit:            49,
 			stats.Stamina:           61,
 			stats.AttackPower:       40*2 - 20,
-			stats.RangedAttackPower: 40*2 - 10,
+			stats.RangedAttackPower: 40*2 - 20,
 		},
 		50: {
 			stats.Health:            1047,
@@ -282,7 +282,7 @@ var ClassBaseStats = map[proto.Class]map[int]stats.Stats{
 			stats.Spirit:            59,
 			stats.Stamina:           74,
 			stats.AttackPower:       50*2 - 20,
-			stats.RangedAttackPower: 50*2 - 10,
+			stats.RangedAttackPower: 50*2 - 20,
 		},
 		60: {
 			stats.Health:            1467,
@@ -293,7 +293,7 @@ var ClassBaseStats = map[proto.Class]map[int]stats.Stats{
 			stats.Spirit:            70,
 			stats.Stamina:           90,
 			stats.AttackPower:       60*2 - 20,
-			stats.RangedAttackPower: 60*2 - 10,
+			stats.RangedAttackPower: 60*2 - 20,
 		},
 	},
 	proto.Class_ClassRogue: {
