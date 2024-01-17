@@ -63,6 +63,7 @@ export const DefaultConsumes = Consumes.create({
 	mainHandImbue: WeaponImbue.BlackfathomSharpeningStone,
 	agilityElixir: AgilityElixir.ElixirOfLesserAgility,
 	strengthBuff: StrengthBuff.ElixirOfOgresStrength,
+	boglingRoot: true,
 });
 
 export const OtherDefaults = {

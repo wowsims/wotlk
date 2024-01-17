@@ -523,6 +523,8 @@ export const StrengthBuffInput = makeConsumeInput('strengthBuff', [
 	{ actionId: ActionId.fromItemId(10310), value: StrengthBuff.ScrollOfStrength },
 ] as Array<IconEnumValueConfig<Player<any>, StrengthBuff>>, (p) => p.getLevel() >= 20);
 
+export const BoglingRootInput = makeBooleanConsumeInput({id: ActionId.fromItemId(5206), fieldName: 'boglingRoot' });
+
 export const SpellDamageBuff = makeConsumeInput('spellPowerBuff', [
 	{ actionId: ActionId.fromItemId(9155), value: SpellPowerBuff.ArcaneElixir, showWhen: (p) => p.getLevel() >= 37 },
 	{ actionId: ActionId.fromItemId(13454), value: SpellPowerBuff.GreaterArcaneElixir, showWhen: (p) => p.getLevel() >= 46 },
