@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
+	"github.com/wowsims/sod/sim/core/proto"
 )
 
 func (hunter *Hunter) getMultiShotConfig(rank int, timer *core.Timer) core.SpellConfig {
@@ -13,7 +14,12 @@ func (hunter *Hunter) getMultiShotConfig(rank int, timer *core.Timer) core.Spell
 	level := [6]int{0, 18, 30, 42, 54, 60}[rank]
 
 	numHits := min(3, hunter.Env.GetNumTargets())
+	hasCobraStrikes := hunter.pet != nil && hunter.HasRune(proto.HunterRune_RuneChestCobraStrikes)
 
+	manaCostMultiplier := 1 - 0.02*float64(hunter.Talents.Efficiency)
+	if hunter.HasRune(proto.HunterRune_RuneChestMasterMarksman) {
+		manaCostMultiplier -= 0.25
+	}
 	return core.SpellConfig{
 		ActionID:      core.ActionID{SpellID: spellId},
 		SpellSchool:   core.SpellSchoolPhysical,
@@ -25,7 +31,7 @@ func (hunter *Hunter) getMultiShotConfig(rank int, timer *core.Timer) core.Spell
 
 		ManaCost: core.ManaCostOptions{
 			FlatCost:   manaCost,
-			Multiplier: 1 - 0.03*float64(hunter.Talents.Efficiency),
+			Multiplier: manaCostMultiplier,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -68,9 +74,21 @@ func (hunter *Hunter) getMultiShotConfig(rank int, timer *core.Timer) core.Spell
 			for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
 				baseDamage := sharedDmg + 0.2*spell.RangedAttackPower(curTarget)
 
-				result := spell.CalcDamage(sim, curTarget, baseDamage, spell.OutcomeRangedHitAndCrit)
+				if hunter.SniperTrainingAura.IsActive() {
+					spell.BonusCritRating += 10 * core.CritRatingPerCritChance
+				}
+				result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeRangedHitAndCrit)
+				if hunter.SniperTrainingAura.IsActive() {
+					spell.BonusCritRating -= 10 * core.CritRatingPerCritChance
+				}
+
 				spell.WaitTravelTime(sim, func(s *core.Simulation) {
 					spell.DealDamage(sim, result)
+
+					if hasCobraStrikes && result.DidCrit() {
+						hunter.CobraStrikesAura.Activate(sim)
+						hunter.CobraStrikesAura.SetStacks(sim, 2)
+					}
 				})
 
 				curTarget = sim.Environment.NextTargetUnit(curTarget)

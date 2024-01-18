@@ -204,6 +204,8 @@ message Hunter {
 		PetType pet_type = 3;
 		HunterPetTalents pet_talents = 4;
 		double pet_uptime = 5;
+
+		double sniper_training_uptime = 6;
 	}
 	Options options = 2;
 }

@@ -111,6 +111,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 		specOptions: Presets.DefaultOptions,
 		// Default raid/party buffs settings.
 		raidBuffs: RaidBuffs.create({
+			aspectOfTheLion: true,
 			arcaneBrilliance: true,
 			giftOfTheWild: TristateEffect.TristateEffectRegular,
 			battleShout: TristateEffect.TristateEffectRegular,
@@ -119,7 +120,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 		partyBuffs: PartyBuffs.create({}),
 
 		individualBuffs: IndividualBuffs.create({
-			aspectOfTheLion: true,
 			blessingOfMight: TristateEffect.TristateEffectImproved,
 			blessingOfWisdom: TristateEffect.TristateEffectRegular,
 			boonOfBlackfathom: true,

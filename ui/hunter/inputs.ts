@@ -1,4 +1,4 @@
-import { Spec } from '../core/proto/common.js';
+import { ItemSlot, Spec } from '../core/proto/common.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
 import { Player } from '../core/player.js';
 import { EventID, TypedEvent } from '../core/typed_event.js';
@@ -11,6 +11,7 @@ import {
 	Hunter_Rotation_StingType as StingType,
 	Hunter_Options_Ammo as Ammo,
 	Hunter_Options_QuiverBonus as QuiverBonus,
+	HunterRune,
 } from '../core/proto/hunter.js';
 
 // Configuration for spec-specific UI elements on the settings tab.
@@ -60,6 +61,15 @@ export const PetUptime = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecHunter
 	label: 'Pet Uptime (%)',
 	labelTooltip: 'Percent of the fight duration for which your pet will be alive.',
 	percent: true,
+});
+
+export const SniperTrainingUptime = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecHunter>({
+	fieldName: 'sniperTrainingUptime',
+	label: 'Sniper Training Uptime (%)',
+	labelTooltip: 'Percent of the fight duration for which you will have the buff.',
+	percent: true,
+	showWhen: (player) => player.getEquippedItem(ItemSlot.ItemSlotLegs)?.rune?.id == HunterRune.RuneLegsSniperTraining,
+	changeEmitter: (player: Player<Spec.SpecHunter>) => TypedEvent.onAny([player.gearChangeEmitter, player.specOptionsChangeEmitter]),
 });
 
 export const HunterRotationConfig = {

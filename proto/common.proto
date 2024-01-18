@@ -436,6 +436,7 @@ message RaidBuffs {
 	// SoD Runes
 	int32 demonic_pact = 32;
 	bool horn_of_lordaeron = 33;
+	bool aspect_of_the_lion = 34;
 }
 
 // Buffs that affect a single party.
@@ -472,8 +473,7 @@ message IndividualBuffs {
 
 	// New SoD Buffs
 	bool boon_of_blackfathom = 15;
-	bool aspect_of_the_lion = 16;
-	bool ashenvale_pvp_buff = 17;
+	bool ashenvale_pvp_buff = 16;
 }
 
 message Consumes {

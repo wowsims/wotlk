@@ -60,14 +60,16 @@ type Hunter struct {
 	MultiShot       *core.Spell
 	RapidFire       *core.Spell
 	RaptorStrike    *core.Spell
+	FlankingStrike  *core.Spell
 	ScorpidSting    *core.Spell
 	SerpentSting    *core.Spell
 	SilencingShot   *core.Spell
 	SteadyShot      *core.Spell
 	Volley          *core.Spell
 
-	// Fake spells to encapsulate weaving logic.
-	TrapWeaveSpell *core.Spell
+	FlankingStrikeAura *core.Aura
+	SniperTrainingAura *core.Aura
+	CobraStrikesAura   *core.Aura
 
 	AspectOfTheHawkAura    *core.Aura
 	AspectOfTheViperAura   *core.Aura
@@ -89,6 +91,10 @@ func (hunter *Hunter) GetHunter() *Hunter {
 func (hunter *Hunter) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	if hunter.Talents.TrueshotAura {
 		raidBuffs.TrueshotAura = true
+	}
+
+	if hunter.HasRune(proto.HunterRune_RuneChestHeartOfTheLion) {
+		raidBuffs.AspectOfTheLion = true
 	}
 }
 func (hunter *Hunter) AddPartyBuffs(_ *proto.PartyBuffs) {
@@ -116,8 +122,9 @@ func (hunter *Hunter) Initialize() {
 	// hunter.registerKillShotSpell()
 	hunter.registerMultiShotSpell(multiShotTimer)
 	hunter.registerRaptorStrikeSpell()
+	hunter.registerFlankingStrikeSpell()
 	// hunter.registerScorpidStingSpell()
-	// hunter.registerSerpentStingSpell()
+	hunter.registerSerpentStingSpell()
 	// hunter.registerSilencingShotSpell()
 	// hunter.registerSteadyShotSpell()
 	// hunter.registerVolleySpell()

@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
+	"github.com/wowsims/sod/sim/core/proto"
 )
 
 // Returns true if the regular melee swing should be used, false otherwise.
@@ -19,6 +20,7 @@ func (hunter *Hunter) getRaptorStrikeConfig(rank int) core.SpellConfig {
 	baseDamage := [9]float64{0, 5, 11, 21, 34, 50, 80, 110, 140}[rank]
 	manaCost := [9]float64{0, 15, 25, 35, 45, 55, 70, 80, 100}[rank]
 	level := [9]int{0, 1, 8, 16, 24, 32, 40, 48, 56}[rank]
+	hasFlankingStrike := hunter.HasRune(proto.HunterRune_RuneLegsFlankingStrike)
 
 	return core.SpellConfig{
 		ActionID:      core.ActionID{SpellID: spellId},
@@ -50,6 +52,14 @@ func (hunter *Hunter) getRaptorStrikeConfig(rank int) core.SpellConfig {
 			baseDamage := baseDamage +
 				spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +
 				spell.BonusWeaponDamage()
+
+			if hasFlankingStrike && hunter.FlankingStrikeAura.IsActive() {
+				baseDamage *= 1.0 + (0.1 * float64(hunter.FlankingStrikeAura.GetStacks()))
+			}
+
+			if hasFlankingStrike && sim.RandomFloat("Flanking Strike Refresh") < 0.2 {
+				hunter.FlankingStrike.CD.Set(sim.CurrentTime)
+			}
 
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
 
@@ -98,6 +108,7 @@ func (hunter *Hunter) makeQueueSpellsAndAura(srcSpell *core.Spell) *core.Spell {
 			queueAura.Activate(sim)
 		},
 	})
+	queueSpell.CdSpell = srcSpell
 
 	return queueSpell
 }

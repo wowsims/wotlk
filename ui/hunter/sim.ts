@@ -125,6 +125,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHunter, {
 		specOptions: Presets.DefaultOptions,
 		// Default raid/party buffs settings.
 		raidBuffs: RaidBuffs.create({
+			aspectOfTheLion: true,
 			arcaneBrilliance: true,
 			powerWordFortitude: TristateEffect.TristateEffectImproved,
 			giftOfTheWild: TristateEffect.TristateEffectImproved,
@@ -133,7 +134,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHunter, {
 		partyBuffs: PartyBuffs.create({
 		}),
 		individualBuffs: IndividualBuffs.create({
-			aspectOfTheLion: true,
 			blessingOfWisdom: TristateEffect.TristateEffectImproved,
 			blessingOfMight: TristateEffect.TristateEffectImproved,
 		}),
@@ -163,6 +163,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHunter, {
 	otherInputs: {
 		inputs: [
 			HunterInputs.PetUptime,
+			HunterInputs.SniperTrainingUptime,
 			OtherInputs.DistanceFromTarget,
 			OtherInputs.TankAssignment,
 			OtherInputs.InFrontOfTarget,
