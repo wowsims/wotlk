@@ -17,6 +17,7 @@ type Hardcast struct {
 	ActionID   ActionID
 	OnComplete func(*Simulation, *Unit)
 	Target     *Unit
+	Pushback   float64
 }
 
 // Input for constructing the CastSpell function for a spell.
@@ -100,7 +101,8 @@ func (unit *Unit) applySpellPushback() {
 
 			if hc := aura.Unit.Hardcast; hc.Expires > sim.CurrentTime {
 				// Do spell pushback
-				pushback := time.Millisecond * 500
+				pushback := DurationFromSeconds(max(0.2, hc.Pushback))
+				aura.Unit.Hardcast.Pushback -= 0.2
 
 				hcSpell := aura.Unit.GetSpell(hc.ActionID)
 
@@ -195,8 +197,15 @@ func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
 		}
 
 		if effectiveTime := spell.CurCast.EffectiveTime(); effectiveTime != 0 {
+			if spell.Flags.Matches(SpellFlagHunterRanged) {
+				effectiveTime = min(effectiveTime, spell.Unit.GCD.TimeToReady(sim))
+			}
 			spell.SpellMetrics[target.UnitIndex].TotalCastTime += effectiveTime
 			spell.Unit.SetGCDTimer(sim, sim.CurrentTime+effectiveTime)
+		}
+
+		if (spell.CurCast.CastTime > 0 || spell.CurCast.ChannelTime > 0) && spell.Unit.Moving {
+			return spell.castFailureHelper(sim, false, "casting/channeling while moving not allowed!")
 		}
 
 		// Non melee casts
@@ -215,6 +224,7 @@ func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
 			spell.Unit.Hardcast = Hardcast{
 				Expires:  sim.CurrentTime + spell.CurCast.CastTime,
 				ActionID: spell.ActionID,
+				Pushback: 1.0,
 				OnComplete: func(sim *Simulation, target *Unit) {
 					if sim.Log != nil && !spell.Flags.Matches(SpellFlagNoLogs) {
 						spell.Unit.Log(sim, "Completed cast %s", spell.ActionID)
@@ -229,6 +239,12 @@ func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
 					if !spell.Flags.Matches(SpellFlagNoOnCastComplete) {
 						spell.Unit.OnCastComplete(sim, spell)
 					}
+
+					if !sim.Options.Interactive {
+						if spell.Unit.IsUsingAPL {
+							spell.Unit.Rotation.DoNextAction(sim)
+						}
+					}
 				},
 				Target: target,
 			}
@@ -242,7 +258,7 @@ func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
 
 		// Instants/Channels
 		if spell.CurCast.ChannelTime > 0 {
-			spell.Unit.Hardcast = Hardcast{Expires: sim.CurrentTime + spell.CurCast.ChannelTime, ActionID: spell.ActionID}
+			spell.Unit.Hardcast = Hardcast{Expires: sim.CurrentTime + spell.CurCast.ChannelTime, ActionID: spell.ActionID, Pushback: 1.0}
 		}
 
 		if sim.Log != nil && !spell.Flags.Matches(SpellFlagNoLogs) {

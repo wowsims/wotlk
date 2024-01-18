@@ -104,10 +104,9 @@ func (hunter *Hunter) registerBestialWrathCD() {
 		ActionID: actionID,
 		Flags:    core.SpellFlagAPL,
 
-		// TODO: Add mana when we fix bug
-		// ManaCost: core.ManaCostOptions{
-		// 	BaseCost: 0.12,
-		// },
+		ManaCost: core.ManaCostOptions{
+			BaseCost: 0.12,
+		},
 
 		Cast: core.CastConfig{
 			CD: core.Cooldown{

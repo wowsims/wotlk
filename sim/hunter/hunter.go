@@ -42,6 +42,9 @@ type Hunter struct {
 
 	currentAspect *core.Aura
 
+	curQueueAura       *core.Aura
+	curQueuedAutoSpell *core.Spell
+
 	AspectOfTheHawk  *core.Spell
 	AspectOfTheViper *core.Spell
 
@@ -100,19 +103,19 @@ func (hunter *Hunter) Initialize() {
 	hunter.registerAspectOfTheHawkSpell()
 	//hunter.registerAspectOfTheViperSpell()
 
-	//multiShotTimer := hunter.NewTimer()
-	//arcaneShotTimer := hunter.NewTimer()
+	multiShotTimer := hunter.NewTimer()
+	arcaneShotTimer := hunter.NewTimer()
 	//fireTrapTimer := hunter.NewTimer()
 
 	// hunter.registerAimedShotSpell(multiShotTimer)
-	// hunter.registerArcaneShotSpell(arcaneShotTimer)
+	hunter.registerArcaneShotSpell(arcaneShotTimer)
 	// hunter.registerBlackArrowSpell(fireTrapTimer)
 	// hunter.registerChimeraShotSpell()
 	// hunter.registerExplosiveShotSpell(arcaneShotTimer)
 	// hunter.registerExplosiveTrapSpell(fireTrapTimer)
 	// hunter.registerKillShotSpell()
-	// hunter.registerMultiShotSpell(multiShotTimer)
-	// hunter.registerRaptorStrikeSpell()
+	hunter.registerMultiShotSpell(multiShotTimer)
+	hunter.registerRaptorStrikeSpell()
 	// hunter.registerScorpidStingSpell()
 	// hunter.registerSerpentStingSpell()
 	// hunter.registerSilencingShotSpell()
@@ -200,13 +203,31 @@ func NewHunter(character *core.Character, options *proto.Player) *Hunter {
 	hunter.EnableAutoAttacks(hunter, core.AutoAttackOptions{
 		// We don't know crit multiplier until later when we see the target so just
 		// use 0 for now.
-		MainHand: hunter.WeaponFromMainHand(0),
-		OffHand:  hunter.WeaponFromOffHand(0),
-		Ranged:   rangedWeapon,
-		//ReplaceMHSwing:  hunter.TryRaptorStrike,
+		MainHand:        hunter.WeaponFromMainHand(0),
+		OffHand:         hunter.WeaponFromOffHand(0),
+		Ranged:          rangedWeapon,
+		ReplaceMHSwing:  hunter.TryRaptorStrike,
 		AutoSwingRanged: true,
 		AutoSwingMelee:  true,
 	})
+
+	hunter.AutoAttacks.RangedConfig().Flags |= core.SpellFlagHunterRanged
+	hunter.AutoAttacks.RangedConfig().Cast = core.CastConfig{
+		DefaultCast: core.Cast{
+			CastTime: time.Millisecond * 500,
+		},
+		ModifyCast: func(_ *core.Simulation, spell *core.Spell, cast *core.Cast) {
+			cast.CastTime = spell.CastTime()
+		},
+		IgnoreHaste: true, // Hunter GCD is locked at 1.5s
+		CastTime: func(spell *core.Spell) time.Duration {
+			return time.Duration(float64(spell.DefaultCast.CastTime) / hunter.RangedSwingSpeed())
+		},
+	}
+	hunter.AutoAttacks.RangedConfig().ExtraCastCondition = func(sim *core.Simulation, target *core.Unit) bool {
+		return hunter.Hardcast.Expires < sim.CurrentTime
+	}
+
 	hunter.AutoAttacks.RangedConfig().ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 		baseDamage := hunter.RangedWeaponDamage(sim, spell.RangedAttackPower(target)) +
 			hunter.AmmoDamageBonus +

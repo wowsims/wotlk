@@ -275,17 +275,22 @@ func (wa *WeaponAttack) swing(sim *Simulation) time.Duration {
 		attackSpell = wa.replaceSwing(sim, attackSpell)
 	}
 
-	// Update swing timer BEFORE the cast, so that APL checks for TimeToNextAuto behave correctly
-	// if the attack causes APL evaluations (e.g. from rage gain).
-	wa.swingAt = sim.CurrentTime + wa.curSwingDuration
-	attackSpell.Cast(sim, wa.unit.CurrentTarget)
+	if attackSpell.CanCast(sim, wa.unit.CurrentTarget) {
+		// Update swing timer BEFORE the cast, so that APL checks for TimeToNextAuto behave correctly
+		// if the attack causes APL evaluations (e.g. from rage gain).
+		wa.swingAt = sim.CurrentTime + wa.curSwingDuration
+		attackSpell.Cast(sim, wa.unit.CurrentTarget)
 
-	if !sim.Options.Interactive {
-		if wa.unit.IsUsingAPL {
-			wa.unit.Rotation.DoNextAction(sim)
-		} else {
-			wa.agent.OnAutoAttack(sim, attackSpell)
+		if !sim.Options.Interactive {
+			if wa.unit.IsUsingAPL {
+				wa.unit.Rotation.DoNextAction(sim)
+			} else {
+				wa.agent.OnAutoAttack(sim, attackSpell)
+			}
 		}
+	} else {
+		// Delay till cast finishes if casting or 500 ms if not
+		wa.swingAt = max(wa.unit.Hardcast.Expires, sim.CurrentTime+time.Millisecond*100)
 	}
 
 	return wa.swingAt

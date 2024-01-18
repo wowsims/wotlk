@@ -418,7 +418,6 @@ func (unit *Unit) initMovement() {
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			unit.Moving = false
 			unit.AutoAttacks.EnableAutoSwing(sim)
-			unit.AutoAttacks.DelayRangedUntil(sim, sim.CurrentTime+time.Millisecond*400)
 		},
 	})
 
@@ -443,8 +442,6 @@ func (unit *Unit) MoveTo(moveRange float64, sim *Simulation) {
 	moveInterval := moveDistance / float64(moveTicks)
 
 	unit.moveSpell.Cast(sim, unit.CurrentTarget)
-	//unit.moveAura.Activate(sim)
-	//unit.moveAura.SetStacks(sim, int32(unit.DistanceFromTarget))
 
 	sim.AddPendingAction(NewPeriodicAction(sim, PeriodicActionOptions{
 		Period:          time.Millisecond * 500,
