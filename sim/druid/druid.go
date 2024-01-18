@@ -183,7 +183,7 @@ func (druid *Druid) RegisterFeralCatSpells() {
 	druid.registerShredSpell()
 	// druid.registerSwipeBearSpell()
 	// druid.registerSwipeCatSpell()
-	// druid.registerTigersFurySpell()
+	druid.registerTigersFurySpell()
 }
 
 // TODO: Classic feral tank

@@ -37,6 +37,7 @@ export const DefaultRotation = FeralDruidRotation.create({
 	minCombosForRip: 3,
 	maxWaitTime: 2.0,
 	preroarDuration: 26.0,
+	precastTigersFury: false,
 });
 
 export const SIMPLE_ROTATION_DEFAULT = PresetUtils.makePresetSimpleRotation('Simple Default', Spec.SpecFeralDruid, DefaultRotation);
