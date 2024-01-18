@@ -181,7 +181,7 @@ func (cat *FeralDruid) postRotation(sim *core.Simulation, nextAction time.Durati
 }
 
 func (cat *FeralDruid) shouldPoolMana(sim *core.Simulation, numShiftsToOom int32) bool {
-	if cat.Talents.Furor < 3 {
+	if cat.Talents.Furor == 0 {
 		return true
 	}
 
