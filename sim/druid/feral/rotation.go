@@ -231,7 +231,8 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) (bool, time.Duration) {
 
 	// Then determine whether to cast vs. wait vs. shift
 	poolMana := cat.shouldPoolMana(sim, numShiftsToOom)
-	poolEnergy := poolMana && (curCp == 5) && (nextEnergy < 100) && (nextAbility == cat.MangleCat)
+	waitForWildStrikesProc := (cat.WildStrikesBuffAura != nil) && !cat.WildStrikesBuffAura.IsActive()
+	poolEnergy := poolMana && ((curCp == 5) || waitForWildStrikesProc) && (nextEnergy < 100) && (nextAbility == cat.MangleCat)
 	nextAction := sim.CurrentTime
 
 	if nextAbility.CanCast(sim, cat.CurrentTarget) && !poolEnergy {

@@ -83,6 +83,7 @@ type Druid struct {
 	SurvivalInstinctsAura    *core.Aura
 	TigersFuryAura           *core.Aura
 	SavageRoarAura           *core.Aura
+	WildStrikesBuffAura      *core.Aura
 
 	BleedCategories core.ExclusiveCategoryArray
 
