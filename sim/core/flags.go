@@ -1,9 +1,6 @@
 package core
 
 import (
-	"math/bits"
-	"strconv"
-
 	"github.com/wowsims/sod/sim/core/proto"
 	"github.com/wowsims/sod/sim/core/stats"
 )
@@ -118,19 +115,14 @@ const (
 	OutcomeCrit
 	OutcomeCrush
 
-	OutcomePartial1
-	OutcomePartial2
-	OutcomePartial4
-	OutcomePartial8
+	OutcomePartial1_4 // 1/4 of the spell was resisted.
+	OutcomePartial2_4 // 2/4 of the spell was resisted.
+	OutcomePartial3_4 // 3/4 of the spell was resisted.
 )
 
 const (
-	OutcomePartial = OutcomePartial1 | OutcomePartial2 | OutcomePartial4 | OutcomePartial8
+	OutcomePartial = OutcomePartial1_4 | OutcomePartial2_4 | OutcomePartial3_4
 	OutcomeLanded  = OutcomeHit | OutcomeCrit | OutcomeCrush | OutcomeGlance | OutcomeBlock
-)
-
-var (
-	OutcomePartialOffset = bits.TrailingZeros(uint(OutcomePartial1))
 )
 
 func (ho HitOutcome) String() string {
@@ -160,10 +152,15 @@ func (ho HitOutcome) String() string {
 }
 
 func (ho HitOutcome) PartialResistString() string {
-	if x := ho >> OutcomePartialOffset; x > 0 {
-		return " (" + strconv.Itoa(10*int(x)) + "% Resist)"
+	if ho.Matches(OutcomePartial1_4) {
+		return " (25% Resist)"
+	} else if ho.Matches(OutcomePartial2_4) {
+		return " (50% Resist)"
+	} else if ho.Matches(OutcomePartial3_4) {
+		return " (75% Resist)"
+	} else {
+		return ""
 	}
-	return ""
 }
 
 // Other flags
@@ -200,7 +197,8 @@ const (
 	SpellFlagPrepullPotion                                  // Indicates this spell is the prepull potion.
 	SpellFlagCombatPotion                                   // Indicates this spell is the combat potion.
 	SpellFlagResetAttackSwing                               // Indicates this spell resets the melee swing timer.
-	SpellFlagHunterRanged                                   // Indicates that this is hunters Auto shot spell
+	SpellFlagHunterRanged                                   // Indicates this spell is hunters Auto shot spell
+	SpellFlagPureDot                                        // Indicates this spell is a dot with no initial damage component
 
 	// Used to let agents categorize their spells.
 	SpellFlagAgentReserved1

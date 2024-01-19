@@ -18,7 +18,7 @@ func (hunter *Hunter) getSerpentStingConfig(rank int) core.SpellConfig {
 		ActionID:      core.ActionID{SpellID: spellId},
 		SpellSchool:   core.SpellSchoolNature,
 		ProcMask:      core.ProcMaskEmpty,
-		Flags:         core.SpellFlagAPL,
+		Flags:         core.SpellFlagAPL | core.SpellFlagPureDot,
 		Rank:          rank,
 		RequiredLevel: level,
 		MissileSpeed:  24,

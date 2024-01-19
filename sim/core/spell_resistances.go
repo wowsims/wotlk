@@ -1,62 +1,59 @@
 package core
 
 import (
-	"fmt"
-	"math"
-	"strings"
-
 	"github.com/wowsims/sod/sim/core/stats"
 )
 
 func (result *SpellResult) applyResistances(sim *Simulation, spell *Spell, isPeriodic bool, attackTable *AttackTable) {
-	// TODO check why result.Outcome isn't updated with resists anymore
-	resistanceMultiplier := spell.ResistanceMultiplier(sim, isPeriodic, attackTable)
+	resistanceMultiplier, outcome := spell.ResistanceMultiplier(sim, isPeriodic, attackTable, result)
 	result.Damage *= resistanceMultiplier
+
+	if outcome != OutcomeEmpty {
+		result.Outcome |= outcome
+	}
 
 	result.ResistanceMultiplier = resistanceMultiplier
 	result.PreOutcomeDamage = result.Damage
 }
 
 // Modifies damage based on Armor or Magic resistances, depending on the damage type.
-func (spell *Spell) ResistanceMultiplier(sim *Simulation, isPeriodic bool, attackTable *AttackTable) float64 {
+func (spell *Spell) ResistanceMultiplier(sim *Simulation, isPeriodic bool, attackTable *AttackTable, result *SpellResult) (float64, HitOutcome) {
 	if spell.Flags.Matches(SpellFlagIgnoreResists) {
-		return 1
+		return 1, OutcomeEmpty
 	}
 
 	if spell.SpellSchool.Matches(SpellSchoolPhysical) {
 		// All physical dots (Bleeds) ignore armor.
 		if isPeriodic && !spell.Flags.Matches(SpellFlagApplyArmorReduction) {
-			return 1
+			return 1, OutcomeEmpty
 		}
 
 		// Physical resistance (armor).
-		return attackTable.GetArmorDamageModifier(spell)
+		return attackTable.GetArmorDamageModifier(spell), OutcomeEmpty
 	}
 
 	// Magical resistance.
-	averageResist := attackTable.Defender.averageResist(spell.SpellSchool, attackTable.Attacker)
-	if averageResist == 0 { // for equal or lower level mobs
-		return 1
-	}
-
 	if spell.Flags.Matches(SpellFlagBinary) {
-		if resistanceRoll := sim.RandomFloat("Binary Resist"); resistanceRoll < averageResist {
-			return 0
-		}
-		return 1
+		// Already accounted for in the binary hit check
+		return 1, OutcomeEmpty
 	}
 
-	thresholds := attackTable.Defender.partialResistRollThresholds(averageResist)
+	resistanceRoll := sim.RandomFloat("Partial Resist")
 
-	switch resistanceRoll := sim.RandomFloat("Partial Resist"); {
-	case resistanceRoll < thresholds[0].cumulativeChance:
-		return thresholds[0].damageMultiplier()
-	case resistanceRoll < thresholds[1].cumulativeChance:
-		return thresholds[1].damageMultiplier()
-	case resistanceRoll < thresholds[2].cumulativeChance:
-		return thresholds[2].damageMultiplier()
-	default:
-		return thresholds[3].damageMultiplier()
+	threshold00, threshold25, threshold50 := attackTable.GetPartialResistThresholds(spell.SpellSchool, spell.Flags.Matches(SpellFlagPureDot))
+	//if sim.Log != nil {
+	//	sim.Log("Resist thresholds: %0.04f, %0.04f, %0.04f", threshold00, threshold25, threshold50)
+	//}
+
+	if resistanceRoll > threshold00 {
+		// No partial resist.
+		return 1, OutcomeEmpty
+	} else if resistanceRoll > threshold25 {
+		return 0.75, OutcomePartial1_4
+	} else if resistanceRoll > threshold50 {
+		return 0.5, OutcomePartial2_4
+	} else {
+		return 0.25, OutcomePartial3_4
 	}
 }
 
@@ -66,89 +63,75 @@ func (at *AttackTable) GetArmorDamageModifier(spell *Spell) float64 {
 	return 1 - defenderArmor/(defenderArmor+400+85*float64(at.Attacker.Level))
 }
 
-// TODO: Classic update
-func (unit *Unit) averageResist(school SpellSchool, attacker *Unit) float64 {
-	resistance := unit.GetStat(school.ResistanceStat()) - attacker.stats[stats.SpellPenetration]
-	if resistance <= 0 {
-		return unit.levelBasedResist(attacker)
+func (at *AttackTable) GetPartialResistThresholds(ss SpellSchool, pureDot bool) (float64, float64, float64) {
+	return at.Defender.partialResistRollThresholds(ss, at.Attacker, pureDot)
+}
+
+func (at *AttackTable) GetBinaryHitChance(ss SpellSchool) float64 {
+	return at.Defender.binaryHitChance(ss, at.Attacker)
+}
+
+// All of the following calculations are based on this guide:
+// https://royalgiraffe.github.io/resist-guide
+
+func (unit *Unit) resistCoeff(school SpellSchool, attacker *Unit, binary bool, pureDot bool) float64 {
+	resistanceCap := float64(unit.Level * 5)
+
+	resistance := max(0, unit.GetStat(school.ResistanceStat())-attacker.stats[stats.SpellPenetration])
+	if school == SpellSchoolHoly {
+		resistance = 0
 	}
 
-	c := 5 * float64(attacker.Level)
-	if attacker.Type == EnemyUnit && attacker.Level-unit.Level >= 3 {
-		c = 510 // other values TBD, but not very useful in practice
-	}
-
-	return resistance/(c+resistance) + unit.levelBasedResist(attacker) // these may stack differently, but that's irrelevant in practice
-}
-
-func (unit *Unit) levelBasedResist(attacker *Unit) float64 {
-	if unit.Type == EnemyUnit && unit.Level > attacker.Level {
-		return 0.02 * float64(unit.Level-attacker.Level)
-	}
-	return 0
-}
-
-type Threshold struct {
-	cumulativeChance float64
-	bracket          int
-}
-
-func (x Threshold) damageMultiplier() float64 {
-	return 1 - 0.1*float64(x.bracket)
-}
-
-type Thresholds [4]Threshold
-
-func (x Thresholds) String() string {
-	var sb strings.Builder
-	var chance float64
-	for _, t := range x {
-		sb.WriteString(fmt.Sprintf("%.1f%% for %d%% ", (t.cumulativeChance-chance)*100, t.bracket*10))
-		if t.cumulativeChance >= 1 {
-			break
+	effectiveResistance := resistance
+	if !binary {
+		levelBasedResistance := 0.0
+		if unit.Type == EnemyUnit {
+			levelBasedResistance = LevelBasedNPCSpellResistancePerLevel * float64(max(0, unit.Level-attacker.Level))
 		}
-		chance = t.cumulativeChance
+		effectiveResistance += levelBasedResistance
 	}
-	return sb.String()
+
+	// Pre-TBC mechanics
+	// TODO: Not sure if this is done on the base resistance or the final resistance score
+	if pureDot {
+		effectiveResistance /= 10
+	}
+
+	return min(resistanceCap, effectiveResistance) / resistanceCap
 }
 
-func (unit *Unit) partialResistRollThresholds(ar float64) Thresholds {
-	if ar <= 0.1 { // always 0%, 10%, or 20%; this covers all player vs. mob cases, in practice
-		return Thresholds{
-			{cumulativeChance: 1 - 7.5*ar, bracket: 0},
-			{cumulativeChance: 1 - 2.5*ar, bracket: 1},
-			{cumulativeChance: 1, bracket: 2},
-		}
+func (unit *Unit) binaryHitChance(school SpellSchool, attacker *Unit) float64 {
+	resistCoeff := unit.resistCoeff(school, attacker, true, false)
+	return 1 - 0.75*resistCoeff
+}
+
+// Roll threshold for each type of partial resist.
+// Also returns binary miss chance as 4th value.
+func (unit *Unit) partialResistRollThresholds(school SpellSchool, attacker *Unit, pureDot bool) (float64, float64, float64) {
+	resistCoeff := unit.resistCoeff(school, attacker, false, pureDot)
+
+	// Based on the piecewise linear regression estimates at https://royalgiraffe.github.io/partial-resist-table.
+	//partialResistChance00 := piecewiseLinear3(resistCoeff, 1, 0.24, 0.00, 0.00)
+	partialResistChance25 := piecewiseLinear3(resistCoeff, 0, 0.55, 0.22, 0.04)
+	partialResistChance50 := piecewiseLinear3(resistCoeff, 0, 0.18, 0.56, 0.16)
+	partialResistChance75 := piecewiseLinear3(resistCoeff, 0, 0.03, 0.22, 0.80)
+
+	return partialResistChance25 + partialResistChance50 + partialResistChance75,
+		partialResistChance50 + partialResistChance75,
+		partialResistChance75
+}
+
+// Interpolation for a 3-part piecewise linear function (which all the partial resist equations use).
+func piecewiseLinear3(val float64, p0 float64, p1 float64, p2 float64, p3 float64) float64 {
+	if val < 1.0/3.0 {
+		return interpolate(val*3, p0, p1)
+	} else if val < 2.0/3.0 {
+		return interpolate((val-1.0/3.0)*3, p1, p2)
+	} else {
+		return interpolate((val-2.0/3.0)*3, p2, p3)
 	}
+}
 
-	if ar >= 0.9 { // always 80%, 90%, or 100%; only relevant for tests ;)
-		return Thresholds{
-			{cumulativeChance: 1 - 7.5*(1-ar), bracket: 10},
-			{cumulativeChance: 1 - 2.5*(1-ar), bracket: 9},
-			{cumulativeChance: 1, bracket: 8},
-		}
-	}
-
-	p := func(x float64) float64 {
-		return math.Max(0.5-2.5*math.Abs(x-ar), 0)
-	}
-
-	const eps = 1e-9 // imprecision guard (25-50-25 might become almost0-25-50-25-almost0)
-
-	var thresholds Thresholds
-	var cumulativeChance float64
-	var index int
-	for bracket := 0; bracket <= 10; bracket++ {
-		if chance := p(float64(bracket) * 0.1); chance > eps {
-			cumulativeChance += chance
-			thresholds[index] = Threshold{cumulativeChance: cumulativeChance, bracket: bracket}
-			index++
-		}
-	}
-
-	if thresholds[index-1].cumulativeChance < 1 { // also guards against floating point imprecision
-		thresholds[index-1].cumulativeChance = 1
-	}
-
-	return thresholds
+func interpolate(val float64, p0 float64, p1 float64) float64 {
+	return p0*(1-val) + p1*val
 }

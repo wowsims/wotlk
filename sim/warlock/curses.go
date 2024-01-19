@@ -17,7 +17,7 @@ func (warlock *Warlock) getCurseOfAgonyBaseConfig(rank int) core.SpellConfig {
 	return core.SpellConfig{
 		ActionID:      core.ActionID{SpellID: spellId},
 		SpellSchool:   core.SpellSchoolShadow,
-		Flags:         core.SpellFlagAPL | core.SpellFlagHauntSE | core.SpellFlagResetAttackSwing,
+		Flags:         core.SpellFlagAPL | core.SpellFlagHauntSE | core.SpellFlagResetAttackSwing | core.SpellFlagPureDot,
 		ProcMask:      core.ProcMaskSpellDamage,
 		RequiredLevel: level,
 		Rank:          rank,
