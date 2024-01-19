@@ -132,6 +132,7 @@ func (warlock *Warlock) getDrainLifeBaseConfig(rank int) core.SpellConfig {
 			Timer:    warlock.NewTimer(),
 			Duration: 15 * time.Second,
 		}
+		spellConfig.Flags |= core.SpellFlagPureDot
 	} else {
 		spellConfig.Flags |= core.SpellFlagChanneled
 		spellConfig.Cast.DefaultCast.ChannelTime = time.Second * 5

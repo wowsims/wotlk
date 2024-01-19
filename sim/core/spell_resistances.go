@@ -6,11 +6,9 @@ import (
 
 func (result *SpellResult) applyResistances(sim *Simulation, spell *Spell, isPeriodic bool, attackTable *AttackTable) {
 	resistanceMultiplier, outcome := spell.ResistanceMultiplier(sim, isPeriodic, attackTable)
-	result.Damage *= resistanceMultiplier
 
-	if outcome != OutcomeEmpty {
-		result.Outcome |= outcome
-	}
+	result.Damage *= resistanceMultiplier
+	result.Outcome |= outcome
 
 	result.ResistanceMultiplier = resistanceMultiplier
 	result.PreOutcomeDamage = result.Damage
@@ -91,8 +89,8 @@ func (unit *Unit) resistCoeff(school SpellSchool, attacker *Unit, binary bool, p
 		effectiveResistance += levelBasedResistance
 	}
 
-	// Pre-TBC mechanics
-	// TODO: Not sure if this is done on the base resistance or the final resistance score
+	// Pre-TBC all dots that dont have an initial damage component
+	// use a 1/10 of the resistance score
 	if pureDot {
 		effectiveResistance /= 10
 	}

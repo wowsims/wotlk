@@ -14,6 +14,7 @@ func (hunter *Hunter) registerKillCommand() {
 
 	actionID := core.ActionID{SpellID: 409379}
 
+	// For tracking in timeline
 	hunterAura := hunter.RegisterAura(core.Aura{
 		Label:     "Kill Command",
 		ActionID:  actionID,

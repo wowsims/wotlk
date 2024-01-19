@@ -96,13 +96,12 @@ func (hunter *Hunter) getMultiShotConfig(rank int, timer *core.Timer) core.Spell
 						serpentStingTicks := serpentStingAura.NumberOfTicks
 						if serpentStingAura.IsActive() {
 							// If less then 2 ticks are left then we refresh with a 2 tick duration
-							if serpentStingAura.NumberOfTicks > 3 {
+							if serpentStingTicks-serpentStingAura.TickCount < 2 {
 								serpentStingAura.NumberOfTicks = 2
 								serpentStingAura.Rollover(sim)
 								serpentStingAura.NumberOfTicks = serpentStingTicks
 							}
 						} else {
-
 							serpentStingAura.NumberOfTicks = 2
 							serpentStingAura.Apply(sim)
 							serpentStingAura.NumberOfTicks = serpentStingTicks

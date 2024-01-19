@@ -52,7 +52,6 @@ type Hunter struct {
 
 	AimedShot       *core.Spell
 	ArcaneShot      *core.Spell
-	BlackArrow      *core.Spell
 	ChimeraShot     *core.Spell
 	ExplosiveShotR4 *core.Spell
 	ExplosiveShotR3 *core.Spell
@@ -66,8 +65,9 @@ type Hunter struct {
 	ScorpidSting    *core.Spell
 	SerpentSting    *core.Spell
 	SilencingShot   *core.Spell
-	SteadyShot      *core.Spell
 	Volley          *core.Spell
+
+	SerpentStingChimeraShot *core.Spell
 
 	FlankingStrikeAura *core.Aura
 	SniperTrainingAura *core.Aura
@@ -115,18 +115,18 @@ func (hunter *Hunter) Initialize() {
 	arcaneShotTimer := hunter.NewTimer()
 	//fireTrapTimer := hunter.NewTimer()
 
-	// hunter.registerAimedShotSpell(multiShotTimer)
+	hunter.registerSerpentStingSpell()
 	hunter.registerArcaneShotSpell(arcaneShotTimer)
+	hunter.registerMultiShotSpell(multiShotTimer)
+	// hunter.registerAimedShotSpell(multiShotTimer)
+	hunter.registerChimeraShotSpell()
 	// hunter.registerBlackArrowSpell(fireTrapTimer)
-	// hunter.registerChimeraShotSpell()
 	// hunter.registerExplosiveShotSpell(arcaneShotTimer)
 	// hunter.registerExplosiveTrapSpell(fireTrapTimer)
 	// hunter.registerKillShotSpell()
-	hunter.registerMultiShotSpell(multiShotTimer)
 	hunter.registerRaptorStrikeSpell()
 	hunter.registerFlankingStrikeSpell()
 	// hunter.registerScorpidStingSpell()
-	hunter.registerSerpentStingSpell()
 	// hunter.registerSilencingShotSpell()
 	// hunter.registerSteadyShotSpell()
 	// hunter.registerVolleySpell()
