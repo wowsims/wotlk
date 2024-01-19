@@ -114,7 +114,7 @@ func (unit *Unit) applySpellPushback() {
 
 					// Update Dot if present
 					if hcDot := hcSpell.CurDot(); hcDot != nil {
-						hcDot.UpdateExpires(newExpires)
+						hcDot.UpdateExpires(sim, newExpires)
 					}
 
 					aura.Unit.Hardcast.Expires = newExpires

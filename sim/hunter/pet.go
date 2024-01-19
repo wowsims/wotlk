@@ -15,6 +15,13 @@ type HunterPet struct {
 
 	KillCommandAura *core.Aura
 
+	claw            *core.Spell
+	bite            *core.Spell
+	furiousHowl     *core.Spell
+	screech         *core.Spell
+	scorpidPoison   *core.Spell
+	lightningBreath *core.Spell
+
 	specialAbility *core.Spell
 	focusDump      *core.Spell
 
@@ -87,6 +94,7 @@ func (hp *HunterPet) Initialize() {
 
 	focusRegenMultiplier := (1.0 + 0.1*float64(hp.hunterOwner.Talents.BestialDiscipline)) *
 		core.TernaryFloat64(hp.hunterOwner.HasRune(proto.HunterRune_RuneHandsBeastmastery), 1.5, 1.0)
+
 	hp.EnableFocusBar(focusRegenMultiplier, func(sim *core.Simulation) {
 		if hp.GCD.IsReady(sim) {
 			hp.OnGCDReady(sim)

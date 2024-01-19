@@ -18,7 +18,7 @@ func (warlock *Warlock) registerShadowBurnBaseConfig(rank int) core.SpellConfig 
 		ActionID:      core.ActionID{SpellID: spellId},
 		SpellSchool:   core.SpellSchoolShadow,
 		ProcMask:      core.ProcMaskSpellDamage,
-		Flags:         core.SpellFlagAPL | core.SpellFlagResetAttackSwing,
+		Flags:         core.SpellFlagAPL | core.SpellFlagResetAttackSwing | core.SpellFlagBinary,
 		RequiredLevel: level,
 		Rank:          rank,
 

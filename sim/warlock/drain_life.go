@@ -31,7 +31,7 @@ func (warlock *Warlock) getDrainLifeBaseConfig(rank int) core.SpellConfig {
 		ActionID:      actionID,
 		SpellSchool:   core.SpellSchoolShadow,
 		ProcMask:      core.ProcMaskSpellDamage,
-		Flags:         core.SpellFlagHauntSE | core.SpellFlagAPL | core.SpellFlagResetAttackSwing | core.SpellFlagBinary,
+		Flags:         core.SpellFlagHauntSE | core.SpellFlagAPL | core.SpellFlagResetAttackSwing,
 		RequiredLevel: level,
 		Rank:          rank,
 
@@ -111,7 +111,7 @@ func (warlock *Warlock) getDrainLifeBaseConfig(rank int) core.SpellConfig {
 
 				dot := spell.Dot(target)
 				dot.Apply(sim)
-				dot.UpdateExpires(dot.ExpiresAt())
+				dot.UpdateExpires(sim, dot.ExpiresAt())
 
 				warlock.EverlastingAfflictionRefresh(sim, target)
 			}

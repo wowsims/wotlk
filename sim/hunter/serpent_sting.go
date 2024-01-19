@@ -79,13 +79,15 @@ func (hunter *Hunter) getSerpentStingConfig(rank int) core.SpellConfig {
 	}
 }
 
-func (hunter *Hunter) registerSerpentStingSpell() {
-	maxRank := 9
+const SERPENT_STING_MAX_RANK = 9
 
-	for i := 1; i <= maxRank; i++ {
+func (hunter *Hunter) registerSerpentStingSpell() {
+
+	for i := 1; i <= SERPENT_STING_MAX_RANK; i++ {
 		config := hunter.getSerpentStingConfig(i)
 
 		if config.RequiredLevel <= int(hunter.Level) {
+			hunter.highestSerpentStingRank = i
 			hunter.SerpentSting = hunter.GetOrRegisterSpell(config)
 		}
 	}

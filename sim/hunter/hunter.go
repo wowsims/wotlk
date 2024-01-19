@@ -40,6 +40,8 @@ type Hunter struct {
 	AmmoDamageBonus           float64
 	NormalizedAmmoDamageBonus float64
 
+	highestSerpentStingRank int
+
 	currentAspect *core.Aura
 
 	curQueueAura       *core.Aura
@@ -129,7 +131,7 @@ func (hunter *Hunter) Initialize() {
 	// hunter.registerSteadyShotSpell()
 	// hunter.registerVolleySpell()
 
-	//hunter.registerKillCommandCD()
+	hunter.registerKillCommand()
 	//hunter.registerRapidFireCD()
 
 	if !hunter.IsUsingAPL {

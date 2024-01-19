@@ -15,6 +15,7 @@ func (hunter *Hunter) getMultiShotConfig(rank int, timer *core.Timer) core.Spell
 
 	numHits := min(3, hunter.Env.GetNumTargets())
 	hasCobraStrikes := hunter.pet != nil && hunter.HasRune(proto.HunterRune_RuneChestCobraStrikes)
+	hasSerpentSpread := hunter.HasRune(proto.HunterRune_RuneLegsSerpentSpread)
 
 	manaCostMultiplier := 1 - 0.02*float64(hunter.Talents.Efficiency)
 	if hunter.HasRune(proto.HunterRune_RuneChestMasterMarksman) {
@@ -88,6 +89,24 @@ func (hunter *Hunter) getMultiShotConfig(rank int, timer *core.Timer) core.Spell
 					if hasCobraStrikes && result.DidCrit() {
 						hunter.CobraStrikesAura.Activate(sim)
 						hunter.CobraStrikesAura.SetStacks(sim, 2)
+					}
+
+					if hasSerpentSpread {
+						serpentStingAura := hunter.SerpentSting.Dot(curTarget)
+						serpentStingTicks := serpentStingAura.NumberOfTicks
+						if serpentStingAura.IsActive() {
+							// If less then 2 ticks are left then we refresh with a 2 tick duration
+							if serpentStingAura.NumberOfTicks > 3 {
+								serpentStingAura.NumberOfTicks = 2
+								serpentStingAura.Rollover(sim)
+								serpentStingAura.NumberOfTicks = serpentStingTicks
+							}
+						} else {
+
+							serpentStingAura.NumberOfTicks = 2
+							serpentStingAura.Apply(sim)
+							serpentStingAura.NumberOfTicks = serpentStingTicks
+						}
 					}
 				})
 
