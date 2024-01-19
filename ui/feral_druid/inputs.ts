@@ -71,5 +71,10 @@ export const FeralDruidRotationConfig = {
 			label: `Pre-cast Tiger's Fury`,
 			labelTooltip: `If checked, model a pre-pull Tiger's Fury cast 3 seconds before initiating combat.`,
 		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
+			fieldName: 'useShredTrick',
+			label: `Use Shred Trick`,
+			labelTooltip: `If checked, enable the "Shred trick" micro-optimization. This should only be used on short fight lengths with full powershifting uptime.`,
+		}),
 	],
 };

@@ -38,6 +38,7 @@ export const DefaultRotation = FeralDruidRotation.create({
 	maxWaitTime: 2.0,
 	preroarDuration: 26.0,
 	precastTigersFury: false,
+	useShredTrick: false,
 });
 
 export const SIMPLE_ROTATION_DEFAULT = PresetUtils.makePresetSimpleRotation('Simple Default', Spec.SpecFeralDruid, DefaultRotation);
