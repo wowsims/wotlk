@@ -106,7 +106,6 @@ func (unit *Unit) binaryHitChance(school SpellSchool, attacker *Unit) float64 {
 }
 
 // Roll threshold for each type of partial resist.
-// Also returns binary miss chance as 4th value.
 func (unit *Unit) partialResistRollThresholds(school SpellSchool, attacker *Unit, pureDot bool) (float64, float64, float64) {
 	resistCoeff := unit.resistCoeff(school, attacker, false, pureDot)
 
