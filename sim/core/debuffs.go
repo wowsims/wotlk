@@ -111,6 +111,9 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 	if debuffs.DemoralizingShout != proto.TristateEffect_TristateEffectMissing {
 		MakePermanent(DemoralizingShoutAura(target, 0, GetTristateValueInt32(debuffs.DemoralizingShout, 0, 5), level))
 	}
+	if debuffs.HuntersMark != proto.TristateEffect_TristateEffectMissing {
+		MakePermanent(HuntersMarkAura(target, GetTristateValueInt32(debuffs.HuntersMark, 0, 5), level))
+	}
 
 	// Atk spd reduction
 	if debuffs.ThunderClap != proto.TristateEffect_TristateEffectMissing {
@@ -610,15 +613,28 @@ func CurseOfWeaknessAura(target *Unit, points int32, playerLevel int32) *Aura {
 
 const HuntersMarkAuraTag = "HuntersMark"
 
-// TODO: Classic
 func HuntersMarkAura(target *Unit, points int32, playerLevel int32) *Aura {
-	bonus := 500.0 * (1 + 0.1*float64(points))
+	spellID := map[int32]int32{
+		25: 14323,
+		40: 14324,
+		50: 14324,
+		60: 14325,
+	}[playerLevel]
+
+	bonus := map[int32]float64{
+		25: 45,
+		40: 75,
+		50: 75,
+		60: 110,
+	}[playerLevel]
+
+	bonus *= 1 + 0.03*float64(points)
 
 	aura := target.GetOrRegisterAura(Aura{
 		Label:    "HuntersMark-" + strconv.Itoa(int(bonus)),
 		Tag:      HuntersMarkAuraTag,
-		ActionID: ActionID{SpellID: 53338},
-		Duration: NeverExpires,
+		ActionID: ActionID{SpellID: spellID},
+		Duration: time.Minute * 2,
 	})
 
 	aura.NewExclusiveEffect("HuntersMark", true, ExclusiveEffect{

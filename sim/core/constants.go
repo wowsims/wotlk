@@ -23,6 +23,7 @@ const ResilienceRatingPerCritDamageReductionPercent = ResilienceRatingPerCritRed
 const EnemyAutoAttackAPCoefficient = 1.0 / (14.0 * 177.0)
 
 const AverageMagicPartialResistMultiplier = 0.94
+const LevelBasedNPCSpellResistancePerLevel = 8
 
 // IDs for items used in core
 const (

@@ -40,14 +40,18 @@ type Hunter struct {
 	AmmoDamageBonus           float64
 	NormalizedAmmoDamageBonus float64
 
+	highestSerpentStingRank int
+
 	currentAspect *core.Aura
+
+	curQueueAura       *core.Aura
+	curQueuedAutoSpell *core.Spell
 
 	AspectOfTheHawk  *core.Spell
 	AspectOfTheViper *core.Spell
 
 	AimedShot       *core.Spell
 	ArcaneShot      *core.Spell
-	BlackArrow      *core.Spell
 	ChimeraShot     *core.Spell
 	ExplosiveShotR4 *core.Spell
 	ExplosiveShotR3 *core.Spell
@@ -57,14 +61,17 @@ type Hunter struct {
 	MultiShot       *core.Spell
 	RapidFire       *core.Spell
 	RaptorStrike    *core.Spell
+	FlankingStrike  *core.Spell
 	ScorpidSting    *core.Spell
 	SerpentSting    *core.Spell
 	SilencingShot   *core.Spell
-	SteadyShot      *core.Spell
 	Volley          *core.Spell
 
-	// Fake spells to encapsulate weaving logic.
-	TrapWeaveSpell *core.Spell
+	SerpentStingChimeraShot *core.Spell
+
+	FlankingStrikeAura *core.Aura
+	SniperTrainingAura *core.Aura
+	CobraStrikesAura   *core.Aura
 
 	AspectOfTheHawkAura    *core.Aura
 	AspectOfTheViperAura   *core.Aura
@@ -87,6 +94,10 @@ func (hunter *Hunter) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	if hunter.Talents.TrueshotAura {
 		raidBuffs.TrueshotAura = true
 	}
+
+	if hunter.HasRune(proto.HunterRune_RuneChestHeartOfTheLion) {
+		raidBuffs.AspectOfTheLion = true
+	}
 }
 func (hunter *Hunter) AddPartyBuffs(_ *proto.PartyBuffs) {
 }
@@ -100,26 +111,27 @@ func (hunter *Hunter) Initialize() {
 	hunter.registerAspectOfTheHawkSpell()
 	//hunter.registerAspectOfTheViperSpell()
 
-	//multiShotTimer := hunter.NewTimer()
-	//arcaneShotTimer := hunter.NewTimer()
+	multiShotTimer := hunter.NewTimer()
+	arcaneShotTimer := hunter.NewTimer()
 	//fireTrapTimer := hunter.NewTimer()
 
+	hunter.registerSerpentStingSpell()
+	hunter.registerArcaneShotSpell(arcaneShotTimer)
+	hunter.registerMultiShotSpell(multiShotTimer)
 	// hunter.registerAimedShotSpell(multiShotTimer)
-	// hunter.registerArcaneShotSpell(arcaneShotTimer)
+	hunter.registerChimeraShotSpell()
 	// hunter.registerBlackArrowSpell(fireTrapTimer)
-	// hunter.registerChimeraShotSpell()
 	// hunter.registerExplosiveShotSpell(arcaneShotTimer)
 	// hunter.registerExplosiveTrapSpell(fireTrapTimer)
 	// hunter.registerKillShotSpell()
-	// hunter.registerMultiShotSpell(multiShotTimer)
-	// hunter.registerRaptorStrikeSpell()
+	hunter.registerRaptorStrikeSpell()
+	hunter.registerFlankingStrikeSpell()
 	// hunter.registerScorpidStingSpell()
-	// hunter.registerSerpentStingSpell()
 	// hunter.registerSilencingShotSpell()
 	// hunter.registerSteadyShotSpell()
 	// hunter.registerVolleySpell()
 
-	//hunter.registerKillCommandCD()
+	hunter.registerKillCommand()
 	//hunter.registerRapidFireCD()
 
 	if !hunter.IsUsingAPL {
@@ -200,13 +212,31 @@ func NewHunter(character *core.Character, options *proto.Player) *Hunter {
 	hunter.EnableAutoAttacks(hunter, core.AutoAttackOptions{
 		// We don't know crit multiplier until later when we see the target so just
 		// use 0 for now.
-		MainHand: hunter.WeaponFromMainHand(0),
-		OffHand:  hunter.WeaponFromOffHand(0),
-		Ranged:   rangedWeapon,
-		//ReplaceMHSwing:  hunter.TryRaptorStrike,
+		MainHand:        hunter.WeaponFromMainHand(0),
+		OffHand:         hunter.WeaponFromOffHand(0),
+		Ranged:          rangedWeapon,
+		ReplaceMHSwing:  hunter.TryRaptorStrike,
 		AutoSwingRanged: true,
 		AutoSwingMelee:  true,
 	})
+
+	hunter.AutoAttacks.RangedConfig().Flags |= core.SpellFlagHunterRanged
+	hunter.AutoAttacks.RangedConfig().Cast = core.CastConfig{
+		DefaultCast: core.Cast{
+			CastTime: time.Millisecond * 500,
+		},
+		ModifyCast: func(_ *core.Simulation, spell *core.Spell, cast *core.Cast) {
+			cast.CastTime = spell.CastTime()
+		},
+		IgnoreHaste: true, // Hunter GCD is locked at 1.5s
+		CastTime: func(spell *core.Spell) time.Duration {
+			return time.Duration(float64(spell.DefaultCast.CastTime) / hunter.RangedSwingSpeed())
+		},
+	}
+	hunter.AutoAttacks.RangedConfig().ExtraCastCondition = func(sim *core.Simulation, target *core.Unit) bool {
+		return hunter.Hardcast.Expires < sim.CurrentTime
+	}
+
 	hunter.AutoAttacks.RangedConfig().ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 		baseDamage := hunter.RangedWeaponDamage(sim, spell.RangedAttackPower(target)) +
 			hunter.AmmoDamageBonus +

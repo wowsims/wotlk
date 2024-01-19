@@ -82,7 +82,7 @@ func TestAssassination(t *testing.T) {
 func TestSubtlety(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
 		Class:       proto.Class_ClassRogue,
-		Race:        proto.Race_RaceBloodElf,
+		Race:        proto.Race_RaceHuman,
 		OtherRaces:  []proto.Race{proto.Race_RaceOrc},
 		GearSet:     core.GetGearSet("../../ui/rogue/gear_sets", "p2_hemosub"),
 		Talents:     SubtletyTalents,

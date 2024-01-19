@@ -991,8 +991,6 @@ export const specTypeFunctions: Record<Spec, SpecTypeFunctions<any>> = {
 
 export const raceToFaction: Record<Race, Faction> = {
 	[Race.RaceUnknown]: Faction.Unknown,
-	[Race.RaceBloodElf]: Faction.Horde,
-	[Race.RaceDraenei]: Faction.Alliance,
 	[Race.RaceDwarf]: Faction.Alliance,
 	[Race.RaceGnome]: Faction.Alliance,
 	[Race.RaceHuman]: Faction.Alliance,
@@ -1030,8 +1028,6 @@ const druidRaces = [
 	Race.RaceNightElf,
 ];
 const hunterRaces = [
-	Race.RaceBloodElf,
-	Race.RaceDraenei,
 	Race.RaceDwarf,
 	Race.RaceNightElf,
 	Race.RaceOrc,
@@ -1040,29 +1036,22 @@ const hunterRaces = [
 ];
 const mageRaces = [
 	Race.RaceTroll,
-	Race.RaceBloodElf,
-	Race.RaceDraenei,
 	Race.RaceGnome,
 	Race.RaceHuman,
 	Race.RaceUndead,
 ];
 const paladinRaces = [
-	Race.RaceBloodElf,
-	Race.RaceDraenei,
 	Race.RaceDwarf,
 	Race.RaceHuman,
 ];
 const priestRaces = [
 	Race.RaceTroll,
-	Race.RaceBloodElf,
-	Race.RaceDraenei,
 	Race.RaceDwarf,
 	Race.RaceHuman,
 	Race.RaceNightElf,
 	Race.RaceUndead,
 ];
 const rogueRaces = [
-	Race.RaceBloodElf,
 	Race.RaceDwarf,
 	Race.RaceGnome,
 	Race.RaceHuman,
@@ -1073,19 +1062,16 @@ const rogueRaces = [
 ];
 const shamanRaces = [
 	Race.RaceOrc,
-	Race.RaceDraenei,
 	Race.RaceTauren,
 	Race.RaceTroll,
 ];
 const warlockRaces = [
-	Race.RaceBloodElf,
 	Race.RaceGnome,
 	Race.RaceHuman,
 	Race.RaceOrc,
 	Race.RaceUndead,
 ];
 const warriorRaces = [
-	Race.RaceDraenei,
 	Race.RaceDwarf,
 	Race.RaceGnome,
 	Race.RaceHuman,

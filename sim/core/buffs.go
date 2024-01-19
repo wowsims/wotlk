@@ -495,7 +495,7 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 	if individualBuffs.BlessingOfKings {
 		kingsAgiIntSpiAmount = 1.1
 		kingsStrStamAmount = 1.1
-	} else if individualBuffs.AspectOfTheLion {
+	} else if raidBuffs.AspectOfTheLion {
 		kingsAgiIntSpiAmount = 1.1
 		kingsStrStamAmount = 1.1
 	}

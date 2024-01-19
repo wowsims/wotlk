@@ -52,7 +52,7 @@ export const AllStatsBuff = InputHelpers.makeMultiIconInput([
 
 export const AllStatsPercentBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(20217), fieldName: 'blessingOfKings'}),
-	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(409580), fieldName: 'aspectOfTheLion'}),
+	makeBooleanRaidBuffInput({id: ActionId.fromSpellId(409580), fieldName: 'aspectOfTheLion'}),
 ], 'Stats %');
 
 // TODO: Classic armor buff ranks

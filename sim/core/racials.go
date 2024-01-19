@@ -11,55 +11,6 @@ func applyRaceEffects(agent Agent) {
 	character := agent.GetCharacter()
 
 	switch character.Race {
-	case proto.Race_RaceBloodElf:
-		character.PseudoStats.ReducedArcaneHitTakenChance += 0.02
-		character.PseudoStats.ReducedFireHitTakenChance += 0.02
-		character.PseudoStats.ReducedFrostHitTakenChance += 0.02
-		character.PseudoStats.ReducedNatureHitTakenChance += 0.02
-		character.PseudoStats.ReducedShadowHitTakenChance += 0.02
-
-		var actionID ActionID
-
-		var resourceMetrics *ResourceMetrics = nil
-		if resourceMetrics == nil {
-			if character.HasEnergyBar() {
-				actionID = ActionID{SpellID: 25046}
-				resourceMetrics = character.NewEnergyMetrics(actionID)
-			} else if character.HasManaBar() {
-				actionID = ActionID{SpellID: 28730}
-				resourceMetrics = character.NewManaMetrics(actionID)
-			}
-		}
-
-		spell := character.RegisterSpell(SpellConfig{
-			ActionID: actionID,
-			Flags:    SpellFlagNoOnCastComplete,
-			Cast: CastConfig{
-				CD: Cooldown{
-					Timer:    character.NewTimer(),
-					Duration: time.Minute * 2,
-				},
-			},
-			ApplyEffects: func(sim *Simulation, _ *Unit, spell *Spell) {
-				if spell.Unit.HasEnergyBar() {
-					spell.Unit.AddEnergy(sim, 15.0, resourceMetrics)
-				} else if spell.Unit.HasManaBar() {
-					spell.Unit.AddMana(sim, spell.Unit.MaxMana()*0.06, resourceMetrics)
-				}
-			},
-		})
-
-		character.AddMajorCooldown(MajorCooldown{
-			Spell:    spell,
-			Type:     CooldownTypeDPS,
-			Priority: CooldownPriorityLow,
-			ShouldActivate: func(sim *Simulation, character *Character) bool {
-				if spell.Unit.HasEnergyBar() {
-					return character.CurrentEnergy() <= character.maxEnergy-15
-				}
-				return true
-			},
-		})
 	case proto.Race_RaceDwarf:
 		character.PseudoStats.ReducedFrostHitTakenChance += 0.02
 

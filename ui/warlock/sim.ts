@@ -38,6 +38,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 		Stat.StatSpellHaste,
 		Stat.StatFirePower,
 		Stat.StatShadowPower,
+		Stat.StatSpellPenetration,
 
 		// Pet Related Stats
 		Stat.StatStrength,
@@ -63,6 +64,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 		Stat.StatSpellHit,
 		Stat.StatSpellCrit,
 		Stat.StatSpellHaste,
+		Stat.StatSpellPenetration,
 		Stat.StatMP5,
 		Stat.StatStamina,
 	],

@@ -157,7 +157,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHolyPaladin, {
 			defaultFactionRaces: {
 				[Faction.Unknown]: Race.RaceUnknown,
 				[Faction.Alliance]: Race.RaceHuman,
-				[Faction.Horde]: Race.RaceBloodElf,
+				[Faction.Horde]: Race.RaceUnknown,
 			},
 			defaultGear: {
 				[Faction.Unknown]: {},

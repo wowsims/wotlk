@@ -176,7 +176,7 @@ var spellCritRegex = regexp.MustCompile(`Improves your chance to get a critical 
 var meleeCritRegex = regexp.MustCompile(`Improves your chance to get a critical strike by ([0-9]+)%\.`)
 var hasteRegex = regexp.MustCompile(`Improves your haste by ([0-9]+)%\.`)
 
-var spellPenetrationRegex = regexp.MustCompile(`Increases your spell penetration by ([0-9]+)\.`)
+var spellPenetrationRegex = regexp.MustCompile(`Decreases the magical resistances of your spell targets by ([0-9]+)\.`)
 var mp5Regex = regexp.MustCompile(`Restores ([0-9]+) mana per 5 sec\.`)
 var attackPowerRegex = regexp.MustCompile(`\+([0-9]+) Attack Power\.`)
 var attackPowerRegex2 = regexp.MustCompile(`\+<!--rtg38-->([0-9]+) Attack Power\.`)
@@ -254,7 +254,7 @@ func (item WowheadItemResponse) GetStats() Stats {
 		proto.Stat_StatNatureResistance:  float64(item.GetIntValue(natureResistanceRegex)),
 		proto.Stat_StatShadowResistance:  float64(item.GetIntValue(shadowResistanceRegex)),
 		proto.Stat_StatHealing:           float64(item.GetIntValue(spellHealingRegex)),
-		proto.Stat_StatFeralAttackPower: float64(item.GetIntValue(feralAttackPowerRegex)),
+		proto.Stat_StatFeralAttackPower:  float64(item.GetIntValue(feralAttackPowerRegex)),
 	}
 }
 

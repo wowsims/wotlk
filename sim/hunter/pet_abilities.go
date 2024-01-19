@@ -75,7 +75,20 @@ func (hp *HunterPet) newFocusDump(pat PetAbilityType, spellID int32) *core.Spell
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(16, 22) + hp.MHWeaponDamage(sim, spell.MeleeAttackPower())
 			baseDamage *= hp.killCommandMult()
+
+			cobraStrikesActive := hp.hunterOwner.CobraStrikesAura.IsActive()
+			if cobraStrikesActive {
+				spell.BonusCritRating += 100 * core.CritRatingPerCritChance
+			}
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+
+			if cobraStrikesActive {
+				spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
+				hp.hunterOwner.CobraStrikesAura.RemoveStack(sim)
+				if hp.hunterOwner.CobraStrikesAura.GetStacks() == 0 {
+					hp.hunterOwner.CobraStrikesAura.Deactivate(sim)
+				}
+			}
 		},
 	})
 }
