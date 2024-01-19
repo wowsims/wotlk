@@ -5,7 +5,7 @@ import (
 )
 
 func (result *SpellResult) applyResistances(sim *Simulation, spell *Spell, isPeriodic bool, attackTable *AttackTable) {
-	resistanceMultiplier, outcome := spell.ResistanceMultiplier(sim, isPeriodic, attackTable, result)
+	resistanceMultiplier, outcome := spell.ResistanceMultiplier(sim, isPeriodic, attackTable)
 	result.Damage *= resistanceMultiplier
 
 	if outcome != OutcomeEmpty {
@@ -17,7 +17,7 @@ func (result *SpellResult) applyResistances(sim *Simulation, spell *Spell, isPer
 }
 
 // Modifies damage based on Armor or Magic resistances, depending on the damage type.
-func (spell *Spell) ResistanceMultiplier(sim *Simulation, isPeriodic bool, attackTable *AttackTable, result *SpellResult) (float64, HitOutcome) {
+func (spell *Spell) ResistanceMultiplier(sim *Simulation, isPeriodic bool, attackTable *AttackTable) (float64, HitOutcome) {
 	if spell.Flags.Matches(SpellFlagIgnoreResists) {
 		return 1, OutcomeEmpty
 	}
