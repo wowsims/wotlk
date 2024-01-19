@@ -15,7 +15,7 @@ func init() {
 func TestHoly(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
 		Class:      proto.Class_ClassPaladin,
-		Race:       proto.Race_RaceBloodElf,
+		Race:       proto.Race_RaceHuman,
 		OtherRaces: []proto.Race{proto.Race_RaceHuman},
 
 		GearSet:     core.GetGearSet("../../../ui/holy_paladin/gear_sets", "p1"),
@@ -46,7 +46,7 @@ func BenchmarkSimulate(b *testing.B) {
 	rsr := &proto.RaidSimRequest{
 		Raid: core.SinglePlayerRaidProto(
 			&proto.Player{
-				Race:          proto.Race_RaceBloodElf,
+				Race:          proto.Race_RaceHuman,
 				Class:         proto.Class_ClassPaladin,
 				Equipment:     core.GetGearSet("../../../ui/holy_paladin/gear_sets", "p1").GearSet,
 				Consumes:      FullConsumes,

@@ -158,7 +158,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRestorationShaman, {
 			consumes: Presets.DefaultConsumes,
 			defaultFactionRaces: {
 				[Faction.Unknown]: Race.RaceUnknown,
-				[Faction.Alliance]: Race.RaceDraenei,
+				[Faction.Alliance]: Race.RaceUnknown,
 				[Faction.Horde]: Race.RaceOrc,
 			},
 			defaultGear: {

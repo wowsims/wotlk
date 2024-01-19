@@ -27,16 +27,14 @@ enum Spec {
 
 enum Race {
 	RaceUnknown = 0;
-	RaceBloodElf = 1;
-	RaceDraenei = 2;
-	RaceDwarf = 3;
-	RaceGnome = 4;
-	RaceHuman = 5;
-	RaceNightElf = 6;
-	RaceOrc = 7;
-	RaceTauren = 8;
-	RaceTroll = 9;
-	RaceUndead = 10;
+	RaceDwarf = 1;
+	RaceGnome = 2;
+	RaceHuman = 3;
+	RaceNightElf = 4;
+	RaceOrc = 5;
+	RaceTauren = 6;
+	RaceTroll = 7;
+	RaceUndead = 8;
 }
 
 enum Faction {
