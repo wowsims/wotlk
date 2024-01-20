@@ -55,13 +55,7 @@ func (hunter *Hunter) getArcaneShotConfig(rank int, timer *core.Timer) core.Spel
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := baseDamage + spellCoeff*spell.SpellPower()
 
-			if hunter.SniperTrainingAura.IsActive() {
-				spell.BonusCritRating += 10 * core.CritRatingPerCritChance
-			}
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeRangedHitAndCrit)
-			if hunter.SniperTrainingAura.IsActive() {
-				spell.BonusCritRating -= 10 * core.CritRatingPerCritChance
-			}
 
 			spell.WaitTravelTime(sim, func(sim *core.Simulation) {
 				spell.DealDamage(sim, result)

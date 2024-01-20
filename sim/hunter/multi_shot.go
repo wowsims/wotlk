@@ -65,8 +65,6 @@ func (hunter *Hunter) getMultiShotConfig(rank int, timer *core.Timer) core.Spell
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			curTarget := target
 
-			//hunter.AutoAttacks.DelayRangedUntil(sim, sim.CurrentTime+time.Duration(float64(time.Millisecond*500)/hunter.RangedSwingSpeed()))
-
 			sharedDmg := hunter.AutoAttacks.Ranged().BaseDamage(sim) +
 				hunter.AmmoDamageBonus +
 				spell.BonusWeaponDamage() +
@@ -75,13 +73,7 @@ func (hunter *Hunter) getMultiShotConfig(rank int, timer *core.Timer) core.Spell
 			for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
 				baseDamage := sharedDmg + 0.2*spell.RangedAttackPower(curTarget)
 
-				if hunter.SniperTrainingAura.IsActive() {
-					spell.BonusCritRating += 10 * core.CritRatingPerCritChance
-				}
 				result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeRangedHitAndCrit)
-				if hunter.SniperTrainingAura.IsActive() {
-					spell.BonusCritRating -= 10 * core.CritRatingPerCritChance
-				}
 
 				spell.WaitTravelTime(sim, func(s *core.Simulation) {
 					spell.DealDamage(sim, result)

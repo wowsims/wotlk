@@ -54,6 +54,7 @@ func (hunter *Hunter) registerChimeraShotSpell() {
 				spell.BonusWeaponDamage()
 
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeRangedHitAndCrit)
+
 			spell.WaitTravelTime(sim, func(s *core.Simulation) {
 				spell.DealDamage(sim, result)
 

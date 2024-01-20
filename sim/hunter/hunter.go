@@ -8,7 +8,7 @@ import (
 	"github.com/wowsims/sod/sim/core/stats"
 )
 
-var TalentTreeSizes = [3]int{26, 27, 28}
+var TalentTreeSizes = [3]int{16, 14, 16}
 
 func RegisterHunter() {
 	core.RegisterAgentFactory(
@@ -118,7 +118,7 @@ func (hunter *Hunter) Initialize() {
 	hunter.registerSerpentStingSpell()
 	hunter.registerArcaneShotSpell(arcaneShotTimer)
 	hunter.registerMultiShotSpell(multiShotTimer)
-	// hunter.registerAimedShotSpell(multiShotTimer)
+	// hunter.registerAimedShotSpell(arcaneShotTimer)
 	hunter.registerChimeraShotSpell()
 	// hunter.registerBlackArrowSpell(fireTrapTimer)
 	// hunter.registerExplosiveShotSpell(arcaneShotTimer)

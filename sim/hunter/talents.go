@@ -15,11 +15,53 @@ func (hunter *Hunter) ApplyTalents() {
 
 		hunter.pet.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*3*float64(hunter.Talents.Ferocity))
 		hunter.pet.AddStat(stats.SpellCrit, core.SpellCritRatingPerCritChance*3*float64(hunter.Talents.Ferocity))
+
 		hunter.pet.PseudoStats.DamageDealtMultiplier *= 1 + 0.04*float64(hunter.Talents.UnleashedFury)
 
-		hunter.pet.MultiplyStat(stats.Health, 1+(0.03*float64(hunter.Talents.EnduranceTraining)))
+		if hunter.Talents.EnduranceTraining > 0 {
+			hunter.pet.MultiplyStat(stats.Health, 1+(0.03*float64(hunter.Talents.EnduranceTraining)))
+		}
 	}
 
+	if hunter.Talents.MonsterSlaying+hunter.Talents.HumanoidSlaying > 0 {
+		target := hunter.CurrentTarget
+		slayingModifier := 1.0
+		monsterMultiplier := 1.0 + 0.01*float64(hunter.Talents.MonsterSlaying)
+		humanoidMultiplier := 1.0 + 0.01*float64(hunter.Talents.HumanoidSlaying)
+		if target.MobType == proto.MobType_MobTypeBeast || target.MobType == proto.MobType_MobTypeGiant || target.MobType == proto.MobType_MobTypeDragonkin {
+			slayingModifier *= monsterMultiplier
+		} else if target.MobType == proto.MobType_MobTypeHumanoid {
+			slayingModifier *= humanoidMultiplier
+		}
+		hunter.PseudoStats.DamageDealtMultiplier *= slayingModifier
+	}
+
+	hunter.AddStat(stats.MeleeHit, float64(hunter.Talents.Surefooted)*1*core.MeleeHitRatingPerHitChance)
+	hunter.AddStat(stats.SpellHit, float64(hunter.Talents.Surefooted)*1*core.SpellHitRatingPerHitChance)
+
+	hunter.AddStat(stats.MeleeCrit, float64(hunter.Talents.KillerInstinct)*1*core.CritRatingPerCritChance)
+
+	if hunter.Talents.LethalShots > 0 {
+		hunter.AddBonusRangedCritRating(1 * float64(hunter.Talents.LethalShots) * core.CritRatingPerCritChance)
+	}
+
+	if hunter.Talents.RangedWeaponSpecialization > 0 {
+		mult := 1 + 0.01*float64(hunter.Talents.RangedWeaponSpecialization)
+		hunter.OnSpellRegistered(func(spell *core.Spell) {
+			if spell.ProcMask.Matches(core.ProcMaskRanged) {
+				spell.DamageMultiplier *= mult
+			}
+		})
+	}
+
+	if hunter.Talents.Survivalist > 0 {
+		hunter.MultiplyStat(stats.Health, 1.0+0.02*float64(hunter.Talents.Survivalist))
+	}
+
+	if hunter.Talents.LightningReflexes > 0 {
+		agiBonus := 0.03 * float64(hunter.Talents.LightningReflexes)
+		hunter.MultiplyStat(stats.Agility, 1.0+agiBonus)
+	}
 }
 
 func (hunter *Hunter) ApplyRunes() {
@@ -77,6 +119,20 @@ func (hunter *Hunter) applySniperTraining() {
 		Label:    "Sniper Training",
 		ActionID: core.ActionID{SpellID: 415399},
 		Duration: time.Second * 6,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			for _, spell := range aura.Unit.Spellbook {
+				if spell.ProcMask.Matches(core.ProcMaskRangedSpecial) {
+					spell.BonusCritRating += 10 * core.CritRatingPerCritChance
+				}
+			}
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			for _, spell := range aura.Unit.Spellbook {
+				if spell.ProcMask.Matches(core.ProcMaskRangedSpecial) {
+					spell.BonusCritRating -= 10 * core.CritRatingPerCritChance
+				}
+			}
+		},
 	})
 
 	core.ApplyFixedUptimeAura(hunter.SniperTrainingAura, hunter.Options.SniperTrainingUptime, time.Second*6, 0)
