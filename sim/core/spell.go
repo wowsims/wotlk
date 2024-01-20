@@ -144,6 +144,10 @@ type Spell struct {
 
 	// Per-target auras that are related to this spell, usually buffs or debuffs applied by the spell.
 	RelatedAuras []AuraArray
+
+	// Reference to a spell to be considered as the CD
+	// Defaults to this spell (Used for Next Melee spells)
+	CdSpell *Spell
 }
 
 func (unit *Unit) OnSpellRegistered(handler SpellRegisteredHandler) {
@@ -230,6 +234,8 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 
 		RelatedAuras: config.RelatedAuras,
 	}
+
+	spell.CdSpell = spell
 
 	switch {
 	case spell.SpellSchool.Matches(SpellSchoolPhysical):
@@ -455,7 +461,7 @@ func (spell *Spell) IsReady(sim *Simulation) bool {
 	if spell == nil {
 		return false
 	}
-	return BothTimersReady(spell.CD.Timer, spell.SharedCD.Timer, sim)
+	return BothTimersReady(spell.CdSpell.CD.Timer, spell.CdSpell.SharedCD.Timer, sim)
 }
 
 func (spell *Spell) TimeToReady(sim *Simulation) time.Duration {
@@ -472,6 +478,14 @@ func (spell *Spell) CanCast(sim *Simulation, target *Unit) bool {
 	if spell.ExtraCastCondition != nil && !spell.ExtraCastCondition(sim, target) {
 		//if sim.Log != nil {
 		//	sim.Log("Cant cast because of extra condition")
+		//}
+		return false
+	}
+
+	// While moving only instant casts are possible
+	if (spell.DefaultCast.CastTime > 0 || spell.DefaultCast.ChannelTime > 0) && spell.Unit.Moving {
+		//if sim.Log != nil {
+		//	sim.Log("Cant cast because moving")
 		//}
 		return false
 	}

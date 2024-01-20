@@ -83,6 +83,7 @@ type Druid struct {
 	SurvivalInstinctsAura    *core.Aura
 	TigersFuryAura           *core.Aura
 	SavageRoarAura           *core.Aura
+	WildStrikesBuffAura      *core.Aura
 
 	BleedCategories core.ExclusiveCategoryArray
 
@@ -183,7 +184,7 @@ func (druid *Druid) RegisterFeralCatSpells() {
 	druid.registerShredSpell()
 	// druid.registerSwipeBearSpell()
 	// druid.registerSwipeCatSpell()
-	// druid.registerTigersFurySpell()
+	druid.registerTigersFurySpell()
 }
 
 // TODO: Classic feral tank

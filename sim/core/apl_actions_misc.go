@@ -175,7 +175,7 @@ func (rot *APLRotation) newActionMove(config *proto.APLActionMove) APLActionImpl
 	}
 }
 func (action *APLActionMove) IsReady(sim *Simulation) bool {
-	return !action.unit.Moving && action.moveRange.GetFloat(sim) != action.unit.DistanceFromTarget
+	return !action.unit.Moving && action.moveRange.GetFloat(sim) != action.unit.DistanceFromTarget && action.unit.Hardcast.Expires < sim.CurrentTime
 }
 func (action *APLActionMove) Execute(sim *Simulation) {
 	moveRange := action.moveRange.GetFloat(sim)

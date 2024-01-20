@@ -111,6 +111,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 		specOptions: Presets.DefaultOptions,
 		// Default raid/party buffs settings.
 		raidBuffs: RaidBuffs.create({
+			aspectOfTheLion: true,
 			arcaneBrilliance: true,
 			giftOfTheWild: TristateEffect.TristateEffectRegular,
 			battleShout: TristateEffect.TristateEffectRegular,
@@ -119,7 +120,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 		partyBuffs: PartyBuffs.create({}),
 
 		individualBuffs: IndividualBuffs.create({
-			aspectOfTheLion: true,
 			blessingOfMight: TristateEffect.TristateEffectImproved,
 			blessingOfWisdom: TristateEffect.TristateEffectRegular,
 			boonOfBlackfathom: true,
@@ -198,10 +198,12 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 
 		const preroarDuration = Math.min(simple.preroarDuration, 33.0);
 		const preRoar = APLPrepullAction.fromJsonString(`{"action":{"activateAura":{"auraId":{"spellId":407988}}},"doAtValue":{"const":{"val":"-${(34.0 - preroarDuration).toFixed(2)}s"}}}`);
-		const doRotation = APLAction.fromJsonString(`{"catOptimalRotationAction":{"maxWaitTime":${simple.maxWaitTime.toFixed(2)},"minCombosForRip":${simple.minCombosForRip.toFixed(0)}, "maintainFaerieFire":${simple.maintainFaerieFire}}}`);
+		const preTF = APLPrepullAction.fromJsonString(`{"action":{"castSpell":{"spellId":{"spellId":5217,"rank":1}}},"doAtValue":{"const":{"val":"-3s"}}}`);
+		const doRotation = APLAction.fromJsonString(`{"catOptimalRotationAction":{"maxWaitTime":${simple.maxWaitTime.toFixed(2)},"minCombosForRip":${simple.minCombosForRip.toFixed(0)},"maintainFaerieFire":${simple.maintainFaerieFire},"useShredTrick":${simple.useShredTrick}}}`);
 
 		prepullActions.push(...[
 			preroarDuration > 0 ? preRoar: null,
+			simple.precastTigersFury ? preTF: null,
 		].filter(a => a) as Array<APLPrepullAction>)
 
 		actions.push(...[

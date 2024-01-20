@@ -38,6 +38,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecShadowPriest, {
 		Stat.StatSpellHit,
 		Stat.StatSpellCrit,
 		Stat.StatSpellHaste,
+		Stat.StatSpellPenetration,
 		Stat.StatMP5,
 	],
 	// Reference stat against which to calculate EP. I think all classes use either spell power or attack power.
@@ -54,6 +55,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecShadowPriest, {
 		Stat.StatHolyPower,
 		Stat.StatSpellHit,
 		Stat.StatSpellCrit,
+		Stat.StatSpellPenetration,
 		Stat.StatMP5,
 	],
 	modifyDisplayStats: (player: Player<Spec.SpecShadowPriest>) => {

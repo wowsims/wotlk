@@ -592,6 +592,7 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 			minCombosForRip: 3,
 			maxWaitTime: 2.0,
 			maintainFaerieFire: false,
+			useShredTrick: false,
 		}),
 		fields: [
 			AplHelpers.numberFieldConfig('minCombosForRip', false, {
@@ -604,6 +605,9 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 			}),
 			AplHelpers.booleanFieldConfig('maintainFaerieFire', 'Maintain Faerie Fire', {
 				labelTooltip: 'If checked, bundle Faerie Fire refreshes with powershifts. Ignored if an external Faerie Fire debuff is selected in settings.',
+			}),
+			AplHelpers.booleanFieldConfig('useShredTrick', 'Use Shred Trick', {
+				labelTooltip: 'If checked, enable the "Shred trick" micro-optimization. This should only be used on short fight lengths with full powershifting uptime.',
 			}),
 		],
 	}),

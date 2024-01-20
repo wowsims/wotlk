@@ -22,7 +22,7 @@ func (priest *Priest) getVoidPlagueConfig() core.SpellConfig {
 		ActionID:      core.ActionID{SpellID: 425204},
 		SpellSchool:   core.SpellSchoolShadow,
 		ProcMask:      core.ProcMaskSpellDamage,
-		Flags:         core.SpellFlagAPL,
+		Flags:         core.SpellFlagAPL | core.SpellFlagPureDot,
 		Rank:          1,
 		RequiredLevel: 1,
 

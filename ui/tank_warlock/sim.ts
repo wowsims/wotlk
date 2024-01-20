@@ -19,6 +19,7 @@ import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
 import * as WarlockInputs from './inputs.js';
 import * as Presets from './presets.js';
+import { WarlockRune } from '../core/proto/warlock.js';
 
 const SPEC_CONFIG = registerSpecConfig(Spec.SpecTankWarlock, {
 	cssClass: 'tank-warlock-sim-ui',
@@ -38,6 +39,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecTankWarlock, {
 		Stat.StatSpellHaste,
 		Stat.StatFirePower,
 		Stat.StatShadowPower,
+		Stat.StatSpellPenetration,
 
 		// Tank stats
 		Stat.StatStrength,
@@ -65,6 +67,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecTankWarlock, {
 		Stat.StatSpellHit,
 		Stat.StatSpellCrit,
 		Stat.StatSpellHaste,
+		Stat.StatSpellPenetration,
 		Stat.StatMP5,
 		// Tank stats
 		Stat.StatStamina,
@@ -163,8 +166,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecTankWarlock, {
 	},
 
 	autoRotation: (player: Player<Spec.SpecTankWarlock>): APLRotation => {
-		const hasMasterChanneler = player.getEquippedItem(ItemSlot.ItemSlotChest)?.rune?.id == 403668
-		const hasLakeOfFire = player.getEquippedItem(ItemSlot.ItemSlotChest)?.rune?.id == 403666
+		const hasMasterChanneler = player.getEquippedItem(ItemSlot.ItemSlotChest)?.rune?.id == WarlockRune.RuneChestMasterChanneler
+		const hasLakeOfFire = player.getEquippedItem(ItemSlot.ItemSlotChest)?.rune?.id == WarlockRune.RuneChestLakeOfFire
 		if (hasMasterChanneler) {
 			return Presets.RotationAfflictionTankDefault.rotation.rotation!;
 		} else if (hasLakeOfFire) {

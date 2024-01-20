@@ -18,7 +18,7 @@ func (priest *Priest) getShadowWordPainConfig(rank int) core.SpellConfig {
 		ActionID:      core.ActionID{SpellID: spellId},
 		SpellSchool:   core.SpellSchoolShadow,
 		ProcMask:      core.ProcMaskSpellDamage,
-		Flags:         core.SpellFlagAPL,
+		Flags:         core.SpellFlagAPL | core.SpellFlagPureDot,
 		Rank:          rank,
 		RequiredLevel: level,
 

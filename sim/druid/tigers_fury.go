@@ -7,12 +7,19 @@ import (
 )
 
 func (druid *Druid) registerTigersFurySpell() {
-	actionID := core.ActionID{SpellID: 50213}
-	energyMetrics := druid.NewEnergyMetrics(actionID)
-	instantEnergy := 20.0 * float64(druid.Talents.KingOfTheJungle)
+	actionID := core.ActionID{SpellID: map[int32]int32{
+		25: 5217,
+		40: 6793,
+		50: 9845,
+		60: 9846,
+	}[druid.Level]}
 
-	dmgBonus := 80.0
-	cdReduction := core.TernaryDuration(druid.HasSetBonus(ItemSetDreamwalkerBattlegear, 4), time.Second*3, 0)
+	dmgBonus := map[int32]float64{
+		25: 10.0,
+		40: 20.0,
+		50: 30.0,
+		60: 40.0,
+	}[druid.Level]
 
 	druid.TigersFuryAura = druid.RegisterAura(core.Aura{
 		Label:    "Tiger's Fury Aura",
@@ -29,19 +36,18 @@ func (druid *Druid) registerTigersFurySpell() {
 	spell := druid.RegisterSpell(Cat, core.SpellConfig{
 		ActionID: actionID,
 		Flags:    core.SpellFlagAPL,
+		
+		EnergyCost: core.EnergyCostOptions{
+			Cost: 30,
+		},
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
 				Timer:    druid.NewTimer(),
-				Duration: time.Second*30 - cdReduction,
+				Duration: time.Second,
 			},
-		},
-		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			return !druid.BerserkAura.IsActive()
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			druid.AddEnergy(sim, instantEnergy, energyMetrics)
-
 			druid.TigersFuryAura.Activate(sim)
 		},
 	})

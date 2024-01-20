@@ -150,6 +150,8 @@ message FeralDruid {
 	int32 min_combos_for_rip = 2;
 	float max_wait_time = 3;
 	float preroar_duration = 4;
+	bool precast_tigers_fury = 5;
+	bool use_shred_trick = 6;
   }
   Rotation rotation = 1;
 

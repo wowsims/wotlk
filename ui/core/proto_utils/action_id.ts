@@ -352,6 +352,7 @@ export class ActionId {
 					name += ' (Snapshot)';
 				}
 				break;
+			case 'Raptor Strike':
 			case 'Heroic Strike':
 			case 'Cleave':
 			case 'Maul':

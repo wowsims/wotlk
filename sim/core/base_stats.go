@@ -79,20 +79,6 @@ var RaceOffsets = map[proto.Race]stats.Stats{
 		stats.Spirit:    1,
 		stats.Stamina:   1,
 	},
-	proto.Race_RaceBloodElf: {
-		stats.Agility:   2,
-		stats.Strength:  -3,
-		stats.Intellect: 3,
-		stats.Spirit:    -2,
-		stats.Stamina:   0,
-	},
-	proto.Race_RaceDraenei: {
-		stats.Agility:   -3,
-		stats.Strength:  1,
-		stats.Intellect: 0,
-		stats.Spirit:    2,
-		stats.Stamina:   0,
-	},
 }
 
 var ClassBaseCrit = map[proto.Class]stats.Stats{

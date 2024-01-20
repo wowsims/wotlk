@@ -141,8 +141,17 @@ func (spell *Spell) SpellHitChance(target *Unit) float64 {
 	return hitRating / (SpellHitRatingPerHitChance * 100)
 }
 func (spell *Spell) SpellChanceToMiss(attackTable *AttackTable) float64 {
+	missChance := 0.01
+
+	if spell.Flags.Matches(SpellFlagBinary) {
+		baseHitChance := (1 - attackTable.BaseSpellMissChance) * attackTable.GetBinaryHitChance(spell.SpellSchool)
+		missChance = 1 - baseHitChance - spell.SpellHitChance(attackTable.Defender)
+	} else {
+		missChance = attackTable.BaseSpellMissChance - spell.SpellHitChance(attackTable.Defender)
+	}
+
 	// Always a 1% chance to miss in classic
-	return math.Max(0.01, attackTable.BaseSpellMissChance-spell.SpellHitChance(attackTable.Defender))
+	return math.Max(0.01, missChance)
 }
 func (spell *Spell) MagicHitCheck(sim *Simulation, attackTable *AttackTable) bool {
 	return sim.Proc(1.0-spell.SpellChanceToMiss(attackTable), "Magical Hit Roll")
@@ -203,9 +212,23 @@ func (spell *Spell) calcDamageInternal(sim *Simulation, target *Unit, baseDamage
 
 	if sim.Log == nil {
 		result.Damage *= attackerMultiplier
-		result.applyTargetModifiers(spell, attackTable, isPeriodic)
 		result.applyResistances(sim, spell, isPeriodic, attackTable)
+		result.applyTargetModifiers(spell, attackTable, isPeriodic)
+
+		// Save partial outcome which comes from applyResistances call
+		partialOutcome := OutcomeEmpty
+		if result.Outcome.Matches(OutcomePartial) {
+			partialOutcome = result.Outcome & OutcomePartial
+		}
+
+		// outcome applier overwrites the Outcome
 		outcomeApplier(sim, result, attackTable)
+
+		// Restore partial outcome
+		if partialOutcome != OutcomeEmpty {
+			result.Outcome |= partialOutcome
+		}
+
 		spell.ApplyPostOutcomeDamageModifiers(sim, result)
 	} else {
 		result.Damage *= attackerMultiplier
@@ -214,7 +237,21 @@ func (spell *Spell) calcDamageInternal(sim *Simulation, target *Unit, baseDamage
 		afterResistances := result.Damage
 		result.applyTargetModifiers(spell, attackTable, isPeriodic)
 		afterTargetMods := result.Damage
+
+		// Save partial outcome which comes from applyResistances call
+		partialOutcome := OutcomeEmpty
+		if result.Outcome.Matches(OutcomePartial) {
+			partialOutcome = result.Outcome & OutcomePartial
+		}
+
+		// outcome applier overwrites the Outcome
 		outcomeApplier(sim, result, attackTable)
+
+		// Restore partial outcome
+		if partialOutcome != OutcomeEmpty {
+			result.Outcome |= partialOutcome
+		}
+
 		afterOutcome := result.Damage
 		spell.ApplyPostOutcomeDamageModifiers(sim, result)
 		afterPostOutcome := result.Damage

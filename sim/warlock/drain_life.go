@@ -31,7 +31,7 @@ func (warlock *Warlock) getDrainLifeBaseConfig(rank int) core.SpellConfig {
 		ActionID:      actionID,
 		SpellSchool:   core.SpellSchoolShadow,
 		ProcMask:      core.ProcMaskSpellDamage,
-		Flags:         core.SpellFlagHauntSE | core.SpellFlagAPL | core.SpellFlagResetAttackSwing | core.SpellFlagBinary,
+		Flags:         core.SpellFlagHauntSE | core.SpellFlagAPL | core.SpellFlagResetAttackSwing,
 		RequiredLevel: level,
 		Rank:          rank,
 
@@ -88,13 +88,13 @@ func (warlock *Warlock) getDrainLifeBaseConfig(rank int) core.SpellConfig {
 				dot.SnapshotAttackerMultiplier *= dot.Spell.TargetDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex], true)
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-				// Remove target modifiers and binary for the tick only
+				// Remove target modifiers for the tick only
 				dot.Spell.Flags |= core.SpellFlagIgnoreTargetModifiers
-				dot.Spell.Flags ^= core.SpellFlagBinary
+				//dot.Spell.Flags ^= core.SpellFlagBinary
 				result := dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTickCounted)
-				// add them back
+				// revert flag changes
 				dot.Spell.Flags ^= core.SpellFlagIgnoreTargetModifiers
-				dot.Spell.Flags |= core.SpellFlagBinary
+				//dot.Spell.Flags |= core.SpellFlagBinary
 
 				health := result.Damage
 				if masterChanneler {
@@ -111,7 +111,7 @@ func (warlock *Warlock) getDrainLifeBaseConfig(rank int) core.SpellConfig {
 
 				dot := spell.Dot(target)
 				dot.Apply(sim)
-				dot.UpdateExpires(dot.ExpiresAt())
+				dot.UpdateExpires(sim, dot.ExpiresAt())
 
 				warlock.EverlastingAfflictionRefresh(sim, target)
 			}
@@ -132,6 +132,7 @@ func (warlock *Warlock) getDrainLifeBaseConfig(rank int) core.SpellConfig {
 			Timer:    warlock.NewTimer(),
 			Duration: 15 * time.Second,
 		}
+		spellConfig.Flags |= core.SpellFlagPureDot
 	} else {
 		spellConfig.Flags |= core.SpellFlagChanneled
 		spellConfig.Cast.DefaultCast.ChannelTime = time.Second * 5

@@ -213,8 +213,12 @@ func (aura *Aura) RemoveStack(sim *Simulation) {
 	aura.SetStacks(sim, aura.stacks-1)
 }
 
-func (aura *Aura) UpdateExpires(newExpires time.Duration) {
+func (aura *Aura) UpdateExpires(sim *Simulation, newExpires time.Duration) {
 	aura.expires = newExpires
+	if aura.expires < aura.Unit.minExpires {
+		aura.Unit.minExpires = aura.expires
+		sim.rescheduleTracker(aura.expires)
+	}
 }
 
 // The amount of time this aura has been active.

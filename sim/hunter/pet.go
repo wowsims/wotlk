@@ -15,8 +15,17 @@ type HunterPet struct {
 
 	KillCommandAura *core.Aura
 
+	claw            *core.Spell
+	bite            *core.Spell
+	furiousHowl     *core.Spell
+	screech         *core.Spell
+	scorpidPoison   *core.Spell
+	lightningBreath *core.Spell
+
 	specialAbility *core.Spell
 	focusDump      *core.Spell
+
+	FlankingStrike *core.Spell
 
 	uptimePercent    float64
 	hasOwnerCooldown bool
@@ -38,12 +47,6 @@ func (hunter *Hunter) NewHunterPet() *HunterPet {
 
 		hasOwnerCooldown: petConfig.SpecialAbility == FuriousHowl,
 	}
-
-	hp.EnableFocusBar(1.0+0.1*float64(hunter.Talents.BestialDiscipline), func(sim *core.Simulation) {
-		if hp.GCD.IsReady(sim) {
-			hp.OnGCDReady(sim)
-		}
-	})
 
 	atkSpd := 2.0 // / (1 + 0.15*float64(hp.Talents().CobraReflexes))
 	hp.EnableAutoAttacks(hp, core.AutoAttackOptions{
@@ -88,6 +91,15 @@ func (hp *HunterPet) Talents() *proto.HunterPetTalents {
 func (hp *HunterPet) Initialize() {
 	hp.specialAbility = hp.NewPetAbility(hp.config.SpecialAbility, true)
 	hp.focusDump = hp.NewPetAbility(hp.config.FocusDump, false)
+
+	focusRegenMultiplier := (1.0 + 0.1*float64(hp.hunterOwner.Talents.BestialDiscipline)) *
+		core.TernaryFloat64(hp.hunterOwner.HasRune(proto.HunterRune_RuneHandsBeastmastery), 1.5, 1.0)
+
+	hp.EnableFocusBar(focusRegenMultiplier, func(sim *core.Simulation) {
+		if hp.GCD.IsReady(sim) {
+			hp.OnGCDReady(sim)
+		}
+	})
 }
 
 func (hp *HunterPet) Reset(_ *core.Simulation) {

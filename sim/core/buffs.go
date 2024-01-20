@@ -495,7 +495,7 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 	if individualBuffs.BlessingOfKings {
 		kingsAgiIntSpiAmount = 1.1
 		kingsStrStamAmount = 1.1
-	} else if individualBuffs.AspectOfTheLion {
+	} else if raidBuffs.AspectOfTheLion {
 		kingsAgiIntSpiAmount = 1.1
 		kingsStrStamAmount = 1.1
 	}
@@ -1658,7 +1658,7 @@ func healthBonusEffect(aura *Aura, healthBonus float64) *ExclusiveEffect {
 	})
 }
 
-func ApplyWildStrikes(character *Character) {
+func ApplyWildStrikes(character *Character) *Aura {
 	buffActionID := ActionID{SpellID: 407975}
 	statDep := character.NewDynamicMultiplyStat(stats.AttackPower, 1.2)
 
@@ -1709,4 +1709,5 @@ func ApplyWildStrikes(character *Character) {
 		},
 	}))
 
+	return wsBuffAura
 }

@@ -146,6 +146,5 @@ func (druid *Druid) applyWildStrikes() {
 		return
 	}
 
-	core.ApplyWildStrikes(druid.GetCharacter())
+	druid.WildStrikesBuffAura = core.ApplyWildStrikes(druid.GetCharacter())
 }
-	
