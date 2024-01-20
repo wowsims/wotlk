@@ -454,7 +454,7 @@ func (spell *Spell) HealthMetrics(target *Unit) *ResourceMetrics {
 }
 
 func (spell *Spell) ReadyAt() time.Duration {
-	return BothTimersReadyAt(spell.CD.Timer, spell.SharedCD.Timer)
+	return BothTimersReadyAt(spell.CdSpell.CD.Timer, spell.CdSpell.SharedCD.Timer)
 }
 
 func (spell *Spell) IsReady(sim *Simulation) bool {
@@ -465,7 +465,7 @@ func (spell *Spell) IsReady(sim *Simulation) bool {
 }
 
 func (spell *Spell) TimeToReady(sim *Simulation) time.Duration {
-	return MaxTimeToReady(spell.CD.Timer, spell.SharedCD.Timer, sim)
+	return MaxTimeToReady(spell.CdSpell.CD.Timer, spell.CdSpell.SharedCD.Timer, sim)
 }
 
 // Returns whether a call to Cast() would be successful, without actually

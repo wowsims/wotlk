@@ -258,7 +258,7 @@ var PetConfigs = map[proto.Hunter_Options_PetType]PetConfig{
 
 		Health: 1.0,
 		Armor:  1.0,
-		Damage: 1.0,
+		Damage: 1.1,
 	},
 	proto.Hunter_Options_Chimaera: {
 		Name: "Chimaera",
