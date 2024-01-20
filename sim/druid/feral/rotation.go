@@ -268,10 +268,10 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) (bool, time.Duration) {
 		nextAbility = cat.SavageRoar
 	} else if isClearcast {
 		nextAbility = cat.Shred
-	} else if curCp >= 1 && cat.clipRoar(sim) {
-		nextAbility = cat.SavageRoar
 	} else if (curCp >= rotation.MinCombosForRip || canRipTrick) && cat.canRip(sim, canRipTrick) {
 		nextAbility = cat.Rip
+	} else if curCp >= 1 && cat.clipRoar(sim) {
+		nextAbility = cat.SavageRoar
 	} else if canShredTrick {
 		nextAbility = cat.Shred
 	} else {
