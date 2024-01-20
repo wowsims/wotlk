@@ -113,6 +113,8 @@ func NewMage(character *core.Character, options *proto.Player) *Mage {
 
 	mage.EnableManaBar()
 
+	mage.AddStatDependency(stats.Intellect, stats.SpellCrit, core.CritPerIntAtLevel[mage.Class][int(mage.Level)]*core.SpellCritRatingPerCritChance)
+
 	if mage.Options.Armor == proto.Mage_Options_MageArmor {
 		mage.PseudoStats.SpiritRegenRateCasting += .3
 	}
