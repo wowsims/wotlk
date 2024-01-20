@@ -95,11 +95,48 @@ func (cat *FeralDruid) timeToCast(numSpecials int32) time.Duration {
 }
 
 func (cat *FeralDruid) canRip(sim *core.Simulation, isTrick bool) bool {
+	if cat.Rip.CurDot().IsActive() {
+		return false
+	}
 	// Allow Rip if conservative napkin math estimate says that we can cast the Rip and then build 5 Combo Points in time before the current Savage Roar expires.
 	roarDur := cat.SavageRoarAura.RemainingDuration(sim)
 	fightDur := sim.GetRemainingDuration()
-	minRoarCp := min(int32((fightDur-roarDur-time.Second*9)/(time.Second*5))+1, 5)
-	return !cat.Rip.CurDot().IsActive() && (cat.timeToCast(minRoarCp+1) < roarDur) && ((cat.ComboPoints() == 5) || (cat.timeToCast(minRoarCp+2) >= roarDur) || isTrick) && (fightDur > time.Second*10)
+	remainingFightTimeAfterRoar := fightDur - roarDur
+
+	// solve "remainingFightTimeAfterRoar = 5*roarCP+9" for roarCP
+	// add 1 to round up instead of down
+	roarCp := int32((remainingFightTimeAfterRoar-time.Second*9)/(time.Second*5)) + 1
+	minRoarCp := min(roarCp, 5)
+
+	// Actions to generate minRoarCp, plus cast Roar itself.
+	actionsToCastRoar := minRoarCp + 1
+
+	// Don't let roar expire.
+	if cat.timeToCast(actionsToCastRoar) >= roarDur {
+		return false
+	}
+
+	// Don't rip if it won't be able to tick for the full duration.
+	if fightDur <= time.Second*10 {
+		return false
+	}
+
+	if cat.ComboPoints() == 5 {
+		return true
+	}
+
+	// If we can't get any more combo points before roar expires, then we should rip now.
+	// If we can generate another CP and then rip without letting roar expire, then wait.
+	if cat.timeToCast(actionsToCastRoar+1) >= roarDur {
+		return true
+	}
+
+	// Caller decided that we should "rip trick".
+	if isTrick {
+		return true
+	}
+
+	return false
 }
 
 /*
