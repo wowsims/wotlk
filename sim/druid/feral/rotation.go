@@ -116,13 +116,18 @@ func (cat *FeralDruid) canRip(sim *core.Simulation, isTrick bool) bool {
 		return false
 	}
 
-	// Don't rip if it won't be able to tick for the full duration.
-	if fightDur <= time.Second*10 {
-		return false
-	}
-
 	if cat.ComboPoints() == 5 {
-		return true
+		// 5CP rip is worth it with 4 ticks
+		if fightDur <= time.Second*8 {
+			return false
+		} else {
+			return true
+		}
+	} else {
+		// Otherwise require 5 ticks
+		if fightDur <= time.Second*10 {
+			return false
+		}
 	}
 
 	// If we can't get any more combo points before roar expires, then we should rip now.
