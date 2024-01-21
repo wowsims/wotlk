@@ -210,7 +210,7 @@ func newRageCost(spell *Spell, options RageCostOptions) *RageCost {
 	}
 }
 
-func (rc *RageCost) MeetsRequirement(spell *Spell) bool {
+func (rc *RageCost) MeetsRequirement(_ *Simulation, spell *Spell) bool {
 	spell.CurCast.Cost = spell.ApplyCostModifiers(spell.CurCast.Cost)
 	return spell.Unit.CurrentRage() >= spell.CurCast.Cost
 }
