@@ -135,7 +135,7 @@ func (eb *energyBar) onEnergyGain(sim *Simulation, crossedThreshold bool) {
 		return
 	}
 
-	if !sim.Options.Interactive && crossedThreshold && (!eb.unit.IsWaitingForEnergy() || eb.unit.DoneWaitingForEnergy(sim)) {
+	if !sim.Options.Interactive && crossedThreshold {
 		eb.unit.Rotation.DoNextAction(sim)
 	}
 }
@@ -279,7 +279,7 @@ func newEnergyCost(spell *Spell, options EnergyCostOptions) *EnergyCost {
 	}
 }
 
-func (ec *EnergyCost) MeetsRequirement(spell *Spell) bool {
+func (ec *EnergyCost) MeetsRequirement(_ *Simulation, spell *Spell) bool {
 	spell.CurCast.Cost = spell.ApplyCostModifiers(spell.CurCast.Cost)
 	return spell.Unit.CurrentEnergy() >= spell.CurCast.Cost
 }

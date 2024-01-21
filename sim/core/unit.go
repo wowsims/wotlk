@@ -144,11 +144,6 @@ type Unit struct {
 	gcdAction      *PendingAction
 	hardcastAction *PendingAction
 
-	// Fields related to waiting for certain events to happen.
-	waitingForEnergy float64
-	waitingForMana   float64
-	waitStartTime    time.Duration
-
 	// Cached mana return values per tick.
 	manaTickWhileCasting    float64
 	manaTickWhileNotCasting float64
@@ -160,8 +155,6 @@ type Unit struct {
 
 	// The currently-channeled DOT spell, otherwise nil.
 	ChanneledDot *Dot
-
-	ManaRequired float64
 }
 
 // Units can be disabled for several reasons:
@@ -482,12 +475,10 @@ func (unit *Unit) startPull(sim *Simulation) {
 	}
 }
 
-// Advance moves time forward counting down auras, and nothing else, currently.
 func (unit *Unit) doneIteration(sim *Simulation) {
 	unit.Hardcast = Hardcast{}
-	unit.doneIterationGCD(sim)
 
-	unit.manaBar.doneIteration()
+	unit.manaBar.doneIteration(sim)
 	unit.rageBar.doneIteration()
 
 	unit.auraTracker.doneIteration(sim)
@@ -543,19 +534,6 @@ func (unit *Unit) GetMetadata() *proto.UnitMetadata {
 	})
 
 	return metadata
-}
-
-func (unit *Unit) StartAPLLoop(_ *Simulation) {
-	if unit.HasManaBar() {
-		unit.ManaRequired = 0
-	}
-}
-
-func (unit *Unit) DoneAPLLoop(sim *Simulation, usedGCD bool) {
-	if unit.HasManaBar() && !usedGCD && unit.ManaRequired > 0 {
-		unit.WaitForMana(sim, unit.ManaRequired)
-		unit.ManaRequired = 0
-	}
 }
 
 func (unit *Unit) ExecuteCustomRotation(sim *Simulation) {

@@ -140,7 +140,7 @@ func newFocusCost(spell *Spell, options FocusCostOptions) *FocusCost {
 	}
 }
 
-func (fc *FocusCost) MeetsRequirement(spell *Spell) bool {
+func (fc *FocusCost) MeetsRequirement(_ *Simulation, spell *Spell) bool {
 	spell.CurCast.Cost = max(0, spell.CurCast.Cost*spell.Unit.PseudoStats.CostMultiplier)
 	return spell.Unit.CurrentFocus() >= spell.CurCast.Cost
 }
