@@ -148,6 +148,7 @@ func NewWarlock(character *core.Character, options *proto.Player, warlockOptions
 	warlock.EnableManaBar()
 
 	warlock.AddStatDependency(stats.Strength, stats.AttackPower, 1)
+	warlock.AddStatDependency(stats.Intellect, stats.SpellCrit, core.CritPerIntAtLevel[warlock.Class][int(warlock.Level)]*core.SpellCritRatingPerCritChance)
 
 	if warlock.Options.Summon != proto.WarlockOptions_NoSummon {
 		warlock.Pet = warlock.NewWarlockPet()

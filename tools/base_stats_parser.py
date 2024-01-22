@@ -92,7 +92,7 @@ import (
     output += f"const BlockRatingPerBlockChance = {cs.CombatRatings['block'][MAX_LEVEL-1]}\n"
     output += f"const ResilienceRatingPerCritReductionChance = {cs.CombatRatings['crit taken melee'][MAX_LEVEL-1]}\n"
 
-    output += '''var CritPerAgiAtLevel = map[proto.Class]map[int]float64{
+"""     output += '''var CritPerAgiAtLevel = map[proto.Class]map[int]float64{
   proto.Class_ClassUnknown: {25: 0.0, 45: 0.0, 50: 0.0, 60: 0.0},'''
     for c in ["Warrior", "Paladin", "Hunter", "Rogue", "Priest", "Shaman", "Mage", "Warlock", "Druid"]:
         cName = c.split()
@@ -125,7 +125,7 @@ proto.Class_ClassUnknown: {},'''
             output += "\n    },"
         output += "\n  },"
     output += "\n}\n"
-    return output
+    return output """
     
 
 if __name__ == "__main__":
