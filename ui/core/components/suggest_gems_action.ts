@@ -17,6 +17,11 @@ interface SocketData {
 	socketIdx: number
 }
 
+interface SocketBonusData {
+	itemSlot: ItemSlot | null
+	socketBonus: number
+}
+
 abstract class GemOptimizer {
 	protected readonly player: Player<Spec>;
 	protected readonly sim: Sim;
@@ -81,12 +86,12 @@ abstract class GemOptimizer {
 		for (var gemColor of GemOptimizer.allGemColors) {
 			if (this.gemPriorityByColor[gemColor].length > 0) {
 				optimizedGear = await this.fillGemsByColor(optimizedGear, gemColor);
-			}
-		}
 
-		// Finally, substitute JC gems by priority while respecting stat caps
-		if (this.useJcGems) {
-			optimizedGear = await this.substituteJcGems(optimizedGear);
+				// Also substitute JC gems by priority while respecting stat caps
+				if (this.useJcGems) {
+					optimizedGear = await this.substituteJcGems(optimizedGear);
+				}
+			}
 		}
 	}
 	
@@ -111,7 +116,7 @@ abstract class GemOptimizer {
 	 * @param blacklistedColor - If non-null, exclude items containing any sockets of this color (assumed to be different from the color used for activation).
 	 * @returns Optimal item slot for activation under the specified constraints, or null if not found.
 	 */	
-	findStrongestSocketBonus(gear: Gear, color: GemColor, singleOnly: boolean, blacklistedColor: GemColor | null): ItemSlot | null {
+	findStrongestSocketBonus(gear: Gear, color: GemColor, singleOnly: boolean, blacklistedColor: GemColor | null): SocketBonusData {
 		let optimalSlot: ItemSlot | null = null;
 		let maxSocketBonusEP: number = 1e-8;
 
@@ -141,7 +146,7 @@ abstract class GemOptimizer {
 			}
 		}
 
-		return optimalSlot;
+		return { itemSlot: optimalSlot, socketBonus: maxSocketBonusEP };
 	}
 	
 	socketGemInFirstMatchingSocket(gear: Gear, itemSlot: ItemSlot | null, colorToMatch: GemColor, gemId: number): Gear {
@@ -289,6 +294,7 @@ export class PhysicalDPSGemOptimizer extends GemOptimizer {
 	metaGemID: number = 41398; // Relentless Earthsiege Diamond
 	arpSlop: number = 11;
 	expSlop: number = 4;
+	hitTarget: number = 8. * 32.79;
 	hitSlop: number = 4;
 	useArpGems: boolean;
 	useExpGems: boolean;
@@ -297,6 +303,7 @@ export class PhysicalDPSGemOptimizer extends GemOptimizer {
 	arpTarget!: number;
 	passiveArp!: number;
 	arpStackDetected!: boolean;
+	passiveHit!: number;
 	tearSlot!: ItemSlot | null;
 
 	constructor(simUI: IndividualSimUI<any>, useArpGems: boolean, useExpGems: boolean, useAgiGems: boolean, useStrGems: boolean) {
@@ -313,7 +320,8 @@ export class PhysicalDPSGemOptimizer extends GemOptimizer {
 		const arpCap = new Stats().withStat(Stat.StatArmorPenetration, this.arpTarget + this.arpSlop);
 		const critCap = this.calcCritCap(ungemmedGear);
 		const expCap = new Stats().withStat(Stat.StatExpertise, this.calcExpTarget() + this.expSlop);
-		const hitCap = new Stats().withStat(Stat.StatMeleeHit, 8. * 32.79 + this.hitSlop);
+		this.passiveHit = passiveStats.getStat(Stat.StatMeleeHit);
+		const hitCap = new Stats().withStat(Stat.StatMeleeHit, this.hitTarget + this.hitSlop);
 
 		// Reset optimal Tear slot from prior calculations
 		this.tearSlot = null;
@@ -405,8 +413,6 @@ export class PhysicalDPSGemOptimizer extends GemOptimizer {
 			this.jcUpgradePriority.push({ gemId: 40118, statCaps: expCap });
 		}
 		
-		this.jcUpgradePriority.push({ gemId: 40125, statCaps: hitCap });
-		
 		if (this.useAgiGems) {
 			this.jcUpgradePriority.push({ gemId: 40112, statCaps: critCap });
 		}
@@ -443,12 +449,15 @@ export class PhysicalDPSGemOptimizer extends GemOptimizer {
 		 * Use a single Nightmare Tear for meta activation. Prioritize blue
 		 * sockets for it if possible, and fall back to yellow sockets if not.
 		 */
-		let tearColor = GemColor.GemColorBlue;
-		this.tearSlot = this.findBlueTearSlot(gear);
+		const blueSlotCandidate = this.findBlueTearSlot(gear);
+		const yellowSlotCandidate = this.findYellowTearSlot(gear);
 
-		if (this.tearSlot == null) {
+		let tearColor = GemColor.GemColorBlue;
+		this.tearSlot = blueSlotCandidate.itemSlot;
+
+		if ((this.tearSlot == null) || (this.arpStackDetected && (yellowSlotCandidate.socketBonus > blueSlotCandidate.socketBonus))) {
 			tearColor = GemColor.GemColorYellow;
-			this.tearSlot = this.findYellowTearSlot(gear);
+			this.tearSlot = yellowSlotCandidate.itemSlot;
 		}
 
 		return this.socketTear(gear, tearColor);
@@ -458,7 +467,7 @@ export class PhysicalDPSGemOptimizer extends GemOptimizer {
 		return this.socketGemInFirstMatchingSocket(gear, this.tearSlot, tearColor, 49110);
 	}
 	
-	findBlueTearSlot(gear: Gear): ItemSlot | null {
+	findBlueTearSlot(gear: Gear): SocketBonusData {
 		// Eligible Tear slots have only one blue socket max.
 		const singleOnly = true;
 
@@ -473,7 +482,7 @@ export class PhysicalDPSGemOptimizer extends GemOptimizer {
 		return this.findStrongestSocketBonus(gear, GemColor.GemColorBlue, singleOnly, blacklistedColor);
 	}
 
-	findYellowTearSlot(gear: Gear): ItemSlot | null {
+	findYellowTearSlot(gear: Gear): SocketBonusData {
 		return this.findStrongestSocketBonus(gear, GemColor.GemColorYellow, false, GemColor.GemColorBlue);
 	}
 	
@@ -578,6 +587,11 @@ export class PhysicalDPSGemOptimizer extends GemOptimizer {
 			updatedGear = this.optimizeJcArpGems(updatedGear);
 		}
 
+		// Likewise, if we still have JC gems available after finishing the red gems, then force utilization of JC Hit gems if possible.
+		if ((color == GemColor.GemColorYellow) && this.useJcGems && (this.numSocketedJcGems < 3)) {
+			updatedGear = this.fillJcHitGems(updatedGear);
+		}
+
 		return await super.fillGemsByColor(updatedGear, color);
 	}
 
@@ -604,6 +618,22 @@ export class PhysicalDPSGemOptimizer extends GemOptimizer {
 		this.numSocketedJcGems = optimalJcArpGems;
 		return updatedGear;
 	}
+
+	fillJcHitGems(gear: Gear): Gear {
+		const yellowSocketList = this.findSocketsByColor(gear, GemColor.GemColorYellow);
+		const maxJcHitGems = Math.min(3 - this.numSocketedJcGems, yellowSocketList.length);
+		const desiredJcHitGems = Math.max(0, Math.floor((this.hitTarget + this.hitSlop - this.passiveHit) / 34));
+		const numJcHitGems = Math.min(desiredJcHitGems, maxJcHitGems);
+
+		let updatedGear: Gear = gear;
+
+		for (let i = 0; i < numJcHitGems; i++) {
+			updatedGear = updatedGear.withGem(yellowSocketList[i].itemSlot, yellowSocketList[i].socketIdx, this.sim.db.lookupGem(42156));
+		}
+
+		this.numSocketedJcGems += numJcHitGems;
+		return updatedGear;
+	}
 }
 
 export class TankGemOptimizer extends GemOptimizer {
@@ -622,7 +652,7 @@ export class TankGemOptimizer extends GemOptimizer {
 		 * Use a single Shifting Dreadstone gem for meta activation, in the slot
 		 * with the strongest bonus for a single red socket.
 		 */
-		return this.socketGemInFirstMatchingSocket(gear, this.findStrongestSocketBonus(gear, GemColor.GemColorRed, true, GemColor.GemColorYellow), GemColor.GemColorRed, 40130);
+		return this.socketGemInFirstMatchingSocket(gear, this.findStrongestSocketBonus(gear, GemColor.GemColorRed, true, GemColor.GemColorYellow).itemSlot, GemColor.GemColorRed, 40130);
 	}
 	
 	allowGemInSocket(gemColor: GemColor, socketColor: GemColor, itemSlot: ItemSlot, item: EquippedItem): boolean {
