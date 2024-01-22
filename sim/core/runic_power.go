@@ -831,7 +831,7 @@ func newRuneCost(spell *Spell, options RuneCostOptions) *RuneCostImpl {
 	}
 }
 
-func (rc *RuneCostImpl) MeetsRequirement(spell *Spell) bool {
+func (rc *RuneCostImpl) MeetsRequirement(_ *Simulation, spell *Spell) bool {
 	spell.CurCast.Cost *= spell.CostMultiplier // TODO this looks fishy - multiplying and rune costs don't go well together
 
 	cost := RuneCost(spell.CurCast.Cost)

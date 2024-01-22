@@ -498,18 +498,10 @@ func (spell *Spell) CanCast(sim *Simulation, target *Unit) bool {
 	if spell.Cost != nil {
 		// temp hack
 		spell.CurCast.Cost = spell.DefaultCast.Cost
-		if !spell.Cost.MeetsRequirement(spell) {
+		if !spell.Cost.MeetsRequirement(sim, spell) {
 			//if sim.Log != nil {
 			//	sim.Log("Cant cast because of resource cost")
 			//}
-			_, isManaCost := spell.Cost.(*ManaCost)
-			if isManaCost && spell.CurCast.Cost > 0 {
-				if spell.Unit.ManaRequired > 0 {
-					spell.Unit.ManaRequired = min(spell.Unit.ManaRequired, spell.CurCast.Cost)
-				} else {
-					spell.Unit.ManaRequired = spell.CurCast.Cost
-				}
-			}
 			return false
 		}
 	}
@@ -600,7 +592,7 @@ func (spell *Spell) TravelTime() time.Duration {
 type SpellCost interface {
 	// Whether the Unit associated with the spell meets the resource cost
 	// requirements to cast the spell.
-	MeetsRequirement(*Spell) bool
+	MeetsRequirement(*Simulation, *Spell) bool
 
 	// Returns a message for when the cast fails due to lack of resources.
 	CostFailureReason(*Simulation, *Spell) string

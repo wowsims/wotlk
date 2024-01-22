@@ -97,9 +97,7 @@ func (we *WaterElemental) ExecuteCustomRotation(sim *core.Simulation) {
 		return
 	}
 
-	if success := spell.Cast(sim, we.CurrentTarget); !success {
-		we.WaitForMana(sim, spell.CurCast.Cost)
-	}
+	spell.Cast(sim, we.CurrentTarget)
 }
 
 // These numbers are just rough guesses based on looking at some logs.
