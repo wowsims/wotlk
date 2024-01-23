@@ -317,7 +317,6 @@ export class PhysicalDPSGemOptimizer extends GemOptimizer {
 	updateGemPriority(ungemmedGear: Gear, passiveStats: Stats) {
 		// First calculate any gear-dependent stat caps.
 		this.arpTarget = this.calcArpTarget(ungemmedGear);
-		const arpCap = new Stats().withStat(Stat.StatArmorPenetration, this.arpTarget + this.arpSlop);
 		const critCap = this.calcCritCap(ungemmedGear);
 		const expCap = new Stats().withStat(Stat.StatExpertise, this.calcExpTarget() + this.expSlop);
 		this.passiveHit = passiveStats.getStat(Stat.StatMeleeHit);
@@ -332,6 +331,13 @@ export class PhysicalDPSGemOptimizer extends GemOptimizer {
 		 */
 		this.passiveArp = passiveStats.getStat(Stat.StatArmorPenetration);
 		this.arpStackDetected = this.detectArpStackConfiguration(ungemmedGear);
+
+		/*
+		 * Use tighter constraint on overcapping ArP for hard stack setups, so as
+		 * to reduce the number of missed yellow socket bonuses.
+		 */
+		const arpSlop = this.arpStackDetected ? 4 : this.arpSlop;
+		const arpCap = new Stats().withStat(Stat.StatArmorPenetration, this.arpTarget + arpSlop);
 
 		// Update red gem priority
 		const redGemCaps = new Array<GemCapsData>();
@@ -441,7 +447,7 @@ export class PhysicalDPSGemOptimizer extends GemOptimizer {
 			projectedArp += 42;
 		}
 
-		return (this.arpTarget > 1000) && (projectedArp > 648) && (projectedArp + 20 < this.arpTarget + this.arpSlop);	
+		return (this.arpTarget > 1000) && (projectedArp > 648) && (projectedArp + 20 < this.arpTarget + 4);
 	}
 
 	activateMetaGem(gear: Gear): Gear {
