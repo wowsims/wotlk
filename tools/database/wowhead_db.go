@@ -70,7 +70,8 @@ type WowheadItem struct {
 	Phase         int32 `json:"contentPhase"`
 	RequiresLevel int32 `json:"reqlevel"`
 
-	Stats WowheadItemStats `json:"stats"`
+	Stats               WowheadItemStats `json:"stats"`
+	RandomSuffixOptions []int32          `json:"randomEnchants"`
 
 	SourceTypes   []int32             `json:"source"` // 1 = Crafted, 2 = Dropped by, 3 = sold by zone vendor? barely used, 4 = Quest, 5 = Sold by
 	SourceDetails []WowheadItemSource `json:"sourcemore"`
@@ -125,12 +126,13 @@ func (wi WowheadItem) ToProto() *proto.UIItem {
 	}
 
 	return &proto.UIItem{
-		Id:            wi.ID,
-		Name:          wi.Name,
-		Icon:          wi.Icon,
-		Ilvl:          wi.Ilvl,
-		Phase:         wi.Phase,
-		RequiresLevel: wi.RequiresLevel,
-		Sources:       sources,
+		Id:                  wi.ID,
+		Name:                wi.Name,
+		Icon:                wi.Icon,
+		Ilvl:                wi.Ilvl,
+		Phase:               wi.Phase,
+		RequiresLevel:       wi.RequiresLevel,
+		Sources:             sources,
+		RandomSuffixOptions: wi.RandomSuffixOptions,
 	}
 }

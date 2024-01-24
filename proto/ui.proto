@@ -37,7 +37,7 @@ message UINPC {
 // Contains all information about an Item needed by the UI.
 // Generally this will include everything needed by the sim, plus some
 // additional data for displaying / filtering.
-// Next tag: 26.
+// Next tag: 28.
 message UIItem {
 	int32 id = 1;
 	string name = 2;
@@ -52,6 +52,7 @@ message UIItem {
 
 	repeated double stats = 10;
 	repeated double socketBonus = 12;
+	repeated int32 random_suffix_options = 27;
 
 	// Weapon stats, needed for computing proper EP for melee weapons
 	double weapon_damage_min = 13;
