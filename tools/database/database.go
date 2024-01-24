@@ -29,9 +29,10 @@ func EnchantToDBKey(enchant *proto.UIEnchant) EnchantDBKey {
 }
 
 type WowDatabase struct {
-	Items    map[int32]*proto.UIItem
-	Enchants map[EnchantDBKey]*proto.UIEnchant
-	Runes    map[int32]*proto.UIRune
+	Items          map[int32]*proto.UIItem
+	RandomSuffixes map[int32]*proto.ItemRandomSuffix
+	Enchants       map[EnchantDBKey]*proto.UIEnchant
+	Runes          map[int32]*proto.UIRune
 
 	Zones map[int32]*proto.UIZone
 	Npcs  map[int32]*proto.UINPC
@@ -52,11 +53,12 @@ func init() {
 
 func NewWowDatabase() *WowDatabase {
 	return &WowDatabase{
-		Items:    make(map[int32]*proto.UIItem),
-		Enchants: make(map[EnchantDBKey]*proto.UIEnchant),
-		Runes:    make(map[int32]*proto.UIRune),
-		Zones:    make(map[int32]*proto.UIZone),
-		Npcs:     make(map[int32]*proto.UINPC),
+		Items:          make(map[int32]*proto.UIItem),
+		RandomSuffixes: make(map[int32]*proto.ItemRandomSuffix),
+		Enchants:       make(map[EnchantDBKey]*proto.UIEnchant),
+		Runes:          make(map[int32]*proto.UIRune),
+		Zones:          make(map[int32]*proto.UIZone),
+		Npcs:           make(map[int32]*proto.UINPC),
 
 		ItemIcons:  make(map[int32]*proto.IconData),
 		SpellIcons: make(map[int32]*proto.IconData),
@@ -65,11 +67,12 @@ func NewWowDatabase() *WowDatabase {
 
 func (db *WowDatabase) Clone() *WowDatabase {
 	return &WowDatabase{
-		Items:    maps.Clone(db.Items),
-		Enchants: maps.Clone(db.Enchants),
-		Runes:    maps.Clone(db.Runes),
-		Zones:    maps.Clone(db.Zones),
-		Npcs:     maps.Clone(db.Npcs),
+		Items:          maps.Clone(db.Items),
+		RandomSuffixes: maps.Clone(db.RandomSuffixes),
+		Enchants:       maps.Clone(db.Enchants),
+		Runes:          maps.Clone(db.Runes),
+		Zones:          maps.Clone(db.Zones),
+		Npcs:           maps.Clone(db.Npcs),
 
 		ItemIcons:  maps.Clone(db.ItemIcons),
 		SpellIcons: maps.Clone(db.SpellIcons),
@@ -235,14 +238,15 @@ func (db *WowDatabase) ToUIProto() *proto.UIDatabase {
 	})
 
 	return &proto.UIDatabase{
-		Items:      mapToSlice(db.Items),
-		Enchants:   enchants,
-		Runes:      mapToSlice(db.Runes),
-		Encounters: db.Encounters,
-		Zones:      mapToSlice(db.Zones),
-		Npcs:       mapToSlice(db.Npcs),
-		ItemIcons:  mapToSlice(db.ItemIcons),
-		SpellIcons: mapToSlice(db.SpellIcons),
+		Items:          mapToSlice(db.Items),
+		RandomSuffixes: mapToSlice(db.RandomSuffixes),
+		Enchants:       enchants,
+		Runes:          mapToSlice(db.Runes),
+		Encounters:     db.Encounters,
+		Zones:          mapToSlice(db.Zones),
+		Npcs:           mapToSlice(db.Npcs),
+		ItemIcons:      mapToSlice(db.ItemIcons),
+		SpellIcons:     mapToSlice(db.SpellIcons),
 	}
 }
 
@@ -266,12 +270,13 @@ func ReadDatabaseFromJson(jsonStr string) *WowDatabase {
 	}
 
 	return &WowDatabase{
-		Items:      sliceToMap(dbProto.Items),
-		Enchants:   enchants,
-		Zones:      sliceToMap(dbProto.Zones),
-		Npcs:       sliceToMap(dbProto.Npcs),
-		ItemIcons:  sliceToMap(dbProto.ItemIcons),
-		SpellIcons: sliceToMap(dbProto.SpellIcons),
+		Items:          sliceToMap(dbProto.Items),
+		RandomSuffixes: sliceToMap(dbProto.RandomSuffixes),
+		Enchants:       enchants,
+		Zones:          sliceToMap(dbProto.Zones),
+		Npcs:           sliceToMap(dbProto.Npcs),
+		ItemIcons:      sliceToMap(dbProto.ItemIcons),
+		SpellIcons:     sliceToMap(dbProto.SpellIcons),
 	}
 }
 
@@ -301,6 +306,8 @@ func (db *WowDatabase) WriteJson(jsonFilePath string) {
 	buffer.WriteString("{\n")
 
 	tools.WriteProtoArrayToBuffer(uidb.Items, buffer, "items")
+	buffer.WriteString(",\n")
+	tools.WriteProtoArrayToBuffer(uidb.RandomSuffixes, buffer, "randomSuffixes")
 	buffer.WriteString(",\n")
 	tools.WriteProtoArrayToBuffer(uidb.Enchants, buffer, "enchants")
 	buffer.WriteString(",\n")

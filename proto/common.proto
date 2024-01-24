@@ -621,6 +621,12 @@ message PresetEncounter {
 	repeated PresetTarget targets = 2;
 }
 
+message ItemRandomSuffix {
+	int32 id = 1;
+	string name = 2;
+	repeated double stats = 3;
+}
+
 message ItemSpec {
 	int32 id = 2;
 	int32 enchant = 3;

@@ -11,6 +11,7 @@ import "paladin.proto";
 // Holds all WoW data for the UI.
 message UIDatabase {
 	repeated UIItem items = 1;
+	repeated ItemRandomSuffix random_suffixes = 11;
 	repeated UIEnchant enchants = 2;
 	repeated UIRune runes = 10;
 	repeated PresetEncounter encounters = 6;

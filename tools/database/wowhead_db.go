@@ -49,15 +49,101 @@ func ParseWowheadDB(dbContents string) WowheadDatabase {
 				log.Fatalf("failed to parse wowhead item db to json %s\n\n%s", err, dbContents[0:30])
 			}
 		}
+
+		if dbName == "wow.gearPlanner.classic.randomEnchant" {
+			standardized, err := hujson.Standardize([]byte(dbContents)) // Removes invalid JSON, such as trailing commas
+			if err != nil {
+				log.Fatalf("Failed to standardize json %s\n\n%s\n\n%s", err, dbContents[0:30], dbContents[len(dbContents)-30:])
+			}
+
+			err = json.Unmarshal(standardized, &wowheadDB.RandomSuffixes)
+			if err != nil {
+				log.Fatalf("failed to parse wowhead random suffix db to json %s\n\n%s", err, dbContents[0:30])
+			}
+		}
 	}
 
 	fmt.Printf("\n--\nWowhead DB items loaded: %d\n--\n", len(wowheadDB.Items))
+	fmt.Printf("\n--\nWowhead DB random suffixes loaded: %d\n--\n", len(wowheadDB.RandomSuffixes))
 
 	return wowheadDB
 }
 
 type WowheadDatabase struct {
-	Items map[string]WowheadItem
+	Items          map[string]WowheadItem
+	RandomSuffixes map[string]WowheadRandomSuffix
+}
+
+type WowheadRandomSuffix struct {
+	ID    int32                    `json:"id"`
+	Name  string                   `json:"name"`
+	Stats WowheadRandomSuffixStats `json:"stats"`
+}
+
+type WowheadRandomSuffixStats struct {
+	Armor             int32 `json:"armor"`
+	Strength          int32 `json:"str"`
+	Agility           int32 `json:"agi"`
+	Stamina           int32 `json:"sta"`
+	Intellect         int32 `json:"int"`
+	Spirit            int32 `json:"spi"`
+	SpellPower        int32 `json:"spldmg"`
+	ArcanePower       int32 `json:"arcsplpwr"`
+	FirePower         int32 `json:"firsplpwr"`
+	FrostPower        int32 `json:"frosplpwr"`
+	HolyPower         int32 `json:"holsplpwr"`
+	NaturePower       int32 `json:"natsplpwr"`
+	ShadowPower       int32 `json:"shasplpwr"`
+	MeleeCrit         int32 `json:"mlecritstrkpct"`
+	MP5               int32 `json:"manargn"`
+	AttackPower       int32 `json:"mleatkpwr"`
+	RangedAttackPower int32 `json:"rgdatkpwr"`
+	Defense           int32 `json:"def"`
+	Block             int32 `json:"blockpct"`
+	Dodge             int32 `json:"dodgepct"`
+	ArcaneResistance  int32 `json:"arcres"`
+	FireResistance    int32 `json:"firres"`
+	FrostResistance   int32 `json:"frores"`
+	NatureResistance  int32 `json:"natres"`
+	ShadowResistance  int32 `json:"shares"`
+	Healing           int32 `json:"splheal"`
+}
+
+func (wrs WowheadRandomSuffix) ToProto() *proto.ItemRandomSuffix {
+	stats := Stats{
+		proto.Stat_StatArmor:             float64(wrs.Stats.Armor),
+		proto.Stat_StatStrength:          float64(wrs.Stats.Strength),
+		proto.Stat_StatAgility:           float64(wrs.Stats.Agility),
+		proto.Stat_StatStamina:           float64(wrs.Stats.Stamina),
+		proto.Stat_StatIntellect:         float64(wrs.Stats.Intellect),
+		proto.Stat_StatSpirit:            float64(wrs.Stats.Spirit),
+		proto.Stat_StatSpellPower:        float64(wrs.Stats.SpellPower),
+		proto.Stat_StatArcanePower:       float64(wrs.Stats.ArcanePower),
+		proto.Stat_StatFirePower:         float64(wrs.Stats.FirePower),
+		proto.Stat_StatFrostPower:        float64(wrs.Stats.FrostPower),
+		proto.Stat_StatHolyPower:         float64(wrs.Stats.HolyPower),
+		proto.Stat_StatNaturePower:       float64(wrs.Stats.NaturePower),
+		proto.Stat_StatShadowPower:       float64(wrs.Stats.ShadowPower),
+		proto.Stat_StatMeleeCrit:         float64(wrs.Stats.MeleeCrit),
+		proto.Stat_StatMP5:               float64(wrs.Stats.MP5),
+		proto.Stat_StatAttackPower:       float64(wrs.Stats.AttackPower),
+		proto.Stat_StatRangedAttackPower: float64(wrs.Stats.RangedAttackPower),
+		proto.Stat_StatDefense:           float64(wrs.Stats.Defense),
+		proto.Stat_StatBlock:             float64(wrs.Stats.Block),
+		proto.Stat_StatDodge:             float64(wrs.Stats.Dodge),
+		proto.Stat_StatArcaneResistance:  float64(wrs.Stats.ArcaneResistance),
+		proto.Stat_StatFireResistance:    float64(wrs.Stats.FireResistance),
+		proto.Stat_StatFrostResistance:   float64(wrs.Stats.FrostResistance),
+		proto.Stat_StatNatureResistance:  float64(wrs.Stats.NatureResistance),
+		proto.Stat_StatShadowResistance:  float64(wrs.Stats.ShadowResistance),
+		proto.Stat_StatHealing:           float64(wrs.Stats.Healing),
+	}
+
+	return &proto.ItemRandomSuffix{
+		Id:    wrs.ID,
+		Name:  wrs.Name,
+		Stats: toSlice(stats),
+	}
 }
 
 type WowheadItem struct {

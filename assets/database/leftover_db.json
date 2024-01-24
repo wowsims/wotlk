@@ -1445,6 +1445,8 @@
 {"id":210250,"name":"Engraved Gold Ring","icon":"inv_jewelry_ring_03","type":11,"stats":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"ilvl":20,"phase":1,"quality":1,"unique":true},
 {"id":210251,"name":"Engraved Silver Ring","icon":"inv_jewelry_ring_01","type":11,"stats":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"ilvl":20,"phase":1,"quality":1,"unique":true}
 ],
+"randomSuffixes":[
+],
 "enchants":[
 {"effectId":24,"spellId":7443,"name":"Minor Mana","type":5,"stats":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"quality":1},
 {"effectId":243,"spellId":7766,"name":"Minor Spirit","type":6,"stats":[0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"quality":1},
