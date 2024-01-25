@@ -31,15 +31,6 @@ func (druid *Druid) ApplyTalents() {
 		druid.MultiplyStat(stats.Intellect, 1.0+bonus)
 	}
 
-	if druid.Talents.ImprovedMarkOfTheWild > 0 {
-		bonus := 0.07 * float64(druid.Talents.ImprovedMarkOfTheWild)
-		druid.MultiplyStat(stats.Stamina, 1.0+bonus)
-		druid.MultiplyStat(stats.Strength, 1.0+bonus)
-		druid.MultiplyStat(stats.Agility, 1.0+bonus)
-		druid.MultiplyStat(stats.Intellect, 1.0+bonus)
-		druid.MultiplyStat(stats.Spirit, 1.0+bonus)
-	}
-
 	druid.setupNaturesGrace()
 	druid.applyMoonkinForm()
 	druid.applyOmenOfClarity()
