@@ -106,6 +106,22 @@ func (druid *Druid) GetCharacter() *core.Character {
 	return &druid.Character
 }
 
+func (druid *Druid) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
+	raidBuffs.GiftOfTheWild = max(raidBuffs.GiftOfTheWild, proto.TristateEffect_TristateEffectRegular)
+
+	if (raidBuffs.GiftOfTheWild == proto.TristateEffect_TristateEffectRegular) && (druid.Talents.ImprovedMarkOfTheWild > 0) {
+		druid.AddStats(core.BuffSpellByLevel[core.MarkOfTheWild][druid.Level].Multiply(0.07 * float64(druid.Talents.ImprovedMarkOfTheWild)))
+	}
+
+	if druid.InForm(Moonkin) && druid.Talents.MoonkinForm {
+		raidBuffs.MoonkinAura = true
+	}
+
+	if druid.InForm(Cat|Bear) && druid.Talents.LeaderOfThePack {
+		raidBuffs.LeaderOfThePack = true
+	}
+}
+
 func (druid *Druid) BalanceCritMultiplier() float64 {
 	return druid.SpellCritMultiplier(1, 0.2*float64(druid.Talents.Vengeance))
 }
