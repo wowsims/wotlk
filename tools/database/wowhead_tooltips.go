@@ -391,8 +391,7 @@ func (item WowheadItemResponse) IsRandomEnchant() bool {
 
 func (item WowheadItemResponse) IsEquippable() bool {
 	return item.GetItemType() != proto.ItemType_ItemTypeUnknown &&
-		!item.IsPattern() &&
-		!item.IsRandomEnchant()
+		!item.IsPattern()
 }
 
 var itemLevelRegex = regexp.MustCompile(`Item Level <!--ilvl-->([0-9]+)<`)

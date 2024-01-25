@@ -621,8 +621,15 @@ message PresetEncounter {
 	repeated PresetTarget targets = 2;
 }
 
+message ItemRandomSuffix {
+	int32 id = 1;
+	string name = 2;
+	repeated double stats = 3;
+}
+
 message ItemSpec {
 	int32 id = 2;
+	int32 random_suffix = 6;
 	int32 enchant = 3;
 	int32 rune = 5;
 }
@@ -633,6 +640,7 @@ message EquipmentSpec {
 
 message SimDatabase {
 	repeated SimItem items = 1;
+	repeated ItemRandomSuffix random_suffixes = 5;
 	repeated SimEnchant enchants = 2;
 	repeated SimRune runes = 4;
 }

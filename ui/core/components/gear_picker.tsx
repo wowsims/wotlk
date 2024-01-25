@@ -27,6 +27,7 @@ import { IndividualSimUI } from '../individual_sim_ui.js';
 import {
 	Class,
 	ItemQuality,
+	ItemRandomSuffix,
 	ItemSlot,
 	ItemSpec,
 	Spec,
@@ -144,6 +145,11 @@ export class ItemRenderer extends Component {
 
 	update(newItem: EquippedItem) {
 		this.nameElem.textContent = newItem.item.name;
+
+		if (newItem.randomSuffix) {
+			this.nameElem.textContent += ' ' + newItem.randomSuffix.name
+		}
+
 		if (newItem.item.heroic) {
 			this.nameElem.insertAdjacentElement('beforeend', createHeroicLabel());
 		} else {
@@ -443,7 +449,7 @@ export class SelectorModal extends BaseModal {
 		this.tabsElem.innerText = '';
 		this.contentElem.innerText = '';
 
-		const { slot, eligibleItems, eligibleEnchants, eligibleRunes, gearData } = this.config;
+		const { slot, equippedItem, eligibleItems, eligibleEnchants, eligibleRunes, gearData } = this.config;
 
 		this.addTab<Item>(
 			'Items',
@@ -472,6 +478,7 @@ export class SelectorModal extends BaseModal {
 			equippedItem => equippedItem?.item,
 			eventID => {
 				gearData.equipItem(eventID, null);
+				this.removeTabs('Random Suffixes');
 			});
 
 		this.addTab<Enchant>(
@@ -529,6 +536,8 @@ export class SelectorModal extends BaseModal {
 					if (equippedItem)
 						gearData.equipItem(eventID, equippedItem.withRune(null));
 				});
+
+		this.addRandomSuffixTab(equippedItem, gearData);
 	}
 
 	protected override onShow(e: Event) {
@@ -541,6 +550,44 @@ export class SelectorModal extends BaseModal {
 		else if (tab.includes('Enchant')) {
 			this.ilists[1].sizeRefresh();
 		}
+	}
+
+	private addRandomSuffixTab(equippedItem: EquippedItem | null, gearData: GearData) {
+		if ((equippedItem == undefined) || (equippedItem.item.randomSuffixOptions.length == 0)) {
+			return;
+		}
+
+		const itemProto = equippedItem.item;
+
+		this.addTab<ItemRandomSuffix>(
+			'Random Suffixes',
+			this.player.getRandomSuffixes(itemProto).map((randomSuffix: ItemRandomSuffix) => {
+				return {
+					item: randomSuffix,
+					id: randomSuffix.id,
+					actionId: ActionId.fromRandomSuffix(itemProto, randomSuffix),
+					name: randomSuffix.name,
+					quality: itemProto.quality,
+					phase: itemProto.phase,
+					heroic: false,
+					baseEP: this.player.computeRandomSuffixEP(randomSuffix),
+					ignoreEPFilter: true,
+					onEquip: (eventID, randomSuffix: ItemRandomSuffix) => {
+						const equippedItem = gearData.getEquippedItem();
+
+						if (equippedItem)
+							gearData.equipItem(eventID, equippedItem.withRandomSuffix(randomSuffix));
+					},
+				};
+			}),
+			randomSuffix => this.player.computeRandomSuffixEP(randomSuffix),
+			equippedItem => equippedItem?.randomSuffix,
+			eventID => {
+				const equippedItem = gearData.getEquippedItem();
+				if (equippedItem)
+					gearData.equipItem(eventID, equippedItem.withRandomSuffix(null));
+			},
+		);
 	}
 
 	/**
@@ -604,6 +651,12 @@ export class SelectorModal extends BaseModal {
 			(itemData: ItemData<T>) => {
 				const item = itemData.item;
 				itemData.onEquip(TypedEvent.nextEventID(), item);
+
+				// If the item changes, then random suffix options will also change, so remove and recreate the suffix tab
+				if (Item.is(item)) {
+					this.removeTabs('Random Suffixes');
+					this.addRandomSuffixTab(gearData.getEquippedItem(), gearData);
+				}
 			},
 		)
 
