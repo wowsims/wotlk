@@ -991,7 +991,15 @@ export class Player<SpecType extends Spec> {
 			}
 		}
 
-		let ep = itemStats.computeEP(this.epWeights);
+		// For random suffix items, use the suffix option with the highest EP for the purposes of ranking items in the picker.
+		let maxSuffixEP = 0;
+
+		if (item.randomSuffixOptions.length > 0) {
+			const suffixEPs = item.randomSuffixOptions.map((id) => new Stats(this.sim.db.getRandomSuffixById(id)!.stats).computeEP(this.epWeights));
+			maxSuffixEP = Math.max(...suffixEPs);
+		}
+
+		let ep = itemStats.computeEP(this.epWeights) + maxSuffixEP;
 
 		// unique items are slightly worse than non-unique because you can have only one.
 		if (item.unique) {

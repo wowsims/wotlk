@@ -1,6 +1,7 @@
 import {
 	Class,
 	EquipmentSpec,
+	ItemRandomSuffix,
 	ItemSlot,
 	ItemSpec,
 	ItemSwap,
@@ -84,6 +85,7 @@ export class Database {
 	}
 
 	private readonly items = new Map<number, Item>();
+	private readonly randomSuffixes = new Map<number, ItemRandomSuffix>();
 	private readonly enchantsBySlot: Partial<Record<ItemSlot, Enchant[]>> = {};
 	private readonly runesBySlotByClass: Partial<Record<ItemSlot, Partial<Record<Class, Rune[]>>>> = {};
 	private readonly runesById: Record<number, Rune> = {};
@@ -102,6 +104,7 @@ export class Database {
 	// Add all data from the db proto into this database.
 	private loadProto(db: UIDatabase) {
 		db.items.forEach(item => this.items.set(item.id, item));
+		db.randomSuffixes.forEach(randomSuffix => this.randomSuffixes.set(randomSuffix.id, randomSuffix));
 		db.enchants.forEach(enchant => {
 			const slots = getEligibleEnchantSlots(enchant);
 			slots.forEach(slot => {
@@ -151,6 +154,10 @@ export class Database {
 
 	getItemById(id: number): Item | undefined {
 		return this.items.get(id);
+	}
+
+	getRandomSuffixById(id: number): ItemRandomSuffix | undefined {
+		return this.randomSuffixes.get(id);
 	}
 
 	getEnchants(slot: ItemSlot): Array<Enchant> {
