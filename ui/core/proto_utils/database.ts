@@ -198,12 +198,17 @@ export class Database {
 			}
 		}
 		
-		let rune: Rune | undefined
+		let rune: Rune | null = null;
 		if (itemSpec.rune && !!this.runesById[itemSpec.rune]) {
 			rune = this.runesById[itemSpec.rune];
 		}
 
-		return new EquippedItem({item, enchant, rune});
+		let randomSuffix: ItemRandomSuffix | null = null;
+		if (itemSpec.randomSuffix && !!this.getRandomSuffixById(itemSpec.randomSuffix)) {
+			randomSuffix = this.getRandomSuffixById(itemSpec.randomSuffix);
+		}
+
+		return new EquippedItem({item, enchant, rune, randomSuffix});
 	}
 
 	lookupEquipmentSpec(equipSpec: EquipmentSpec): Gear {
