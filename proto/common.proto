@@ -629,6 +629,7 @@ message ItemRandomSuffix {
 
 message ItemSpec {
 	int32 id = 2;
+	int32 random_suffix = 6;
 	int32 enchant = 3;
 	int32 rune = 5;
 }

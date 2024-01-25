@@ -1,4 +1,4 @@
-import { ItemSpec, Profession } from '../proto/common.js';
+import { ItemRandomSuffix, ItemSpec, Profession } from '../proto/common.js';
 import {
 	UIEnchant as Enchant,
 	UIItem as Item,
@@ -16,6 +16,7 @@ interface EquippedItemConfig {
 	item: Item, 
 	enchant?: Enchant | null, 
 	rune?: Rune | null,
+	randomSuffix?: ItemRandomSuffix | null,
 }
 
 /**
@@ -25,11 +26,13 @@ interface EquippedItemConfig {
  */
 export class EquippedItem {
 	readonly _item: Item;
+	readonly _randomSuffix: ItemRandomSuffix | null;
 	readonly _enchant: Enchant | null;
 	readonly _rune: Rune | null;
 
 	constructor(config: EquippedItemConfig) {
 		this._item = config.item;
+		this._randomSuffix = config.randomSuffix || null;
 		this._enchant = config.enchant || null;
 		this._rune = config.rune || null;
 	}
@@ -41,6 +44,10 @@ export class EquippedItem {
 
 	get id(): number {
 		return this._item.id;
+	}
+
+	get randomSuffix(): ItemRandomSuffix | null {
+		return this._randomSuffix ? ItemRandomSuffix.clone(this._randomSuffix) : null;
 	}
 
 	get enchant(): Enchant | null {
@@ -55,6 +62,12 @@ export class EquippedItem {
 
 	equals(other: EquippedItem) {
 		if (!Item.equals(this._item, other.item))
+			return false;
+
+		if ((this._randomSuffix == null) != (other.randomSuffix == null))
+			return false;
+
+		if (this._randomSuffix && other.randomSuffix && !ItemRandomSuffix.equals(this._randomSuffix, other.randomSuffix))
 			return false;
 
 		if ((this._enchant == null) != (other.enchant == null))
@@ -87,20 +100,28 @@ export class EquippedItem {
 	 * Returns a new EquippedItem with the given enchant applied.
 	 */
 	withEnchant(enchant: Enchant | null): EquippedItem {
-		return new EquippedItem({item: this._item, enchant, rune: this._rune});
+		return new EquippedItem({item: this._item, enchant, rune: this._rune, randomSuffix: this._randomSuffix});
 	}
 
 	withRune(rune: Rune | null): EquippedItem {
-		return new EquippedItem({item: this._item, enchant: this.enchant, rune});
+		return new EquippedItem({item: this._item, enchant: this.enchant, rune, randomSuffix: this._randomSuffix});
+	}
+
+	withRandomSuffix(randomSuffix: ItemRandomSuffix | null): EquippedItem {
+		return new EquippedItem({item: this._item, enchant: this.enchant, rune: this._rune, randomSuffix});
 	}
 
 	asActionId(): ActionId {
+		if (this._randomSuffix)
+			return ActionId.fromRandomSuffix(this._item, this._randomSuffix);
+
 		return ActionId.fromItemId(this._item.id);
 	}
 
 	asSpec(): ItemSpec {
 		return ItemSpec.create({
 			id: this._item.id,
+			randomSuffix: this._randomSuffix?.id,
 			enchant: this._enchant?.effectId,
 			rune: this._rune?.id,
 		});
