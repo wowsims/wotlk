@@ -80,18 +80,19 @@ func (cat *FeralDruid) tryPowershift(sim *core.Simulation) {
 }
 
 func (cat *FeralDruid) maxShifts() int32 {
-	return int32(cat.MaxMana() / cat.CatForm.DefaultCast.Cost)
+	return max(int32(cat.MaxMana()/cat.CatForm.DefaultCast.Cost), 0)
 }
 
 func (cat *FeralDruid) numShiftsRemaining() int32 {
-	return int32(cat.CurrentMana() / cat.CatForm.DefaultCast.Cost)
+	return max(int32(cat.CurrentMana()/cat.CatForm.DefaultCast.Cost), 0)
 }
 
 func (cat *FeralDruid) timeToCast(numSpecials int32) time.Duration {
 	// Rough calculation, won't be exact! Intended to skew conservatively.
-	numPowershiftedSpecials := min(numSpecials, cat.numShiftsRemaining()*2)
-	numOomSpecials := numSpecials - numPowershiftedSpecials
-	return core.DurationFromSeconds(float64(numPowershiftedSpecials*2 + numOomSpecials*4))
+	totalCasts := float64(numSpecials)
+	numPowershiftedSpecials := min(totalCasts, float64(cat.numShiftsRemaining()*2*cat.Talents.Furor)/5.0)
+	numOomSpecials := totalCasts - numPowershiftedSpecials
+	return core.DurationFromSeconds(numPowershiftedSpecials*2.0 + numOomSpecials*4.0)
 }
 
 func (cat *FeralDruid) canRip(sim *core.Simulation, isTrick bool) bool {
@@ -225,13 +226,15 @@ func (cat *FeralDruid) postRotation(sim *core.Simulation, nextAction time.Durati
 }
 
 func (cat *FeralDruid) shouldPoolMana(sim *core.Simulation, numShiftsToOom int32) bool {
-	if cat.Talents.Furor == 0 {
+	maxShiftsPossible := cat.maxShifts()
+
+	if (maxShiftsPossible == 0) || (cat.Talents.Furor == 0) {
 		return true
 	}
 
 	effectiveFightDur := sim.GetRemainingDuration() - core.DurationFromSeconds(3.0) - cat.latency
 	numShiftsToFightEnd := int32(effectiveFightDur / (time.Second * 4))
-	canPoolMana := (numShiftsToOom < cat.maxShifts()) && (numShiftsToOom < numShiftsToFightEnd-1) && (sim.CurrentTime-cat.lastShift > time.Second*5)
+	canPoolMana := (numShiftsToOom < maxShiftsPossible) && (numShiftsToOom < numShiftsToFightEnd-1) && (sim.CurrentTime-cat.lastShift > time.Second*5)
 
 	if !canPoolMana {
 		return false
