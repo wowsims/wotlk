@@ -90,6 +90,7 @@ abstract class BaseGear {
 		const equippedItems = this.asArray().filter(ei => ei != null) as Array<EquippedItem>;
 		return SimDatabase.create({
 			items: distinct(equippedItems.map(ei => BaseGear.itemToDB(ei.item))),
+			randomSuffixes: distinct(equippedItems.filter(ei => ei.randomSuffix).map(ei => ei.randomSuffix!)),
 			enchants: distinct(equippedItems.filter(ei => ei.enchant).map(ei => BaseGear.enchantToDB(ei.enchant!))),
 		});
 	}

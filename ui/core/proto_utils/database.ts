@@ -205,7 +205,7 @@ export class Database {
 
 		let randomSuffix: ItemRandomSuffix | null = null;
 		if (itemSpec.randomSuffix && !!this.getRandomSuffixById(itemSpec.randomSuffix)) {
-			randomSuffix = this.getRandomSuffixById(itemSpec.randomSuffix);
+			randomSuffix = this.getRandomSuffixById(itemSpec.randomSuffix)!;
 		}
 
 		return new EquippedItem({item, enchant, rune, randomSuffix});
@@ -325,6 +325,7 @@ export class Database {
 	public static mergeSimDatabases(db1: SimDatabase, db2: SimDatabase): SimDatabase {
 		return SimDatabase.create({
 			items: distinct(db1.items.concat(db2.items), (a, b) => a.id == b.id),
+			randomSuffixes: distinct(db1.randomSuffixes.concat(db2.randomSuffixes), (a, b) => a.id == b.id),
 			enchants: distinct(db1.enchants.concat(db2.enchants), (a, b) => a.effectId == b.effectId),
 		})
 	}

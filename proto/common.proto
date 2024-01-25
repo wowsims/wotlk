@@ -640,6 +640,7 @@ message EquipmentSpec {
 
 message SimDatabase {
 	repeated SimItem items = 1;
+	repeated ItemRandomSuffix random_suffixes = 5;
 	repeated SimEnchant enchants = 2;
 	repeated SimRune runes = 4;
 }
