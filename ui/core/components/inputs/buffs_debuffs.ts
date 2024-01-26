@@ -43,10 +43,10 @@ export const AllStatsPercentBuffHorde = withLabel(
 );
 
 // TODO: Classic armor buff ranks
-export const ArmorBuff = withLabel(
-	makeTristateRaidBuffInput({id: ActionId.fromSpellId(10293), impId: ActionId.fromSpellId(20142), fieldName: 'devotionAura', faction: Faction.Alliance}),
-	'Armor',
-);
+export const ArmorBuff = InputHelpers.makeMultiIconInput([
+	makeTristateRaidBuffInput({id: ActionId.fromSpellId(10293), impId: ActionId.fromSpellId(20142), fieldName: 'devotionAura'}),
+	makeBooleanRaidBuffInput({id: ActionId.fromItemId(1478), fieldName: 'scrollOfProtection'}),
+], 'Armor');
 
 export const StaminaBuff = InputHelpers.makeMultiIconInput([
 	makeTristateRaidBuffInput({id: ActionId.fromSpellId(10938), impId: ActionId.fromSpellId(14767), fieldName: 'powerWordFortitude'}),
@@ -56,6 +56,7 @@ export const StaminaBuff = InputHelpers.makeMultiIconInput([
 	// makeTristateRaidBuffInput({id: ActionId.fromSpellId(1244), impId: ActionId.fromSpellId(14767), fieldName: 'powerWordFortitude', minLevel: 12, maxLevel: 23}),
 	// makeTristateRaidBuffInput({id: ActionId.fromSpellId(1243), impId: ActionId.fromSpellId(14767), fieldName: 'powerWordFortitude', minLevel: 1, maxLevel: 11}),
 	makeTristateRaidBuffInput({id: ActionId.fromSpellId(11767), impId: ActionId.fromSpellId(18696), fieldName: 'bloodPact'}),
+	makeBooleanRaidBuffInput({id: ActionId.fromItemId(10307), fieldName: 'scrollOfStamina'}),
 ], 'Stamina');
 
 // Separate Strength buffs allow us to use boolean pickers for each
@@ -74,15 +75,15 @@ export const AgilityBuff = withLabel(
 	'Agility',
 );
 
-export const IntellectBuff = withLabel(
+export const IntellectBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanRaidBuffInput({id: ActionId.fromSpellId(23028), fieldName: 'arcaneBrilliance'}),
-	'Intellect',
-);
+	makeBooleanRaidBuffInput({id: ActionId.fromItemId(10308), fieldName: 'scrollOfIntellect'}),
+], 'Intellect');
 
-export const SpiritBuff = withLabel(
-	makeBooleanRaidBuffInput({id: ActionId.fromSpellId(27841), fieldName: 'divineSpirit'}),
-	'Spirit'
-);
+export const SpiritBuff = InputHelpers.makeMultiIconInput([
+	makeBooleanRaidBuffInput({id: ActionId.fromSpellId(27841), fieldName: 'divineSpirit', minLevel: 30}),
+	makeBooleanRaidBuffInput({id: ActionId.fromItemId(10306), fieldName: 'scrollOfSpirit'}),
+], 'Spirit');
 
 export const BlessingOfMightBuff = withLabel(
 	makeTristateIndividualBuffInput({id: ActionId.fromSpellId(25291), impId: ActionId.fromSpellId(20048), fieldName: 'blessingOfMight', faction: Faction.Alliance}),
@@ -321,7 +322,7 @@ export const RAID_BUFFS_CONFIG = [
 	},
 	{
 		config: ArmorBuff,
-		picker: IconPicker,
+		picker: MultiIconPicker,
 		stats: [Stat.StatArmor]
 	},
 	{
@@ -346,12 +347,12 @@ export const RAID_BUFFS_CONFIG = [
 	},
 	{
 		config: IntellectBuff,
-		picker: IconPicker,
+		picker: MultiIconPicker,
 		stats: [Stat.StatIntellect]
 	},
 	{
 		config: SpiritBuff,
-		picker: IconPicker,
+		picker: MultiIconPicker,
 		stats: [Stat.StatSpirit]
 	},
 	{
