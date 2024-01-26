@@ -65,7 +65,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHealingPriest, {
 		// Default consumes settings.
 		consumes: Presets.DefaultConsumes,
 		// Default rotation settings.
-		rotation: Presets.DiscDefaultRotation,
+		simpleRotation: Presets.DiscDefaultRotation,
 		// Default talents.
 		talents: Presets.DiscTalents.data,
 		// Default spec-specific settings.

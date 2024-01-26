@@ -1396,12 +1396,6 @@ export class Player<SpecType extends Spec> {
 				hpPercentForDefensives: isTankSpec(this.spec) ? 0.35 : 0,
 			}));
 			this.setBonusStats(eventID, new Stats());
-
-			if (aplLaunchStatuses[this.spec] >= LaunchStatus.Beta) {
-				this.setAplRotation(eventID, APLRotation.create({
-					type: APLRotationType.TypeAuto,
-				}))
-			}
 		});
 	}
 }

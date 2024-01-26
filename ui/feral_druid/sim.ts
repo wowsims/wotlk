@@ -38,6 +38,7 @@ import {
 	APLPrepullAction,
 	APLListItem,
 	APLRotation,
+	APLRotation_Type as APLRotationType,
 } from '../core/proto/apl.js';
 
 const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
@@ -104,7 +105,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 		// Default consumes settings.
 		consumes: Presets.DefaultConsumes,
 		// Default rotation settings.
-		rotation: Presets.DefaultRotation,
+		rotationType: APLRotationType.TypeSimple,
+		simpleRotation: Presets.DefaultRotation,
 		// Default talents.
 		talents: Presets.StandardTalents.data,
 		// Default spec-specific settings.
