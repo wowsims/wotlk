@@ -1,7 +1,7 @@
-import { Faction, SaygesFortune } from "../../proto/common";
+import { Faction, SaygesFortune, Stat } from "../../proto/common";
 import { ActionId } from "../../proto_utils/action_id";
-import { IconEnumPickerDirection } from "../icon_enum_picker";
 
+import { IconEnumPicker, IconEnumPickerDirection } from "../icon_enum_picker";
 import {
   makeBooleanDebuffInput,
   makeBooleanIndividualBuffInput,
@@ -14,6 +14,10 @@ import {
   makeTristateRaidBuffInput,
   withLabel
 } from "../icon_inputs";
+import { IconPicker } from "../icon_picker";
+import { MultiIconPicker } from "../multi_icon_picker";
+
+import { StatOptions } from "./stat_options";
 
 import * as InputHelpers from '../input_helpers';
 
@@ -282,3 +286,259 @@ export const JudgementOfLight = withLabel(
 	makeBooleanDebuffInput({id: ActionId.fromSpellId(20346), fieldName: 'judgementOfLight', minLevel: 30}),
 	'Judgement of Light',
 );
+
+export const RAID_BUFFS_CONFIG = [
+	// Standard buffs
+	{
+		config: AllStatsBuff,
+		picker: IconPicker,
+		stats: []
+	},
+	{
+		config: AllStatsPercentBuff,
+		picker: MultiIconPicker,
+		stats: []
+	},
+	{
+		config: ArmorBuff,
+		picker: MultiIconPicker,
+		stats: [Stat.StatArmor]
+	},
+	{
+		config: StaminaBuff,
+		picker: MultiIconPicker,
+		stats: [Stat.StatStamina]
+	},
+	{
+		config: StrengthRaidBuff,
+		picker: MultiIconPicker,
+		stats: [Stat.StatStrength]
+	},
+	{
+		config: AgilityRaidBuff,
+		picker: MultiIconPicker,
+		stats: [Stat.StatAgility]
+	},
+	{
+		config: IntellectBuff,
+		picker: MultiIconPicker,
+		stats: [Stat.StatIntellect]
+	},
+	{
+		config: SpiritBuff,
+		picker: MultiIconPicker,
+		stats: [Stat.StatSpirit]
+	},
+	{
+		config: BattleShoutBuff,
+		picker: MultiIconPicker,
+		stats: [Stat.StatAttackPower]
+	},
+	{
+		config: BlessingOfMightBuff,
+		picker: IconPicker,
+		stats: [Stat.StatAttackPower]
+	},
+	{
+		config: TrueshotAuraBuff,
+		picker: IconPicker,
+		stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower]
+		},
+	{
+		config: AttackPowerPercentBuff,
+		picker: MultiIconPicker,
+		stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower]
+		},
+	{
+		config: MeleeCritBuff,
+		picker: IconPicker,
+		stats: [Stat.StatMeleeCrit]
+	},
+	{
+		config: SpellIncreaseBuff,
+		picker: IconPicker,
+		stats: [Stat.StatSpellPower]
+	},
+	{
+		config: SpellCritBuff,
+		picker: IconPicker,
+		stats: [Stat.StatSpellCrit]
+	},
+	{
+		config: ResistanceBuff,
+		picker: MultiIconPicker,
+		stats: [Stat.StatNatureResistance, Stat.StatShadowResistance, Stat.StatFrostResistance]
+		},
+	{
+		config: DefensiveCooldownBuff,
+		picker: MultiIconPicker,
+		stats: [Stat.StatArmor]
+	},
+	{
+		config: BlessingOfWisdom,
+		picker: IconPicker,
+		stats: [Stat.StatMP5]
+	},
+	{
+		config: ManaSpringTotem,
+		picker: IconPicker,
+		stats: [Stat.StatMP5]
+	},
+
+	// Misc Buffs
+	{
+		config: Thorns,
+		picker: IconPicker,
+		stats: [Stat.StatArmor]
+	},
+	{
+		config: RetributionAura,
+		picker: IconPicker,
+		stats: [Stat.StatArmor]
+	},
+	{
+		config: Innervate,
+		picker: IconPicker,
+		stats: [Stat.StatMP5]
+	},
+	{
+		config: PowerInfusion,
+		picker: IconPicker,
+		stats: [Stat.StatMP5, Stat.StatSpellPower]
+	},
+] as StatOptions
+
+export const WORLD_BUFFS_CONFIG = [
+	{
+		config: BoonOfBlackfathom,
+		picker: IconPicker,
+		stats: [
+			Stat.StatMeleeCrit,
+			// TODO: Stat.StatRangedCrit,
+			Stat.StatSpellCrit,
+			Stat.StatAttackPower
+		]
+	},
+	{
+		config: FengusFerocity,
+		picker: IconPicker,
+		stats: [Stat.StatAttackPower]
+	},
+	{
+		config: MoldarsMoxie,
+		picker: IconPicker,
+		stats: [Stat.StatStamina]
+	},
+	{
+		config: RallyingCryOfTheDragonslayer,
+		picker: IconPicker,
+		stats: [
+			Stat.StatMeleeCrit,
+			// TODO: Stat.StatRangedCrit,
+			Stat.StatSpellCrit,
+			Stat.StatAttackPower,
+		]
+	},
+	{
+		config: SaygesDarkFortune,
+		picker: IconEnumPicker,
+		stats: [],
+	},
+	{
+		config: SongflowerSerenade,
+		picker: IconPicker,
+		stats: []
+	},
+	{
+		config: SpiritOfZandalar,
+		picker: IconPicker,
+		stats: []
+	},
+	{
+		config: WarchiefsBlessing,
+		picker: IconPicker,
+		stats: [
+			Stat.StatHealth,
+			Stat.StatMeleeHaste,
+			Stat.StatMP5,
+		]
+	},
+] as StatOptions;
+
+export const DEBUFFS_CONFIG = [
+	// Standard Debuffs
+	{ 
+		config: MajorArmorDebuff,
+		stats: [Stat.StatArmorPenetration],
+		picker: MultiIconPicker,
+	},
+	{ 
+		config: CurseOfRecklessness,
+		picker: IconPicker,
+		stats: [Stat.StatAttackPower]
+	},
+	{ 
+		config: FaerieFire,
+		picker: IconPicker,
+		stats: [Stat.StatAttackPower]
+	},
+	// { 
+	// 	config: MinorArmorDebuff,
+	// picker: MultiIconPicker,
+	// 	stats: [Stat.StatArmorPenetration]
+	// },
+	{ 
+		config: BleedDebuff,
+		picker: MultiIconPicker,
+		stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower]
+	},
+	{ 
+		config: SpellISBDebuff,
+		picker: IconPicker,
+		stats: [Stat.StatShadowPower]
+	},
+	{ 
+		config: SpellScorchDebuff,
+		picker: IconPicker,
+		stats: [Stat.StatFirePower]
+	},
+	{ 
+		config: SpellWintersChillDebuff,
+		picker: IconPicker,
+		stats: [Stat.StatFrostPower]
+	},
+	{ 
+		config: AttackPowerDebuff,
+		picker: MultiIconPicker,
+		stats: [Stat.StatArmor]
+	},
+	{ 
+		config: MeleeAttackSpeedDebuff,
+		picker: IconPicker,
+		stats: [Stat.StatArmor]
+	},
+	{ 
+		config: MeleeHitDebuff,
+		picker: IconPicker,
+		stats: [Stat.StatDodge]
+	},
+
+	// Other Debuffs
+	{
+		config: JudgementOfWisdom,
+		picker: IconPicker,
+		stats: [Stat.StatMP5, Stat.StatIntellect],
+	},
+	{
+		config: HuntersMark,
+		picker: IconPicker,
+		stats: [Stat.StatRangedAttackPower],
+	},
+
+	// Misc Debuffs
+	{
+		config: JudgementOfLight,
+		picker: IconPicker,
+		stats: [Stat.StatStamina]
+	},
+] as StatOptions;
