@@ -33,7 +33,7 @@ export const buildIconInput = (parent: HTMLElement, player: Player<Spec>, inputC
 	}
 };
 
-export function withLabel<ModObject, T>(config: InputHelpers.TypedIconPickerConfig<ModObject, T>, label: string): InputHelpers.TypedIconPickerConfig<ModObject, T> {
+export function withLabel<ModObject, T>(config: IconInputConfig<ModObject, T>, label: string): IconInputConfig<ModObject, T> {
 	config.label = label;
 	return config;
 }

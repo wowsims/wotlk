@@ -1,39 +1,30 @@
-import { Player } from "ui/core/player";
 import { IndividualSimUI } from "../../individual_sim_ui";
 import {
-	Potions,
-	Flask,
-	Food,
 	Profession,
 	Spec,
 	Stat,
-	WeaponImbue,
 	Conjured
 } from "../../proto/common";
+
 import { Component } from "../component";
 import { IconEnumPicker } from "../icon_enum_picker";
-
-import * as IconInputs from '../icon_inputs.js';
 import { buildIconInput } from "../icon_inputs.js";
-import { SettingsTab } from "./settings_tab";
 import { relevantStatOptions } from "../inputs/stat_options";
 
-import * as PotionsConfig from "../inputs/consumables";
+import * as ConsumablesInputs from '../inputs/consumables';
 
 export class ConsumesPicker extends Component {
-	protected settingsTab: SettingsTab;
 	protected simUI: IndividualSimUI<Spec>;
 
-	constructor(parentElem: HTMLElement, settingsTab: SettingsTab, simUI: IndividualSimUI<Spec>) {
+	constructor(parentElem: HTMLElement, simUI: IndividualSimUI<Spec>) {
 		super(parentElem, 'consumes-picker-root');
-		this.settingsTab = settingsTab;
 		this.simUI = simUI;
 
 		// this.buildPotionsPicker();
-		// this.buildFlaskPicker();
-		// this.buildWeaponImbuePicker();
-		// this.buildFoodPicker();
-		// this.buildPhysicalBuffPicker();
+		this.buildFlaskPicker();
+		this.buildWeaponImbuePicker();
+		this.buildFoodPicker();
+		this.buildPhysicalBuffPicker();
 		// this.buildSpellPowerBuffPicker();
 		// this.buildEngPicker();
 		// this.buildPetPicker();
@@ -53,23 +44,23 @@ export class ConsumesPicker extends Component {
 
 		this.rootElem.appendChild(fragment.children[0] as HTMLElement);
 
-		const potionOptions = relevantStatOptions(POTIONS_CONFIG, this.simUI);
+		const potionOptions = relevantStatOptions(ConsumablesInputs.POTIONS_CONFIG, this.simUI);
 		if (potionOptions.length) {
 			const elem = this.rootElem.querySelector('.consumes-potions') as HTMLElement;
 			new IconEnumPicker(
 				elem,
 				this.simUI.player,
-				IconInputs.makePotionsInput(potionOptions, 'Combat Potion')
+				ConsumablesInputs.makePotionsInput(potionOptions, 'Combat Potion')
 			);
 		}
 
-		const conjuredOptions = this.simUI.splitRelevantOptions([
+		const conjuredOptions = relevantStatOptions([
 			{ item: Conjured.ConjuredMinorRecombobulator, stats: [Stat.StatIntellect] },
 			{ item: Conjured.ConjuredDemonicRune, stats: [Stat.StatIntellect] },
 		]);
 		if (conjuredOptions.length) {
 			const elem = this.rootElem.querySelector('.consumes-conjured') as HTMLElement;
-			new IconEnumPicker(elem, this.simUI.player, IconInputs.makeConjuredInput(conjuredOptions));
+			new IconEnumPicker(elem, this.simUI.player, ConsumablesInputs.makeConjuredInput(conjuredOptions));
 		}
 	}
 
@@ -84,36 +75,11 @@ export class ConsumesPicker extends Component {
       </div>
     `;
 
-		const ele = this.rootElem.appendChild(fragment.children[0] as HTMLElement);
+		this.rootElem.appendChild(fragment.children[0] as HTMLElement);
 
-		const flaskOptions = this.simUI.splitRelevantOptions([
-			{ item: Flask.FlaskOfTheTitans, stats: [Stat.StatStamina] },
-			{ item: Flask.FlaskOfDistilledWisdom, stats: [Stat.StatMP5, Stat.StatSpellPower] },
-			{ item: Flask.FlaskOfSupremePower, stats: [Stat.StatMP5, Stat.StatSpellPower] },
-			{ item: Flask.FlaskOfChromaticResistance, stats: [Stat.StatStamina] },
-		]);
-		let picker: IconEnumPicker<Player<Spec>, Flask>;
-		if (flaskOptions.length) {
-			const elem = this.rootElem.querySelector('.consumes-flasks') as HTMLElement;
-			picker = new IconEnumPicker(
-				elem,
-				this.simUI.player,
-				IconInputs.makeFlasksInput(flaskOptions, 'Flask')
-			);
-		}
-
-		// All current flasks are a level 50+ requirement
-		const updateFlask = () => {
-			if (this.simUI.player.getLevel() >= 50){
-				picker?.restoreValue();
-				ele!.classList.remove('hide');
-			} else {
-				picker?.storeValue();
-				ele!.classList.add('hide');
-			}
-		};
-		this.simUI.player.levelChangeEmitter.on(updateFlask);
-		updateFlask();
+		const flaskOptions = relevantStatOptions(ConsumablesInputs.FLASKS_CONFIG, this.simUI)
+		const elem = this.rootElem.querySelector('.consumes-flasks') as HTMLElement;
+		new IconEnumPicker(elem, this.simUI.player, ConsumablesInputs.makeFlasksInput(flaskOptions));
 	}
 
 	private buildWeaponImbuePicker() {
@@ -127,23 +93,9 @@ export class ConsumesPicker extends Component {
 
 		this.rootElem.appendChild(fragment.children[0] as HTMLElement);
 
-		const weaponOptions = this.simUI.splitRelevantOptions([
-			{ item: WeaponImbue.BrillianWizardOil, stats: [Stat.StatSpellPower] },
-			{ item: WeaponImbue.BrilliantManaOil, stats: [Stat.StatHealing, Stat.StatSpellPower] },
-			{ item: WeaponImbue.DenseSharpeningStone, stats: [Stat.StatAttackPower] },
-			{ item: WeaponImbue.ElementalSharpeningStone, stats: [Stat.StatAttackPower] },
-			{ item: WeaponImbue.BlackfathomManaOil, stats: [Stat.StatSpellPower, Stat.StatMP5] },
-			{ item: WeaponImbue.BlackfathomSharpeningStone, stats: [Stat.StatMeleeHit] },
-			{ item: WeaponImbue.WildStrikes, stats: [Stat.StatMeleeHit] },
-		]);
-		if (weaponOptions.length) {
-			const elem = this.rootElem.querySelector('.consumes-mainhand') as HTMLElement;
-			new IconEnumPicker(
-				elem,
-				this.simUI.player,	
-				IconInputs.makeMainHandImbuesInput(weaponOptions, 'Weapon Imbues'),
-			);
-		}
+		const weaponOptions = relevantStatOptions(ConsumablesInputs.WEAPON_IMBUES_MH_CONFIG, this.simUI);
+		const elem = this.rootElem.querySelector('.consumes-mainhand') as HTMLElement;
+		new IconEnumPicker(elem, this.simUI.player,	ConsumablesInputs.makeMainHandImbuesInput(weaponOptions, 'Weapon Imbues'));
 	}
 
 	private buildFoodPicker() {
@@ -159,26 +111,16 @@ export class ConsumesPicker extends Component {
 
 		this.rootElem.appendChild(fragment.children[0] as HTMLElement);
 
-		const foodOptions = this.simUI.splitRelevantOptions([
-			{ item: Food.FoodHotWolfRibs, stats: [Stat.StatSpirit] },
-			{ item: Food.FoodSmokedSagefish, stats: [Stat.StatMP5] },
-			{ item: Food.FoodNightfinSoup, stats: [Stat.StatMP5, Stat.StatSpellPower] },
-			{ item: Food.FoodGrilledSquid, stats: [Stat.StatAgility] },
-			{ item: Food.FoodSmokedDesertDumpling, stats: [Stat.StatStrength] },
-			{ item: Food.FoodRunnTumTuberSurprise, stats: [Stat.StatIntellect] },
-			{ item: Food.FoodDirgesKickChimaerokChops, stats: [Stat.StatStamina] },
-			{ item: Food.FoodBlessSunfruit, stats: [Stat.StatStrength] },
-			{ item: Food.FoodBlessedSunfruitJuice, stats: [Stat.StatSpirit] },
-		]);
+		const foodOptions = relevantStatOptions(ConsumablesInputs.FOOD_CONFIG, this.simUI)
 		if (foodOptions.length) {
 			const elem = this.rootElem.querySelector('.consumes-food') as HTMLElement;
-			new IconEnumPicker(elem, this.simUI.player, IconInputs.makeFoodInput(foodOptions));
+			new IconEnumPicker(elem, this.simUI.player, ConsumablesInputs.makeFoodInput(foodOptions));
 		}
 	}
 
 	private buildPhysicalBuffPicker() {
-		const includeAgi = !this.simUI.individualConfig.excludeBuffDebuffInputs.includes(IconInputs.AgilityBuffInput);
-		const includeStr = !this.simUI.individualConfig.excludeBuffDebuffInputs.includes(IconInputs.StrengthBuffInput);
+		const includeAgi = this.simUI.individualConfig.epStats.includes(Stat.StatAgility)
+		const includeStr = this.simUI.individualConfig.epStats.includes(Stat.StatStrength)
 
 		if (!includeAgi && !includeStr) return;
 
@@ -193,23 +135,23 @@ export class ConsumesPicker extends Component {
 		this.rootElem.appendChild(fragment.children[0] as HTMLElement);
 		const physicalConsumesElem = this.rootElem.querySelector('.consumes-physical') as HTMLElement;
 
-		if (includeAgi){
-			buildIconInput(physicalConsumesElem, this.simUI.player, IconInputs.AgilityBuffInput);
+		if (includeAgi) {
+			buildIconInput(physicalConsumesElem, this.simUI.player, ConsumablesInputs.makeAgilityConsumeInput(ConsumablesInputs.AGILITY_CONSUMES_CONFIG));
 		}
-		if (includeStr){
-			buildIconInput(physicalConsumesElem, this.simUI.player, IconInputs.StrengthBuffInput);
+		if (includeStr) {
+			buildIconInput(physicalConsumesElem, this.simUI.player, ConsumablesInputs.makeStrengthConsumeInput(ConsumablesInputs.STRENGTH_CONSUMES_CONFIG));
 		}
 	}
 
 	private buildSpellPowerBuffPicker() {
 		const config = this.simUI.individualConfig;
-		const includeSpellPower = config.epStats.includes(Stat.StatSpellPower) && !config.excludeBuffDebuffInputs.includes(IconInputs.SpellDamageBuff);
+		const includeSpellPower = config.epStats.includes(Stat.StatSpellPower) && !config.excludeBuffDebuffInputs.includes(ConsumablesInputs.SpellDamageBuff);
 
 		if (!includeSpellPower) return;
 
-		const includeShadowPower = !config.excludeBuffDebuffInputs.includes(IconInputs.ShadowDamageBuff);
-		const includeFirePower = !config.excludeBuffDebuffInputs.includes(IconInputs.FireDamageBuff);
-		const includeFrostPower = !config.excludeBuffDebuffInputs.includes(IconInputs.FrostDamageBuff);
+		const includeShadowPower = !config.excludeBuffDebuffInputs.includes(ConsumablesInputs.ShadowDamageBuff);
+		const includeFirePower = !config.excludeBuffDebuffInputs.includes(ConsumablesInputs.FireDamageBuff);
+		const includeFrostPower = !config.excludeBuffDebuffInputs.includes(ConsumablesInputs.FrostDamageBuff);
 
 		let fragment = document.createElement('fragment');
 		fragment.innerHTML = `
@@ -223,16 +165,16 @@ export class ConsumesPicker extends Component {
 		const spellsCnsumesElem = this.rootElem.querySelector('.consumes-spells') as HTMLElement;
 
 		if (includeSpellPower){
-			buildIconInput(spellsCnsumesElem, this.simUI.player, IconInputs.SpellDamageBuff);
+			buildIconInput(spellsCnsumesElem, this.simUI.player, ConsumablesInputs.SpellDamageBuff);
 		}
 		if (includeFirePower){
-			buildIconInput(spellsCnsumesElem, this.simUI.player, IconInputs.FireDamageBuff);
+			buildIconInput(spellsCnsumesElem, this.simUI.player, ConsumablesInputs.FireDamageBuff);
 		}
 		if (includeShadowPower){
-			buildIconInput(spellsCnsumesElem, this.simUI.player, IconInputs.ShadowDamageBuff);
+			buildIconInput(spellsCnsumesElem, this.simUI.player, ConsumablesInputs.ShadowDamageBuff);
 		}
 		if( includeFrostPower){
-			buildIconInput(spellsCnsumesElem, this.simUI.player, IconInputs.FrostDamageBuff);
+			buildIconInput(spellsCnsumesElem, this.simUI.player, ConsumablesInputs.FrostDamageBuff);
 		}
 
 		const updateSpellGroup = () => {
@@ -259,8 +201,8 @@ export class ConsumesPicker extends Component {
 
 		const tradeConsumesElem = this.rootElem.querySelector('.consumes-trade') as HTMLElement;
 
-		buildIconInput(tradeConsumesElem, this.simUI.player, IconInputs.Sapper);
-		buildIconInput(tradeConsumesElem, this.simUI.player, IconInputs.FillerExplosiveInput);
+		buildIconInput(tradeConsumesElem, this.simUI.player, ConsumablesInputs.Sapper);
+		buildIconInput(tradeConsumesElem, this.simUI.player, ConsumablesInputs.FillerExplosiveInput);
 
 		const updateProfession = () => {
 			if (this.simUI.player.hasProfession(Profession.Engineering))
@@ -289,15 +231,3 @@ export class ConsumesPicker extends Component {
 		}
 	}
 }
-
-const POTIONS_CONFIG = [
-	{ item: PotionsConfig.LesserManaPotion, stats: [Stat.StatIntellect] },
-	{ item: PotionsConfig.ManaPotion, stats: [Stat.StatIntellect] },
-]
-
-const FLASKS_CONFIG = [
-	{ item: Flask.FlaskOfTheTitans, stats: [Stat.StatStamina] },
-	{ item: Flask.FlaskOfDistilledWisdom, stats: [Stat.StatMP5, Stat.StatSpellPower] },
-	{ item: Flask.FlaskOfSupremePower, stats: [Stat.StatMP5, Stat.StatSpellPower] },
-	{ item: Flask.FlaskOfChromaticResistance, stats: [Stat.StatStamina] }
-]

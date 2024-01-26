@@ -17,7 +17,7 @@ import {
 import { IconPicker } from "../icon_picker";
 import { MultiIconPicker } from "../multi_icon_picker";
 
-import { StatOptions } from "./stat_options";
+import { PickerStatOptions } from "./stat_options";
 
 import * as InputHelpers from '../input_helpers';
 
@@ -31,16 +31,22 @@ export const AllStatsBuff = withLabel(
 	'Mark of the Wild',
 );
 
-export const AllStatsPercentBuff = InputHelpers.makeMultiIconInput([
+// Separate Strength buffs allow us to use a boolean pickers for Horde specifically
+export const AllStatsPercentBuffAlliance = InputHelpers.makeMultiIconInput([
 	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(20217), fieldName: 'blessingOfKings', faction: Faction.Alliance}),
-	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(409580), fieldName: 'aspectOfTheLion'}),
+	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(409580), fieldName: 'aspectOfTheLion', faction: Faction.Alliance}),
 ], 'Stats %');
 
+export const AllStatsPercentBuffHorde = withLabel(
+	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(409580), fieldName: 'aspectOfTheLion', faction: Faction.Horde}),
+	'Stats %',
+);
+
 // TODO: Classic armor buff ranks
-export const ArmorBuff = InputHelpers.makeMultiIconInput([
+export const ArmorBuff = withLabel(
 	makeTristateRaidBuffInput({id: ActionId.fromSpellId(10293), impId: ActionId.fromSpellId(20142), fieldName: 'devotionAura', faction: Faction.Alliance}),
-	makeBooleanRaidBuffInput({id: ActionId.fromItemId(1478), fieldName: 'scrollOfProtection'}),
-], 'Armor');
+	'Armor',
+);
 
 export const StaminaBuff = InputHelpers.makeMultiIconInput([
 	makeTristateRaidBuffInput({id: ActionId.fromSpellId(10938), impId: ActionId.fromSpellId(14767), fieldName: 'powerWordFortitude'}),
@@ -50,28 +56,33 @@ export const StaminaBuff = InputHelpers.makeMultiIconInput([
 	// makeTristateRaidBuffInput({id: ActionId.fromSpellId(1244), impId: ActionId.fromSpellId(14767), fieldName: 'powerWordFortitude', minLevel: 12, maxLevel: 23}),
 	// makeTristateRaidBuffInput({id: ActionId.fromSpellId(1243), impId: ActionId.fromSpellId(14767), fieldName: 'powerWordFortitude', minLevel: 1, maxLevel: 11}),
 	makeTristateRaidBuffInput({id: ActionId.fromSpellId(11767), impId: ActionId.fromSpellId(18696), fieldName: 'bloodPact'}),
-	makeBooleanRaidBuffInput({id: ActionId.fromItemId(10307), fieldName: 'scrollOfStamina'}),
 ], 'Stamina');
 
-export const StrengthRaidBuff = InputHelpers.makeMultiIconInput([
+// Separate Strength buffs allow us to use boolean pickers for each
+export const StrengthBuffAlliance = withLabel(
+	makeBooleanRaidBuffInput({id: ActionId.fromSpellId(425600), fieldName: 'hornOfLordaeron', faction: Faction.Alliance}),
+	'Strength',
+)
+
+export const StrengthBuffHorde = withLabel(
 	makeTristateRaidBuffInput({id: ActionId.fromSpellId(25361), impId: ActionId.fromSpellId(16295), fieldName: 'strengthOfEarthTotem', faction: Faction.Horde}),
-	makeBooleanRaidBuffInput({id: ActionId.fromItemId(10310), fieldName: 'scrollOfStrength'}),
-], 'Strength');
+	'Strength',
+);
 
-export const AgilityRaidBuff = InputHelpers.makeMultiIconInput([
+export const AgilityBuff = withLabel(
 	makeTristateRaidBuffInput({id: ActionId.fromSpellId(25359), impId: ActionId.fromSpellId(16295), fieldName: 'graceOfAirTotem', minLevel: 42, faction: Faction.Horde}),
-	makeBooleanRaidBuffInput({id: ActionId.fromItemId(10309), fieldName: 'scrollOfAgility'}),
-], 'Agility');
+	'Agility',
+);
 
-export const IntellectBuff = InputHelpers.makeMultiIconInput([
+export const IntellectBuff = withLabel(
 	makeBooleanRaidBuffInput({id: ActionId.fromSpellId(23028), fieldName: 'arcaneBrilliance'}),
-	makeBooleanRaidBuffInput({id: ActionId.fromItemId(10308), fieldName: 'scrollOfIntellect'}),
-], 'Intellect');
+	'Intellect',
+);
 
-export const SpiritBuff = InputHelpers.makeMultiIconInput([
+export const SpiritBuff = withLabel(
 	makeBooleanRaidBuffInput({id: ActionId.fromSpellId(27841), fieldName: 'divineSpirit'}),
-	makeBooleanRaidBuffInput({id: ActionId.fromItemId(10306), fieldName: 'scrollOfSpirit'}),
-], 'Spirit');
+	'Spirit'
+);
 
 export const BlessingOfMightBuff = withLabel(
 	makeTristateIndividualBuffInput({id: ActionId.fromSpellId(25291), impId: ActionId.fromSpellId(20048), fieldName: 'blessingOfMight', faction: Faction.Alliance}),
@@ -87,8 +98,8 @@ export const TrueshotAuraBuff = withLabel(
 	'Trueshot Aura',
 );
 
-export const AttackPowerPercentBuff = InputHelpers.makeMultiIconInput([
-], 'Attack Power %', 1, 40);
+// export const AttackPowerPercentBuff = InputHelpers.makeMultiIconInput([
+// ], 'Attack Power %', 1, 40);
 
 export const DamageReductionPercentBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(25899), fieldName: 'blessingOfSanctuary'}),
@@ -143,11 +154,11 @@ export const Thorns = withLabel(
 	'Thorns',
 );
 export const Innervate = withLabel(
-	makeMultistateIndividualBuffInput({id: ActionId.fromSpellId(29166), numStates: 11, fieldName: 'innervates'}),
+	makeMultistateIndividualBuffInput({id: ActionId.fromSpellId(29166), numStates: 11, fieldName: 'innervates', minLevel: 40}),
 	'Innervate',
 );
 export const PowerInfusion = withLabel(
-	makeMultistateIndividualBuffInput({id: ActionId.fromSpellId(10060), numStates: 11, fieldName: 'powerInfusions'}),
+	makeMultistateIndividualBuffInput({id: ActionId.fromSpellId(10060), numStates: 11, fieldName: 'powerInfusions', minLevel: 40}),
 	'Power Infusion',
 );
 
@@ -178,11 +189,11 @@ export const SaygesDarkFortune = makeEnumIndividualBuffInput({
 	direction: IconEnumPickerDirection.Horizontal,
 	values: [
 		{ iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/inv_misc_orb_02.jpg', value: SaygesFortune.SaygesUnknown, text: `Sayge's Dark Fortune` },
-		{ actionId: ActionId.fromSpellId(23768), value: SaygesFortune.SaygesDamage, text: `Sayge's Damage` },
-		{ actionId: ActionId.fromSpellId(23736), value: SaygesFortune.SaygesAgility, text: `Sayge's Agility` },
-		{ actionId: ActionId.fromSpellId(23766), value: SaygesFortune.SaygesIntellect, text: `Sayge's Intellect` },
-		{ actionId: ActionId.fromSpellId(23738), value: SaygesFortune.SaygesSpirit, text: `Sayge's Spirit` },
-		{ actionId: ActionId.fromSpellId(23737), value: SaygesFortune.SaygesStamina, text: `Sayge's Stamina` },
+		{ id: ActionId.fromSpellId(23768), value: SaygesFortune.SaygesDamage, text: `Sayge's Damage` },
+		{ id: ActionId.fromSpellId(23736), value: SaygesFortune.SaygesAgility, text: `Sayge's Agility` },
+		{ id: ActionId.fromSpellId(23766), value: SaygesFortune.SaygesIntellect, text: `Sayge's Intellect` },
+		{ id: ActionId.fromSpellId(23738), value: SaygesFortune.SaygesSpirit, text: `Sayge's Spirit` },
+		{ id: ActionId.fromSpellId(23737), value: SaygesFortune.SaygesStamina, text: `Sayge's Stamina` },
 	],
 	fieldName: 'saygesFortune'
 })
@@ -287,6 +298,10 @@ export const JudgementOfLight = withLabel(
 	'Judgement of Light',
 );
 
+///////////////////////////////////////////////////////////////////////////
+//                                 CONFIGS
+///////////////////////////////////////////////////////////////////////////
+
 export const RAID_BUFFS_CONFIG = [
 	// Standard buffs
 	{
@@ -295,13 +310,18 @@ export const RAID_BUFFS_CONFIG = [
 		stats: []
 	},
 	{
-		config: AllStatsPercentBuff,
+		config: AllStatsPercentBuffAlliance,
 		picker: MultiIconPicker,
 		stats: []
 	},
 	{
+		config: AllStatsPercentBuffHorde,
+		picker: IconPicker,
+		stats: []
+	},
+	{
 		config: ArmorBuff,
-		picker: MultiIconPicker,
+		picker: IconPicker,
 		stats: [Stat.StatArmor]
 	},
 	{
@@ -310,23 +330,28 @@ export const RAID_BUFFS_CONFIG = [
 		stats: [Stat.StatStamina]
 	},
 	{
-		config: StrengthRaidBuff,
-		picker: MultiIconPicker,
+		config: StrengthBuffAlliance,
+		picker: IconPicker,
 		stats: [Stat.StatStrength]
 	},
 	{
-		config: AgilityRaidBuff,
-		picker: MultiIconPicker,
+		config: StrengthBuffHorde,
+		picker: IconPicker,
+		stats: [Stat.StatStrength]
+	},
+	{
+		config: AgilityBuff,
+		picker: IconPicker,
 		stats: [Stat.StatAgility]
 	},
 	{
 		config: IntellectBuff,
-		picker: MultiIconPicker,
+		picker: IconPicker,
 		stats: [Stat.StatIntellect]
 	},
 	{
 		config: SpiritBuff,
-		picker: MultiIconPicker,
+		picker: IconPicker,
 		stats: [Stat.StatSpirit]
 	},
 	{
@@ -344,11 +369,11 @@ export const RAID_BUFFS_CONFIG = [
 		picker: IconPicker,
 		stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower]
 		},
-	{
-		config: AttackPowerPercentBuff,
-		picker: MultiIconPicker,
-		stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower]
-		},
+	// {
+	// 	config: AttackPowerPercentBuff,
+	// 	picker: MultiIconPicker,
+	// 	stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower]
+	// },
 	{
 		config: MeleeCritBuff,
 		picker: IconPicker,
@@ -406,7 +431,7 @@ export const RAID_BUFFS_CONFIG = [
 		picker: IconPicker,
 		stats: [Stat.StatMP5, Stat.StatSpellPower]
 	},
-] as StatOptions
+] as PickerStatOptions[]
 
 export const WORLD_BUFFS_CONFIG = [
 	{
@@ -463,7 +488,7 @@ export const WORLD_BUFFS_CONFIG = [
 			Stat.StatMP5,
 		]
 	},
-] as StatOptions;
+] as PickerStatOptions[];
 
 export const DEBUFFS_CONFIG = [
 	// Standard Debuffs
@@ -541,4 +566,4 @@ export const DEBUFFS_CONFIG = [
 		picker: IconPicker,
 		stats: [Stat.StatStamina]
 	},
-] as StatOptions;
+] as PickerStatOptions[];

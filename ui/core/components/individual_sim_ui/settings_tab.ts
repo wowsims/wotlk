@@ -223,7 +223,7 @@ export class SettingsTab extends SimTab {
 			header: { title: 'Consumables' }
 		});
 
-		new ConsumesPicker(contentBlock.bodyElement, this, this.simUI);
+		new ConsumesPicker(contentBlock.bodyElement, this.simUI);
 	}
 
 	private buildCooldownSettings() {

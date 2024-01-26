@@ -36,6 +36,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 		Stat.StatSpellHit,
 		Stat.StatSpellCrit,
 		Stat.StatSpellHaste,
+		Stat.StatMP5,
 		Stat.StatFirePower,
 		Stat.StatShadowPower,
 
