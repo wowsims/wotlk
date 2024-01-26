@@ -79,7 +79,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRestorationShaman, {
 		// Default consumes settings.
 		consumes: Presets.DefaultConsumes,
 		// Default rotation settings.
-		rotation: Presets.DefaultRotation,
+		simpleRotation: Presets.DefaultRotation,
 		// Default talents.
 		talents: Presets.RaidHealingTalents.data,
 		// Default spec-specific settings.

@@ -114,7 +114,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecProtectionPaladin, {
 		// Default consumes settings.
 		consumes: Presets.DefaultConsumes,
 		// Default rotation settings.
-		rotation: Presets.DefaultRotation,
+		simpleRotation: Presets.DefaultRotation,
 		// Default talents.
 		talents: Presets.GenericAoeTalents.data,
 		// Default spec-specific settings.
