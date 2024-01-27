@@ -291,7 +291,6 @@ export class SettingsTab extends SimTab {
 		);
 
 		const saygesOptions = relevantStatOptions(BuffDebuffInputs.SAYGES_CONFIG, this.simUI);
-		console.log(saygesOptions)
 		new IconEnumPicker(contentBlock.bodyElement, this.simUI.player, BuffDebuffInputs.SaygesDarkFortune(saygesOptions));
 	}
 
