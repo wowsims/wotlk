@@ -8,7 +8,7 @@ import { IconPicker, IconPickerConfig } from "../icon_picker";
 import { MultiIconPicker, MultiIconPickerConfig } from "../multi_icon_picker";
 
 export interface ActionInputConfig<T> {
-	id: ActionId
+	actionId: ActionId
 	value: T
 	minLevel?: number
 	maxLevel?: number

@@ -11,6 +11,7 @@ import { buildIconInput } from "../icon_inputs.js";
 import { relevantStatOptions } from "../inputs/stat_options";
 
 import * as ConsumablesInputs from '../inputs/consumables';
+import { TypedEvent } from "ui/core/typed_event";
 
 export class ConsumesPicker extends Component {
 	protected simUI: IndividualSimUI<Spec>;
@@ -41,7 +42,7 @@ export class ConsumesPicker extends Component {
       </div>
     `;
 
-		this.rootElem.appendChild(fragment.children[0] as HTMLElement);
+		const rowElem = this.rootElem.appendChild(fragment.children[0] as HTMLElement);
 		const potionsElem = this.rootElem.querySelector('.consumes-potions') as HTMLElement;
 		const conjuredElem = this.rootElem.querySelector('.consumes-conjured') as HTMLElement;
 
@@ -211,5 +212,11 @@ export class ConsumesPicker extends Component {
 		const petConsumesElem = this.rootElem.querySelector('.consumes-pet') as HTMLElement;
 
 		this.simUI.individualConfig.petConsumeInputs.map(iconInput => buildIconInput(petConsumesElem, this.simUI.player, iconInput));
+	}
+
+	private updateOptions(changeEmitters: TypedEvent<any>[]) {
+		TypedEvent.onAny(changeEmitters).on(() => {
+			
+		});
 	}
 }

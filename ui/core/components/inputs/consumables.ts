@@ -37,7 +37,7 @@ export interface ConsumableStatOption<T> extends ItemStatOption<T> {
 export interface ConsumeInputFactoryArgs<T extends number> {
 	consumesFieldName: keyof Consumes,
 	// Additional callback if logic besides syncing consumes is required
-	onSet?: (eventID: EventID, p: Player<any>, newValue: T) => void
+	onSet?: (eventactionId: EventID, p: Player<any>, newValue: T) => void
 	minLevel?: number,
 	maxLevel?: number,
 	faction?: Faction,
@@ -53,7 +53,7 @@ function makeConsumeInputFactory<T extends number>(args: ConsumeInputFactoryArgs
 				{ value: 0 } as unknown as IconEnumValueConfig<Player<any>, T>,
 			].concat(options.map(option => {
 				const rtn = {
-					id: option.config.id,
+					actionId: option.config.actionId,
 					showWhen: (player: Player<any>) =>
 						(option.config.shownWhen && option.config.shownWhen(player)) ||
 						(option.config.minLevel || 0) <= player.getLevel() &&
@@ -92,8 +92,8 @@ function makeConsumeInputFactory<T extends number>(args: ConsumeInputFactoryArgs
 //                                 CONJURED
 ///////////////////////////////////////////////////////////////////////////
 
-export const ConjuredMinorRecombobulator = { id: ActionId.fromItemId(4381), value: Conjured.ConjuredMinorRecombobulator, showWhen: (player: Player<any>) => player.getGear().hasTrinket(4381) };
-export const ConjuredDemonicRune = { id: ActionId.fromItemId(12662), value: Conjured.ConjuredDemonicRune, minLevel: 40 };
+export const ConjuredMinorRecombobulator = { actionId: ActionId.fromItemId(4381), value: Conjured.ConjuredMinorRecombobulator, showWhen: (player: Player<any>) => player.getGear().hasTrinket(4381) };
+export const ConjuredDemonicRune = { actionId: ActionId.fromItemId(12662), value: Conjured.ConjuredDemonicRune, minLevel: 40 };
 
 export const CONJURED_CONFIG = [
 	{ config: ConjuredMinorRecombobulator, stats: [Stat.StatIntellect] },
@@ -106,8 +106,8 @@ export const makeConjuredInput = makeConsumeInputFactory({consumesFieldName: 'de
 //                                 EXPLOSIVES
 ///////////////////////////////////////////////////////////////////////////
 
-export const ExplosiveDenseDynamite = { id: ActionId.fromItemId(18641), value: Explosive.ExplosiveDenseDynamite, minLevel: 40 };
-export const ExplosiveThoriumGrenade = { id: ActionId.fromItemId(15993), value: Explosive.ExplosiveThoriumGrenade, minLevel: 40 };
+export const ExplosiveDenseDynamite = { actionId: ActionId.fromItemId(18641), value: Explosive.ExplosiveDenseDynamite, minLevel: 40 };
+export const ExplosiveThoriumGrenade = { actionId: ActionId.fromItemId(15993), value: Explosive.ExplosiveThoriumGrenade, minLevel: 40 };
 
 export const EXPLOSIVES_CONFIG = [
 	{ config: ExplosiveDenseDynamite, stats: [] },
@@ -116,16 +116,16 @@ export const EXPLOSIVES_CONFIG = [
 
 export const makeExplosivesInput = makeConsumeInputFactory({consumesFieldName: 'fillerExplosive'});
 
-export const Sapper = makeBooleanConsumeInput({id: ActionId.fromItemId(10646), fieldName: 'sapper', minLevel: 40});
+export const Sapper = makeBooleanConsumeInput({actionId: ActionId.fromItemId(10646), fieldName: 'sapper', minLevel: 40});
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 FLASKS
 ///////////////////////////////////////////////////////////////////////////
 
-export const FlaskOfTheTitans = { id: ActionId.fromItemId(13510), value: Flask.FlaskOfTheTitans, minLevel: 50 };
-export const FlaskOfDistilledWisdom = { id: ActionId.fromItemId(13511), value: Flask.FlaskOfDistilledWisdom, minLevel: 50 };
-export const FlaskOfSupremePower = { id: ActionId.fromItemId(13512), value: Flask.FlaskOfSupremePower, minLevel: 50 };
-export const FlaskOfChromaticResistance = { id: ActionId.fromItemId(13513), value: Flask.FlaskOfChromaticResistance, minLevel: 50 };
+export const FlaskOfTheTitans = { actionId: ActionId.fromItemId(13510), value: Flask.FlaskOfTheTitans, minLevel: 50 };
+export const FlaskOfDistilledWisdom = { actionId: ActionId.fromItemId(13511), value: Flask.FlaskOfDistilledWisdom, minLevel: 50 };
+export const FlaskOfSupremePower = { actionId: ActionId.fromItemId(13512), value: Flask.FlaskOfSupremePower, minLevel: 50 };
+export const FlaskOfChromaticResistance = { actionId: ActionId.fromItemId(13513), value: Flask.FlaskOfChromaticResistance, minLevel: 50 };
 
 export const FLASKS_CONFIG = [
 	{ config: FlaskOfTheTitans, stats: [Stat.StatStamina] },
@@ -140,16 +140,16 @@ export const makeFlasksInput = makeConsumeInputFactory({consumesFieldName: 'flas
 //                                 FOOD
 ///////////////////////////////////////////////////////////////////////////
 
-export const SmokedSagefish = { id: ActionId.fromItemId(21072), value: Food.FoodSmokedSagefish, minLevel: 10 };
-export const HotWolfRibs = { id: ActionId.fromItemId(13851), value: Food.FoodHotWolfRibs, minLevel: 25 };
-export const TenderWolfSteak = { id: ActionId.fromItemId(22480), value: Food.FoodTenderWolfSteak, minLevel: 40 };
-export const NightfinSoup = { id: ActionId.fromItemId(13931), value: Food.FoodNightfinSoup, minLevel: 35 };
-export const GrilledSquid = { id: ActionId.fromItemId(13928), value: Food.FoodGrilledSquid, minLevel: 35 };
-export const SmokedDesertDumpling = { id: ActionId.fromItemId(20452), value: Food.FoodSmokedDesertDumpling, minLevel: 45 };
-export const RunnTumTuberSurprise = { id: ActionId.fromItemId(18254), value: Food.FoodRunnTumTuberSurprise, minLevel: 45 };
-export const BlessedSunfruitJuice = { id: ActionId.fromItemId(13813), value: Food.FoodBlessedSunfruitJuice, minLevel: 45 };
-export const BlessSunfruit = { id: ActionId.fromItemId(13810), value: Food.FoodBlessSunfruit, minLevel: 45 };
-export const DirgesKickChimaerokChops = { id: ActionId.fromItemId(21023), value: Food.FoodDirgesKickChimaerokChops, minLevel: 55 };
+export const SmokedSagefish = { actionId: ActionId.fromItemId(21072), value: Food.FoodSmokedSagefish, minLevel: 10 };
+export const HotWolfRibs = { actionId: ActionId.fromItemId(13851), value: Food.FoodHotWolfRibs, minLevel: 25 };
+export const TenderWolfSteak = { actionId: ActionId.fromItemId(22480), value: Food.FoodTenderWolfSteak, minLevel: 40 };
+export const NightfinSoup = { actionId: ActionId.fromItemId(13931), value: Food.FoodNightfinSoup, minLevel: 35 };
+export const GrilledSquid = { actionId: ActionId.fromItemId(13928), value: Food.FoodGrilledSquid, minLevel: 35 };
+export const SmokedDesertDumpling = { actionId: ActionId.fromItemId(20452), value: Food.FoodSmokedDesertDumpling, minLevel: 45 };
+export const RunnTumTuberSurprise = { actionId: ActionId.fromItemId(18254), value: Food.FoodRunnTumTuberSurprise, minLevel: 45 };
+export const BlessedSunfruitJuice = { actionId: ActionId.fromItemId(13813), value: Food.FoodBlessedSunfruitJuice, minLevel: 45 };
+export const BlessSunfruit = { actionId: ActionId.fromItemId(13810), value: Food.FoodBlessSunfruit, minLevel: 45 };
+export const DirgesKickChimaerokChops = { actionId: ActionId.fromItemId(21023), value: Food.FoodDirgesKickChimaerokChops, minLevel: 55 };
 
 export const FOOD_CONFIG = [
 	{ config: HotWolfRibs, stats: [Stat.StatSpirit] },
@@ -170,10 +170,10 @@ export const makeFoodInput = makeConsumeInputFactory({consumesFieldName: 'food'}
 ///////////////////////////////////////////////////////////////////////////
 
 // Agility
-export const ElixirOfTheMongoose = { id: ActionId.fromItemId(13452), value: AgilityElixir.ElixirOfTheMongoose, minLevel: 46 };
-export const ElixirOfGreaterAgility = { id: ActionId.fromItemId(9187), value: AgilityElixir.ElixirOfGreaterAgility, minLevel: 38 };
-export const ElixirOfLesserAgility = { id: ActionId.fromItemId(3390), value: AgilityElixir.ElixirOfLesserAgility, minLevel: 18 };
-export const ScrollOfAgility = { id: ActionId.fromItemId(10309), value: AgilityElixir.ScrollOfAgility };
+export const ElixirOfTheMongoose = { actionId: ActionId.fromItemId(13452), value: AgilityElixir.ElixirOfTheMongoose, minLevel: 46 };
+export const ElixirOfGreaterAgility = { actionId: ActionId.fromItemId(9187), value: AgilityElixir.ElixirOfGreaterAgility, minLevel: 38 };
+export const ElixirOfLesserAgility = { actionId: ActionId.fromItemId(3390), value: AgilityElixir.ElixirOfLesserAgility, minLevel: 18 };
+export const ScrollOfAgility = { actionId: ActionId.fromItemId(10309), value: AgilityElixir.ScrollOfAgility };
 
 export const AGILITY_CONSUMES_CONFIG = [
 	{ config: ElixirOfTheMongoose, stats: [Stat.StatAgility] },
@@ -185,10 +185,10 @@ export const AGILITY_CONSUMES_CONFIG = [
 export const makeAgilityConsumeInput = makeConsumeInputFactory({consumesFieldName: 'agilityElixir'});
 
 // Strength
-export const JujuPower = { id: ActionId.fromItemId(12451), value: StrengthBuff.JujuPower, minLevel: 46 };
-export const ElixirOfGiants = { id: ActionId.fromItemId(9206), value: StrengthBuff.ElixirOfGiants, minLevel: 46 };
-export const ElixirOfOgresStrength = { id: ActionId.fromItemId(3391), value: StrengthBuff.ElixirOfOgresStrength, minLevel: 20 };
-export const ScrollOfStrength = { id: ActionId.fromItemId(10310), value: StrengthBuff.ScrollOfStrength };
+export const JujuPower = { actionId: ActionId.fromItemId(12451), value: StrengthBuff.JujuPower, minLevel: 46 };
+export const ElixirOfGiants = { actionId: ActionId.fromItemId(9206), value: StrengthBuff.ElixirOfGiants, minLevel: 46 };
+export const ElixirOfOgresStrength = { actionId: ActionId.fromItemId(3391), value: StrengthBuff.ElixirOfOgresStrength, minLevel: 20 };
+export const ScrollOfStrength = { actionId: ActionId.fromItemId(10310), value: StrengthBuff.ScrollOfStrength };
 
 export const STRENGTH_CONSUMES_CONFIG = [
 	{ config: JujuPower, stats: [Stat.StatStrength] },
@@ -200,21 +200,21 @@ export const STRENGTH_CONSUMES_CONFIG = [
 export const makeStrengthConsumeInput = makeConsumeInputFactory({consumesFieldName: 'strengthBuff'});
 
 // Other
-export const BoglingRootDebuff = makeBooleanConsumeInput({id: ActionId.fromItemId(5206), fieldName: 'boglingRoot'});
+export const BoglingRootDebuff = makeBooleanConsumeInput({actionId: ActionId.fromItemId(5206), fieldName: 'boglingRoot'});
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 PET
 ///////////////////////////////////////////////////////////////////////////
 
-// export const PetScrollOfAgilityV = makeBooleanConsumeInput({id: ActionId.fromItemId(27498), fieldName: 'petScrollOfAgility', minLevel: 5});
-// export const PetScrollOfStrengthV = makeBooleanConsumeInput({id: ActionId.fromItemId(27503), fieldName: 'petScrollOfStrength', minLevel: 5});
+// export const PetScrollOfAgilityV = makeBooleanConsumeInput({actionId: ActionId.fromItemId(27498), fieldName: 'petScrollOfAgility', minLevel: 5});
+// export const PetScrollOfStrengthV = makeBooleanConsumeInput({actionId: ActionId.fromItemId(27503), fieldName: 'petScrollOfStrength', minLevel: 5});
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 POTIONS
 ///////////////////////////////////////////////////////////////////////////
 
-export const LesserManaPotion = { id: ActionId.fromItemId(3385), value: Potions.LesserManaPotion };
-export const ManaPotion = { id: ActionId.fromItemId(3827), value: Potions.ManaPotion };
+export const LesserManaPotion = { actionId: ActionId.fromItemId(3385), value: Potions.LesserManaPotion };
+export const ManaPotion = { actionId: ActionId.fromItemId(3827), value: Potions.ManaPotion };
 
 export const POTIONS_CONFIG = [
 	{ config: LesserManaPotion, stats: [Stat.StatIntellect] },
@@ -228,8 +228,8 @@ export const makePotionsInput = makeConsumeInputFactory({consumesFieldName: 'def
 ///////////////////////////////////////////////////////////////////////////
 
 // Arcane
-export const ArcaneElixir = { id: ActionId.fromItemId(9155), value: SpellPowerBuff.ArcaneElixir, minLevel: 37 };
-export const GreaterArcaneElixir = { id: ActionId.fromItemId(13454), value: SpellPowerBuff.GreaterArcaneElixir, minLevel: 46 };
+export const ArcaneElixir = { actionId: ActionId.fromItemId(9155), value: SpellPowerBuff.ArcaneElixir, minLevel: 37 };
+export const GreaterArcaneElixir = { actionId: ActionId.fromItemId(13454), value: SpellPowerBuff.GreaterArcaneElixir, minLevel: 46 };
 
 export const SPELL_POWER_CONFIG = [
 	{ config: ArcaneElixir, stats: [Stat.StatSpellPower] },
@@ -239,8 +239,8 @@ export const SPELL_POWER_CONFIG = [
 export const makeSpellPowerConsumeInput = makeConsumeInputFactory({consumesFieldName: 'spellPowerBuff'})
 
 // Fire
-export const ElixirOfFirepower = { id: ActionId.fromItemId(6373), value: FirePowerBuff.ElixirOfFirepower, minLevel: 18 };
-export const ElixirOfGreaterFirepower = { id: ActionId.fromItemId(21546), value: FirePowerBuff.ElixirOfGreaterFirepower, minLevel: 40 };
+export const ElixirOfFirepower = { actionId: ActionId.fromItemId(6373), value: FirePowerBuff.ElixirOfFirepower, minLevel: 18 };
+export const ElixirOfGreaterFirepower = { actionId: ActionId.fromItemId(21546), value: FirePowerBuff.ElixirOfGreaterFirepower, minLevel: 40 };
 
 export const FIRE_POWER_CONFIG = [
 	{ config: ElixirOfFirepower, stats: [Stat.StatFirePower] },
@@ -250,7 +250,7 @@ export const FIRE_POWER_CONFIG = [
 export const makeFirePowerConsumeInput = makeConsumeInputFactory({consumesFieldName: 'firePowerBuff'})
 
 // Frost
-export const ElixirOfFrostPower = {id: ActionId.fromItemId(17708), value: FrostPowerBuff.ElixirOfFrostPower, minLevel: 40 };
+export const ElixirOfFrostPower = {actionId: ActionId.fromItemId(17708), value: FrostPowerBuff.ElixirOfFrostPower, minLevel: 40 };
 
 export const FROST_POWER_CONFIG = [
 	{ config: ElixirOfFrostPower, stats: [Stat.StatFrostPower] },
@@ -259,7 +259,7 @@ export const FROST_POWER_CONFIG = [
 export const makeFrostPowerConsumeInput = makeConsumeInputFactory({consumesFieldName: 'frostPowerBuff'})
 
 // Shadow
-export const ElixirOfShadowPower = {id: ActionId.fromItemId(9264), value: ShadowPowerBuff.ElixirOfShadowPower, minLevel: 40 };
+export const ElixirOfShadowPower = {actionId: ActionId.fromItemId(9264), value: ShadowPowerBuff.ElixirOfShadowPower, minLevel: 40 };
 
 export const SHADOW_POWER_CONFIG = [
 	{ config: ElixirOfShadowPower, stats: [Stat.StatShadowPower] },
@@ -271,13 +271,13 @@ export const makeshadowPowerConsumeInput = makeConsumeInputFactory({consumesFiel
 //                                 Weapon Imbues
 ///////////////////////////////////////////////////////////////////////////
 
-export const BrillianWizardOil = { id: ActionId.fromItemId(20749), value: WeaponImbue.BrillianWizardOil, minLevel: 45 };
-export const BrilliantManaOil = { id: ActionId.fromItemId(20748), value: WeaponImbue.BrilliantManaOil, minLevel: 45 };
-export const DenseSharpeningStone = { id: ActionId.fromItemId(12404), value: WeaponImbue.DenseSharpeningStone, minLevel: 35 };
-export const ElementalSharpeningStone = { id: ActionId.fromItemId(18262), value: WeaponImbue.ElementalSharpeningStone, minLevel: 50 };
-export const BlackfathomManaOil = { id: ActionId.fromItemId(211848), value: WeaponImbue.BlackfathomManaOil, minLevel: 25 };
-export const BlackfathomSharpeningStone = { id: ActionId.fromItemId(211845), value: WeaponImbue.BlackfathomSharpeningStone };
-export const WildStrikes = { id: ActionId.fromSpellId(407975), value: WeaponImbue.WildStrikes };
+export const BrillianWizardOil = { actionId: ActionId.fromItemId(20749), value: WeaponImbue.BrillianWizardOil, minLevel: 45 };
+export const BrilliantManaOil = { actionId: ActionId.fromItemId(20748), value: WeaponImbue.BrilliantManaOil, minLevel: 45 };
+export const DenseSharpeningStone = { actionId: ActionId.fromItemId(12404), value: WeaponImbue.DenseSharpeningStone, minLevel: 35 };
+export const ElementalSharpeningStone = { actionId: ActionId.fromItemId(18262), value: WeaponImbue.ElementalSharpeningStone, minLevel: 50 };
+export const BlackfathomManaOil = { actionId: ActionId.fromItemId(211848), value: WeaponImbue.BlackfathomManaOil, minLevel: 25 };
+export const BlackfathomSharpeningStone = { actionId: ActionId.fromItemId(211845), value: WeaponImbue.BlackfathomSharpeningStone };
+export const WildStrikes = { actionId: ActionId.fromSpellId(407975), value: WeaponImbue.WildStrikes };
 
 export const WEAPON_IMBUES_OH_CONFIG = [
 	{ config: BrillianWizardOil, stats: [Stat.StatSpellPower] },

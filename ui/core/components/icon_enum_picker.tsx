@@ -15,10 +15,10 @@ export enum IconEnumPickerDirection {
 export interface IconEnumValueConfig<ModObject, T> {
 	value: T,
 	// One of these should be set.
-	// If id is set, shows the icon for that id.
+	// If actionId is set, shows the icon for that id.
 	// If color is set, shows that color.
 	// If iconUrl is set, shows that icon as grayscale
-	id?: ActionId,
+	actionId?: ActionId,
 	color?: string,
 	iconUrl?: string,
 	// Text to be displayed on the icon.
@@ -191,8 +191,8 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 			return;
 		}
 
-		if (valueConfig.id) {
-			this.setActionImage(elem, valueConfig.id);
+		if (valueConfig.actionId) {
+			this.setActionImage(elem, valueConfig.actionId);
 			elem.style.filter = ''
 		} else if (valueConfig.iconUrl) {
 			elem.style.backgroundImage = `url(${valueConfig.iconUrl})`
