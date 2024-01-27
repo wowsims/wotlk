@@ -1,3 +1,7 @@
+import { TotemsSection } from '../core/components/totem_inputs.js';
+import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
+import { Player } from '../core/player.js';
+import { APLRotation } from '../core/proto/apl.js';
 import {
 	Class,
 	Faction,
@@ -10,17 +14,11 @@ import {
 	Stat,
 	TristateEffect,
 } from '../core/proto/common.js';
-import {
-	APLRotation,
-} from '../core/proto/apl.js';
 import { ShamanImbue } from '../core/proto/shaman.js';
-import { Player } from '../core/player.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import { getSpecIcon, specNames } from '../core/proto_utils/utils.js';
-import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
-import { TotemsSection } from '../core/components/totem_inputs.js';
 
-import * as IconInputs from '../core/components/icon_inputs.js';
+import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs';
 import * as OtherInputs from '../core/components/other_inputs.js';
 import * as ShamanInputs from './inputs.js';
 import * as Presets from './presets.js';
@@ -125,12 +123,12 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecEnhancementShaman, {
 	rotationInputs: ShamanInputs.EnhancementShamanRotationConfig,
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
-		IconInputs.BlessingOfWisdom,
-		IconInputs.ManaSpringTotem,
-		IconInputs.SpiritBuff,
+		BuffDebuffInputs.BlessingOfWisdom,
+		BuffDebuffInputs.ManaSpringTotem,
+		BuffDebuffInputs.SpiritBuff,
 	],
 	excludeBuffDebuffInputs: [
-		IconInputs.BleedDebuff,
+		BuffDebuffInputs.BleedDebuff,
 	],
 	// Inputs to include in the 'Other' section on the settings tab.
 	otherInputs: {

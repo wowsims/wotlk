@@ -30,9 +30,8 @@ import {
 	Rogue_Rotation_SubtletyPriority as SubtletyPriority,
 } from '../core/proto/rogue.js';
 
-import * as IconInputs from '../core/components/icon_inputs.js';
+import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs';
 import * as OtherInputs from '../core/components/other_inputs.js';
-
 import * as RogueInputs from './inputs.js';
 import * as Presets from './presets.js';
 
@@ -236,8 +235,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 	rotationInputs: RogueInputs.RogueRotationConfig,
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
-		IconInputs.SpellCritBuff,
-		IconInputs.SpellISBDebuff
+		BuffDebuffInputs.SpellCritBuff,
+		BuffDebuffInputs.SpellISBDebuff
 	],
 	excludeBuffDebuffInputs: [
 	],

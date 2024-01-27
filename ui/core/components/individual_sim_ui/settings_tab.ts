@@ -313,7 +313,7 @@ export class SettingsTab extends SimTab {
 			new MultiIconPicker(contentBlock.bodyElement, this.simUI.player, {
 				inputs: miscDebuffOptions.map(options => options.config) as Array<MultiIconPickerItemConfig<Player<Spec>>>,
 				numColumns: 3,
-				label: 'Misc',
+				label: 'Misc Debuffs',
 			}, this.simUI);
 		}
 	}

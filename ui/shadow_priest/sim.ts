@@ -14,7 +14,8 @@ import { Player } from '../core/player.js';
 import { getSpecIcon, specNames } from '../core/proto_utils/utils.js';
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
 
-import * as IconInputs from '../core/components/icon_inputs.js';
+import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs';
+import * as ConsumablesInputs from '../core/components/inputs/consumables.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
 import * as Mechanics from '../core/constants/mechanics.js';
 import * as ShadowPriestInputs from './inputs.js';
@@ -109,15 +110,17 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecShadowPriest, {
 	rotationInputs: ShadowPriestInputs.ShadowPriestRotationConfig,
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
-		IconInputs.BlessingOfWisdom,
-		IconInputs.ManaSpringTotem,
-		IconInputs.StaminaBuff,
+		BuffDebuffInputs.BlessingOfWisdom,
+		BuffDebuffInputs.ManaSpringTotem,
+		BuffDebuffInputs.StaminaBuff,
 	],
 	excludeBuffDebuffInputs: [
-		IconInputs.AgilityBuffInput,
-		IconInputs.StrengthBuffInput,
-		IconInputs.FireDamageBuff,
-		IconInputs.FrostDamageBuff,
+		BuffDebuffInputs.SpellScorchDebuff,
+		BuffDebuffInputs.SpellWintersChillDebuff,
+		ConsumablesInputs.FireDamageBuff,
+		ConsumablesInputs.FrostDamageBuff,
+		...ConsumablesInputs.AGILITY_CONSUMES_CONFIG,
+		...ConsumablesInputs.STRENGTH_CONSUMES_CONFIG,
 	],
 	// Inputs to include in the 'Other' section on the settings tab.
 	otherInputs: {

@@ -18,7 +18,7 @@ import {
 import { IconPicker } from "../icon_picker";
 import { MultiIconPicker } from "../multi_icon_picker";
 
-import { ItemStatOption, PickerStatOptions, StatOption } from "./stat_options";
+import { ItemStatOption, PickerStatOptions } from "./stat_options";
 
 import * as InputHelpers from '../input_helpers';
 

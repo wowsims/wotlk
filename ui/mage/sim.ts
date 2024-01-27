@@ -16,7 +16,8 @@ import { getSpecIcon } from '../core/proto_utils/utils.js';
 import {Player} from '../core/player.js';
 import {IndividualSimUI, registerSpecConfig} from '../core/individual_sim_ui.js';
 
-import * as IconInputs from '../core/components/icon_inputs.js';
+import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs';
+import * as ConsumablesInputs from '../core/components/inputs/consumables.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
 import * as MageInputs from './inputs.js';
 import * as Presets from './presets.js';
@@ -103,15 +104,16 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecMage, {
 	rotationInputs: MageInputs.MageRotationConfig,
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
-		IconInputs.BlessingOfWisdom,
-		IconInputs.ManaSpringTotem,
-		IconInputs.StaminaBuff,
-		IconInputs.JudgementOfWisdom,
+		BuffDebuffInputs.BlessingOfWisdom,
+		BuffDebuffInputs.ManaSpringTotem,
+		BuffDebuffInputs.StaminaBuff,
+		BuffDebuffInputs.JudgementOfWisdom,
 	],
 	excludeBuffDebuffInputs: [
-		IconInputs.AgilityBuffInput,
-		IconInputs.StrengthBuffInput,
-		IconInputs.ShadowDamageBuff,
+		BuffDebuffInputs.SpellISBDebuff,
+		ConsumablesInputs.ShadowDamageBuff,
+		...ConsumablesInputs.AGILITY_CONSUMES_CONFIG,
+		...ConsumablesInputs.STRENGTH_CONSUMES_CONFIG,
 	],
 	// Inputs to include in the 'Other' section on the settings tab.
 	otherInputs: {
