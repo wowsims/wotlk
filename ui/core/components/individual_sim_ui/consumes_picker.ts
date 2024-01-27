@@ -9,9 +9,9 @@ import { TypedEvent } from "../../typed_event";
 import { Component } from "../component";
 import { buildIconInput } from "../icon_inputs.js";
 import { relevantStatOptions } from "../inputs/stat_options";
+import { TypedIconEnumPickerConfig, TypedIconPickerConfig } from "../input_helpers";
 
 import * as ConsumablesInputs from '../inputs/consumables';
-import { TypedIconEnumPickerConfig, TypedIconPickerConfig } from "../input_helpers";
 
 export class ConsumesPicker extends Component {
 	protected simUI: IndividualSimUI<Spec>;

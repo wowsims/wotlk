@@ -55,7 +55,7 @@ function makeConsumeInputFactory<T extends number>(args: ConsumeInputFactoryArgs
 				const rtn = {
 					actionId: option.config.actionId,
 					showWhen: (player: Player<any>) =>
-						(option.config.shownWhen && option.config.shownWhen(player)) ||
+						(!option.config.showWhen || option.config.showWhen(player)) &&
 						(option.config.minLevel || 0) <= player.getLevel() &&
 						(option.config.maxLevel || MAX_CHARACTER_LEVEL) >= player.getLevel() &&
 						(option.config.faction || player.getFaction()) == player.getFaction()
