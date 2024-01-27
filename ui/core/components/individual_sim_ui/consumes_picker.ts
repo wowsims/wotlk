@@ -43,7 +43,8 @@ export class ConsumesPicker extends Component {
 		const potionsElem = this.rootElem.querySelector('.consumes-potions') as HTMLElement;
 
 		this.buildPickers({
-			changeEmitters: [this.simUI.player.levelChangeEmitter],
+			// GearChangeEmitter for ConjuredMinorRecombobulator
+			changeEmitters: [this.simUI.player.levelChangeEmitter, this.simUI.player.gearChangeEmitter],
 			containerElem: rowElem,
 			options: [
 				{
