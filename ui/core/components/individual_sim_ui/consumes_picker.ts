@@ -136,13 +136,15 @@ export class ConsumesPicker extends Component {
 		const physicalConsumesElem = this.rootElem.querySelector('.consumes-physical') as HTMLElement;
 
 		if (includeAgi) {
-			buildIconInput(physicalConsumesElem, this.simUI.player, ConsumablesInputs.makeAgilityConsumeInput(ConsumablesInputs.AGILITY_CONSUMES_CONFIG));
+			const agilityConsumesOptions = ConsumablesInputs.AGILITY_CONSUMES_CONFIG;
+			buildIconInput(physicalConsumesElem, this.simUI.player, ConsumablesInputs.makeAgilityConsumeInput(agilityConsumesOptions));
 		}
 		if (includeStr) {
-			buildIconInput(physicalConsumesElem, this.simUI.player, ConsumablesInputs.makeStrengthConsumeInput(ConsumablesInputs.STRENGTH_CONSUMES_CONFIG));
+			const strengthConsumesOptions = ConsumablesInputs.STRENGTH_CONSUMES_CONFIG;
+			buildIconInput(physicalConsumesElem, this.simUI.player, ConsumablesInputs.makeStrengthConsumeInput(strengthConsumesOptions));
 		}
 
-		buildIconInput(physicalConsumesElem, this.simUI.player, IconInputs.BoglingRootInput);
+		buildIconInput(physicalConsumesElem, this.simUI.player, ConsumablesInputs.BoglingRootDebuff);
 	}
 
 	private buildSpellPowerBuffPicker() {

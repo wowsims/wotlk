@@ -1,7 +1,7 @@
 import { Faction, SaygesFortune, Stat } from "../../proto/common";
 import { ActionId } from "../../proto_utils/action_id";
 
-import { IconEnumPicker, IconEnumPickerDirection } from "../icon_enum_picker";
+import { IconEnumPickerDirection } from "../icon_enum_picker";
 import {
   makeBooleanDebuffInput,
   makeBooleanIndividualBuffInput,
@@ -18,7 +18,7 @@ import {
 import { IconPicker } from "../icon_picker";
 import { MultiIconPicker } from "../multi_icon_picker";
 
-import { PickerStatOptions } from "./stat_options";
+import { ItemStatOption, PickerStatOptions, StatOption } from "./stat_options";
 
 import * as InputHelpers from '../input_helpers';
 
@@ -181,19 +181,21 @@ export const WarchiefsBlessing = withLabel(
 	`Warchief's Blessing`,
 );
 
-export const SaygesDarkFortune = makeEnumIndividualBuffInput({
+export const SaygesDarkFortune = (inputs: ItemStatOption<SaygesFortune>[]) => makeEnumIndividualBuffInput({
 	numColumns: 6,
 	direction: IconEnumPickerDirection.Horizontal,
 	values: [
 		{ iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/inv_misc_orb_02.jpg', value: SaygesFortune.SaygesUnknown, text: `Sayge's Dark Fortune` },
-		{ id: ActionId.fromSpellId(23768), value: SaygesFortune.SaygesDamage, text: `Sayge's Damage` },
-		{ id: ActionId.fromSpellId(23736), value: SaygesFortune.SaygesAgility, text: `Sayge's Agility` },
-		{ id: ActionId.fromSpellId(23766), value: SaygesFortune.SaygesIntellect, text: `Sayge's Intellect` },
-		{ id: ActionId.fromSpellId(23738), value: SaygesFortune.SaygesSpirit, text: `Sayge's Spirit` },
-		{ id: ActionId.fromSpellId(23737), value: SaygesFortune.SaygesStamina, text: `Sayge's Stamina` },
+		...inputs.map(input => input.config),
 	],
 	fieldName: 'saygesFortune'
 })
+
+export const SaygesDamage = { id: ActionId.fromSpellId(23768), value: SaygesFortune.SaygesDamage, text: `Sayge's Damage` };
+export const SaygesAgility = { id: ActionId.fromSpellId(23736), value: SaygesFortune.SaygesAgility, text: `Sayge's Agility` };
+export const SaygesIntellect = { id: ActionId.fromSpellId(23766), value: SaygesFortune.SaygesIntellect, text: `Sayge's Intellect` };
+export const SaygesSpirit = { id: ActionId.fromSpellId(23738), value: SaygesFortune.SaygesSpirit, text: `Sayge's Spirit` };
+export const SaygesStamina = { id: ActionId.fromSpellId(23737), value: SaygesFortune.SaygesStamina, text: `Sayge's Stamina` };
 
 // Dire Maul Buffs
 export const FengusFerocity = withLabel(
@@ -332,7 +334,7 @@ export const RAID_BUFFS_CONFIG = [
 	},
 	{
 		config: StrengthBuffAlliance,
-		picker: IconPicker,
+		picker: MultiIconPicker,
 		stats: [Stat.StatStrength]
 	},
 	{
@@ -461,11 +463,6 @@ export const WORLD_BUFFS_CONFIG = [
 		]
 	},
 	{
-		config: SaygesDarkFortune,
-		picker: IconEnumPicker,
-		stats: [],
-	},
-	{
 		config: SongflowerSerenade,
 		picker: IconPicker,
 		stats: []
@@ -485,6 +482,29 @@ export const WORLD_BUFFS_CONFIG = [
 		]
 	},
 ] as PickerStatOptions[];
+
+export const SAYGES_CONFIG = [
+	{
+		config: SaygesDamage,
+		stats: [],
+	},
+	{
+		config: SaygesAgility,
+		stats: [Stat.StatAgility],
+	},
+	{
+		config: SaygesIntellect,
+		stats: [Stat.StatIntellect],
+	},
+	{
+		config: SaygesSpirit,
+		stats: [Stat.StatSpirit, Stat.StatMP5],
+	},
+	{
+		config: SaygesStamina,
+		stats: [Stat.StatStamina],
+	},
+] as ItemStatOption<SaygesFortune>[];
 
 export const DEBUFFS_CONFIG = [
 	// Standard Debuffs

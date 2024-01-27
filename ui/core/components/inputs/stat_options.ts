@@ -7,8 +7,9 @@ import { IconEnumPicker, IconEnumPickerConfig } from "../icon_enum_picker";
 import { IconPicker, IconPickerConfig } from "../icon_picker";
 import { MultiIconPicker, MultiIconPickerConfig } from "../multi_icon_picker";
 
-export interface ItemInputConfig {
+export interface ActionInputConfig<T> {
 	id: ActionId
+	value: T
 	minLevel?: number
 	maxLevel?: number
 	faction?: Faction
@@ -18,8 +19,8 @@ export interface StatOption {
 	stats: Array<Stat>,
 }
 
-export interface ItemStatOption extends StatOption {
-	item: ItemInputConfig,
+export interface ItemStatOption<T> extends StatOption {
+	config: ActionInputConfig<T>,
 }
 
 export interface PickerStatOption<PickerType, ConfigType> extends StatOption {
@@ -42,14 +43,14 @@ export interface IconEnumPickerStatOption extends PickerStatOption<
   IconEnumPickerConfig<Player<any>, any>
 > {}
 
-export type ItemStatOptions = ItemStatOption
+export type ItemStatOptions<T> = ItemStatOption<T>
 export type PickerStatOptions = IconPickerStatOption | MultiIconPickerStatOption | IconEnumPickerStatOption
-export type StatOptions<Options extends ItemStatOptions | PickerStatOptions> = Array<Options>
+export type StatOptions<T, Options extends ItemStatOptions<T> | PickerStatOptions> = Array<Options>
 
-export function relevantStatOptions<OptionsType extends ItemStatOptions | PickerStatOptions>(
-	options: StatOptions<OptionsType>,
+export function relevantStatOptions<T, OptionsType extends ItemStatOptions<T> | PickerStatOptions>(
+	options: StatOptions<T, OptionsType>,
 	simUI: IndividualSimUI<Spec>
-): StatOptions<OptionsType> {
+): StatOptions<T, OptionsType> {
   return options
     .filter(option =>
       option.stats.length == 0 ||

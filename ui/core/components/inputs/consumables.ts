@@ -18,18 +18,18 @@ import { ActionId } from "../../proto_utils/action_id";
 import { EventID, TypedEvent } from "../../typed_event";
 
 import { IconEnumValueConfig } from "../icon_enum_picker";
-import { makeBooleanConsumeInput, makeBooleanDebuffInput, withLabel } from "../icon_inputs";
+import { makeBooleanConsumeInput } from "../icon_inputs";
 
-import { ItemInputConfig, ItemStatOption } from "./stat_options";
+import { ActionInputConfig, ItemStatOption } from "./stat_options";
 
 import * as InputHelpers from '../input_helpers';
 
-export interface ConsumableInputConfig<T> extends ItemInputConfig {
+export interface ConsumableInputConfig<T> extends ActionInputConfig<T> {
 	value: T,
 }
 
-export interface ConsumableStatOption<T> extends ItemStatOption {
-	item: ConsumableInputConfig<T>
+export interface ConsumableStatOption<T> extends ItemStatOption<T> {
+	config: ConsumableInputConfig<T>
 }
 
 function makePotionInputFactory(consumesFieldName: keyof Consumes): (options: Array<Potions>, tooltip?: string) => InputHelpers.TypedIconEnumPickerConfig<Player<any>, Potions> {
@@ -66,6 +66,8 @@ export const StrengthBuffInput = makeConsumeInput('strengthBuff', [
 	{ id: ActionId.fromItemId(10310), value: StrengthBuff.ScrollOfStrength },
 ] as Array<IconEnumValueConfig<Player<any>, StrengthBuff>>, (p) => p.getLevel() >= 20);
 
+export const BoglingRootDebuff = makeBooleanConsumeInput({ id: ActionId.fromItemId(5206), fieldName: 'boglingRoot' });
+
 export const SpellDamageBuff = makeConsumeInput('spellPowerBuff', [
 	{ id: ActionId.fromItemId(9155), value: SpellPowerBuff.ArcaneElixir, minLevel: 37 },
 	{ id: ActionId.fromItemId(13454), value: SpellPowerBuff.GreaterArcaneElixir, minLevel: 46 },
@@ -83,16 +85,6 @@ export const FillerExplosiveInput = makeConsumeInput('fillerExplosive', [
 	{ id: ActionId.fromItemId(18641), value: Explosive.ExplosiveDenseDynamite, showWhen: (p) => p.getLevel() >= 40 },
 	{ id: ActionId.fromItemId(15993), value: Explosive.ExplosiveThoriumGrenade, showWhen: (p) => p.getLevel() >= 40 },
 ] as Array<IconEnumValueConfig<Player<any>, Explosive>>);
-
-// TODO: These should be moved to consumes
-export const GiftOfArthas = withLabel(
-	makeBooleanDebuffInput({id: ActionId.fromSpellId(11374), fieldName: 'giftOfArthas'}),
-	'Gift of Arthas',
-);
-export const CrystalYield = withLabel(
-	makeBooleanDebuffInput({id: ActionId.fromSpellId(15235), fieldName: 'crystalYield'}),
-	'Crystal Yield',
-);
 
 Consumes
 export const Sapper = makeBooleanConsumeInput({id: ActionId.fromItemId(10646), fieldName: 'sapper', minLevel: 40});
@@ -119,13 +111,13 @@ function makeConsumeInputFactory<T extends number>(args: ConsumeInputFactoryArgs
 				{ value: 0 } as unknown as IconEnumValueConfig<Player<any>, T>,
 			].concat(options.map(option => {
 				const rtn = {
-					id: option.item.id,
+					id: option.config.id,
 					showWhen: (player: Player<any>) =>
-						(option.item.minLevel || 0) <= player.getLevel() &&
-						(option.item.maxLevel || MAX_CHARACTER_LEVEL) >= player.getLevel() &&
-						(option.item.faction || player.getFaction()) == player.getFaction()
+						(option.config.minLevel || 0) <= player.getLevel() &&
+						(option.config.maxLevel || MAX_CHARACTER_LEVEL) >= player.getLevel() &&
+						(option.config.faction || player.getFaction()) == player.getFaction()
 				} as IconEnumValueConfig<Player<any>, T>;
-				if (option.item.value) rtn.value = option.item.value
+				if (option.config.value) rtn.value = option.config.value
 
 				return rtn
 			})),
@@ -230,58 +222,58 @@ export const WildStrikes = { id: ActionId.fromSpellId(407975), value: WeaponImbu
 ///////////////////////////////////////////////////////////////////////////
 
 export const AGILITY_CONSUMES_CONFIG = [
-	{ item: ElixirOfTheMongoose, stats: [Stat.StatAgility] },
-	{ item: ElixirOfGreaterAgility, stats: [Stat.StatAgility] },
-	{ item: ElixirOfLesserAgility, stats: [Stat.StatAgility] },
-	{ item: ScrollOfAgility, stats: [Stat.StatAgility] },
+	{ config: ElixirOfTheMongoose, stats: [Stat.StatAgility] },
+	{ config: ElixirOfGreaterAgility, stats: [Stat.StatAgility] },
+	{ config: ElixirOfLesserAgility, stats: [Stat.StatAgility] },
+	{ config: ScrollOfAgility, stats: [Stat.StatAgility] },
 ] as ConsumableStatOption<AgilityElixir>[];
 
 export const FLASKS_CONFIG = [
-	{ item: FlaskOfTheTitans, stats: [Stat.StatStamina] },
-	{ item: FlaskOfDistilledWisdom, stats: [Stat.StatMP5, Stat.StatSpellPower] },
-	{ item: FlaskOfSupremePower, stats: [Stat.StatMP5, Stat.StatSpellPower] },
-	{ item: FlaskOfChromaticResistance, stats: [Stat.StatStamina] },
+	{ config: FlaskOfTheTitans, stats: [Stat.StatStamina] },
+	{ config: FlaskOfDistilledWisdom, stats: [Stat.StatMP5, Stat.StatSpellPower] },
+	{ config: FlaskOfSupremePower, stats: [Stat.StatMP5, Stat.StatSpellPower] },
+	{ config: FlaskOfChromaticResistance, stats: [Stat.StatStamina] },
 ] as ConsumableStatOption<Flask>[];
 
 export const FOOD_CONFIG = [
-	{ item: HotWolfRibs, stats: [Stat.StatSpirit] },
-	{ item: SmokedSagefish, stats: [Stat.StatMP5] },
-	{ item: NightfinSoup, stats: [Stat.StatMP5, Stat.StatSpellPower] },
-	{ item: GrilledSquid, stats: [Stat.StatAgility] },
-	{ item: SmokedDesertDumpling, stats: [Stat.StatStrength] },
-	{ item: RunnTumTuberSurprise, stats: [Stat.StatIntellect] },
-	{ item: DirgesKickChimaerokChops, stats: [Stat.StatStamina] },
-	{ item: BlessSunfruit, stats: [Stat.StatStrength] },
-	{ item: BlessedSunfruitJuice, stats: [Stat.StatSpirit] },
+	{ config: HotWolfRibs, stats: [Stat.StatSpirit] },
+	{ config: SmokedSagefish, stats: [Stat.StatMP5] },
+	{ config: NightfinSoup, stats: [Stat.StatMP5, Stat.StatSpellPower] },
+	{ config: GrilledSquid, stats: [Stat.StatAgility] },
+	{ config: SmokedDesertDumpling, stats: [Stat.StatStrength] },
+	{ config: RunnTumTuberSurprise, stats: [Stat.StatIntellect] },
+	{ config: DirgesKickChimaerokChops, stats: [Stat.StatStamina] },
+	{ config: BlessSunfruit, stats: [Stat.StatStrength] },
+	{ config: BlessedSunfruitJuice, stats: [Stat.StatSpirit] },
 ] as ConsumableStatOption<Food>[];
 
 export const POTIONS_CONFIG = [
-	{ item: LesserManaPotion, stats: [Stat.StatIntellect] },
-	{ item: ManaPotion, stats: [Stat.StatIntellect] },
+	{ config: LesserManaPotion, stats: [Stat.StatIntellect] },
+	{ config: ManaPotion, stats: [Stat.StatIntellect] },
 ] as ConsumableStatOption<Potions>[];
 
 export const STRENGTH_CONSUMES_CONFIG = [
-	{ item: JujuPower, stats: [Stat.StatStrength] },
-	{ item: ElixirOfGiants, stats: [Stat.StatStrength] },
-	{ item: ElixirOfOgresStrength, stats: [Stat.StatStrength] },
-	{ item: ScrollOfStrength, stats: [Stat.StatStrength] },
-]
+	{ config: JujuPower, stats: [Stat.StatStrength] },
+	{ config: ElixirOfGiants, stats: [Stat.StatStrength] },
+	{ config: ElixirOfOgresStrength, stats: [Stat.StatStrength] },
+	{ config: ScrollOfStrength, stats: [Stat.StatStrength] },
+] as ConsumableStatOption<StrengthBuff>[];
 
 export const WEAPON_IMBUES_MH_CONFIG = [
-	{ item: BrillianWizardOil, stats: [Stat.StatSpellPower] },
-	{ item: BrilliantManaOil, stats: [Stat.StatHealing, Stat.StatSpellPower] },
-	{ item: DenseSharpeningStone, stats: [Stat.StatAttackPower] },
-	{ item: ElementalSharpeningStone, stats: [Stat.StatAttackPower] },
-	{ item: BlackfathomManaOil, stats: [Stat.StatSpellPower, Stat.StatMP5] },
-	{ item: BlackfathomSharpeningStone, stats: [Stat.StatMeleeHit] },
-	{ item: WildStrikes, stats: [Stat.StatMeleeHit] },
+	{ config: BrillianWizardOil, stats: [Stat.StatSpellPower] },
+	{ config: BrilliantManaOil, stats: [Stat.StatHealing, Stat.StatSpellPower] },
+	{ config: DenseSharpeningStone, stats: [Stat.StatAttackPower] },
+	{ config: ElementalSharpeningStone, stats: [Stat.StatAttackPower] },
+	{ config: BlackfathomManaOil, stats: [Stat.StatSpellPower, Stat.StatMP5] },
+	{ config: BlackfathomSharpeningStone, stats: [Stat.StatMeleeHit] },
+	{ config: WildStrikes, stats: [Stat.StatMeleeHit] },
 ] as ConsumableStatOption<WeaponImbue>[];
 
 export const WEAPON_IMBUES_OF_CONFIG = [
-	{ item: BrillianWizardOil, stats: [Stat.StatSpellPower] },
-	{ item: BrilliantManaOil, stats: [Stat.StatHealing, Stat.StatSpellPower] },
-	{ item: DenseSharpeningStone, stats: [Stat.StatAttackPower] },
-	{ item: ElementalSharpeningStone, stats: [Stat.StatAttackPower] },
-	{ item: BlackfathomManaOil, stats: [Stat.StatSpellPower, Stat.StatMP5] },
-	{ item: BlackfathomSharpeningStone, stats: [Stat.StatMeleeHit] },
+	{ config: BrillianWizardOil, stats: [Stat.StatSpellPower] },
+	{ config: BrilliantManaOil, stats: [Stat.StatHealing, Stat.StatSpellPower] },
+	{ config: DenseSharpeningStone, stats: [Stat.StatAttackPower] },
+	{ config: ElementalSharpeningStone, stats: [Stat.StatAttackPower] },
+	{ config: BlackfathomManaOil, stats: [Stat.StatSpellPower, Stat.StatMP5] },
+	{ config: BlackfathomSharpeningStone, stats: [Stat.StatMeleeHit] },
 ] as ConsumableStatOption<WeaponImbue>[];

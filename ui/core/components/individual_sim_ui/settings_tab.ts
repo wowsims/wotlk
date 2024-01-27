@@ -1,4 +1,6 @@
+import { Encounter } from '../../encounter';
 import { IndividualSimUI, InputSection } from "../../individual_sim_ui";
+import { aplLaunchStatuses, LaunchStatus } from '../../launched_sims';
 import {
 	Consumes,
 	Cooldowns,
@@ -13,16 +15,16 @@ import {
 } from "../../proto/common";
 import { professionNames, raceNames } from "../../proto_utils/names";
 import { specToEligibleRaces } from "../../proto_utils/utils";
-import { Encounter } from '../../encounter';
+import { Player } from "../../player";
 import { SavedEncounter, SavedSettings } from "../../proto/ui";
 import { EventID, TypedEvent } from "../../typed_event";
 import { getEnumValues } from "../../utils";
-import { aplLaunchStatuses, LaunchStatus } from '../../launched_sims';
 
 import { BooleanPicker } from "../boolean_picker";
 import { ContentBlock } from "../content_block";
 import { EncounterPicker } from '../encounter_picker';
 import { EnumPicker } from "../enum_picker";
+import { IconEnumPicker } from "../icon_enum_picker";
 import { Input } from "../input";
 import { relevantStatOptions } from "../inputs/stat_options";
 import { ItemSwapPicker } from "../item_swap_picker";
@@ -38,8 +40,6 @@ import { ConsumesPicker } from "./consumes_picker";
 import * as Tooltips from '../../constants/tooltips';
 import * as IconInputs from '../icon_inputs';
 import * as BuffDebuffInputs from '../inputs/buffs_debuffs';
-
-import { Player } from "../..//player";
 
 export class SettingsTab extends SimTab {
 	protected simUI: IndividualSimUI<Spec>;
@@ -266,11 +266,12 @@ export class SettingsTab extends SimTab {
 	}
 
 	private buildBuffsSettings() {
+		const buffOptions = relevantStatOptions(BuffDebuffInputs.RAID_BUFFS_CONFIG, this.simUI);
+
 		const contentBlock = new ContentBlock(this.column3, 'buffs-settings', {
 			header: { title: 'Raid Buffs', tooltip: Tooltips.BUFFS_SECTION }
 		});
 
-		const buffOptions = relevantStatOptions(BuffDebuffInputs.RAID_BUFFS_CONFIG, this.simUI);
 		this.configureIconSection(
 			contentBlock.bodyElement,
 			buffOptions.map(options => options.picker && new options.picker(contentBlock.bodyElement, this.simUI.player, options.config as any, this.simUI)),
@@ -278,19 +279,26 @@ export class SettingsTab extends SimTab {
 	}
 
 	private buildWorldBuffsSettings() {
+		const worldBuffOptions = relevantStatOptions(BuffDebuffInputs.WORLD_BUFFS_CONFIG, this.simUI);
+
 		const contentBlock = new ContentBlock(this.column3, 'world-buffs-settings', {
 			header: { title: 'World Buffs', tooltip: Tooltips.WORLD_BUFFS_SECTION }
 		});
-
-		const worldBuffOptions = relevantStatOptions(BuffDebuffInputs.WORLD_BUFFS_CONFIG, this.simUI);
 
 		this.configureIconSection(
 			contentBlock.bodyElement,
 			worldBuffOptions.map(options => options.picker && new options.picker(contentBlock.bodyElement, this.simUI.player, options.config as any, this.simUI)),
 		);
+
+		const saygesOptions = relevantStatOptions(BuffDebuffInputs.SAYGES_CONFIG, this.simUI);
+		console.log(saygesOptions)
+		new IconEnumPicker(contentBlock.bodyElement, this.simUI.player, BuffDebuffInputs.SaygesDarkFortune(saygesOptions));
 	}
 
 	private buildDebuffsSettings() {
+		const miscDebuffOptions = relevantStatOptions(BuffDebuffInputs.DEBUFFS_MISC_CONFIG, this.simUI) 
+		if (miscDebuffOptions.length == 0) return
+
 		const contentBlock = new ContentBlock(this.column3, 'debuffs-settings', {
 			header: { title: 'Debuffs', tooltip: Tooltips.DEBUFFS_SECTION }
 		});
@@ -301,7 +309,6 @@ export class SettingsTab extends SimTab {
 			debuffOptions.map(options => options.picker && new options.picker(contentBlock.bodyElement, this.simUI.player, options.config as any, this.simUI))
 		);
 
-		const miscDebuffOptions = relevantStatOptions(BuffDebuffInputs.DEBUFFS_MISC_CONFIG, this.simUI) 
 		if (miscDebuffOptions.length > 0) {
 			new MultiIconPicker(contentBlock.bodyElement, this.simUI.player, {
 				inputs: miscDebuffOptions.map(options => options.config) as Array<MultiIconPickerItemConfig<Player<Spec>>>,
