@@ -7,34 +7,52 @@ import (
 )
 
 func (druid *Druid) registerFaerieFireSpell() {
-	actionID := core.ActionID{SpellID: 770}
+	actionID := core.ActionID{SpellID: map[int32]int32{
+		25: 770,
+		40: 778,
+		50: 9749,
+		60: 9907,
+	}[druid.Level]}
 	manaCostOptions := core.ManaCostOptions{
-		BaseCost: 0.08,
+		FlatCost: map[int32]float64{
+			25: 55,
+			40: 75,
+			50: 95,
+			60: 115,
+		}[druid.Level],
 	}
 	gcd := core.GCDDefault
 	ignoreHaste := false
 	cd := core.Cooldown{}
-	flatThreatBonus := 66. * 2.
-	flags := SpellFlagOmenTrigger
+	flatThreatBonus := 2. * map[int32]float64{
+		25: 18,
+		40: 30,
+		50: 42,
+		60: 54,
+	}[druid.Level]
+	flags := core.SpellFlagNone
 	formMask := Humanoid | Moonkin
 
-	if druid.InForm(Cat | Bear) {
-		actionID = core.ActionID{SpellID: 16857}
+	if druid.InForm(Cat | Bear) && druid.Talents.FaerieFireFeral {
+		actionID = core.ActionID{SpellID: map[int32]int32{
+			25: 16857,
+			40: 17390,
+			50: 17391,
+			60: 17392,
+		}[druid.Level]}
 		manaCostOptions = core.ManaCostOptions{}
 		gcd = time.Second
 		ignoreHaste = true
-		flags = core.SpellFlagNone
 		formMask = Cat | Bear
 		cd = core.Cooldown{
 			Timer:    druid.NewTimer(),
 			Duration: time.Second * 6,
 		}
-		flatThreatBonus = 632.
 	}
 	flags |= core.SpellFlagAPL
 
 	druid.FaerieFireAuras = druid.NewEnemyAuraArray(func(target *core.Unit, level int32) *core.Aura {
-		return core.FaerieFireAura(target, 0)
+		return core.FaerieFireAura(target, level)
 	})
 
 	druid.FaerieFire = druid.RegisterSpell(formMask, core.SpellConfig{
@@ -62,6 +80,10 @@ func (druid *Druid) registerFaerieFireSpell() {
 			if result.Landed() {
 				druid.FaerieFireAuras.Get(target).Activate(sim)
 			}
+
+			if druid.InForm(Humanoid | Moonkin) {
+				druid.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime, false)
+			}
 		},
 
 		RelatedAuras: []core.AuraArray{druid.FaerieFireAuras},
@@ -77,5 +99,6 @@ func (druid *Druid) ShouldFaerieFire(sim *core.Simulation, target *core.Unit) bo
 		return false
 	}
 
-	return druid.FaerieFireAuras.Get(target).ShouldRefreshExclusiveEffects(sim, time.Second*3)
+	debuff := druid.FaerieFireAuras.Get(target)
+	return !debuff.IsActive() || debuff.RemainingDuration(sim) < time.Second * 4
 }

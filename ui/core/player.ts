@@ -17,6 +17,7 @@ import {
 	HandType,
 	HealingModel,
 	IndividualBuffs,
+	ItemRandomSuffix,
 	ItemSlot,
 	Profession,
 	PseudoStat,
@@ -252,6 +253,7 @@ export class Player<SpecType extends Spec> {
 	private readonly simpleRotationGenerator: SimpleRotationGenerator<SpecType> | null = null;
 
 	private itemEPCache = new Array<Map<number, number>>();
+	private randomSuffixEPCache = new Map<number, number>();
 	private enchantEPCache = new Map<number, number>();
 	private talents: SpecTalents<SpecType> | null = null;
 
@@ -410,6 +412,12 @@ export class Player<SpecType extends Spec> {
 		return this.sim.db.getItems(slot).filter(item => canEquipItem(this, item, slot));
 	}
 
+	// Returns all random suffixes that this player would be interested in for the given base item.
+	getRandomSuffixes(item: Item): Array<ItemRandomSuffix> {
+		const allSuffixes = item.randomSuffixOptions.map((id) => this.sim.db.getRandomSuffixById(id)!);
+		return allSuffixes.filter(suffix => this.computeRandomSuffixEP(suffix) > 0);
+	}
+
 	// Returns all enchants that this player can wear in the given slot.
 	getEnchants(slot: ItemSlot): Array<Enchant> {
 		return this.sim.db.getEnchants(slot).filter(enchant => canEquipEnchant(enchant, this.spec));
@@ -428,6 +436,7 @@ export class Player<SpecType extends Spec> {
 		this.epWeightsChangeEmitter.emit(eventID);
 
 		this.enchantEPCache = new Map();
+		this.randomSuffixEPCache = new Map();
 		for(let i = 0; i < ItemSlot.ItemSlotRanged+1; ++i) {
 			this.itemEPCache[i] = new Map();
 		}
@@ -971,6 +980,16 @@ export class Player<SpecType extends Spec> {
 		return ep
 	}
 
+	computeRandomSuffixEP(randomSuffix: ItemRandomSuffix): number {
+		if (this.randomSuffixEPCache.has(randomSuffix.id)) {
+			return this.randomSuffixEPCache.get(randomSuffix.id)!;
+		}
+
+		let ep = this.computeStatsEP(new Stats(randomSuffix.stats));
+		this.randomSuffixEPCache.set(randomSuffix.id, ep);
+		return ep
+	}
+
 	computeItemEP(item: Item, slot: ItemSlot): number {
 		if (item == null)
 			return 0;
@@ -991,7 +1010,15 @@ export class Player<SpecType extends Spec> {
 			}
 		}
 
-		let ep = itemStats.computeEP(this.epWeights);
+		// For random suffix items, use the suffix option with the highest EP for the purposes of ranking items in the picker.
+		let maxSuffixEP = 0;
+
+		if (item.randomSuffixOptions.length > 0) {
+			const suffixEPs = item.randomSuffixOptions.map((id) => this.computeRandomSuffixEP(this.sim.db.getRandomSuffixById(id)!));
+			maxSuffixEP = Math.max(...suffixEPs);
+		}
+
+		let ep = itemStats.computeEP(this.epWeights) + maxSuffixEP;
 
 		// unique items are slightly worse than non-unique because you can have only one.
 		if (item.unique) {
@@ -1286,14 +1313,7 @@ export class Player<SpecType extends Spec> {
 			}
 
 			if (this.spec == Spec.SpecHunter) {
-				const rot = this.getRotation() as SpecRotation<Spec.SpecHunter>;
-				if (rot.timeToTrapWeaveMs) {
-					const options = this.getSpecOptions() as SpecOptions<Spec.SpecHunter>;
-					options.timeToTrapWeaveMs = rot.timeToTrapWeaveMs;
-					this.setSpecOptions(eventID, options as SpecOptions<SpecType>);
-					rot.timeToTrapWeaveMs = 0;
-					this.setRotation(eventID, rot as SpecRotation<SpecType>);
-				}
+				// no-op
 			}
 
 			if (this.spec == Spec.SpecShadowPriest) {
@@ -1376,12 +1396,6 @@ export class Player<SpecType extends Spec> {
 				hpPercentForDefensives: isTankSpec(this.spec) ? 0.35 : 0,
 			}));
 			this.setBonusStats(eventID, new Stats());
-
-			if (aplLaunchStatuses[this.spec] >= LaunchStatus.Beta) {
-				this.setAplRotation(eventID, APLRotation.create({
-					type: APLRotationType.TypeAuto,
-				}))
-			}
 		});
 	}
 }

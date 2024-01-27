@@ -28,6 +28,10 @@ func (unit *Unit) newHardcastAction(sim *Simulation) {
 	} else {
 		unit.hardcastAction.cancelled = false
 		unit.hardcastAction.NextActionAt = unit.Hardcast.Expires
+
+		if sim.Log != nil {
+			unit.Log(sim, "Unit Hardcast extended to %s", unit.Hardcast.Expires)
+		}
 	}
 
 	sim.AddPendingAction(unit.hardcastAction)

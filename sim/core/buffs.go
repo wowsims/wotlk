@@ -361,6 +361,20 @@ var BuffSpellByLevel = map[BuffName]map[int32]stats.Stats{
 			stats.Intellect: 16,
 		},
 	},
+	ScrollOfSpirit: {
+		25: stats.Stats{
+			stats.Spirit: 7,
+		},
+		40: stats.Stats{
+			stats.Spirit: 11,
+		},
+		50: stats.Stats{
+			stats.Spirit: 15,
+		},
+		60: stats.Stats{
+			stats.Spirit: 15,
+		},
+	},
 	ScrollOfStamina: {
 		25: stats.Stats{
 			stats.Stamina: 8,
@@ -481,7 +495,7 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 	if individualBuffs.BlessingOfKings {
 		kingsAgiIntSpiAmount = 1.1
 		kingsStrStamAmount = 1.1
-	} else if individualBuffs.AspectOfTheLion {
+	} else if raidBuffs.AspectOfTheLion {
 		kingsAgiIntSpiAmount = 1.1
 		kingsStrStamAmount = 1.1
 	}
@@ -1644,7 +1658,7 @@ func healthBonusEffect(aura *Aura, healthBonus float64) *ExclusiveEffect {
 	})
 }
 
-func ApplyWildStrikes(character *Character) {
+func ApplyWildStrikes(character *Character) *Aura {
 	buffActionID := ActionID{SpellID: 407975}
 	statDep := character.NewDynamicMultiplyStat(stats.AttackPower, 1.2)
 
@@ -1695,4 +1709,5 @@ func ApplyWildStrikes(character *Character) {
 		},
 	}))
 
+	return wsBuffAura
 }

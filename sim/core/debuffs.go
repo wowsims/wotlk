@@ -42,8 +42,16 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 		MakePermanent(GiftOfArthasAura(target))
 	}
 
+	if debuffs.CurseOfVulnerability {
+		MakePermanent(CurseOfVulnerabilityAura(target))
+	}
+
 	if debuffs.CrystalYield {
 		MakePermanent(CrystalYieldAura(target))
+	}
+
+	if debuffs.AncientCorrosivePoison > 0 {
+		ApplyFixedUptimeAura(AncientCorrosivePoisonAura(target), float64(debuffs.AncientCorrosivePoison)/100.0, GCDDefault, 1)
 	}
 
 	// Major Armor Debuffs
@@ -77,8 +85,11 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 			}, raid)
 		}
 
-		if debuffs.Homunculi {
-			MakePermanent(HomunculiArmorAura(target, level))
+		if debuffs.Homunculi > 0 {
+			// Calculate desired downtime based on selected uptimeCount (1 count = 10% uptime, 0%-100%)
+			totalDuration := time.Second * 15
+			uptimePercent := float64(debuffs.Homunculi) / 100.0
+			ApplyFixedUptimeAura(HomunculiArmorAura(target, level), uptimePercent, totalDuration, 1)
 		}
 	}
 
@@ -99,6 +110,9 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 	}
 	if debuffs.DemoralizingShout != proto.TristateEffect_TristateEffectMissing {
 		MakePermanent(DemoralizingShoutAura(target, 0, GetTristateValueInt32(debuffs.DemoralizingShout, 0, 5), level))
+	}
+	if debuffs.HuntersMark != proto.TristateEffect_TristateEffectMissing {
+		MakePermanent(HuntersMarkAura(target, GetTristateValueInt32(debuffs.HuntersMark, 0, 5), level))
 	}
 
 	// Atk spd reduction
@@ -313,6 +327,20 @@ func GiftOfArthasAura(target *Unit) *Aura {
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.BonusPhysicalDamageTaken -= 8
+		},
+	})
+}
+
+func CurseOfVulnerabilityAura(target *Unit) *Aura {
+	return target.GetOrRegisterAura(Aura{
+		Label:    "Curse of Vulnerability",
+		ActionID: ActionID{SpellID: 427143},
+		Duration: time.Second * 15,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			aura.Unit.PseudoStats.BonusPhysicalDamageTaken += 2
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			aura.Unit.PseudoStats.BonusPhysicalDamageTaken -= 2
 		},
 	})
 }
@@ -585,15 +613,28 @@ func CurseOfWeaknessAura(target *Unit, points int32, playerLevel int32) *Aura {
 
 const HuntersMarkAuraTag = "HuntersMark"
 
-// TODO: Classic
 func HuntersMarkAura(target *Unit, points int32, playerLevel int32) *Aura {
-	bonus := 500.0 * (1 + 0.1*float64(points))
+	spellID := map[int32]int32{
+		25: 14323,
+		40: 14324,
+		50: 14324,
+		60: 14325,
+	}[playerLevel]
+
+	bonus := map[int32]float64{
+		25: 45,
+		40: 75,
+		50: 75,
+		60: 110,
+	}[playerLevel]
+
+	bonus *= 1 + 0.03*float64(points)
 
 	aura := target.GetOrRegisterAura(Aura{
 		Label:    "HuntersMark-" + strconv.Itoa(int(bonus)),
 		Tag:      HuntersMarkAuraTag,
-		ActionID: ActionID{SpellID: 53338},
-		Duration: NeverExpires,
+		ActionID: ActionID{SpellID: spellID},
+		Duration: time.Minute * 2,
 	})
 
 	aura.NewExclusiveEffect("HuntersMark", true, ExclusiveEffect{
@@ -737,6 +778,20 @@ func CrystalYieldAura(target *Unit) *Aura {
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			aura.Unit.stats[stats.Armor] += 200
+		},
+	})
+}
+
+func AncientCorrosivePoisonAura(target *Unit) *Aura {
+	return target.GetOrRegisterAura(Aura{
+		Label:    "Ancient Corrosive Poison",
+		ActionID: ActionID{SpellID: 422996},
+		Duration: 15 * time.Second,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			aura.Unit.stats[stats.Armor] -= 150
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			aura.Unit.stats[stats.Armor] += 150
 		},
 	})
 }

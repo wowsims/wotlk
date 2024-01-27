@@ -37,6 +37,8 @@ export const DefaultRotation = FeralDruidRotation.create({
 	minCombosForRip: 3,
 	maxWaitTime: 2.0,
 	preroarDuration: 26.0,
+	precastTigersFury: false,
+	useShredTrick: false,
 });
 
 export const SIMPLE_ROTATION_DEFAULT = PresetUtils.makePresetSimpleRotation('Simple Default', Spec.SpecFeralDruid, DefaultRotation);
@@ -63,6 +65,7 @@ export const DefaultConsumes = Consumes.create({
 	mainHandImbue: WeaponImbue.BlackfathomSharpeningStone,
 	agilityElixir: AgilityElixir.ElixirOfLesserAgility,
 	strengthBuff: StrengthBuff.ElixirOfOgresStrength,
+	boglingRoot: true,
 });
 
 export const OtherDefaults = {

@@ -23,20 +23,12 @@ func (druid *Druid) BearArmorMultiplier() float64 {
 }
 
 func (druid *Druid) ApplyTalents() {
+	druid.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= 1 + 0.02*float64(druid.Talents.NaturalWeapons)
 	druid.ApplyEquipScaling(stats.Armor, druid.ThickHideMultiplier())
 
 	if druid.Talents.HeartOfTheWild > 0 {
 		bonus := 0.04 * float64(druid.Talents.HeartOfTheWild)
 		druid.MultiplyStat(stats.Intellect, 1.0+bonus)
-	}
-
-	if druid.Talents.ImprovedMarkOfTheWild > 0 {
-		bonus := 0.07 * float64(druid.Talents.ImprovedMarkOfTheWild)
-		druid.MultiplyStat(stats.Stamina, 1.0+bonus)
-		druid.MultiplyStat(stats.Strength, 1.0+bonus)
-		druid.MultiplyStat(stats.Agility, 1.0+bonus)
-		druid.MultiplyStat(stats.Intellect, 1.0+bonus)
-		druid.MultiplyStat(stats.Spirit, 1.0+bonus)
 	}
 
 	druid.setupNaturesGrace()

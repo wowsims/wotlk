@@ -11,12 +11,19 @@ import (
 var WITH_DB = false
 
 var ItemsByID = map[int32]Item{}
+var RandomSuffixesByID = map[int32]RandomSuffix{}
 var EnchantsByEffectID = map[int32]Enchant{}
 
 func addToDatabase(newDB *proto.SimDatabase) {
 	for _, v := range newDB.Items {
 		if _, ok := ItemsByID[v.Id]; !ok {
 			ItemsByID[v.Id] = ItemFromProto(v)
+		}
+	}
+
+	for _, v := range newDB.RandomSuffixes {
+		if _, ok := RandomSuffixesByID[v.Id]; !ok {
+			RandomSuffixesByID[v.Id] = RandomSuffixFromProto(v)
 		}
 	}
 
@@ -49,8 +56,9 @@ type Item struct {
 	SetName string // Empty string if not part of a set.
 
 	// Modified for each instance of the item.
-	Enchant Enchant
-	Rune    int32
+	RandomSuffix RandomSuffix
+	Enchant      Enchant
+	Rune         int32
 
 	//Internal use
 	TempEnchant int32
@@ -75,10 +83,25 @@ func ItemFromProto(pData *proto.SimItem) Item {
 
 func (item *Item) ToItemSpecProto() *proto.ItemSpec {
 	return &proto.ItemSpec{
-		Id:      item.ID,
-		Enchant: item.Enchant.EffectID,
+		Id:           item.ID,
+		RandomSuffix: item.RandomSuffix.ID,
+		Enchant:      item.Enchant.EffectID,
 
 		Rune: item.Rune,
+	}
+}
+
+type RandomSuffix struct {
+	ID    int32
+	Name  string
+	Stats stats.Stats
+}
+
+func RandomSuffixFromProto(pData *proto.ItemRandomSuffix) RandomSuffix {
+	return RandomSuffix{
+		ID:    pData.Id,
+		Name:  pData.Name,
+		Stats: stats.FromFloatArray(pData.Stats),
 	}
 }
 
@@ -105,9 +128,10 @@ func RuneFromProto(pData *proto.SimRune) Rune {
 }
 
 type ItemSpec struct {
-	ID      int32
-	Enchant int32
-	Rune    int32
+	ID           int32
+	RandomSuffix int32
+	Enchant      int32
+	Rune         int32
 }
 
 type Equipment [proto.ItemSlot_ItemSlotRanged + 1]Item
@@ -199,9 +223,10 @@ func ProtoToEquipmentSpec(es *proto.EquipmentSpec) EquipmentSpec {
 	var coreEquip EquipmentSpec
 	for i, item := range es.Items {
 		coreEquip[i] = ItemSpec{
-			ID:      item.Id,
-			Enchant: item.Enchant,
-			Rune:    item.Rune,
+			ID:           item.Id,
+			RandomSuffix: item.RandomSuffix,
+			Enchant:      item.Enchant,
+			Rune:         item.Rune,
 		}
 	}
 	return coreEquip
@@ -213,6 +238,14 @@ func NewItem(itemSpec ItemSpec) Item {
 		item = foundItem
 	} else {
 		panic(fmt.Sprintf("No item with id: %d", itemSpec.ID))
+	}
+
+	if itemSpec.RandomSuffix != 0 {
+		if randomSuffix, ok := RandomSuffixesByID[itemSpec.RandomSuffix]; ok {
+			item.RandomSuffix = randomSuffix
+		} else {
+			panic(fmt.Sprintf("No random suffix with id: %d", itemSpec.RandomSuffix))
+		}
 	}
 
 	if itemSpec.Enchant != 0 {
@@ -268,6 +301,7 @@ func (equipment *Equipment) Stats() stats.Stats {
 	equipStats := stats.Stats{}
 	for _, item := range equipment {
 		equipStats = equipStats.Add(item.Stats)
+		equipStats = equipStats.Add(item.RandomSuffix.Stats)
 		equipStats = equipStats.Add(item.Enchant.Stats)
 	}
 	return equipStats

@@ -83,6 +83,7 @@ type Druid struct {
 	SurvivalInstinctsAura    *core.Aura
 	TigersFuryAura           *core.Aura
 	SavageRoarAura           *core.Aura
+	WildStrikesBuffAura      *core.Aura
 
 	BleedCategories core.ExclusiveCategoryArray
 
@@ -103,6 +104,22 @@ type SelfBuffs struct {
 
 func (druid *Druid) GetCharacter() *core.Character {
 	return &druid.Character
+}
+
+func (druid *Druid) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
+	raidBuffs.GiftOfTheWild = max(raidBuffs.GiftOfTheWild, proto.TristateEffect_TristateEffectRegular)
+
+	if (raidBuffs.GiftOfTheWild == proto.TristateEffect_TristateEffectRegular) && (druid.Talents.ImprovedMarkOfTheWild > 0) {
+		druid.AddStats(core.BuffSpellByLevel[core.MarkOfTheWild][druid.Level].Multiply(0.07 * float64(druid.Talents.ImprovedMarkOfTheWild)))
+	}
+
+	if druid.InForm(Moonkin) && druid.Talents.MoonkinForm {
+		raidBuffs.MoonkinAura = true
+	}
+
+	if druid.InForm(Cat|Bear) && druid.Talents.LeaderOfThePack {
+		raidBuffs.LeaderOfThePack = true
+	}
 }
 
 func (druid *Druid) BalanceCritMultiplier() float64 {
@@ -155,8 +172,8 @@ func (druid *Druid) RegisterSpell(formMask DruidForm, config core.SpellConfig) *
 
 func (druid *Druid) Initialize() {
 	druid.BleedCategories = druid.GetEnemyExclusiveCategories(core.BleedEffectCategory)
-	
-	// druid.registerFaerieFireSpell()
+
+	druid.registerFaerieFireSpell()
 	// druid.registerInnervateCD()
 }
 
@@ -183,7 +200,7 @@ func (druid *Druid) RegisterFeralCatSpells() {
 	druid.registerShredSpell()
 	// druid.registerSwipeBearSpell()
 	// druid.registerSwipeCatSpell()
-	// druid.registerTigersFurySpell()
+	druid.registerTigersFurySpell()
 }
 
 // TODO: Classic feral tank
@@ -224,6 +241,7 @@ func New(char *core.Character, form DruidForm, selfBuffs SelfBuffs, talents stri
 	druid.AddStatDependency(stats.Strength, stats.AttackPower, 2)
 	druid.AddStatDependency(stats.BonusArmor, stats.Armor, 1)
 	druid.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritPerAgiAtLevel[char.Class][int(druid.Level)]*core.CritRatingPerCritChance)
+	druid.AddStatDependency(stats.Intellect, stats.SpellCrit, core.CritPerIntAtLevel[char.Class][int(druid.Level)]*core.SpellCritRatingPerCritChance)
 	//Druid get 0.0209 dodge per agi (before dr), roughly 1 per 47.846
 	druid.AddStatDependency(stats.Agility, stats.Dodge, (0.0209)*core.DodgeRatingPerDodgeChance)
 

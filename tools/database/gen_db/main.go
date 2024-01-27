@@ -124,6 +124,12 @@ func main() {
 				db.AddSpellIcon(crafted.SpellId, spellTooltips)
 			}
 		}
+
+		for _, randomSuffixID := range item.RandomSuffixOptions {
+			if _, exists := db.RandomSuffixes[randomSuffixID]; !exists {
+				db.RandomSuffixes[randomSuffixID] = wowheadDB.RandomSuffixes[strconv.Itoa(int(randomSuffixID))].ToProto()
+			}
+		}
 	}
 
 	for _, spellId := range database.SharedSpellsIcons {

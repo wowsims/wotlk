@@ -176,7 +176,8 @@ func NewPaladin(character *core.Character, talentsStr string) *Paladin {
 
 	paladin.EnableManaBar()
 	paladin.AddStatDependency(stats.Strength, stats.AttackPower, 2.0)
-	paladin.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritPerAgiMaxLevel[character.Class]*core.CritRatingPerCritChance)
+	paladin.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritPerAgiAtLevel[character.Class][int(paladin.Level)]*core.CritRatingPerCritChance)
+	paladin.AddStatDependency(stats.Intellect, stats.SpellCrit, core.CritPerIntAtLevel[character.Class][int(paladin.Level)]*core.SpellCritRatingPerCritChance)
 
 	// Paladins get 0.0167 dodge per agi. ~1% per 59.88
 	paladin.AddStatDependency(stats.Agility, stats.Dodge, (1.0/59.88)*core.DodgeRatingPerDodgeChance)

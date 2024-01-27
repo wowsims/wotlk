@@ -177,6 +177,8 @@ func (rot *APLRotation) newAPLActionImpl(config *proto.APLAction) APLActionImpl 
 		return rot.newActionTriggerICD(config.GetTriggerIcd())
 	case *proto.APLAction_ItemSwap:
 		return rot.newActionItemSwap(config.GetItemSwap())
+	case *proto.APLAction_Move:
+		return rot.newActionMove(config.GetMove())
 	default:
 		return nil
 	}

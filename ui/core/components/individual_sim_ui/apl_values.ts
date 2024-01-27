@@ -65,6 +65,7 @@ import {
 	APLValueWarlockShouldRecastDrainSoul,
 	APLValueWarlockShouldRefreshCorruption,
 	APLValueCatNewSavageRoarDuration,
+	APLValueAutoTimeToNext_AutoType as AutoType,
 } from '../../proto/apl.js';
 
 import { EventID } from '../../typed_event.js';
@@ -310,6 +311,25 @@ function mathOperatorFieldConfig(field: string): AplHelpers.APLPickerBuilderFiel
 				{ value: MathOperator.OpSub, label: '-' },
 				{ value: MathOperator.OpMul, label: '*' },
 				{ value: MathOperator.OpDiv, label: '/' },
+			],
+		}),
+	};
+}
+
+function autoTypeFieldConfig(field: string): AplHelpers.APLPickerBuilderFieldConfig<any, any> {
+	return {
+		field: field,
+		newValue: () => AutoType.Any,
+		factory: (parent, player, config) => new TextDropdownPicker(parent, player, {
+			...config,
+			defaultLabel: 'None',
+			equals: (a, b) => a == b,
+			values: [
+				{ value: AutoType.Any, label: 'Any' },
+				{ value: AutoType.Melee, label: 'Melee' },
+				{ value: AutoType.MainHand, label: 'Main Hand' },
+				{ value: AutoType.OffHand, label: 'Off Hand' },
+				{ value: AutoType.Ranged, label: 'Ranged' },
 			],
 		}),
 	};
@@ -621,7 +641,9 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		submenu: ['Auto'],
 		shortDescription: 'Amount of time remaining before the next Main-hand or Off-hand melee attack, or <b>0</b> if autoattacks are not engaged.',
 		newValue: APLValueAutoTimeToNext.create,
-		fields: [],
+		fields: [
+			autoTypeFieldConfig('autoType')
+		],
 	}),
 
 	// Spells

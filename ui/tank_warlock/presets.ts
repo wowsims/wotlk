@@ -80,16 +80,16 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	giftOfTheWild: TristateEffect.TristateEffectImproved,
 	arcaneBrilliance: true,
 	divineSpirit: true,
+	aspectOfTheLion: true,
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({
-	aspectOfTheLion: true,
 	blessingOfWisdom: TristateEffect.TristateEffectImproved,
 	blessingOfMight: TristateEffect.TristateEffectImproved,
 });
 
 export const DefaultDebuffs = Debuffs.create({
-	homunculi: true,
+	homunculi: 70, // 70% average uptime default
 	faerieFire: true,
 });
 

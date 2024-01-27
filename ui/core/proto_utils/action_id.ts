@@ -2,6 +2,7 @@ import { getWowheadLanguagePrefix } from '../constants/lang.js';
 import { ActionID as ActionIdProto } from '../proto/common.js';
 import { ResourceType } from '../proto/api.js';
 import { OtherAction } from '../proto/common.js';
+import { ItemRandomSuffix } from '../proto/common.js';
 import { IconData } from '../proto/ui.js';
 import {
 	UIItem as Item,
@@ -13,6 +14,7 @@ import { MAX_CHARACTER_LEVEL } from '../constants/mechanics.js';
 // Uniquely identifies a specific item / spell / thing in WoW. This object is immutable.
 export class ActionId {
 	readonly itemId: number;
+	readonly randomSuffixId: number;
 	readonly spellId: number;
 	readonly otherId: OtherAction;
 	readonly tag: number;
@@ -22,8 +24,9 @@ export class ActionId {
 	readonly name: string;
 	readonly iconUrl: string;
 
-	private constructor(itemId: number, spellId: number, otherId: OtherAction, tag: number, baseName: string, name: string, iconUrl: string, rank: number) {
+	private constructor(itemId: number, spellId: number, otherId: OtherAction, tag: number, baseName: string, name: string, iconUrl: string, rank: number, randomSuffixId?: number) {
 		this.itemId = itemId;
+		this.randomSuffixId = randomSuffixId || 0;
 		this.spellId = spellId;
 		this.otherId = otherId;
 		this.rank = rank,
@@ -74,6 +77,10 @@ export class ActionId {
 				name = 'Shoot';
 				iconUrl = 'https://wow.zamimg.com/images/wow/icons/large/ability_marksmanship.jpg';
 				break;
+			case OtherAction.OtherActionMove:
+				name = 'Move';
+				iconUrl = 'https://wow.zamimg.com/images/wow/icons/large/inv_boots_02.jpg';
+				break;
 			case OtherAction.OtherActionPet:
 				break;
 			case OtherAction.OtherActionRefund:
@@ -110,6 +117,7 @@ export class ActionId {
 	equalsIgnoringTag(other: ActionId): boolean {
 		return (
 			this.itemId == other.itemId
+			&& this.randomSuffixId == other.randomSuffixId
 			&& this.spellId == other.spellId
 			&& this.otherId == other.otherId);
 	}
@@ -120,9 +128,9 @@ export class ActionId {
 		}
 	}
 
-	static makeItemUrl(id: number): string {
+	static makeItemUrl(id: number, randomSuffixId?: number): string {
 		const langPrefix = getWowheadLanguagePrefix();
-		return `https://wowhead.com/classic/${langPrefix}item=${id}?lvl=${MAX_CHARACTER_LEVEL}`;
+		return `https://wowhead.com/classic/${langPrefix}item=${id}?lvl=${MAX_CHARACTER_LEVEL}?rand=${randomSuffixId || 0}`;
 	}
 	static makeSpellUrl(id: number): string {
 		const langPrefix = getWowheadLanguagePrefix();
@@ -143,7 +151,7 @@ export class ActionId {
 
 	setWowheadHref(elem: HTMLAnchorElement) {
 		if (this.itemId) {
-			elem.href = ActionId.makeItemUrl(this.itemId);
+			elem.href = ActionId.makeItemUrl(this.itemId, this.randomSuffixId);
 		} else if (this.spellId) {
 			elem.href = ActionId.makeSpellUrl(this.spellId);
 		}
@@ -348,6 +356,7 @@ export class ActionId {
 					name += ' (Snapshot)';
 				}
 				break;
+			case 'Raptor Strike':
 			case 'Heroic Strike':
 			case 'Cleave':
 			case 'Maul':
@@ -390,7 +399,7 @@ export class ActionId {
 			iconUrl = ActionId.makeIconUrl(overrideTooltipData['icon']);
 		}
 
-		return new ActionId(this.itemId, this.spellId, this.otherId, this.tag, baseName, name, iconUrl, this.rank || tooltipData['rank']);
+		return new ActionId(this.itemId, this.spellId, this.otherId, this.tag, baseName, name, iconUrl, this.rank || tooltipData['rank'], this.randomSuffixId);
 	}
 
 	toString(): string {
@@ -440,15 +449,15 @@ export class ActionId {
 	}
 
 	withoutTag(): ActionId {
-		return new ActionId(this.itemId, this.spellId, this.otherId, 0, this.baseName, this.baseName, this.iconUrl, this.rank);
+		return new ActionId(this.itemId, this.spellId, this.otherId, 0, this.baseName, this.baseName, this.iconUrl, this.rank, this.randomSuffixId);
 	}
 
 	static fromEmpty(): ActionId {
 		return new ActionId(0, 0, OtherAction.OtherActionNone, 0, '', '', '', 0);
 	}
 
-	static fromItemId(itemId: number, tag?: number): ActionId {
-		return new ActionId(itemId, 0, OtherAction.OtherActionNone, tag || 0, '', '', '', 0);
+	static fromItemId(itemId: number, tag?: number, randomSuffixId?: number): ActionId {
+		return new ActionId(itemId, 0, OtherAction.OtherActionNone, tag || 0, '', '', '', 0, randomSuffixId || 0);
 	}
 
 	static fromSpellId(spellId: number, rank = 0, tag?: number): ActionId {
@@ -465,6 +474,10 @@ export class ActionId {
 
 	static fromItem(item: Item): ActionId {
 		return ActionId.fromItemId(item.id);
+	}
+
+	static fromRandomSuffix(item: Item, randomSuffix: ItemRandomSuffix): ActionId {
+		return ActionId.fromItemId(item.id, 0, randomSuffix.id);
 	}
 
 	static fromProto(protoId: ActionIdProto): ActionId {

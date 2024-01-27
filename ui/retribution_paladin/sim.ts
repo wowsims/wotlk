@@ -96,7 +96,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRetributionPaladin, {
 		// Default consumes settings.
 		consumes: Presets.DefaultConsumes,
 		// Default rotation settings.
-		rotation: Presets.DefaultRotation,
+		simpleRotation: Presets.DefaultRotation,
 		// Default talents.
 		talents: Presets.AuraMasteryTalents.data,
 		// Default spec-specific settings.
@@ -201,7 +201,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRetributionPaladin, {
 			defaultFactionRaces: {
 				[Faction.Unknown]: Race.RaceUnknown,
 				[Faction.Alliance]: Race.RaceHuman,
-				[Faction.Horde]: Race.RaceBloodElf,
+				[Faction.Horde]: Race.RaceUnknown,
 			},
 			defaultGear: {
 				[Faction.Unknown]: {},

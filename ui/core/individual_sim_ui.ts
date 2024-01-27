@@ -37,6 +37,7 @@ import {
 
 import { IndividualSimSettings, SavedTalents } from './proto/ui';
 import { StatWeightsResult } from './proto/api';
+import { APLRotation, APLRotation_Type as APLRotationType } from './proto/apl';
 
 import { professionNames } from './proto_utils/names';
 import { Stats } from './proto_utils/stats';
@@ -119,7 +120,8 @@ export interface IndividualSimUIConfig<SpecType extends Spec> extends PlayerConf
 		gear: EquipmentSpec,
 		epWeights: Stats,
 		consumes: Consumes,
-		rotation?: SpecRotation<SpecType>,
+		rotationType?: APLRotationType,
+		simpleRotation?: SpecRotation<SpecType>,
 		talents: SavedTalents,
 		specOptions: SpecOptions<SpecType>,
 
@@ -391,6 +393,20 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		//this.simHeader.addExportLink("CLI", _parent => new Exporters.IndividualCLIExporter(this.rootElem, this), true);
 	}
 
+	applyDefaultRotation(eventID: EventID) {
+		TypedEvent.freezeAllAndDo(() => {
+			if (aplLaunchStatuses[this.player.spec] >= LaunchStatus.Beta) {
+				const defaultRotationType = this.individualConfig.defaults.rotationType || APLRotationType.TypeAuto;
+				this.player.setAplRotation(eventID, APLRotation.create({
+					type: defaultRotationType,
+				}))
+			}
+
+			const defaultSimpleRotation = this.individualConfig.defaults.simpleRotation || this.player.specTypeFunctions.rotationCreate();
+			this.player.setRotation(eventID, defaultSimpleRotation);
+		});
+	}
+
 	applyDefaults(eventID: EventID) {
 		TypedEvent.freezeAllAndDo(() => {
 			const tankSpec = isTankSpec(this.player.spec);
@@ -402,7 +418,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			this.player.setLevel(eventID, Mechanics.CURRENT_LEVEL_CAP);
 			this.player.setGear(eventID, this.sim.db.lookupEquipmentSpec(this.individualConfig.defaults.gear));
 			this.player.setConsumes(eventID, this.individualConfig.defaults.consumes);
-			this.player.setRotation(eventID, this.player.specTypeFunctions.rotationCreate());
+			this.applyDefaultRotation(eventID);
 			this.player.setTalentsString(eventID, this.individualConfig.defaults.talents.talentsString);
 			this.player.setSpecOptions(eventID, this.individualConfig.defaults.specOptions);
 			this.player.setBuffs(eventID, this.individualConfig.defaults.individualBuffs);

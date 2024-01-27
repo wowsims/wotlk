@@ -27,16 +27,14 @@ enum Spec {
 
 enum Race {
 	RaceUnknown = 0;
-	RaceBloodElf = 1;
-	RaceDraenei = 2;
-	RaceDwarf = 3;
-	RaceGnome = 4;
-	RaceHuman = 5;
-	RaceNightElf = 6;
-	RaceOrc = 7;
-	RaceTauren = 8;
-	RaceTroll = 9;
-	RaceUndead = 10;
+	RaceDwarf = 1;
+	RaceGnome = 2;
+	RaceHuman = 3;
+	RaceNightElf = 4;
+	RaceOrc = 5;
+	RaceTauren = 6;
+	RaceTroll = 7;
+	RaceUndead = 8;
 }
 
 enum Faction {
@@ -436,6 +434,7 @@ message RaidBuffs {
 	// SoD Runes
 	int32 demonic_pact = 32;
 	bool horn_of_lordaeron = 33;
+	bool aspect_of_the_lion = 34;
 }
 
 // Buffs that affect a single party.
@@ -472,8 +471,7 @@ message IndividualBuffs {
 
 	// New SoD Buffs
 	bool boon_of_blackfathom = 15;
-	bool aspect_of_the_lion = 16;
-	bool ashenvale_pvp_buff = 17;
+	bool ashenvale_pvp_buff = 16;
 }
 
 message Consumes {
@@ -495,6 +493,7 @@ message Consumes {
 	WeaponImbue off_hand_imbue = 16;
 	Potions default_potion = 17;
 	Conjured default_conjured = 18;
+	bool bogling_root = 19;
 }
 
 message Debuffs {
@@ -509,11 +508,14 @@ message Debuffs {
 	bool improved_shadow_bolt = 7;
 	bool improved_scorch = 8;
 
+	// Bonus physical damage
 	bool gift_of_arthas = 9;
+	bool curse_of_vulnerability = 23;
 
 	// Major armor
 	TristateEffect expose_armor = 10;
 	bool sunder_armor = 11;
+	int32 homunculi = 22; // between 0 and 100, represents average uptime percentage
 
 	TristateEffect curse_of_weakness = 12;
 	bool curse_of_recklessness = 13;
@@ -529,9 +531,9 @@ message Debuffs {
 
 	TristateEffect hunters_mark = 20;
 
+	// ArP items
 	bool crystal_yield = 21;
-	
-	bool homunculi = 22;
+	int32 ancient_corrosive_poison = 24; // between 0 and 100, represents average uptime percentage
 }
 
 enum MobType {
@@ -619,8 +621,15 @@ message PresetEncounter {
 	repeated PresetTarget targets = 2;
 }
 
+message ItemRandomSuffix {
+	int32 id = 1;
+	string name = 2;
+	repeated double stats = 3;
+}
+
 message ItemSpec {
 	int32 id = 2;
+	int32 random_suffix = 6;
 	int32 enchant = 3;
 	int32 rune = 5;
 }
@@ -631,6 +640,7 @@ message EquipmentSpec {
 
 message SimDatabase {
 	repeated SimItem items = 1;
+	repeated ItemRandomSuffix random_suffixes = 5;
 	repeated SimEnchant enchants = 2;
 	repeated SimRune runes = 4;
 }
@@ -707,17 +717,18 @@ enum OtherAction {
 	OtherActionNone = 0;
 	OtherActionWait = 1;
 	OtherActionManaRegen = 2;
-	OtherActionEnergyRegen = 5;
-	OtherActionFocusRegen = 6;
-	OtherActionManaGain = 10; // For threat generated from mana gains.
-	OtherActionRageGain = 11; // For threat generated from rage gains.
-	OtherActionAttack = 3; // A white hit, can be main hand or off hand.
-	OtherActionShoot = 4; // Default shoot action using a wand/bow/gun.
-	OtherActionPet = 7; // Represents a grouping of all pet actions. Only used by the UI.
-	OtherActionRefund = 8; // Refund of a resource like Energy or Rage, when the ability didn't land.
-	OtherActionDamageTaken = 9; // Indicates damage taken; used for rage gen.
+	OtherActionEnergyRegen = 3;
+	OtherActionFocusRegen = 4;
+	OtherActionManaGain = 5; // For threat generated from mana gains.
+	OtherActionRageGain = 6; // For threat generated from rage gains.
+	OtherActionAttack = 7; // A white hit, can be main hand or off hand.
+	OtherActionShoot = 8; // Default shoot action using a wand/bow/gun.
+	OtherActionPet = 9; // Represents a grouping of all pet actions. Only used by the UI.
+	OtherActionRefund = 10; // Refund of a resource like Energy or Rage, when the ability didn't land.
+	OtherActionDamageTaken = 11; // Indicates damage taken; used for rage gen.
 	OtherActionHealingModel = 12; // Indicates healing received from healing model.
-	OtherActionPotion = 17; // Used by APL to generically refer to either the prepull or combat potion.
+	OtherActionPotion = 13; // Used by APL to generically refer to either the prepull or combat potion.
+	OtherActionMove = 14; // Used by movement to be able to show it in timeline
 }
 
 message ActionID {

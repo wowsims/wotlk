@@ -141,6 +141,8 @@ export class ConsumesPicker extends Component {
 		if (includeStr) {
 			buildIconInput(physicalConsumesElem, this.simUI.player, ConsumablesInputs.makeStrengthConsumeInput(ConsumablesInputs.STRENGTH_CONSUMES_CONFIG));
 		}
+
+		buildIconInput(physicalConsumesElem, this.simUI.player, IconInputs.BoglingRootInput);
 	}
 
 	private buildSpellPowerBuffPicker() {

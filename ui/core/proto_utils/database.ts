@@ -1,6 +1,7 @@
 import {
 	Class,
 	EquipmentSpec,
+	ItemRandomSuffix,
 	ItemSlot,
 	ItemSpec,
 	ItemSwap,
@@ -84,6 +85,7 @@ export class Database {
 	}
 
 	private readonly items = new Map<number, Item>();
+	private readonly randomSuffixes = new Map<number, ItemRandomSuffix>();
 	private readonly enchantsBySlot: Partial<Record<ItemSlot, Enchant[]>> = {};
 	private readonly runesBySlotByClass: Partial<Record<ItemSlot, Partial<Record<Class, Rune[]>>>> = {};
 	private readonly runesById: Record<number, Rune> = {};
@@ -102,6 +104,7 @@ export class Database {
 	// Add all data from the db proto into this database.
 	private loadProto(db: UIDatabase) {
 		db.items.forEach(item => this.items.set(item.id, item));
+		db.randomSuffixes.forEach(randomSuffix => this.randomSuffixes.set(randomSuffix.id, randomSuffix));
 		db.enchants.forEach(enchant => {
 			const slots = getEligibleEnchantSlots(enchant);
 			slots.forEach(slot => {
@@ -153,6 +156,10 @@ export class Database {
 		return this.items.get(id);
 	}
 
+	getRandomSuffixById(id: number): ItemRandomSuffix | undefined {
+		return this.randomSuffixes.get(id);
+	}
+
 	getEnchants(slot: ItemSlot): Array<Enchant> {
 		return this.enchantsBySlot[slot] || [];
 	}
@@ -191,12 +198,17 @@ export class Database {
 			}
 		}
 		
-		let rune: Rune | undefined
+		let rune: Rune | null = null;
 		if (itemSpec.rune && !!this.runesById[itemSpec.rune]) {
 			rune = this.runesById[itemSpec.rune];
 		}
 
-		return new EquippedItem({item, enchant, rune});
+		let randomSuffix: ItemRandomSuffix | null = null;
+		if (itemSpec.randomSuffix && !!this.getRandomSuffixById(itemSpec.randomSuffix)) {
+			randomSuffix = this.getRandomSuffixById(itemSpec.randomSuffix)!;
+		}
+
+		return new EquippedItem({item, enchant, rune, randomSuffix});
 	}
 
 	lookupEquipmentSpec(equipSpec: EquipmentSpec): Gear {
@@ -313,6 +325,7 @@ export class Database {
 	public static mergeSimDatabases(db1: SimDatabase, db2: SimDatabase): SimDatabase {
 		return SimDatabase.create({
 			items: distinct(db1.items.concat(db2.items), (a, b) => a.id == b.id),
+			randomSuffixes: distinct(db1.randomSuffixes.concat(db2.randomSuffixes), (a, b) => a.id == b.id),
 			enchants: distinct(db1.enchants.concat(db2.enchants), (a, b) => a.effectId == b.effectId),
 		})
 	}

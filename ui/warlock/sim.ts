@@ -39,6 +39,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 		Stat.StatMP5,
 		Stat.StatFirePower,
 		Stat.StatShadowPower,
+		Stat.StatSpellPenetration,
 
 		// Pet Related Stats
 		Stat.StatStrength,
@@ -64,6 +65,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 		Stat.StatSpellHit,
 		Stat.StatSpellCrit,
 		Stat.StatSpellHaste,
+		Stat.StatSpellPenetration,
 		Stat.StatMP5,
 		Stat.StatStamina,
 	],
@@ -168,7 +170,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 	raidSimPresets: [
 		{
 			spec: Spec.SpecWarlock,
-			tooltip: 'Affliction Warlock',
+			tooltip: 'Affliction DPS',
 			defaultName: 'Affliction',
 			iconUrl: getSpecIcon(Class.ClassWarlock, 0),
 
@@ -193,7 +195,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 		},
 		{
 			spec: Spec.SpecWarlock,
-			tooltip: 'Demonology Warlock',
+			tooltip: 'Demonology DPS',
 			defaultName: 'Demonology',
 			iconUrl: getSpecIcon(Class.ClassWarlock, 1),
 
@@ -218,7 +220,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 		},
 		{
 			spec: Spec.SpecWarlock,
-			tooltip: 'Destruction Warlock',
+			tooltip: 'Destruction DPS',
 			defaultName: 'Destruction',
 			iconUrl: getSpecIcon(Class.ClassWarlock, 2),
 

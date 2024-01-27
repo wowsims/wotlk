@@ -11,8 +11,11 @@ import (
 type FeralDruidRotation struct {
 	// RotationType proto.FeralDruid_Rotation_AplType
 
-	MinCombosForRip int32
-	MaxWaitTime     time.Duration
+	MinCombosForRip    int32
+	MaxWaitTime        time.Duration
+	MaintainFaerieFire bool
+	UseShredTrick      bool
+	UseRipTrick        bool
 }
 
 func (cat *FeralDruid) OnGCDReady(sim *core.Simulation) {
@@ -61,56 +64,85 @@ func (cat *FeralDruid) NextRotationAction(sim *core.Simulation, kickAt time.Dura
 	sim.AddPendingAction(cat.rotationAction)
 }
 
-func (cat *FeralDruid) shiftBearCat(sim *core.Simulation, powershift bool) bool {
-	// If we have just now decided to shift, then we do not execute the
-	// shift immediately, but instead trigger an input delay for realism.
-	if !cat.readyToShift {
-		cat.readyToShift = true
-		return false
-	}
-	cat.readyToShift = false
-
-	toCat := !cat.InForm(druid.Cat)
-	if powershift {
-		toCat = !toCat
+func (cat *FeralDruid) tryPowershift(sim *core.Simulation) {
+	if cat.InForm(druid.Cat) {
 		cat.ClearForm(sim)
 		cat.TryUseCooldowns(sim)
 	}
 
-	cat.lastShift = sim.CurrentTime
-	if toCat {
-		return cat.CatForm.Cast(sim, nil)
+	if cat.Rotation.MaintainFaerieFire && cat.ShouldFaerieFire(sim, cat.CurrentTarget) && (cat.CurrentMana() >= cat.CatForm.DefaultCast.Cost+cat.FaerieFire.DefaultCast.Cost) {
+		cat.FaerieFire.Cast(sim, cat.CurrentTarget)
 	} else {
-		cat.BearForm.Cast(sim, nil)
-		// Bundle Enrage if available
-		if cat.Enrage.IsReady(sim) {
-			cat.Enrage.Cast(sim, nil)
-		}
-		return true
+		cat.CatForm.Cast(sim, nil)
+		cat.readyToShift = false
+		cat.lastShift = sim.CurrentTime
 	}
 }
 
 func (cat *FeralDruid) maxShifts() int32 {
-	return int32(cat.MaxMana() / cat.CatForm.DefaultCast.Cost)
+	return max(int32(cat.MaxMana()/cat.CatForm.DefaultCast.Cost), 0)
 }
 
 func (cat *FeralDruid) numShiftsRemaining() int32 {
-	return int32(cat.CurrentMana() / cat.CatForm.DefaultCast.Cost)
+	return max(int32(cat.CurrentMana()/cat.CatForm.DefaultCast.Cost), 0)
 }
 
 func (cat *FeralDruid) timeToCast(numSpecials int32) time.Duration {
 	// Rough calculation, won't be exact! Intended to skew conservatively.
-	numPowershiftedSpecials := min(numSpecials, cat.numShiftsRemaining()*2)
-	numOomSpecials := numSpecials - numPowershiftedSpecials
-	return core.DurationFromSeconds(float64(numPowershiftedSpecials*2 + numOomSpecials*4))
+	totalCasts := float64(numSpecials)
+	numPowershiftedSpecials := min(totalCasts, float64(cat.numShiftsRemaining()*2*cat.Talents.Furor)/5.0)
+	numOomSpecials := totalCasts - numPowershiftedSpecials
+	return core.DurationFromSeconds(numPowershiftedSpecials*2.0 + numOomSpecials*4.0)
 }
 
-func (cat *FeralDruid) canRip(sim *core.Simulation) bool {
+func (cat *FeralDruid) canRip(sim *core.Simulation, isTrick bool) bool {
+	if cat.Rip.CurDot().IsActive() {
+		return false
+	}
 	// Allow Rip if conservative napkin math estimate says that we can cast the Rip and then build 5 Combo Points in time before the current Savage Roar expires.
 	roarDur := cat.SavageRoarAura.RemainingDuration(sim)
 	fightDur := sim.GetRemainingDuration()
-	minRoarCp := min(int32((fightDur-roarDur-time.Second*9)/(time.Second*5))+1, 5)
-	return !cat.Rip.CurDot().IsActive() && (cat.timeToCast(minRoarCp+1) < roarDur) && ((cat.ComboPoints() == 5) || (cat.timeToCast(minRoarCp+2) >= roarDur)) && (fightDur > time.Second*10)
+	remainingFightTimeAfterRoar := fightDur - roarDur
+
+	// solve "remainingFightTimeAfterRoar = 5*roarCP+9" for roarCP
+	// add 1 to round up instead of down
+	roarCp := int32((remainingFightTimeAfterRoar-time.Second*9)/(time.Second*5)) + 1
+	minRoarCp := min(roarCp, 5)
+
+	// Actions to generate minRoarCp, plus cast Roar itself.
+	actionsToCastRoar := minRoarCp + 1
+
+	// Don't let roar expire.
+	if cat.timeToCast(actionsToCastRoar) >= roarDur {
+		return false
+	}
+
+	if cat.ComboPoints() == 5 {
+		// 5CP rip is worth it with 4 ticks
+		if fightDur <= time.Second*8 {
+			return false
+		} else {
+			return true
+		}
+	} else {
+		// Otherwise require 5 ticks
+		if fightDur <= time.Second*10 {
+			return false
+		}
+	}
+
+	// If we can't get any more combo points before roar expires, then we should rip now.
+	// If we can generate another CP and then rip without letting roar expire, then wait.
+	if cat.timeToCast(actionsToCastRoar+1) >= roarDur {
+		return true
+	}
+
+	// Caller decided that we should "rip trick".
+	if isTrick {
+		return true
+	}
+
+	return false
 }
 
 /*
@@ -176,7 +208,7 @@ func (cat *FeralDruid) preRotationCleanup(sim *core.Simulation) bool {
 	// If we previously decided to shift, then execute the shift now once
 	// the input delay is over.
 	if cat.readyToShift {
-		cat.shiftBearCat(sim, true)
+		cat.tryPowershift(sim)
 		return false
 	}
 
@@ -194,13 +226,15 @@ func (cat *FeralDruid) postRotation(sim *core.Simulation, nextAction time.Durati
 }
 
 func (cat *FeralDruid) shouldPoolMana(sim *core.Simulation, numShiftsToOom int32) bool {
-	if cat.Talents.Furor < 5 {
+	maxShiftsPossible := cat.maxShifts()
+
+	if (maxShiftsPossible == 0) || (cat.Talents.Furor == 0) {
 		return true
 	}
 
 	effectiveFightDur := sim.GetRemainingDuration() - core.DurationFromSeconds(3.0) - cat.latency
 	numShiftsToFightEnd := int32(effectiveFightDur / (time.Second * 4))
-	canPoolMana := (numShiftsToOom < cat.maxShifts()) && (numShiftsToOom < numShiftsToFightEnd-1) && (sim.CurrentTime-cat.lastShift > time.Second*5)
+	canPoolMana := (numShiftsToOom < maxShiftsPossible) && (numShiftsToOom < numShiftsToFightEnd-1) && (sim.CurrentTime-cat.lastShift > time.Second*5)
 
 	if !canPoolMana {
 		return false
@@ -222,29 +256,39 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) (bool, time.Duration) {
 	curEnergy := cat.CurrentEnergy()
 	nextEnergy := curEnergy + core.EnergyPerTick
 	nextTick := cat.NextEnergyTickAt()
+	timeToNextTick := nextTick - sim.CurrentTime
 	isClearcast := cat.ClearcastingAura.IsActive()
 	hasRoar := cat.SavageRoarAura.IsActive()
 	numShiftsToOom := cat.numShiftsRemaining()
-	effectiveFightDur := sim.GetRemainingDuration() - core.DurationFromSeconds(1.5) - cat.latency
+	fightDur := sim.GetRemainingDuration()
+	shredCost := cat.Shred.DefaultCast.Cost
+	mangleCost := cat.MangleCat.DefaultCast.Cost
+	ripCost := cat.Rip.DefaultCast.Cost
 
 	// First determine the next special ability we want to cast
+	poolMana := cat.shouldPoolMana(sim, numShiftsToOom)
+	canShredTrick := rotation.UseShredTrick && cat.bleedAura.IsActive() && (curEnergy >= shredCost) && (timeToNextTick > time.Second) && ((nextEnergy-shredCost >= mangleCost) || (timeToNextTick > core.GCDDefault)) && (numShiftsToOom > 1) && !poolMana
+	canRipTrick := rotation.UseRipTrick && (curCp >= 1) && ((curEnergy >= ripCost && curEnergy < mangleCost) || (nextEnergy >= ripCost && nextEnergy < mangleCost)) && (numShiftsToOom > 0) && !poolMana
+
 	var nextAbility *druid.DruidSpell
 
 	if curCp >= 1 && !hasRoar {
 		nextAbility = cat.SavageRoar
 	} else if isClearcast {
 		nextAbility = cat.Shred
+	} else if (curCp >= rotation.MinCombosForRip || canRipTrick) && cat.canRip(sim, canRipTrick) {
+		nextAbility = cat.Rip
 	} else if curCp >= 1 && cat.clipRoar(sim) {
 		nextAbility = cat.SavageRoar
-	} else if curCp >= rotation.MinCombosForRip && cat.canRip(sim) {
-		nextAbility = cat.Rip
+	} else if canShredTrick {
+		nextAbility = cat.Shred
 	} else {
 		nextAbility = cat.MangleCat
 	}
 
 	// Then determine whether to cast vs. wait vs. shift
-	poolMana := cat.shouldPoolMana(sim, numShiftsToOom)
-	poolEnergy := poolMana && (curCp == 5) && (nextEnergy < 100) && (nextAbility == cat.MangleCat)
+	waitForWildStrikesProc := (cat.WildStrikesBuffAura != nil) && !cat.WildStrikesBuffAura.IsActive()
+	poolEnergy := poolMana && ((curCp == 5) || waitForWildStrikesProc) && (nextEnergy < 100) && (nextAbility == cat.MangleCat)
 	nextAction := sim.CurrentTime
 
 	if nextAbility.CanCast(sim, cat.CurrentTarget) && !poolEnergy {
@@ -252,7 +296,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) (bool, time.Duration) {
 		return false, nextAction
 	}
 
-	shiftNow := ((nextEnergy < nextAbility.DefaultCast.Cost) || (nextTick-sim.CurrentTime > rotation.MaxWaitTime)) && (effectiveFightDur > 0)
+	shiftNow := ((nextEnergy < nextAbility.DefaultCast.Cost) || (timeToNextTick > rotation.MaxWaitTime)) && (fightDur > core.GCDDefault+cat.latency)
 
 	if shiftNow && (poolMana || (numShiftsToOom == 0)) {
 		shiftNow = false
@@ -706,7 +750,10 @@ type FeralDruidRotation struct {
 
 func (cat *FeralDruid) setupRotation(config *proto.APLActionCatOptimalRotationAction) {
 	cat.Rotation = FeralDruidRotation{
-		MinCombosForRip: config.MinCombosForRip,
-		MaxWaitTime:     core.DurationFromSeconds(float64(config.MaxWaitTime)),
+		MinCombosForRip:    config.MinCombosForRip,
+		MaxWaitTime:        core.DurationFromSeconds(float64(config.MaxWaitTime)),
+		MaintainFaerieFire: config.MaintainFaerieFire,
+		UseShredTrick:      config.UseShredTrick,
+		UseRipTrick:        false,
 	}
 }

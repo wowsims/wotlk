@@ -63,7 +63,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRestorationDruid, {
 		// Default consumes settings.
 		consumes: Presets.DefaultConsumes,
 		// Default rotation settings.
-		rotation: Presets.DefaultRotation,
+		simpleRotation: Presets.DefaultRotation,
 		// Default talents.
 		talents: Presets.CelestialFocusTalents.data,
 		// Default spec-specific settings.

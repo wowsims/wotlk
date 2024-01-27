@@ -26,6 +26,7 @@ import {
 	APLActionTriggerICD,
 	APLActionItemSwap,
 	APLActionItemSwap_SwapSet as ItemSwapSet,
+	APLActionMove,
 
 	APLActionCatOptimalRotationAction,
 
@@ -568,6 +569,18 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 			itemSwapSetFieldConfig('swapSet'),
 		],
 	}),
+	['move']: inputBuilder({
+		label: 'Move',
+		submenu: ['Misc'],
+		shortDescription: 'Starts a move to the desired range from target.',
+		newValue: () => APLActionMove.create(),
+		fields: [
+			AplValues.valueFieldConfig('rangeFromTarget', {
+				label: 'to Range',
+				labelTooltip: 'Desired range from target.',
+			}),
+		],
+	}),
 
 	// Class/spec specific actions
 	['catOptimalRotationAction']: inputBuilder({
@@ -577,16 +590,24 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 		includeIf: (player: Player<any>, isPrepull: boolean) => player.spec == Spec.SpecFeralDruid,
 		newValue: () => APLActionCatOptimalRotationAction.create({
 			minCombosForRip: 3,
-			maxWaitTime: 1.5,
+			maxWaitTime: 2.0,
+			maintainFaerieFire: false,
+			useShredTrick: false,
 		}),
 		fields: [
 			AplHelpers.numberFieldConfig('minCombosForRip', false, {
 				'label': 'Min Rip CP',
-				'labelTooltip': 'Combo Point threshold for allowing a Rip cast.',
+				'labelTooltip': 'Combo Point threshold for allowing a Rip cast',
 			}),
 			AplHelpers.numberFieldConfig('maxWaitTime', true, {
 				'label': 'Max Wait Time',
-				'labelTooltip': 'Max seconds to wait for an Energy tick to cast rather than powershifting.',
+				'labelTooltip': 'Max seconds to wait for an Energy tick to cast rather than powershifting',
+			}),
+			AplHelpers.booleanFieldConfig('maintainFaerieFire', 'Maintain Faerie Fire', {
+				labelTooltip: 'If checked, bundle Faerie Fire refreshes with powershifts. Ignored if an external Faerie Fire debuff is selected in settings.',
+			}),
+			AplHelpers.booleanFieldConfig('useShredTrick', 'Use Shred Trick', {
+				labelTooltip: 'If checked, enable the "Shred trick" micro-optimization. This should only be used on short fight lengths with full powershifting uptime.',
 			}),
 		],
 	}),

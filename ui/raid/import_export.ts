@@ -300,19 +300,6 @@ export class RaidWCLImporter extends Importer {
 		// If defined in log, use that faction. Otherwise default to UI setting.
 		let faction = (wclData.guild?.faction?.id || this.simUI.raidPicker?.getCurrentFaction() || Faction.Horde) as Faction;
 
-		wclData.combatantInfoEvents.data.forEach((combatantInfo: wclCombatantInfoEvent) => {
-			combatantInfo.auras
-				.filter(aura => aura.ability == 28878)
-				.forEach(aura => {
-					const sourcePlayer = wclPlayers.find(player => player.id == aura.source);
-					if (sourcePlayer && sourcePlayer.player.getRace() != Race.RaceDraenei) {
-						console.log(`Inferring player ${sourcePlayer.name} has race ${raceNames.get(Race.RaceDraenei)} from Heroic Presence aura event`);
-						sourcePlayer.player.setRace(eventID, Race.RaceDraenei);
-						faction = Faction.Alliance;
-					}
-				});
-		});
-
 		const castEventsBySpellId = bucket(wclData.reportCastEvents.data as Array<wclCastEvent>, event => String(event.abilityGameID));
 		racialSpells.forEach(spell => {
 			const spellEvents: Array<wclCastEvent> = castEventsBySpellId[spell.id] || [];

@@ -3,8 +3,6 @@ package proto;
 
 option go_package = "./proto";
 
-import "common.proto";
-
 message HunterTalents {
 	// Beast Mastery
 	int32 improved_aspect_of_the_hawk = 1;
@@ -104,116 +102,110 @@ message HunterPetTalents {
 	int32 silverback = 37;
 }
 
+enum HunterRune {
+	HunterRuneNone 			= 0;
+	RuneChestMasterMarksman = 409428;
+	RuneChestHeartOfTheLion = 409580;
+	RuneChestLoneWolf		= 415370;
+	RuneChestCobraStrikes   = 425713;
+	RuneHandsBeastmastery   = 409368;
+	RuneHandsChimeraShot    = 409433;
+	RuneHandsExplosiveShot  = 409552;
+	RuneHandsCarve			= 425711;
+	RuneLegsKillCommand     = 409379;
+	RuneLegsFlankingStrike 	= 415320;
+	RuneLegsSniperTraining 	= 415399;
+	RuneLegsSerpentSpread 	= 425738;
+}
+
 message Hunter {
 	message Rotation {
 		enum RotationType {
 			UnknownType = 0;
 			SingleTarget = 1;
-			Aoe = 3;
-			Custom = 2;
+			Aoe = 2;
+			Custom = 3;
 		}
-		RotationType type = 9;
+		RotationType type = 1;
 
 		enum StingType {
 			NoSting = 0;
 			ScorpidSting = 1;
 			SerpentSting = 2;
 		}
-		StingType sting = 5;
-
-		bool trap_weave = 1;
-
-		// TODO: Safe to delete after 1 month (after 8/26/2023).
-		double time_to_trap_weave_ms = 2 [deprecated = true];
-
-		enum SpellOption {
-			NoSpell = 0;
-			SteadyShot = 1;
-			ArcaneShot = 2;
-			AimedShot = 3;
-			MultiShot = 4;
-			SerpentStingSpell = 5;
-			ScorpidStingSpell = 6;
-			KillShot = 7;
-			BlackArrow = 8;
-			ChimeraShot = 9;
-			ExplosiveShot = 10;
-			ExplosiveShotDownrank = 13;
-			ExplosiveTrap = 11;
-			Volley = 12;
-		}
-		CustomRotation custom_rotation = 8 [deprecated = true];
-
-		// Switch to Aspect of the Viper when mana goes below this percent.
-		double viper_start_mana_percent = 6;
-		// Switch back to Aspect of the Hawk when mana goes above this percent.
-		double viper_stop_mana_percent = 7;
-
-		// Allow use of Explosive Shot Rank 3 during LNL procs.
-		bool allow_explosive_shot_downrank = 10;
-
-		bool multi_dot_serpent_sting = 11;
-		double steady_shot_max_delay = 12 [deprecated = true];
+		StingType sting = 2;
+		bool multi_dot_serpent_sting = 3;
 	}
 	Rotation rotation = 1;
 	
 	message Options {
 		enum Ammo {
 			AmmoNone = 0;
-			IcebladeArrow = 1;
-			SaroniteRazorheads = 2;
-			TerrorshaftArrow = 3;
-			TimelessArrow = 4;
-			MysteriousArrow = 5;
-			AdamantiteStinger = 6;
-			BlackflightArrow = 7;
+			// 25
+			RazorArrow = 1;
+			SolidShot = 2;
+			// 40
+			JaggedArrow = 3;
+			AccurateSlugs = 4;
+			// 50
+			MithrilGyroShot = 5;
+			RockshardPellets = 6;
+			// 60
+			IceThreadedArrow = 7;
+			ThoriumHeadedArrow = 8;
+			Doomshot = 9;
+			IceThreadedBullet = 10;
+			ThoriumShells = 11;
+			MiniatureCannonBalls = 12;
 		}
 		Ammo ammo = 1;
 
+		enum QuiverBonus
+		{
+			QuiverNone = 0;
+			Speed10 = 1;
+			Speed11 = 2;
+			Speed12 = 3;
+			Speed13 = 4;
+			Speed14 = 5;
+			Speed15 = 6;
+		}
+		QuiverBonus quiver_bonus = 2;
+
 		enum PetType {
 			PetNone = 0;
-			Bat = 1;
-			Bear = 2;
-			BirdOfPrey = 3;
-			Boar = 4;
-			CarrionBird = 5;
-			Cat = 6;
-			Chimaera = 7;
-			CoreHound = 8;
-			Crab = 9;
-			Crocolisk = 10;
-			Devilsaur = 11;
-			Dragonhawk = 12;
-			Gorilla = 13;
-			Hyena = 14;
-			Moth = 15;
-			NetherRay = 16;
+			Cat = 1;
+			WindSerpent = 2;
+			Wolf = 3;
+			Bat = 4;
+			Bear = 5;
+			BirdOfPrey = 6;
+			Boar = 7;
+			CarrionBird = 8;
+			Chimaera = 9;
+			CoreHound = 10;
+			Crab = 11;
+			Crocolisk = 12;
+			Devilsaur = 13;
+			Dragonhawk = 14;
+			Gorilla = 15;
+			Hyena = 16;
 			Raptor = 17;
-			Ravager = 18;
-			Rhino = 19;
-			Scorpid = 20;
-			Serpent = 21;
-			Silithid = 22;
-			Spider = 23;
-			SpiritBeast = 24;
-			SporeBat = 25;
-			Tallstrider = 26;
-			Turtle = 27;
-			WarpStalker = 28;
-			Wasp = 29;
-			WindSerpent = 30;
-			Wolf = 31;
-			Worm = 32;
+			Scorpid = 18;
+			Serpent = 19;
+			Silithid = 20;
+			Spider = 21;
+			SpiritBeast = 22;
+			SporeBat = 23;
+			Tallstrider = 24;
+			Turtle = 25;
 		}
 
-		PetType pet_type = 2;
-		HunterPetTalents pet_talents = 3;
-		double pet_uptime = 4;
+		PetType pet_type = 3;
+		HunterPetTalents pet_talents = 4;
+		double pet_uptime = 5;
 
-		double sniper_training_uptime = 7;
-		double time_to_trap_weave_ms = 8;
-
-		bool use_hunters_mark = 5;
+		double sniper_training_uptime = 6;
 	}
-	Options options = 3;
+	Options options = 2;
 }

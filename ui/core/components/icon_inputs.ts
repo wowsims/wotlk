@@ -204,6 +204,15 @@ export function makeMultistateIndividualBuffInput<SpecType extends Spec>(config:
 // 	}, id, numStates, fieldName, multiplier);
 // }
 
+export function makeMultistateMultiplierDebuffInput(id: ActionId, numStates: number, multiplier: number, fieldName: keyof Debuffs): InputHelpers.TypedIconPickerConfig<Player<any>, number> {
+	return InputHelpers.makeMultistateIconInput<any, Debuffs, Raid>({
+		getModObject: (player: Player<any>) => player.getRaid()!,
+		getValue: (raid: Raid) => raid.getDebuffs(),
+		setValue: (eventID: EventID, raid: Raid, newVal: Debuffs) => raid.setDebuffs(eventID, newVal),
+		changeEmitter: (raid: Raid) => raid.debuffsChangeEmitter,
+	}, id, numStates, fieldName, multiplier);
+}
+
 interface EnumInputConfig<ModObject, Message, T> {
 	fieldName: keyof Message
 	values: Array<IconEnumValueConfig<ModObject, T>>

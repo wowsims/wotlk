@@ -19,16 +19,17 @@ import { EventID, TypedEvent } from "../../typed_event";
 import { getEnumValues } from "../../utils";
 import { aplLaunchStatuses, LaunchStatus } from '../../launched_sims';
 
+import { BooleanPicker } from "../boolean_picker";
 import { ContentBlock } from "../content_block";
 import { EncounterPicker } from '../encounter_picker';
-import { ItemSwapPicker } from "../item_swap_picker";
-import { SavedDataManager } from "../saved_data_manager";
-import { SimTab } from "../sim_tab";
-import { NumberPicker } from "../number_picker";
-import { BooleanPicker } from "../boolean_picker";
 import { EnumPicker } from "../enum_picker";
 import { Input } from "../input";
 import { relevantStatOptions } from "../inputs/stat_options";
+import { ItemSwapPicker } from "../item_swap_picker";
+import { MultiIconPicker, MultiIconPickerItemConfig } from "../multi_icon_picker";
+import { NumberPicker } from "../number_picker";
+import { SavedDataManager } from "../saved_data_manager";
+import { SimTab } from "../sim_tab";
 
 import { CustomRotationPicker } from "./custom_rotation_picker";
 import { CooldownsPicker } from "./cooldowns_picker";
@@ -37,6 +38,8 @@ import { ConsumesPicker } from "./consumes_picker";
 import * as Tooltips from '../../constants/tooltips';
 import * as IconInputs from '../icon_inputs';
 import * as BuffDebuffInputs from '../inputs/buffs_debuffs';
+
+import { Player } from "../..//player";
 
 export class SettingsTab extends SimTab {
 	protected simUI: IndividualSimUI<Spec>;
@@ -297,6 +300,15 @@ export class SettingsTab extends SimTab {
 			contentBlock.bodyElement,
 			debuffOptions.map(options => options.picker && new options.picker(contentBlock.bodyElement, this.simUI.player, options.config as any, this.simUI))
 		);
+
+		const miscDebuffOptions = relevantStatOptions(BuffDebuffInputs.DEBUFFS_MISC_CONFIG, this.simUI) 
+		if (miscDebuffOptions.length > 0) {
+			new MultiIconPicker(contentBlock.bodyElement, this.simUI.player, {
+				inputs: miscDebuffOptions.map(options => options.config) as Array<MultiIconPickerItemConfig<Player<Spec>>>,
+				numColumns: 3,
+				label: 'Misc',
+			}, this.simUI);
+		}
 	}
 
 	private buildSavedDataPickers() {

@@ -10,7 +10,6 @@ import {
 	Flask,
 	Food,
 	Potions,
-	Scroll,
 	SpellPowerBuff,
 	Stat,
 	StrengthBuff,

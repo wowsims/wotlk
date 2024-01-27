@@ -9,6 +9,7 @@ import {
   makeEnumIndividualBuffInput,
   makeMultistateIndividualBuffInput,
   makeMultistateRaidBuffInput,
+	makeMultistateMultiplierDebuffInput,
   makeTristateDebuffInput,
   makeTristateIndividualBuffInput,
   makeTristateRaidBuffInput,
@@ -34,11 +35,11 @@ export const AllStatsBuff = withLabel(
 // Separate Strength buffs allow us to use a boolean pickers for Horde specifically
 export const AllStatsPercentBuffAlliance = InputHelpers.makeMultiIconInput([
 	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(20217), fieldName: 'blessingOfKings', faction: Faction.Alliance}),
-	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(409580), fieldName: 'aspectOfTheLion', faction: Faction.Alliance}),
+	makeBooleanRaidBuffInput({id: ActionId.fromSpellId(409580), fieldName: 'aspectOfTheLion', faction: Faction.Alliance}),
 ], 'Stats %');
 
 export const AllStatsPercentBuffHorde = withLabel(
-	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(409580), fieldName: 'aspectOfTheLion', faction: Faction.Horde}),
+	makeBooleanRaidBuffInput({id: ActionId.fromSpellId(409580), fieldName: 'aspectOfTheLion', faction: Faction.Horde}),
 	'Stats %',
 );
 
@@ -60,10 +61,10 @@ export const StaminaBuff = InputHelpers.makeMultiIconInput([
 ], 'Stamina');
 
 // Separate Strength buffs allow us to use boolean pickers for each
-export const StrengthBuffAlliance = withLabel(
+export const StrengthBuffAlliance = InputHelpers.makeMultiIconInput([
+	makeTristateIndividualBuffInput({id: ActionId.fromSpellId(25291), impId: ActionId.fromSpellId(20048), fieldName: 'blessingOfMight', faction: Faction.Alliance}),
 	makeBooleanRaidBuffInput({id: ActionId.fromSpellId(425600), fieldName: 'hornOfLordaeron', faction: Faction.Alliance}),
-	'Strength',
-)
+], 'Strength / Agility');
 
 export const StrengthBuffHorde = withLabel(
 	makeTristateRaidBuffInput({id: ActionId.fromSpellId(25361), impId: ActionId.fromSpellId(16295), fieldName: 'strengthOfEarthTotem', faction: Faction.Horde}),
@@ -84,11 +85,6 @@ export const SpiritBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanRaidBuffInput({id: ActionId.fromSpellId(27841), fieldName: 'divineSpirit', minLevel: 30}),
 	makeBooleanRaidBuffInput({id: ActionId.fromItemId(10306), fieldName: 'scrollOfSpirit'}),
 ], 'Spirit');
-
-export const BlessingOfMightBuff = withLabel(
-	makeTristateIndividualBuffInput({id: ActionId.fromSpellId(25291), impId: ActionId.fromSpellId(20048), fieldName: 'blessingOfMight', faction: Faction.Alliance}),
-	'Blessing of Might',
-);
 
 export const BattleShoutBuff = InputHelpers.makeMultiIconInput([
 	makeTristateRaidBuffInput({id: ActionId.fromSpellId(25289), impId: ActionId.fromSpellId(12861), fieldName: 'battleShout'}),
@@ -226,7 +222,8 @@ export const BoonOfBlackfathom = withLabel(
 export const MajorArmorDebuff = InputHelpers.makeMultiIconInput([
 	makeBooleanDebuffInput({id: ActionId.fromSpellId(11597), fieldName: 'sunderArmor'}),
 	makeTristateDebuffInput(ActionId.fromSpellId(11198), ActionId.fromSpellId(14169), 'exposeArmor'),
-], 'Armor Penetration');
+	makeMultistateMultiplierDebuffInput(ActionId.fromSpellId(402818), 101, 10, 'homunculi'),
+], 'Major Armor Penetration');
 
 export const CurseOfRecklessness = withLabel(
 	makeBooleanDebuffInput({id: ActionId.fromSpellId(11717), fieldName: 'curseOfRecklessness'}),
@@ -294,10 +291,13 @@ export const JudgementOfWisdom = withLabel(
 	makeBooleanDebuffInput({id: ActionId.fromSpellId(20355), fieldName: 'judgementOfWisdom', minLevel: 38}),
 	'Judgement of Wisdom',
 );
-export const JudgementOfLight = withLabel(
-	makeBooleanDebuffInput({id: ActionId.fromSpellId(20346), fieldName: 'judgementOfLight', minLevel: 30}),
-	'Judgement of Light',
-);
+
+// Misc Debuffs
+export const JudgementOfLight = makeBooleanDebuffInput({id: ActionId.fromSpellId(20346), fieldName: 'judgementOfLight', minLevel: 30});
+export const CurseOfVulnerability = makeBooleanDebuffInput({id: ActionId.fromSpellId(427143), fieldName: 'curseOfVulnerability', minLevel: 25});
+export const GiftOfArthas = makeBooleanDebuffInput({id: ActionId.fromSpellId(11374), fieldName: 'giftOfArthas', minLevel: 38});
+export const CrystalYield = makeBooleanDebuffInput({id: ActionId.fromSpellId(15235), fieldName: 'crystalYield', minLevel: 47});
+export const AncientCorrosivePoison = makeMultistateMultiplierDebuffInput(ActionId.fromSpellId(422996), 101, 10, 'ancientCorrosivePoison');
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 CONFIGS
@@ -358,11 +358,6 @@ export const RAID_BUFFS_CONFIG = [
 	{
 		config: BattleShoutBuff,
 		picker: MultiIconPicker,
-		stats: [Stat.StatAttackPower]
-	},
-	{
-		config: BlessingOfMightBuff,
-		picker: IconPicker,
 		stats: [Stat.StatAttackPower]
 	},
 	{
@@ -495,7 +490,7 @@ export const DEBUFFS_CONFIG = [
 	// Standard Debuffs
 	{ 
 		config: MajorArmorDebuff,
-		stats: [Stat.StatArmorPenetration],
+		stats: [Stat.StatAttackPower],
 		picker: MultiIconPicker,
 	},
 	{ 
@@ -511,7 +506,7 @@ export const DEBUFFS_CONFIG = [
 	// { 
 	// 	config: MinorArmorDebuff,
 	// picker: MultiIconPicker,
-	// 	stats: [Stat.StatArmorPenetration]
+	// 	stats: [Stat.StatAttackPower]
 	// },
 	{ 
 		config: BleedDebuff,
@@ -560,11 +555,33 @@ export const DEBUFFS_CONFIG = [
 		picker: IconPicker,
 		stats: [Stat.StatRangedAttackPower],
 	},
+] as PickerStatOptions[];
 
+export const DEBUFFS_MISC_CONFIG = [
 	// Misc Debuffs
 	{
 		config: JudgementOfLight,
 		picker: IconPicker,
 		stats: [Stat.StatStamina]
+	},
+	{
+		config: CurseOfVulnerability,
+		picker: IconPicker,
+		stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower],
+	},
+	{
+		config: GiftOfArthas,
+		picker: IconPicker,
+		stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower],
+	},
+	{
+		config: CrystalYield,
+		picker: IconPicker,
+		stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower],
+	},
+	{
+		config: AncientCorrosivePoison,
+		picker: IconPicker,
+		stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower],
 	},
 ] as PickerStatOptions[];
