@@ -117,10 +117,10 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecShadowPriest, {
 	excludeBuffDebuffInputs: [
 		BuffDebuffInputs.SpellScorchDebuff,
 		BuffDebuffInputs.SpellWintersChillDebuff,
-		ConsumablesInputs.FireDamageBuff,
-		ConsumablesInputs.FrostDamageBuff,
 		...ConsumablesInputs.AGILITY_CONSUMES_CONFIG,
 		...ConsumablesInputs.STRENGTH_CONSUMES_CONFIG,
+		...ConsumablesInputs.FIRE_POWER_CONFIG,
+		...ConsumablesInputs.FROST_POWER_CONFIG,
 	],
 	// Inputs to include in the 'Other' section on the settings tab.
 	otherInputs: {

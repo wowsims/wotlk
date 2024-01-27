@@ -128,7 +128,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 		BuffDebuffInputs.MeleeAttackSpeedDebuff,
 		BuffDebuffInputs.StaminaBuff,
 		BuffDebuffInputs.SpellWintersChillDebuff,
-		ConsumablesInputs.FrostDamageBuff,
+		...ConsumablesInputs.FROST_POWER_CONFIG,
 	],
 	petConsumeInputs: [
 	],

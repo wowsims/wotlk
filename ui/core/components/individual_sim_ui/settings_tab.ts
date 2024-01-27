@@ -245,19 +245,19 @@ export class SettingsTab extends SimTab {
 		)
 
 		const swapSlots = this.simUI.individualConfig.itemSwapSlots || [];
-		if (settings.length > 0 || swapSlots.length > 0) {
+		if (settings.length || swapSlots.length) {
 			const contentBlock = new ContentBlock(this.column2, 'other-settings', {
 				header: { title: 'Other' }
 			});
 
-			if (settings.length > 0) {
+			if (settings.length) {
 				this.configureInputSection(contentBlock.bodyElement, this.simUI.individualConfig.otherInputs);
 				contentBlock.bodyElement.querySelectorAll('.input-root').forEach(elem => {
 					elem.classList.add('input-inline');
 				})
 			}
 
-			if (swapSlots.length > 0) {
+			if (swapSlots.length) {
 				const _itemSwapPicker = new ItemSwapPicker(contentBlock.bodyElement, this.simUI, this.simUI.player, {
 					itemSlots: swapSlots,
 				});
@@ -296,9 +296,6 @@ export class SettingsTab extends SimTab {
 	}
 
 	private buildDebuffsSettings() {
-		const miscDebuffOptions = relevantStatOptions(BuffDebuffInputs.DEBUFFS_MISC_CONFIG, this.simUI) 
-		if (miscDebuffOptions.length == 0) return
-
 		const contentBlock = new ContentBlock(this.column3, 'debuffs-settings', {
 			header: { title: 'Debuffs', tooltip: Tooltips.DEBUFFS_SECTION }
 		});
@@ -309,7 +306,8 @@ export class SettingsTab extends SimTab {
 			debuffOptions.map(options => options.picker && new options.picker(contentBlock.bodyElement, this.simUI.player, options.config as any, this.simUI))
 		);
 
-		if (miscDebuffOptions.length > 0) {
+		const miscDebuffOptions = relevantStatOptions(BuffDebuffInputs.DEBUFFS_MISC_CONFIG, this.simUI) 
+		if (miscDebuffOptions.length) {
 			new MultiIconPicker(contentBlock.bodyElement, this.simUI.player, {
 				inputs: miscDebuffOptions.map(options => options.config) as Array<MultiIconPickerItemConfig<Player<Spec>>>,
 				numColumns: 3,

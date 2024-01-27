@@ -125,7 +125,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecTankWarlock, {
 	excludeBuffDebuffInputs: [
 		BuffDebuffInputs.BleedDebuff,
 		BuffDebuffInputs.SpellWintersChillDebuff,
-		ConsumablesInputs.FrostDamageBuff,
+		...ConsumablesInputs.FROST_POWER_CONFIG,
 	],
 	petConsumeInputs: [
 	],

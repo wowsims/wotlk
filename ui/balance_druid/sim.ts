@@ -92,11 +92,11 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecBalanceDruid, {
 		BuffDebuffInputs.SpellISBDebuff,
 		BuffDebuffInputs.SpellScorchDebuff,
 		BuffDebuffInputs.SpellWintersChillDebuff,
-		ConsumablesInputs.FireDamageBuff,
-		ConsumablesInputs.FrostDamageBuff,
-		ConsumablesInputs.ShadowDamageBuff,
 		...ConsumablesInputs.AGILITY_CONSUMES_CONFIG,
 		...ConsumablesInputs.STRENGTH_CONSUMES_CONFIG,
+		...ConsumablesInputs.FIRE_POWER_CONFIG,
+		...ConsumablesInputs.FROST_POWER_CONFIG,
+		...ConsumablesInputs.SHADOW_POWER_CONFIG,
 	],
 	// Inputs to include in the 'Other' section on the settings tab.
 	otherInputs: {

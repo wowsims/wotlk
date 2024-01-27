@@ -111,9 +111,9 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecMage, {
 	],
 	excludeBuffDebuffInputs: [
 		BuffDebuffInputs.SpellISBDebuff,
-		ConsumablesInputs.ShadowDamageBuff,
 		...ConsumablesInputs.AGILITY_CONSUMES_CONFIG,
 		...ConsumablesInputs.STRENGTH_CONSUMES_CONFIG,
+		...ConsumablesInputs.SHADOW_POWER_CONFIG,
 	],
 	// Inputs to include in the 'Other' section on the settings tab.
 	otherInputs: {

@@ -25,8 +25,8 @@ export class ConsumesPicker extends Component {
 		this.buildWeaponImbuePicker();
 		this.buildFoodPicker();
 		this.buildPhysicalBuffPicker();
-		// this.buildSpellPowerBuffPicker();
-		// this.buildEngPicker();
+		this.buildSpellPowerBuffPicker();
+		this.buildEngPicker();
 		// this.buildPetPicker();
 	}
 
@@ -110,12 +110,10 @@ export class ConsumesPicker extends Component {
     `;
 
 		this.rootElem.appendChild(fragment.children[0] as HTMLElement);
+		const elem = this.rootElem.querySelector('.consumes-food') as HTMLElement;
 
 		const foodOptions = relevantStatOptions(ConsumablesInputs.FOOD_CONFIG, this.simUI)
-		if (foodOptions.length) {
-			const elem = this.rootElem.querySelector('.consumes-food') as HTMLElement;
-			new IconEnumPicker(elem, this.simUI.player, ConsumablesInputs.makeFoodInput(foodOptions));
-		}
+		new IconEnumPicker(elem, this.simUI.player, ConsumablesInputs.makeFoodInput(foodOptions));
 	}
 
 	private buildPhysicalBuffPicker() {
@@ -148,14 +146,12 @@ export class ConsumesPicker extends Component {
 	}
 
 	private buildSpellPowerBuffPicker() {
-		const config = this.simUI.individualConfig;
-		const includeSpellPower = config.epStats.includes(Stat.StatSpellPower) && !config.excludeBuffDebuffInputs.includes(ConsumablesInputs.SpellDamageBuff);
+		const spellPowerOptions = relevantStatOptions(ConsumablesInputs.SPELL_POWER_CONFIG, this.simUI);
+		if (!spellPowerOptions.length) return;
 
-		if (!includeSpellPower) return;
-
-		const includeShadowPower = !config.excludeBuffDebuffInputs.includes(ConsumablesInputs.ShadowDamageBuff);
-		const includeFirePower = !config.excludeBuffDebuffInputs.includes(ConsumablesInputs.FireDamageBuff);
-		const includeFrostPower = !config.excludeBuffDebuffInputs.includes(ConsumablesInputs.FrostDamageBuff);
+		const firePowerOptions = relevantStatOptions(ConsumablesInputs.FIRE_POWER_CONFIG, this.simUI);
+		const frostPowerOptions = relevantStatOptions(ConsumablesInputs.FROST_POWER_CONFIG, this.simUI);
+		const shadowPowerOptions = relevantStatOptions(ConsumablesInputs.SHADOW_POWER_CONFIG, this.simUI);
 
 		let fragment = document.createElement('fragment');
 		fragment.innerHTML = `
@@ -165,31 +161,13 @@ export class ConsumesPicker extends Component {
       </div>
     `;
 
-		const spellsGroup = this.rootElem.appendChild(fragment.children[0] as HTMLElement);
+		this.rootElem.appendChild(fragment.children[0] as HTMLElement);
 		const spellsCnsumesElem = this.rootElem.querySelector('.consumes-spells') as HTMLElement;
 
-		if (includeSpellPower){
-			buildIconInput(spellsCnsumesElem, this.simUI.player, ConsumablesInputs.SpellDamageBuff);
-		}
-		if (includeFirePower){
-			buildIconInput(spellsCnsumesElem, this.simUI.player, ConsumablesInputs.FireDamageBuff);
-		}
-		if (includeShadowPower){
-			buildIconInput(spellsCnsumesElem, this.simUI.player, ConsumablesInputs.ShadowDamageBuff);
-		}
-		if( includeFrostPower){
-			buildIconInput(spellsCnsumesElem, this.simUI.player, ConsumablesInputs.FrostDamageBuff);
-		}
-
-		const updateSpellGroup = () => {
-			if (this.simUI.player.getLevel() >= 25){
-				spellsGroup!.classList.remove('hide');
-			} else {
-				spellsGroup!.classList.add('hide');
-			}
-		};
-		this.simUI.player.levelChangeEmitter.on(updateSpellGroup);
-		updateSpellGroup();
+		buildIconInput(spellsCnsumesElem, this.simUI.player, ConsumablesInputs.makeSpellPowerConsumeInput(spellPowerOptions));
+		buildIconInput(spellsCnsumesElem, this.simUI.player, ConsumablesInputs.makeFirePowerConsumeInput(firePowerOptions));
+		buildIconInput(spellsCnsumesElem, this.simUI.player, ConsumablesInputs.makeFrostPowerConsumeInput(frostPowerOptions));
+		buildIconInput(spellsCnsumesElem, this.simUI.player, ConsumablesInputs.makeshadowPowerConsumeInput(shadowPowerOptions));
 	}
 
 	private buildEngPicker() {
@@ -201,18 +179,19 @@ export class ConsumesPicker extends Component {
       </div>
     `;
 
-		this.rootElem.appendChild(fragment.children[0] as HTMLElement);
-
+		const rowElem = this.rootElem.appendChild(fragment.children[0] as HTMLElement);
 		const tradeConsumesElem = this.rootElem.querySelector('.consumes-trade') as HTMLElement;
 
 		buildIconInput(tradeConsumesElem, this.simUI.player, ConsumablesInputs.Sapper);
-		buildIconInput(tradeConsumesElem, this.simUI.player, ConsumablesInputs.FillerExplosiveInput);
+
+		const explosivesOptions = relevantStatOptions(ConsumablesInputs.EXPLOSIVES_CONFIG, this.simUI);
+		buildIconInput(tradeConsumesElem, this.simUI.player, ConsumablesInputs.makeExplosivesInput(explosivesOptions));
 
 		const updateProfession = () => {
 			if (this.simUI.player.hasProfession(Profession.Engineering))
-				tradeConsumesElem.parentElement!.classList.remove('hide');
+				rowElem.classList.remove('hide');
 			else
-				tradeConsumesElem.parentElement!.classList.add('hide');
+				rowElem.classList.add('hide');
 		};
 		this.simUI.player.professionChangeEmitter.on(updateProfession);
 		updateProfession();
