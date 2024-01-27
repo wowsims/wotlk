@@ -93,8 +93,8 @@ export class ConsumesPicker extends Component {
 		const mhImbueOptions = relevantStatOptions(ConsumablesInputs.WEAPON_IMBUES_MH_CONFIG, this.simUI);
 		const ohImbueOptions = relevantStatOptions(ConsumablesInputs.WEAPON_IMBUES_OH_CONFIG, this.simUI);
 
-		new IconEnumPicker(mhElem, this.simUI.player,	ConsumablesInputs.makeMainHandImbuesInput(mhImbueOptions, 'Main Hand Imbue'));
-		new IconEnumPicker(ohElem, this.simUI.player,	ConsumablesInputs.makeOffHandImbuesInput(ohImbueOptions, 'Off Hand Imbue'));
+		new IconEnumPicker(mhElem, this.simUI.player,	ConsumablesInputs.makeMainHandImbuesInput(mhImbueOptions, 'Main Hand'));
+		new IconEnumPicker(ohElem, this.simUI.player,	ConsumablesInputs.makeOffHandImbuesInput(ohImbueOptions, 'Off Hand'));
 	}
 
 	private buildFoodPicker() {
