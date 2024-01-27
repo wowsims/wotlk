@@ -108,6 +108,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecMage, {
 		BuffDebuffInputs.ManaSpringTotem,
 		BuffDebuffInputs.StaminaBuff,
 		BuffDebuffInputs.JudgementOfWisdom,
+		...ConsumablesInputs.FIRE_POWER_CONFIG,
+		...ConsumablesInputs.FROST_POWER_CONFIG,
 	],
 	excludeBuffDebuffInputs: [
 		BuffDebuffInputs.SpellISBDebuff,
