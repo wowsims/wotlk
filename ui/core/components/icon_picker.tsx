@@ -12,7 +12,7 @@ import { element, ref } from 'tsx-vanilla';
 // ModObject is the object being modified (Sim, Player, or Target).
 // ValueType is either number or boolean.
 export interface IconPickerConfig<ModObject, ValueType> extends InputConfig<ModObject, ValueType> {
-	id: ActionId;
+	actionId: ActionId;
 
 	// The number of possible 'states' this icon can have. Most inputs will use 2
 	// for a bi-state icon (on or off). 0 indicates an unlimited number of states.
@@ -80,7 +80,7 @@ export class IconPicker<ModObject, ValueType> extends Input<ModObject, ValueType
 		this.improvedAnchor2 = ia2.value!;
 		this.counterElem = ce.value!;
 
-		this.config.id.fillAndSet(this.rootAnchor, true, true);
+		this.config.actionId.fillAndSet(this.rootAnchor, true, true);
 
 		if (this.config.states >= 3 && this.config.improvedId) {
 			this.config.improvedId.fillAndSet(this.improvedAnchor, true, true);
@@ -166,13 +166,13 @@ export class IconPicker<ModObject, ValueType> extends Input<ModObject, ValueType
 		if (v == 0) {
 			return null;
 		} else if (v == 1) {
-			return this.config.id;
+			return this.config.actionId;
 		} else if (v == 2 && this.config.improvedId) {
 			return this.config.improvedId;
 		} else if (v == 3 && this.config.improvedId2) {
 			return this.config.improvedId2;
 		} else {
-			return this.config.id;
+			return this.config.actionId;
 		}
 	}
 

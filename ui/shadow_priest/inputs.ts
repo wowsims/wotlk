@@ -21,7 +21,7 @@ export const ArmorInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecSha
 
 export const MindBlastInput = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.SpecShadowPriest>({
 	fieldName: 'useMindBlast',
-	id: ActionId.fromSpellId(10947),
+	actionId: ActionId.fromSpellId(10947),
 });
 
 export const ShadowPriestRotationConfig = {

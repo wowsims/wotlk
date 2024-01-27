@@ -147,11 +147,11 @@ export class SettingsTab extends SimTab {
 		});
 	}
 
-	private makeBooleanRaidIconBuffInput(parent: HTMLElement, id: ActionId, field: keyof RaidBuffs): IconPicker<Raid, boolean> {
+	private makeBooleanRaidIconBuffInput(parent: HTMLElement, actionId: ActionId, field: keyof RaidBuffs): IconPicker<Raid, boolean> {
 		const raid = this.simUI.sim.raid;
 
 		return new IconPicker<Raid, boolean>(parent, raid, {
-			id: id,
+			actionId: actionId,
 			states: 2,
 			changedEvent: (raid: Raid) => raid.buffsChangeEmitter,
 			getValue: (raid: Raid) => raid.getBuffs()[field] as unknown as boolean,
