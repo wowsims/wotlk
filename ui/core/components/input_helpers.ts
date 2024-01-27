@@ -12,10 +12,9 @@ import { BooleanPickerConfig } from './boolean_picker.js';
 import { NumberPickerConfig } from './number_picker.js';
 import { MultiIconPickerConfig } from './multi_icon_picker.js';
 
-export function makeMultiIconInput<ModObject>(inputs: Array<IconPickerConfig<ModObject, any>>, label: string, numColumns?: number): MultiIconPickerConfig<ModObject> {
+export function makeMultiIconInput<ModObject>(inputs: Array<IconPickerConfig<ModObject, any>>, label: string): MultiIconPickerConfig<ModObject> {
 	return {
 		inputs: inputs,
-		numColumns: numColumns || 1,
 		label: label,
 		showWhen: (p) => inputs.filter(i => !i.showWhen || i.showWhen(p as ModObject)).length > 0
 	};
@@ -419,7 +418,7 @@ export function makeEnumIconInput<SpecType extends Spec, Message, ModObject, T>(
 ): TypedIconEnumPickerConfig<Player<SpecType>, T> {
 	return makeWrappedEnumIconInput<SpecType, ModObject, T>({
 		direction: direction || IconEnumPickerDirection.Vertical,
-		numColumns: numColumns || 1,
+		numColumns: numColumns,
 		values: values,
 		zeroValue: 0 as unknown as T,
 		equals: (a: T, b: T) => a == b,
@@ -450,7 +449,7 @@ export function makeSpecOptionsEnumIconInput<SpecType extends Spec, T>(config: P
 		setFieldValue: config.setValue,
 		changeEmitter: config.changeEmitter || ((player: Player<SpecType>) => player.specOptionsChangeEmitter),
 		extraCssClasses: config.extraCssClasses,
-	}, config.fieldName, config.values, config.numColumns || 1);
+	}, config.fieldName, config.values, config.numColumns);
 }
 export function makeRotationEnumIconInput<SpecType extends Spec, T>(config: PlayerEnumIconInputConfig<SpecType, SpecRotation<SpecType>, T>): TypedIconEnumPickerConfig<Player<SpecType>, T> {
 	return makeEnumIconInput<SpecType, SpecRotation<SpecType>, Player<SpecType>, T>({
@@ -462,7 +461,7 @@ export function makeRotationEnumIconInput<SpecType extends Spec, T>(config: Play
 		setFieldValue: config.setValue,
 		changeEmitter: config.changeEmitter || ((player: Player<SpecType>) => player.rotationChangeEmitter),
 		extraCssClasses: config.extraCssClasses,
-	}, config.fieldName, config.values, config.numColumns || 1);
+	}, config.fieldName, config.values, config.numColumns);
 }
 
 export interface TypedCustomRotationPickerConfig<SpecType extends Spec, T> extends CustomRotationPickerConfig<SpecType, T> {

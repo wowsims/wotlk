@@ -30,7 +30,7 @@ export interface IconEnumValueConfig<ModObject, T> {
 }
 
 export interface IconEnumPickerConfig<ModObject, T> extends InputConfig<ModObject, T> {
-	numColumns: number,
+	numColumns?: number,
 	values: Array<IconEnumValueConfig<ModObject, T>>;
 	// Value that will be considered inactive.
 	zeroValue: T,
@@ -100,7 +100,11 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 		this.buttonText = this.rootElem.querySelector('label') as HTMLElement;
 		const dropdownMenu = this.rootElem.querySelector('.dropdown-menu') as HTMLElement;
 
-		dropdownMenu.style.gridTemplateColumns = `repeat(${this.config.numColumns}, 1fr)`;
+		if (this.config.numColumns)
+			dropdownMenu.style.gridTemplateColumns = `repeat(${this.config.numColumns}, 1fr)`;
+		
+		if (this.config.direction == IconEnumPickerDirection.Horizontal)
+			dropdownMenu.style.gridAutoFlow = 'column';
 
 		config.values.forEach((valueConfig, _) => {
 			const optionContainer = document.createElement('li');

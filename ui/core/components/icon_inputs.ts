@@ -233,5 +233,5 @@ export function makeEnumIndividualBuffInput<SpecType extends Spec>(config: EnumI
 		getValue: (player: Player<SpecType>) => player.getBuffs(),
 		setValue: (eventID: EventID, player: Player<SpecType>, newVal: IndividualBuffs) => player.setBuffs(eventID, newVal),
 		changeEmitter: (player: Player<SpecType>) => TypedEvent.onAny([player.buffsChangeEmitter, player.levelChangeEmitter, player.raceChangeEmitter]),
-	}, config.fieldName, config.values, config.numColumns || 1, config.direction || IconEnumPickerDirection.Vertical)
+	}, config.fieldName, config.values, config.numColumns, config.direction || IconEnumPickerDirection.Vertical)
 };

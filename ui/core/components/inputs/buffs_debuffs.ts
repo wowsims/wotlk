@@ -182,7 +182,6 @@ export const WarchiefsBlessing = withLabel(
 );
 
 export const SaygesDarkFortune = (inputs: ItemStatOption<SaygesFortune>[]) => makeEnumIndividualBuffInput({
-	numColumns: 6,
 	direction: IconEnumPickerDirection.Horizontal,
 	values: [
 		{ iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/inv_misc_orb_02.jpg', value: SaygesFortune.SaygesUnknown, text: `Sayge's Dark Fortune` },
