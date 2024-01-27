@@ -13,6 +13,7 @@ export interface ActionInputConfig<T> {
 	minLevel?: number
 	maxLevel?: number
 	faction?: Faction
+	shownWhen?: (player: Player<Spec>) => boolean
 }
 
 export interface StatOption {

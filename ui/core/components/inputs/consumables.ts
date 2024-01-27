@@ -34,30 +34,6 @@ export interface ConsumableStatOption<T> extends ItemStatOption<T> {
 	config: ConsumableInputConfig<T>
 }
 
-function makePotionInputFactory(consumesFieldName: keyof Consumes): (options: Array<Potions>, tooltip?: string) => InputHelpers.TypedIconEnumPickerConfig<Player<any>, Potions> {
-	return makeConsumeInputFactory({
-		consumesFieldName: consumesFieldName,
-		allOptions: [
-			{ id: ActionId.fromItemId(3385), value: Potions.LesserManaPotion },
-			{ id: ActionId.fromItemId(3827), value: Potions.ManaPotion },
-		] as Array<IconEnumValueConfig<Player<any>, Potions>>,
-	});
-}
-export const makePotionsInput = makePotionInputFactory('defaultPotion');
-
-// TODO: Classic? 
-export const makeConjuredInput = makeConsumeInputFactory({
-	consumesFieldName: 'defaultConjured',
-	allOptions: [
-		{ id: ActionId.fromItemId(4381), value: Conjured.ConjuredMinorRecombobulator, showWhen: (player: Player<any>) => player.getGear().hasTrinket(4381) },
-		{ id: ActionId.fromItemId(12662), value: Conjured.ConjuredDemonicRune, showWhen: (p) => p.getLevel() >= 40 },
-	] as Array<IconEnumValueConfig<Player<any>, Conjured>>
-});
-
-// TODO: Classic
-export const PetScrollOfAgilityV = makeBooleanConsumeInput(ActionId.fromItemId(27498), 'petScrollOfAgility', 5);
-export const PetScrollOfStrengthV = makeBooleanConsumeInput(ActionId.fromItemId(27503), 'petScrollOfStrength', 5);
-
 export interface ConsumeInputFactoryArgs<T extends number> {
 	consumesFieldName: keyof Consumes,
 	// Additional callback if logic besides syncing consumes is required
@@ -79,6 +55,7 @@ function makeConsumeInputFactory<T extends number>(args: ConsumeInputFactoryArgs
 				const rtn = {
 					id: option.config.id,
 					showWhen: (player: Player<any>) =>
+						(option.config.shownWhen && option.config.shownWhen(player)) ||
 						(option.config.minLevel || 0) <= player.getLevel() &&
 						(option.config.maxLevel || MAX_CHARACTER_LEVEL) >= player.getLevel() &&
 						(option.config.faction || player.getFaction()) == player.getFaction()
@@ -111,10 +88,19 @@ function makeConsumeInputFactory<T extends number>(args: ConsumeInputFactoryArgs
 }
 
 
+///////////////////////////////////////////////////////////////////////////
+//                                 CONJURED
+///////////////////////////////////////////////////////////////////////////
 
+export const ConjuredMinorRecombobulator = { id: ActionId.fromItemId(4381), value: Conjured.ConjuredMinorRecombobulator, showWhen: (player: Player<any>) => player.getGear().hasTrinket(4381) };
+export const ConjuredDemonicRune = { id: ActionId.fromItemId(12662), value: Conjured.ConjuredDemonicRune, minLevel: 40 };
 
+export const CONJURED_CONFIG = [
+	{ config: ConjuredMinorRecombobulator, stats: [Stat.StatIntellect] },
+	{ config: ConjuredDemonicRune, stats: [Stat.StatIntellect] },
+] as ConsumableStatOption<Conjured>[]
 
-
+export const makeConjuredInput = makeConsumeInputFactory({consumesFieldName: 'defaultConjured'});
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 EXPLOSIVES
@@ -217,16 +203,25 @@ export const makeStrengthConsumeInput = makeConsumeInputFactory({consumesFieldNa
 export const BoglingRootDebuff = makeBooleanConsumeInput({id: ActionId.fromItemId(5206), fieldName: 'boglingRoot'});
 
 ///////////////////////////////////////////////////////////////////////////
+//                                 PET
+///////////////////////////////////////////////////////////////////////////
+
+// export const PetScrollOfAgilityV = makeBooleanConsumeInput({id: ActionId.fromItemId(27498), fieldName: 'petScrollOfAgility', minLevel: 5});
+// export const PetScrollOfStrengthV = makeBooleanConsumeInput({id: ActionId.fromItemId(27503), fieldName: 'petScrollOfStrength', minLevel: 5});
+
+///////////////////////////////////////////////////////////////////////////
 //                                 POTIONS
 ///////////////////////////////////////////////////////////////////////////
 
 export const LesserManaPotion = { id: ActionId.fromItemId(3385), value: Potions.LesserManaPotion };
-export const ManaPotion = { id: ActionId.fromItemId(3385), value: Potions.ManaPotion };
+export const ManaPotion = { id: ActionId.fromItemId(3827), value: Potions.ManaPotion };
 
 export const POTIONS_CONFIG = [
 	{ config: LesserManaPotion, stats: [Stat.StatIntellect] },
 	{ config: ManaPotion, stats: [Stat.StatIntellect] },
 ] as ConsumableStatOption<Potions>[];
+
+export const makePotionsInput = makeConsumeInputFactory({consumesFieldName: 'defaultPotion'});
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 SPELL DAMAGE CONSUMES
@@ -237,14 +232,8 @@ export const ArcaneElixir = { id: ActionId.fromItemId(9155), value: SpellPowerBu
 export const GreaterArcaneElixir = { id: ActionId.fromItemId(13454), value: SpellPowerBuff.GreaterArcaneElixir, minLevel: 46 };
 
 export const SPELL_POWER_CONFIG = [
-	{
-		config: ArcaneElixir,
-		stats: [Stat.StatSpellPower],
-	},
-	{
-		config: GreaterArcaneElixir,
-		stats: [Stat.StatSpellPower],
-	}
+	{ config: ArcaneElixir, stats: [Stat.StatSpellPower] },
+	{ config: GreaterArcaneElixir, stats: [Stat.StatSpellPower] },
 ] as ConsumableStatOption<SpellPowerBuff>[];
 
 export const makeSpellPowerConsumeInput = makeConsumeInputFactory({consumesFieldName: 'spellPowerBuff'})
@@ -254,14 +243,8 @@ export const ElixirOfFirepower = { id: ActionId.fromItemId(6373), value: FirePow
 export const ElixirOfGreaterFirepower = { id: ActionId.fromItemId(21546), value: FirePowerBuff.ElixirOfGreaterFirepower, minLevel: 40 };
 
 export const FIRE_POWER_CONFIG = [
-	{
-		config: ElixirOfFirepower,
-		stats: [Stat.StatFirePower],
-	},
-	{
-		config: ElixirOfGreaterFirepower,
-		stats: [Stat.StatFirePower],
-	}
+	{ config: ElixirOfFirepower, stats: [Stat.StatFirePower] },
+	{ config: ElixirOfGreaterFirepower, stats: [Stat.StatFirePower] },
 ] as ConsumableStatOption<FirePowerBuff>[];
 
 export const makeFirePowerConsumeInput = makeConsumeInputFactory({consumesFieldName: 'firePowerBuff'})
@@ -270,10 +253,7 @@ export const makeFirePowerConsumeInput = makeConsumeInputFactory({consumesFieldN
 export const ElixirOfFrostPower = {id: ActionId.fromItemId(17708), value: FrostPowerBuff.ElixirOfFrostPower, minLevel: 40 };
 
 export const FROST_POWER_CONFIG = [
-	{
-		config: ElixirOfFrostPower,
-		stats: [Stat.StatFrostPower],
-	},
+	{ config: ElixirOfFrostPower, stats: [Stat.StatFrostPower] },
 ] as ConsumableStatOption<FrostPowerBuff>[];
 
 export const makeFrostPowerConsumeInput = makeConsumeInputFactory({consumesFieldName: 'frostPowerBuff'})
@@ -282,10 +262,7 @@ export const makeFrostPowerConsumeInput = makeConsumeInputFactory({consumesField
 export const ElixirOfShadowPower = {id: ActionId.fromItemId(9264), value: ShadowPowerBuff.ElixirOfShadowPower, minLevel: 40 };
 
 export const SHADOW_POWER_CONFIG = [
-	{
-		config: ElixirOfShadowPower,
-		stats: [Stat.StatShadowPower],
-	},
+	{ config: ElixirOfShadowPower, stats: [Stat.StatShadowPower] },
 ] as ConsumableStatOption<ShadowPowerBuff>[];
 
 export const makeshadowPowerConsumeInput = makeConsumeInputFactory({consumesFieldName: 'shadowPowerBuff'})

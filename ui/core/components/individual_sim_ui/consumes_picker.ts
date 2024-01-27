@@ -3,7 +3,6 @@ import {
 	Profession,
 	Spec,
 	Stat,
-	Conjured
 } from "../../proto/common";
 
 import { Component } from "../component";
@@ -20,14 +19,14 @@ export class ConsumesPicker extends Component {
 		super(parentElem, 'consumes-picker-root');
 		this.simUI = simUI;
 
-		// this.buildPotionsPicker();
+		this.buildPotionsPicker();
 		this.buildFlaskPicker();
 		this.buildWeaponImbuePicker();
 		this.buildFoodPicker();
 		this.buildPhysicalBuffPicker();
 		this.buildSpellPowerBuffPicker();
 		this.buildEngPicker();
-		// this.buildPetPicker();
+		this.buildPetPicker();
 	}
 
 	private buildPotionsPicker() {
@@ -43,25 +42,18 @@ export class ConsumesPicker extends Component {
     `;
 
 		this.rootElem.appendChild(fragment.children[0] as HTMLElement);
+		const potionsElem = this.rootElem.querySelector('.consumes-potions') as HTMLElement;
+		const conjuredElem = this.rootElem.querySelector('.consumes-conjured') as HTMLElement;
 
 		const potionOptions = relevantStatOptions(ConsumablesInputs.POTIONS_CONFIG, this.simUI);
-		if (potionOptions.length) {
-			const elem = this.rootElem.querySelector('.consumes-potions') as HTMLElement;
-			new IconEnumPicker(
-				elem,
-				this.simUI.player,
-				ConsumablesInputs.makePotionsInput(potionOptions, 'Combat Potion')
-			);
-		}
+		new IconEnumPicker(
+			potionsElem,
+			this.simUI.player,
+			ConsumablesInputs.makePotionsInput(potionOptions, 'Combat Potion')
+		);
 
-		const conjuredOptions = relevantStatOptions([
-			{ item: Conjured.ConjuredMinorRecombobulator, stats: [Stat.StatIntellect] },
-			{ item: Conjured.ConjuredDemonicRune, stats: [Stat.StatIntellect] },
-		]);
-		if (conjuredOptions.length) {
-			const elem = this.rootElem.querySelector('.consumes-conjured') as HTMLElement;
-			new IconEnumPicker(elem, this.simUI.player, ConsumablesInputs.makeConjuredInput(conjuredOptions));
-		}
+		const conjuredOptions = relevantStatOptions(ConsumablesInputs.CONJURED_CONFIG, this.simUI);
+		new IconEnumPicker(conjuredElem, this.simUI.player, ConsumablesInputs.makeConjuredInput(conjuredOptions));
 	}
 
 	private buildFlaskPicker() {
@@ -135,11 +127,11 @@ export class ConsumesPicker extends Component {
 
 		if (includeAgi) {
 			const agilityConsumesOptions = ConsumablesInputs.AGILITY_CONSUMES_CONFIG;
-			buildIconInput(physicalConsumesElem, this.simUI.player, ConsumablesInputs.makeAgilityConsumeInput(agilityConsumesOptions));
+			buildIconInput(physicalConsumesElem, this.simUI.player, ConsumablesInputs.makeAgilityConsumeInput(agilityConsumesOptions, 'Agility'));
 		}
 		if (includeStr) {
 			const strengthConsumesOptions = ConsumablesInputs.STRENGTH_CONSUMES_CONFIG;
-			buildIconInput(physicalConsumesElem, this.simUI.player, ConsumablesInputs.makeStrengthConsumeInput(strengthConsumesOptions));
+			buildIconInput(physicalConsumesElem, this.simUI.player, ConsumablesInputs.makeStrengthConsumeInput(strengthConsumesOptions, 'Strength'));
 		}
 
 		buildIconInput(physicalConsumesElem, this.simUI.player, ConsumablesInputs.BoglingRootDebuff);
@@ -164,10 +156,10 @@ export class ConsumesPicker extends Component {
 		this.rootElem.appendChild(fragment.children[0] as HTMLElement);
 		const spellsCnsumesElem = this.rootElem.querySelector('.consumes-spells') as HTMLElement;
 
-		buildIconInput(spellsCnsumesElem, this.simUI.player, ConsumablesInputs.makeSpellPowerConsumeInput(spellPowerOptions));
-		buildIconInput(spellsCnsumesElem, this.simUI.player, ConsumablesInputs.makeFirePowerConsumeInput(firePowerOptions));
-		buildIconInput(spellsCnsumesElem, this.simUI.player, ConsumablesInputs.makeFrostPowerConsumeInput(frostPowerOptions));
-		buildIconInput(spellsCnsumesElem, this.simUI.player, ConsumablesInputs.makeshadowPowerConsumeInput(shadowPowerOptions));
+		buildIconInput(spellsCnsumesElem, this.simUI.player, ConsumablesInputs.makeSpellPowerConsumeInput(spellPowerOptions, 'Arcane'));
+		buildIconInput(spellsCnsumesElem, this.simUI.player, ConsumablesInputs.makeFirePowerConsumeInput(firePowerOptions, 'Fire'));
+		buildIconInput(spellsCnsumesElem, this.simUI.player, ConsumablesInputs.makeFrostPowerConsumeInput(frostPowerOptions, 'Frost'));
+		buildIconInput(spellsCnsumesElem, this.simUI.player, ConsumablesInputs.makeshadowPowerConsumeInput(shadowPowerOptions, 'Shadow'));
 	}
 
 	private buildEngPicker() {
@@ -185,7 +177,7 @@ export class ConsumesPicker extends Component {
 		buildIconInput(tradeConsumesElem, this.simUI.player, ConsumablesInputs.Sapper);
 
 		const explosivesOptions = relevantStatOptions(ConsumablesInputs.EXPLOSIVES_CONFIG, this.simUI);
-		buildIconInput(tradeConsumesElem, this.simUI.player, ConsumablesInputs.makeExplosivesInput(explosivesOptions));
+		buildIconInput(tradeConsumesElem, this.simUI.player, ConsumablesInputs.makeExplosivesInput(explosivesOptions, 'Explosives'));
 
 		const updateProfession = () => {
 			if (this.simUI.player.hasProfession(Profession.Engineering))
@@ -198,19 +190,19 @@ export class ConsumesPicker extends Component {
 	}
 
 	private buildPetPicker() {
-		if (this.simUI.individualConfig.petConsumeInputs?.length) {
-			let fragment = document.createElement('fragment');
-			fragment.innerHTML = `
-        <div class="consumes-row input-root input-inline">
-          <label class="form-label">Pet</label>
-          <div class="consumes-row-inputs consumes-pet"></div>
-        </div>
-      `;
+		if (!this.simUI.individualConfig.petConsumeInputs?.length) return
 
-			this.rootElem.appendChild(fragment.children[0] as HTMLElement);
+		let fragment = document.createElement('fragment');
+		fragment.innerHTML = `
+			<div class="consumes-row input-root input-inline">
+				<label class="form-label">Pet</label>
+				<div class="consumes-row-inputs consumes-pet"></div>
+			</div>
+		`;
 
-			const petConsumesElem = this.rootElem.querySelector('.consumes-pet') as HTMLElement;
-			this.simUI.individualConfig.petConsumeInputs.map(iconInput => buildIconInput(petConsumesElem, this.simUI.player, iconInput));
-		}
+		this.rootElem.appendChild(fragment.children[0] as HTMLElement);
+		const petConsumesElem = this.rootElem.querySelector('.consumes-pet') as HTMLElement;
+
+		this.simUI.individualConfig.petConsumeInputs.map(iconInput => buildIconInput(petConsumesElem, this.simUI.player, iconInput));
 	}
 }
