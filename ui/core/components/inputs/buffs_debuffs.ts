@@ -334,7 +334,7 @@ export const RAID_BUFFS_CONFIG = [
 	{
 		config: PaladinPhysicalBuff,
 		picker: MultiIconPicker,
-		stats: [Stat.StatStrength, Stat.StatAgility, Stat.StatAttackPower, Stat.StatRangedAttackPower]
+		stats: [Stat.StatStrength, Stat.StatAgility, Stat.StatAttackPower]
 	},
 	{
 		config: StrengthBuffHorde,
