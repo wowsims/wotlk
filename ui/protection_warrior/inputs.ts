@@ -30,7 +30,7 @@ export const ShoutPicker = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecPr
 
 export const ShatteringThrow = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.SpecProtectionWarrior>({
 	fieldName: 'useShatteringThrow',
-	id: ActionId.fromSpellId(64382),
+	actionId: ActionId.fromSpellId(64382),
 });
 
 export const ProtectionWarriorRotationConfig = {

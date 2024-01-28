@@ -19,6 +19,7 @@ import { getSpecIcon, specNames } from '../core/proto_utils/utils.js';
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
 import { TypedEvent } from '../core/typed_event.js';
 import { TotemsSection } from '../core/components/totem_inputs.js';
+
 import * as OtherInputs from '../core/components/other_inputs.js';
 import * as Mechanics from '../core/constants/mechanics.js';
 import * as ShamanInputs from './inputs.js';

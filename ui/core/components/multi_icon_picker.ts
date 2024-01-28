@@ -12,7 +12,6 @@ export interface MultiIconPickerItemConfig<ModObject> extends IconPickerConfig<M
 
 export interface MultiIconPickerConfig<ModObject> {
 	inputs: Array<MultiIconPickerItemConfig<ModObject>>,
-	numColumns: number,
 	label?: string,
 	categoryId?: ActionId,
 	showWhen?: (obj: Player<any>) => boolean,
@@ -25,7 +24,6 @@ export class MultiIconPicker<ModObject> extends Component {
 
 	private currentValue: ActionId | null;
 
-	private readonly dropdownRootElem: HTMLElement;
 	private readonly buttonElem: HTMLAnchorElement;
 	private readonly dropdownMenu: HTMLElement;
 
@@ -51,7 +49,6 @@ export class MultiIconPicker<ModObject> extends Component {
 			</div>
 			<label class="multi-icon-picker-label form-label"></label>
     `;
-		this.dropdownRootElem = this.rootElem.querySelector('.dropdown') as HTMLElement;
 
 		const labelElem = this.rootElem.querySelector('.multi-icon-picker-label') as HTMLElement;
 		if (config.label) {

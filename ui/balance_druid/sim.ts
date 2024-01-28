@@ -13,7 +13,8 @@ import { getSpecIcon, specNames } from '../core/proto_utils/utils.js';
 import { Player } from '../core/player.js';
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
 
-import * as IconInputs from '../core/components/icon_inputs.js';
+import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs';
+import * as ConsumablesInputs from '../core/components/inputs/consumables.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
 import * as DruidInputs from './inputs.js';
 import * as Presets from './presets.js';
@@ -88,11 +89,14 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecBalanceDruid, {
 	includeBuffDebuffInputs: [
 	],
 	excludeBuffDebuffInputs: [
-		IconInputs.AgilityBuffInput,
-		IconInputs.StrengthBuffInput,
-		IconInputs.FireDamageBuff,
-		IconInputs.FrostDamageBuff,
-		IconInputs.ShadowDamageBuff,
+		BuffDebuffInputs.SpellISBDebuff,
+		BuffDebuffInputs.SpellScorchDebuff,
+		BuffDebuffInputs.SpellWintersChillDebuff,
+		...ConsumablesInputs.AGILITY_CONSUMES_CONFIG,
+		...ConsumablesInputs.STRENGTH_CONSUMES_CONFIG,
+		...ConsumablesInputs.FIRE_POWER_CONFIG,
+		...ConsumablesInputs.FROST_POWER_CONFIG,
+		...ConsumablesInputs.SHADOW_POWER_CONFIG,
 	],
 	// Inputs to include in the 'Other' section on the settings tab.
 	otherInputs: {

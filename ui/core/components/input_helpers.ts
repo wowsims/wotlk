@@ -6,18 +6,17 @@ import { EventID, TypedEvent } from '../typed_event.js';
 import { SpecOptions, SpecRotation } from '../proto_utils/utils.js';
 import { CustomRotationPickerConfig } from './individual_sim_ui/custom_rotation_picker.js';
 import { IconPickerConfig } from './icon_picker.js';
-import { IconEnumPickerConfig, IconEnumValueConfig } from './icon_enum_picker.js';
+import { IconEnumPickerConfig, IconEnumPickerDirection, IconEnumValueConfig } from './icon_enum_picker.js';
 import { EnumPickerConfig, EnumValueConfig } from './enum_picker.js';
 import { BooleanPickerConfig } from './boolean_picker.js';
 import { NumberPickerConfig } from './number_picker.js';
 import { MultiIconPickerConfig } from './multi_icon_picker.js';
 
-export function makeMultiIconInput<ModObject>(inputs: Array<IconPickerConfig<ModObject, any>>, label: string, numColumns?: number, minLevel?: number): MultiIconPickerConfig<ModObject> {
+export function makeMultiIconInput<ModObject>(inputs: Array<IconPickerConfig<ModObject, any>>, label: string): MultiIconPickerConfig<ModObject> {
 	return {
 		inputs: inputs,
-		numColumns: numColumns || 1,
 		label: label,
-		showWhen: (p) => p.getLevel() >= (minLevel || 0)
+		showWhen: (p) => inputs.filter(i => !i.showWhen || i.showWhen(p as ModObject)).length > 0
 	};
 }
 
@@ -275,7 +274,7 @@ function makeWrappedIconInput<SpecType extends Spec, ModObject, T>(config: Wrapp
 	const getModObject = config.getModObject;
 	return {
 		type: 'icon',
-		id: config.id,
+		actionId: config.actionId,
 		states: config.states,
 		showWhen: config.showWhen as any,
 		changedEvent: (player: Player<SpecType>) => config.changedEvent(getModObject(player)),
@@ -297,10 +296,10 @@ interface WrappedTypedInputConfig<Message, ModObject, T> {
 	setFieldValue?: (eventID: EventID, modObj: ModObject, newValue: T) => void,
 }
 
-export function makeBooleanIconInput<SpecType extends Spec, Message, ModObject>(config: WrappedTypedInputConfig<Message, ModObject, boolean>, id: ActionId, fieldName: keyof Message, value?: number): TypedIconPickerConfig<Player<SpecType>, boolean> {
+export function makeBooleanIconInput<SpecType extends Spec, Message, ModObject>(config: WrappedTypedInputConfig<Message, ModObject, boolean>, actionId: ActionId, fieldName: keyof Message, value?: number): TypedIconPickerConfig<Player<SpecType>, boolean> {
 	return makeWrappedIconInput<SpecType, ModObject, boolean>({
 		getModObject: config.getModObject,
-		id: id,
+		actionId: actionId,
 		states: 2,
 		changedEvent: config.changeEmitter,
 		showWhen: config.showWhen,
@@ -324,7 +323,7 @@ export function makeBooleanIconInput<SpecType extends Spec, Message, ModObject>(
 
 export interface PlayerBooleanIconInputConfig<SpecType extends Spec, Message, T> extends BasePlayerConfig<SpecType, T> {
 	fieldName: keyof Message,
-	id: ActionId,
+	actionId: ActionId,
 	value?: number,
 }
 export function makeSpecOptionsBooleanIconInput<SpecType extends Spec>(config: PlayerBooleanIconInputConfig<SpecType, SpecOptions<SpecType>, boolean>): TypedIconPickerConfig<Player<SpecType>, boolean> {
@@ -336,13 +335,13 @@ export function makeSpecOptionsBooleanIconInput<SpecType extends Spec>(config: P
 		extraCssClasses: config.extraCssClasses,
 		getFieldValue: config.getValue,
 		setFieldValue: config.setValue,
-	}, config.id, config.fieldName, config.value);
+	}, config.actionId, config.fieldName, config.value);
 }
 
-function makeNumberIconInput<SpecType extends Spec, Message, ModObject>(config: WrappedTypedInputConfig<Message, ModObject, number>, id: ActionId, fieldName: keyof Message, multiplier?: number): TypedIconPickerConfig<Player<SpecType>, number> {
+function makeNumberIconInput<SpecType extends Spec, Message, ModObject>(config: WrappedTypedInputConfig<Message, ModObject, number>, actionId: ActionId, fieldName: keyof Message, multiplier?: number): TypedIconPickerConfig<Player<SpecType>, number> {
 	return makeWrappedIconInput<SpecType, ModObject, number>({
 		getModObject: config.getModObject,
-		id: id,
+		actionId: actionId,
 		states: 0, // Must be assigned externally.
 		changedEvent: config.changeEmitter,
 		showWhen: config.showWhen,
@@ -361,25 +360,24 @@ function makeNumberIconInput<SpecType extends Spec, Message, ModObject>(config: 
 		},
 	});
 }
-export function makeTristateIconInput<SpecType extends Spec, Message, ModObject>(config: WrappedTypedInputConfig<Message, ModObject, number>, id: ActionId, impId: ActionId, fieldName: keyof Message): TypedIconPickerConfig<Player<SpecType>, number> {
-	const input = makeNumberIconInput(config, id, fieldName);
+export function makeTristateIconInput<SpecType extends Spec, Message, ModObject>(config: WrappedTypedInputConfig<Message, ModObject, number>, actionId: ActionId, impId: ActionId, fieldName: keyof Message): TypedIconPickerConfig<Player<SpecType>, number> {
+	const input = makeNumberIconInput(config, actionId, fieldName);
 	input.states = 3;
 	input.improvedId = impId;
 	return input;
 }
-export function makeQuadstateIconInput<SpecType extends Spec, Message, ModObject>(config: WrappedTypedInputConfig<Message, ModObject, number>, id: ActionId, impId: ActionId, impId2: ActionId, fieldName: keyof Message): TypedIconPickerConfig<Player<SpecType>, number> {
-	const input = makeNumberIconInput(config, id, fieldName);
+export function makeQuadstateIconInput<SpecType extends Spec, Message, ModObject>(config: WrappedTypedInputConfig<Message, ModObject, number>, actionId: ActionId, impId: ActionId, impId2: ActionId, fieldName: keyof Message): TypedIconPickerConfig<Player<SpecType>, number> {
+	const input = makeNumberIconInput(config, actionId, fieldName);
 	input.states = 4;
 	input.improvedId = impId;
 	input.improvedId2 = impId2;
 	return input;
 }
-export function makeMultistateIconInput<SpecType extends Spec, Message, ModObject>(config: WrappedTypedInputConfig<Message, ModObject, number>, id: ActionId, numStates: number, fieldName: keyof Message, multiplier?: number): TypedIconPickerConfig<Player<SpecType>, number> {
-	const input = makeNumberIconInput(config, id, fieldName, multiplier);
+export function makeMultistateIconInput<SpecType extends Spec, Message, ModObject>(config: WrappedTypedInputConfig<Message, ModObject, number>, actionId: ActionId, numStates: number, fieldName: keyof Message, multiplier?: number): TypedIconPickerConfig<Player<SpecType>, number> {
+	const input = makeNumberIconInput(config, actionId, fieldName, multiplier);
 	input.states = numStates;
 	return input;
 }
-
 
 export interface TypedIconEnumPickerConfig<ModObject, T> extends IconEnumPickerConfig<ModObject, T> {
 	type: 'iconEnum',
@@ -388,11 +386,13 @@ export interface TypedIconEnumPickerConfig<ModObject, T> extends IconEnumPickerC
 interface WrappedEnumIconInputConfig<SpecType extends Spec, ModObject, T> extends IconEnumPickerConfig<ModObject, T> {
 	getModObject: (player: Player<SpecType>) => ModObject,
 }
+
 function makeWrappedEnumIconInput<SpecType extends Spec, ModObject, T>(config: WrappedEnumIconInputConfig<SpecType, ModObject, T>): TypedIconEnumPickerConfig<Player<SpecType>, T> {
 	const getModObject = config.getModObject;
 	return {
 		type: 'iconEnum',
 		numColumns: config.numColumns,
+		direction: config.direction,
 		values: config.values.map(value => {
 			if (value.showWhen) {
 				const showWhen = value.showWhen;
@@ -410,46 +410,58 @@ function makeWrappedEnumIconInput<SpecType extends Spec, ModObject, T>(config: W
 	}
 }
 
+export function makeEnumIconInput<SpecType extends Spec, Message, ModObject, T>(
+	config: WrappedTypedInputConfig<Message, ModObject, T>,
+	fieldName: keyof Message, values: Array<IconEnumValueConfig<ModObject, T>>,
+	numColumns?: number,
+	direction?: IconEnumPickerDirection
+): TypedIconEnumPickerConfig<Player<SpecType>, T> {
+	return makeWrappedEnumIconInput<SpecType, ModObject, T>({
+		direction: direction || IconEnumPickerDirection.Vertical,
+		numColumns: numColumns,
+		values: values,
+		zeroValue: 0 as unknown as T,
+		equals: (a: T, b: T) => a == b,
+		getModObject: config.getModObject,
+		changedEvent: config.changeEmitter,
+		showWhen: config.showWhen,
+		getValue: (modObj: ModObject) => config.getValue(modObj)[fieldName] as unknown as T,
+		setValue: (eventID: EventID, modObj: ModObject, newValue: T) => {
+			const newMessage = config.getValue(modObj);
+			(newMessage[fieldName] as unknown as T) = newValue;
+			config.setValue(eventID, modObj, newMessage);
+		},
+	});
+}
+
 export interface PlayerEnumIconInputConfig<SpecType extends Spec, Message, T> extends BasePlayerConfig<SpecType, T> {
 	fieldName: keyof Message,
 	values: Array<IconEnumValueConfig<Player<SpecType>, T>>;
 	numColumns?: number,
 }
 export function makeSpecOptionsEnumIconInput<SpecType extends Spec, T>(config: PlayerEnumIconInputConfig<SpecType, SpecOptions<SpecType>, T>): TypedIconEnumPickerConfig<Player<SpecType>, T> {
-	return makeWrappedEnumIconInput<SpecType, Player<SpecType>, T>({
-		numColumns: config.numColumns || 1,
-		values: config.values,
-		equals: (a: T, b: T) => a == b,
+	return makeEnumIconInput<SpecType, SpecOptions<SpecType>, Player<SpecType>, T>({
 		showWhen: config.showWhen,
-		zeroValue: 0 as unknown as T,
 		getModObject: (player: Player<SpecType>) => player,
-		getValue: config.getValue || ((player: Player<SpecType>) => player.getSpecOptions()[config.fieldName] as unknown as T),
-		setValue: config.setValue || ((eventID: EventID, player: Player<SpecType>, newVal: T) => {
-			const newMessage = player.getSpecOptions();
-			(newMessage[config.fieldName] as unknown as T) = newVal;
-			player.setSpecOptions(eventID, newMessage);
-		}),
-		changedEvent: config.changeEmitter || ((player: Player<SpecType>) => player.specOptionsChangeEmitter),
+		getValue: (player: Player<SpecType>) => player.getSpecOptions(),
+		setValue: (eventID: EventID, player: Player<SpecType>, newVal: SpecOptions<SpecType>) => player.setSpecOptions(eventID, newVal),
+		getFieldValue: config.getValue,
+		setFieldValue: config.setValue,
+		changeEmitter: config.changeEmitter || ((player: Player<SpecType>) => player.specOptionsChangeEmitter),
 		extraCssClasses: config.extraCssClasses,
-	});
+	}, config.fieldName, config.values, config.numColumns);
 }
 export function makeRotationEnumIconInput<SpecType extends Spec, T>(config: PlayerEnumIconInputConfig<SpecType, SpecRotation<SpecType>, T>): TypedIconEnumPickerConfig<Player<SpecType>, T> {
-	return makeWrappedEnumIconInput<SpecType, Player<SpecType>, T>({
-		numColumns: config.numColumns || 1,
-		values: config.values,
-		equals: (a: T, b: T) => a == b,
+	return makeEnumIconInput<SpecType, SpecRotation<SpecType>, Player<SpecType>, T>({
 		showWhen: config.showWhen,
-		zeroValue: 0 as unknown as T,
 		getModObject: (player: Player<SpecType>) => player,
-		getValue: config.getValue || ((player: Player<SpecType>) => player.getRotation()[config.fieldName] as unknown as T),
-		setValue: config.setValue || ((eventID: EventID, player: Player<SpecType>, newVal: T) => {
-			const newMessage = player.getRotation();
-			(newMessage[config.fieldName] as unknown as T) = newVal;
-			player.setRotation(eventID, newMessage);
-		}),
-		changedEvent: config.changeEmitter || ((player: Player<SpecType>) => player.rotationChangeEmitter),
+		getValue: (player: Player<SpecType>) => player.getRotation(),
+		setValue: (eventID: EventID, player: Player<SpecType>, newVal: SpecRotation<SpecType>) => player.setRotation(eventID, newVal),
+		getFieldValue: config.getValue,
+		setFieldValue: config.setValue,
+		changeEmitter: config.changeEmitter || ((player: Player<SpecType>) => player.rotationChangeEmitter),
 		extraCssClasses: config.extraCssClasses,
-	});
+	}, config.fieldName, config.values, config.numColumns);
 }
 
 export interface TypedCustomRotationPickerConfig<SpecType extends Spec, T> extends CustomRotationPickerConfig<SpecType, T> {

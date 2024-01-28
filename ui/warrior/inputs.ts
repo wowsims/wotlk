@@ -14,7 +14,7 @@ import * as InputHelpers from '../core/components/input_helpers.js';
 
 export const Recklessness = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.SpecWarrior>({
 	fieldName: 'useRecklessness',
-	id: ActionId.fromSpellId(1719),
+	actionId: ActionId.fromSpellId(1719),
 });
 
 export const StartingRage = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecWarrior>({

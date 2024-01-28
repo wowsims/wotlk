@@ -1,3 +1,4 @@
+import { APLRotation } from '../core/proto/apl.js';
 import {
 	Class,
 	Faction,
@@ -7,19 +8,17 @@ import {
 	Spec,
 	Stat,
 } from '../core/proto/common.js';
-import {
-	APLRotation,
-} from '../core/proto/apl.js';
-
+import { WarlockRune } from '../core/proto/warlock.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import { Player } from '../core/player.js';
 import { getSpecIcon } from '../core/proto_utils/utils.js';
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
-import * as IconInputs from '../core/components/icon_inputs.js';
+
+import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs';
+import * as ConsumablesInputs from '../core/components/inputs/consumables.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
 import * as WarlockInputs from './inputs.js';
 import * as Presets from './presets.js';
-import { WarlockRune } from '../core/proto/warlock.js';
 
 const SPEC_CONFIG = registerSpecConfig(Spec.SpecTankWarlock, {
 	cssClass: 'tank-warlock-sim-ui',
@@ -119,11 +118,14 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecTankWarlock, {
 
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
-		IconInputs.MP5Buff,
+		BuffDebuffInputs.BlessingOfWisdom,
+		BuffDebuffInputs.ManaSpringTotem,
+		BuffDebuffInputs.JudgementOfWisdom,
 	],
 	excludeBuffDebuffInputs: [
-		IconInputs.FrostDamageBuff,
-		IconInputs.BleedDebuff,
+		BuffDebuffInputs.BleedDebuff,
+		BuffDebuffInputs.SpellWintersChillDebuff,
+		...ConsumablesInputs.FROST_POWER_CONFIG,
 	],
 	petConsumeInputs: [
 	],

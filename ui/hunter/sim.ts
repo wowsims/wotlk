@@ -29,7 +29,7 @@ import {
 	Hunter_Rotation_RotationType,
 } from '../core/proto/hunter.js';
 
-import * as IconInputs from '../core/components/icon_inputs.js';
+import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs';
 import * as OtherInputs from '../core/components/other_inputs.js';
 import * as Mechanics from '../core/constants/mechanics.js';
 import * as AplUtils from '../core/proto_utils/apl_utils.js';
@@ -155,7 +155,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHunter, {
 	],
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
-		IconInputs.StaminaBuff,
+		BuffDebuffInputs.StaminaBuff,
 	],
 	excludeBuffDebuffInputs: [
 	],

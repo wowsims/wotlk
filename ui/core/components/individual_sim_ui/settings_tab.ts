@@ -1,4 +1,6 @@
-import { IndividualSimUI, InputSection, StatOption } from "../../individual_sim_ui";
+import { Encounter } from '../../encounter';
+import { IndividualSimUI, InputSection } from "../../individual_sim_ui";
+import { aplLaunchStatuses, LaunchStatus } from '../../launched_sims';
 import {
 	Consumes,
 	Cooldowns,
@@ -9,39 +11,35 @@ import {
 	PartyBuffs,
 	Profession,
 	RaidBuffs,
-	SaygesFortune,
 	Spec,
-	Stat
 } from "../../proto/common";
 import { professionNames, raceNames } from "../../proto_utils/names";
 import { specToEligibleRaces } from "../../proto_utils/utils";
-import { Encounter } from '../../encounter';
+import { Player } from "../../player";
 import { SavedEncounter, SavedSettings } from "../../proto/ui";
 import { EventID, TypedEvent } from "../../typed_event";
 import { getEnumValues } from "../../utils";
-import { Player } from "../../player";
-import { aplLaunchStatuses, LaunchStatus } from '../../launched_sims';
 
+import { BooleanPicker } from "../boolean_picker";
 import { ContentBlock } from "../content_block";
-import { EncounterPicker } from '../encounter_picker.js';
+import { EncounterPicker } from '../encounter_picker';
+import { EnumPicker } from "../enum_picker";
+import { IconEnumPicker } from "../icon_enum_picker";
+import { Input } from "../input";
+import { relevantStatOptions } from "../inputs/stat_options";
+import { ItemSwapPicker } from "../item_swap_picker";
+import { MultiIconPicker, MultiIconPickerItemConfig } from "../multi_icon_picker";
+import { NumberPicker } from "../number_picker";
 import { SavedDataManager } from "../saved_data_manager";
 import { SimTab } from "../sim_tab";
-import { NumberPicker } from "../number_picker";
-import { BooleanPicker } from "../boolean_picker";
-import { EnumPicker } from "../enum_picker";
-import { Input } from "../input";
-import { MultiIconPicker } from "../multi_icon_picker";
-import { IconPickerConfig } from "../icon_picker";
-import { TypedIconPickerConfig } from "../input_helpers";
 
 import { CustomRotationPicker } from "./custom_rotation_picker";
 import { CooldownsPicker } from "./cooldowns_picker";
 import { ConsumesPicker } from "./consumes_picker";
 
-import * as IconInputs from '../icon_inputs.js';
-import * as Tooltips from '../../constants/tooltips.js';
-import { ItemSwapPicker } from "../item_swap_picker";
-import { IconEnumPicker } from "../icon_enum_picker";
+import * as Tooltips from '../../constants/tooltips';
+import * as IconInputs from '../icon_inputs';
+import * as BuffDebuffInputs from '../inputs/buffs_debuffs';
 
 export class SettingsTab extends SimTab {
 	protected simUI: IndividualSimUI<Spec>;
@@ -228,7 +226,7 @@ export class SettingsTab extends SimTab {
 			header: { title: 'Consumables' }
 		});
 
-		new ConsumesPicker(contentBlock.bodyElement, this, this.simUI);
+		new ConsumesPicker(contentBlock.bodyElement, this.simUI);
 	}
 
 	private buildCooldownSettings() {
@@ -247,19 +245,19 @@ export class SettingsTab extends SimTab {
 		)
 
 		const swapSlots = this.simUI.individualConfig.itemSwapSlots || [];
-		if (settings.length > 0 || swapSlots.length > 0) {
+		if (settings.length || swapSlots.length) {
 			const contentBlock = new ContentBlock(this.column2, 'other-settings', {
 				header: { title: 'Other' }
 			});
 
-			if (settings.length > 0) {
+			if (settings.length) {
 				this.configureInputSection(contentBlock.bodyElement, this.simUI.individualConfig.otherInputs);
 				contentBlock.bodyElement.querySelectorAll('.input-root').forEach(elem => {
 					elem.classList.add('input-inline');
 				})
 			}
 
-			if (swapSlots.length > 0) {
+			if (swapSlots.length) {
 				const _itemSwapPicker = new ItemSwapPicker(contentBlock.bodyElement, this.simUI, this.simUI.player, {
 					itemSlots: swapSlots,
 				});
@@ -268,106 +266,32 @@ export class SettingsTab extends SimTab {
 	}
 
 	private buildBuffsSettings() {
+		const buffOptions = relevantStatOptions(BuffDebuffInputs.RAID_BUFFS_CONFIG, this.simUI);
+
 		const contentBlock = new ContentBlock(this.column3, 'buffs-settings', {
 			header: { title: 'Raid Buffs', tooltip: Tooltips.BUFFS_SECTION }
 		});
 
-		const buffOptions = this.simUI.splitRelevantOptions([
-			{ item: IconInputs.AllStatsBuff, stats: [] },
-			{ item: IconInputs.AllStatsPercentBuff, stats: [] },
-			{ item: IconInputs.ArmorBuff, stats: [Stat.StatArmor] },
-			{ item: IconInputs.StaminaBuff, stats: [Stat.StatStamina] },
-			{ item: IconInputs.StrengthRaidBuff, stats: [Stat.StatStrength] },
-			{ item: IconInputs.AgilityRaidBuff, stats: [Stat.StatAgility] },
-			{ item: IconInputs.IntellectBuff, stats: [Stat.StatIntellect] },
-			{ item: IconInputs.SpiritBuff, stats: [Stat.StatSpirit] },
-			{ item: IconInputs.BattleShoutBuff, stats: [Stat.StatAttackPower] },
-			{ item: IconInputs.BlessingOfMightBuff, stats: [Stat.StatAttackPower] },
-			{ item: IconInputs.TrueshotAuraBuff, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
-			{ item: IconInputs.AttackPowerPercentBuff, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
-			{ item: IconInputs.MeleeCritBuff, stats: [Stat.StatMeleeCrit] },
-			{ item: IconInputs.SpellIncreaseBuff, stats: [Stat.StatSpellPower] },
-			{ item: IconInputs.SpellCritBuff, stats: [Stat.StatSpellCrit] },
-			{ item: IconInputs.ResistanceBuff, stats: [Stat.StatNatureResistance, Stat.StatShadowResistance, Stat.StatFrostResistance] },
-			{ item: IconInputs.DefensiveCooldownBuff, stats: [Stat.StatArmor] },
-			{ item: IconInputs.MP5Buff, stats: [Stat.StatMP5] },
-		]);
-
 		this.configureIconSection(
 			contentBlock.bodyElement,
-			buffOptions.map(multiIconInput => new MultiIconPicker(contentBlock.bodyElement, this.simUI.player, multiIconInput, this.simUI))
+			buffOptions.map(options => options.picker && new options.picker(contentBlock.bodyElement, this.simUI.player, options.config as any, this.simUI)),
 		);
-
-		const miscBuffOptions = this.simUI.splitRelevantOptions([
-			{ item: IconInputs.Thorns, stats: [Stat.StatArmor] },
-			{ item: IconInputs.RetributionAura, stats: [Stat.StatArmor] },
-			{ item: IconInputs.Innervate, stats: [Stat.StatMP5] },
-			{ item: IconInputs.PowerInfusion, stats: [Stat.StatMP5, Stat.StatSpellPower] },
-		] as Array<StatOption<IconPickerConfig<Player<any>, any>>>);
-		if (miscBuffOptions.length > 0) {
-			new MultiIconPicker(contentBlock.bodyElement, this.simUI.player, {
-				inputs: miscBuffOptions,
-				numColumns: 3,
-				label: 'Misc',
-			}, this.simUI);
-		}
 	}
 
 	private buildWorldBuffsSettings() {
+		const worldBuffOptions = relevantStatOptions(BuffDebuffInputs.WORLD_BUFFS_CONFIG, this.simUI);
+
 		const contentBlock = new ContentBlock(this.column3, 'world-buffs-settings', {
 			header: { title: 'World Buffs', tooltip: Tooltips.WORLD_BUFFS_SECTION }
 		});
 
-		const worldBuffOptions = this.simUI.splitRelevantOptions([
-			{
-				item: IconInputs.BoonOfBlackfathom,
-				stats: [
-					Stat.StatMeleeCrit,
-					// TODO: Stat.StatRangedCrit,
-					Stat.StatSpellCrit,
-					Stat.StatAttackPower
-				]
-			},
-			{ item: IconInputs.AshenvaleRallyingCry, stats: [Stat.StatAttackPower, Stat.StatSpellPower] },
-			{ item: IconInputs.FengusFerocity, stats: [Stat.StatAttackPower] },
-			{ item: IconInputs.MoldarsMoxie, stats: [Stat.StatStamina] },
-			{
-				item: IconInputs.RallyingCryOfTheDragonslayer,
-				stats: [
-					Stat.StatMeleeCrit,
-					// TODO: Stat.StatRangedCrit,
-					Stat.StatSpellCrit,
-					Stat.StatAttackPower,
-				]
-			},
-			{
-				item: IconInputs.SongflowerSerenade,
-				stats: [
-					Stat.StatMeleeCrit,
-					// TODO: Stat.StatRangedCrit,
-					Stat.StatSpellCrit,
-					// TODO: How to also apply to all stats?
-				]
-			},
-			{ item: IconInputs.SpiritOfZandalar, stats: [] },
-			{
-				item: IconInputs.WarchiefsBlessing,
-				stats: [
-					Stat.StatHealth,
-					Stat.StatMeleeHaste,
-					Stat.StatMP5,
-				]
-			},
-		]);
-
-		const worldBuffPickers = worldBuffOptions.map(iconInput => IconInputs.buildIconInput(contentBlock.bodyElement, this.simUI.player, iconInput));
-
 		this.configureIconSection(
 			contentBlock.bodyElement,
-			worldBuffPickers,
+			worldBuffOptions.map(options => options.picker && new options.picker(contentBlock.bodyElement, this.simUI.player, options.config as any, this.simUI)),
 		);
 
-		new IconEnumPicker<Player<Spec>, SaygesFortune>(contentBlock.bodyElement, this.simUI.player, IconInputs.SaygesDarkFortune);
+		const saygesOptions = relevantStatOptions(BuffDebuffInputs.SAYGES_CONFIG, this.simUI);
+		new IconEnumPicker(contentBlock.bodyElement, this.simUI.player, BuffDebuffInputs.SaygesDarkFortune(saygesOptions));
 	}
 
 	private buildDebuffsSettings() {
@@ -375,43 +299,17 @@ export class SettingsTab extends SimTab {
 			header: { title: 'Debuffs', tooltip: Tooltips.DEBUFFS_SECTION }
 		});
 
-		const debuffOptions = this.simUI.splitRelevantOptions([
-			{ item: IconInputs.MajorArmorDebuff, stats: [Stat.StatAttackPower] },
-			{ item: IconInputs.CurseOfRecklessness, stats: [Stat.StatAttackPower] },
-			{ item: IconInputs.FaerieFire, stats: [Stat.StatAttackPower] },
-			//{ item: IconInputs.MinorArmorDebuff, stats: [Stat.StatArmorPenetration] },
-			{ item: IconInputs.BleedDebuff, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
-			{ item: IconInputs.SpellISBDebuff, stats: [Stat.StatShadowPower] },
-			{ item: IconInputs.SpellScorchDebuff, stats: [Stat.StatFirePower] },
-			{ item: IconInputs.SpellWintersChillDebuff, stats: [Stat.StatFrostPower] },
-			{ item: IconInputs.AttackPowerDebuff, stats: [Stat.StatArmor] },
-			{ item: IconInputs.MeleeAttackSpeedDebuff, stats: [Stat.StatArmor] },
-			{ item: IconInputs.MeleeHitDebuff, stats: [Stat.StatDodge] },
-		]);
-
+		const debuffOptions = relevantStatOptions(BuffDebuffInputs.DEBUFFS_CONFIG, this.simUI);
 		this.configureIconSection(
 			contentBlock.bodyElement,
-			debuffOptions.map(multiIconInput => new MultiIconPicker(contentBlock.bodyElement, this.simUI.player, multiIconInput, this.simUI))
+			debuffOptions.map(options => options.picker && new options.picker(contentBlock.bodyElement, this.simUI.player, options.config as any, this.simUI))
 		);
 
-		const otherDebuffOptions = this.simUI.splitRelevantOptions([
-			{ item: IconInputs.JudgementOfWisdom, stats: [Stat.StatMP5, Stat.StatIntellect] },
-			{ item: IconInputs.HuntersMark, stats: [Stat.StatRangedAttackPower] },
-		] as Array<StatOption<TypedIconPickerConfig<Player<any>, any>>>);
-		otherDebuffOptions.forEach(iconInput => IconInputs.buildIconInput(contentBlock.bodyElement, this.simUI.player, iconInput));
-
-		const miscDebuffOptions = this.simUI.splitRelevantOptions([
-			{ item: IconInputs.JudgementOfLight, stats: [Stat.StatStamina] },
-			{ item: IconInputs.CurseOfVulnerability, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
-			{ item: IconInputs.GiftOfArthas, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
-			{ item: IconInputs.AncientCorrosivePoison, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
-			{ item: IconInputs.CrystalYield, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
-		] as Array<StatOption<IconPickerConfig<Player<any>, any>>>);
-		if (miscDebuffOptions.length > 0) {
+		const miscDebuffOptions = relevantStatOptions(BuffDebuffInputs.DEBUFFS_MISC_CONFIG, this.simUI) 
+		if (miscDebuffOptions.length) {
 			new MultiIconPicker(contentBlock.bodyElement, this.simUI.player, {
-				inputs: miscDebuffOptions,
-				numColumns: 3,
-				label: 'Misc',
+				inputs: miscDebuffOptions.map(options => options.config) as Array<MultiIconPickerItemConfig<Player<Spec>>>,
+				label: 'Misc Debuffs',
 			}, this.simUI);
 		}
 	}

@@ -7,6 +7,11 @@ import { Input, InputConfig } from './input.js';
 // eslint-disable-next-line unused-imports/no-unused-imports
 import { element, fragment } from 'tsx-vanilla';
 
+export enum IconEnumPickerDirection {
+	Vertical = 'vertical',
+	Horizontal = 'Horizontal',
+}
+
 export interface IconEnumValueConfig<ModObject, T> {
 	value: T,
 	// One of these should be set.
@@ -25,7 +30,7 @@ export interface IconEnumValueConfig<ModObject, T> {
 }
 
 export interface IconEnumPickerConfig<ModObject, T> extends InputConfig<ModObject, T> {
-	numColumns: number,
+	numColumns?: number,
 	values: Array<IconEnumValueConfig<ModObject, T>>;
 	// Value that will be considered inactive.
 	zeroValue: T,
@@ -33,7 +38,7 @@ export interface IconEnumPickerConfig<ModObject, T> extends InputConfig<ModObjec
 	// Tooltip that will be shown whne hovering over the icon-picker-button
 	tooltip?: string,
 	// The direction the menu will open in relative to the root element
-	direction?: string,
+	direction?: IconEnumPickerDirection,
 	equals: (a: T, b: T) => boolean,
 	backupIconUrl?: (value: T) => ActionId,
 	showWhen?: (obj: ModObject) => boolean,
@@ -95,7 +100,11 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 		this.buttonText = this.rootElem.querySelector('label') as HTMLElement;
 		const dropdownMenu = this.rootElem.querySelector('.dropdown-menu') as HTMLElement;
 
-		dropdownMenu.style.gridTemplateColumns = `repeat(${this.config.numColumns}, 1fr)`;
+		if (this.config.numColumns)
+			dropdownMenu.style.gridTemplateColumns = `repeat(${this.config.numColumns}, 1fr)`;
+		
+		if (this.config.direction == IconEnumPickerDirection.Horizontal)
+			dropdownMenu.style.gridAutoFlow = 'column';
 
 		config.values.forEach((valueConfig, _) => {
 			const optionContainer = document.createElement('li');
@@ -114,6 +123,9 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 					title: valueConfig.tooltip
 				});
 			}
+
+			const show = !valueConfig.showWhen || valueConfig.showWhen(this.modObject);
+			if (!show) optionContainer.classList.add('hide')
 
 			if (valueConfig.showWhen) {
 				config.changedEvent(this.modObject).on(_ => {

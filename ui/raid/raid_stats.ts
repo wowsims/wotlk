@@ -681,7 +681,7 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 					effects: [
 						{
 							label: 'Insect Swarm',
-							actionId: ActionId.fromSpellId(65855),
+							actionId: ActionId.fromSpellId(24977),
 							playerData: playerSpecAndTalent(Spec.SpecBalanceDruid, 'insectSwarm'),
 						},
 						{

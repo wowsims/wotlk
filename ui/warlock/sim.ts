@@ -15,7 +15,9 @@ import { Stats } from '../core/proto_utils/stats.js';
 import { Player } from '../core/player.js';
 import { getSpecIcon } from '../core/proto_utils/utils.js';
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
-import * as IconInputs from '../core/components/icon_inputs.js';
+
+import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs';
+import * as ConsumablesInputs from '../core/components/inputs/consumables.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
 import * as WarlockInputs from './inputs.js';
 import * as Presets from './presets.js';
@@ -36,6 +38,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 		Stat.StatSpellHit,
 		Stat.StatSpellCrit,
 		Stat.StatSpellHaste,
+		Stat.StatMP5,
 		Stat.StatFirePower,
 		Stat.StatShadowPower,
 		Stat.StatSpellPenetration,
@@ -112,16 +115,20 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
-		IconInputs.MP5Buff,
+		BuffDebuffInputs.BlessingOfWisdom,
+		BuffDebuffInputs.ManaSpringTotem,
+		BuffDebuffInputs.StaminaBuff,
+		BuffDebuffInputs.JudgementOfWisdom,
 	],
 	excludeBuffDebuffInputs: [
-		IconInputs.FrostDamageBuff,
-		IconInputs.BleedDebuff,
-		IconInputs.StaminaBuff,
-		IconInputs.ArmorBuff,
-		IconInputs.DefensiveCooldownBuff,
-		IconInputs.AttackPowerDebuff,
-		IconInputs.MeleeAttackSpeedDebuff,
+		BuffDebuffInputs.ArmorBuff,
+		BuffDebuffInputs.AttackPowerDebuff,
+		BuffDebuffInputs.BleedDebuff,
+		BuffDebuffInputs.DefensiveCooldownBuff,
+		BuffDebuffInputs.MeleeAttackSpeedDebuff,
+		BuffDebuffInputs.StaminaBuff,
+		BuffDebuffInputs.SpellWintersChillDebuff,
+		...ConsumablesInputs.FROST_POWER_CONFIG,
 	],
 	petConsumeInputs: [
 	],

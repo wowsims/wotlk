@@ -1,3 +1,12 @@
+import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
+import { Player } from '../core/player.js';
+import {
+	APLAction,
+	APLPrepullAction,
+	APLListItem,
+	APLRotation,
+	APLRotation_Type as APLRotationType,
+} from '../core/proto/apl.js';
 import {
 	Class,
 	Cooldowns,
@@ -6,40 +15,25 @@ import {
 	IndividualBuffs,
 	ItemSlot,
 	PartyBuffs,
-	PseudoStat,
 	Race,
 	RaidBuffs,
 	Spec,
 	Stat,
-        TristateEffect,
-    	WeaponImbue,
+  TristateEffect,
+  WeaponImbue,
 	SaygesFortune
 } from '../core/proto/common.js';
-
-import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
+import { FeralDruid_Rotation as DruidRotation } from '../core/proto/druid.js';
 import { Gear } from '../core/proto_utils/gear.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import { getSpecIcon, specNames } from '../core/proto_utils/utils.js';
 import { TypedEvent } from '../core/typed_event.js';
-import { Player } from '../core/player.js';
 
-import {
-	FeralDruid_Rotation as DruidRotation,
-} from '../core/proto/druid.js';
-
-import * as IconInputs from '../core/components/icon_inputs.js';
+import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs';
 import * as OtherInputs from '../core/components/other_inputs.js';
 import * as AplUtils from '../core/proto_utils/apl_utils.js';
-
 import * as DruidInputs from './inputs.js';
 import * as Presets from './presets.js';
-import {
-	APLAction,
-	APLPrepullAction,
-	APLListItem,
-	APLRotation,
-	APLRotation_Type as APLRotationType,
-} from '../core/proto/apl.js';
 
 const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 	cssClass: 'feral-druid-sim-ui',
@@ -151,15 +145,16 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 	rotationInputs: DruidInputs.FeralDruidRotationConfig,
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
-		IconInputs.IntellectBuff,
-		IconInputs.MP5Buff,
-		IconInputs.JudgementOfWisdom,
+		BuffDebuffInputs.IntellectBuff,
+		BuffDebuffInputs.BlessingOfWisdom,
+		BuffDebuffInputs.ManaSpringTotem,
+		BuffDebuffInputs.JudgementOfWisdom,
 	],
-        excludeBuffDebuffInputs: [
-	    WeaponImbue.ElementalSharpeningStone,
-	    WeaponImbue.DenseSharpeningStone,
-	    WeaponImbue.WildStrikes,
-	    IconInputs.BleedDebuff,
+  excludeBuffDebuffInputs: [
+		WeaponImbue.ElementalSharpeningStone,
+		WeaponImbue.DenseSharpeningStone,
+		WeaponImbue.WildStrikes,
+		BuffDebuffInputs.BleedDebuff,
 	],
 	// Inputs to include in the 'Other' section on the settings tab.
 	otherInputs: {
