@@ -52,10 +52,6 @@ func NewEnhancementShaman(character *core.Character, options *proto.Player) *Enh
 
 	enh.ApplySyncType(enhOptions.Options.SyncType)
 
-	if enh.Totems.UseFireElemental && enhOptions.Rotation.EnableItemSwap {
-		enh.EnableItemSwap(enhOptions.Rotation.ItemSwap, enh.DefaultMeleeCritMultiplier(), enh.DefaultMeleeCritMultiplier(), 0)
-	}
-
 	if !enh.HasMHWeapon() {
 		enh.SelfBuffs.ImbueMH = proto.ShamanImbue_NoImbue
 	}
@@ -113,7 +109,6 @@ func (enh *EnhancementShaman) Initialize() {
 
 func (enh *EnhancementShaman) Reset(sim *core.Simulation) {
 	enh.Shaman.Reset(sim)
-	enh.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand, proto.ItemSlot_ItemSlotOffHand}, false)
 }
 
 func (enh *EnhancementShaman) AutoSyncWeapons() proto.ShamanSyncType {
