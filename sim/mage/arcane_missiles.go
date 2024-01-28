@@ -49,7 +49,6 @@ func (mage *Mage) getArcaneMissilesSpellConfig(rank int) core.SpellConfig {
 	level := [9]int{0, 8, 16, 24, 32, 40, 48, 56, 56}[rank]
 
 	tickLength := time.Second
-	channelTime := tickLength * time.Duration(numTicks)
 	tickSpell := mage.getArcaneMissilesTickSpell(rank, numTicks, baseDotDamage)
 
 	return core.SpellConfig{
@@ -63,8 +62,7 @@ func (mage *Mage) getArcaneMissilesSpellConfig(rank int) core.SpellConfig {
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD:         core.GCDDefault,
-				ChannelTime: channelTime,
+				GCD: core.GCDDefault,
 			},
 		},
 

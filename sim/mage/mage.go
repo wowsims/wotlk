@@ -33,9 +33,8 @@ func RegisterMage() {
 type Mage struct {
 	core.Character
 
-	Talents  *proto.MageTalents
-	Options  *proto.Mage_Options
-	Rotation *proto.Mage_Rotation
+	Talents *proto.MageTalents
+	Options *proto.Mage_Options
 
 	ArcaneBlast             *core.Spell
 	ArcaneExplosion         *core.Spell

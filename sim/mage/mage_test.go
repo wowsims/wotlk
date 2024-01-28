@@ -101,7 +101,6 @@ func init() {
 // 		Options: &proto.Mage_Options{
 // 			Armor: proto.Mage_Options_MageArmor,
 // 		},
-// 		Rotation: &proto.Mage_Rotation{},
 // 	},
 // }
 
@@ -110,7 +109,6 @@ func init() {
 // 		Options: &proto.Mage_Options{
 // 			Armor: proto.Mage_Options_MageArmor,
 // 		},
-// 		Rotation: &proto.Mage_Rotation{},
 // 	},
 // }
 
@@ -119,7 +117,6 @@ func init() {
 // 		Options: &proto.Mage_Options{
 // 			Armor: proto.Mage_Options_MageArmor,
 // 		},
-// 		Rotation: &proto.Mage_Rotation{},
 // 	},
 // }
 
