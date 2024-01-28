@@ -43,9 +43,9 @@ func NewFeralDruid(character *core.Character, options *proto.Player) *FeralDruid
 	cat.maxRipTicks = 6
 	//cat.setupRotation(feralOptions.Rotation)
 
-	cat.EnableEnergyBar(100.0, cat.OnGCDReady)
+	cat.EnableEnergyBar(100.0)
 
-	cat.EnableRageBar(core.RageBarOptions{RageMultiplier: 1, MHSwingSpeed: 2.5}, func(sim *core.Simulation) {})
+	cat.EnableRageBar(core.RageBarOptions{RageMultiplier: 1, MHSwingSpeed: 2.5})
 
 	cat.EnableAutoAttacks(cat, core.AutoAttackOptions{
 		// Base paw weapon.
@@ -91,10 +91,6 @@ func (cat *FeralDruid) MissChance() float64 {
 func (cat *FeralDruid) Initialize() {
 	cat.Druid.Initialize()
 	cat.RegisterFeralCatSpells()
-
-	if cat.IsUsingAPL {
-		return
-	}
 }
 
 func (cat *FeralDruid) Reset(sim *core.Simulation) {

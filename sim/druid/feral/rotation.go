@@ -43,7 +43,6 @@ func (cat *FeralDruid) OnGCDReady(sim *core.Simulation) {
 	// Replace gcd event with our own if we casted a spell
 	if !cat.GCD.IsReady(sim) {
 		nextGcd := cat.NextGCDAt()
-		cat.DoNothing()
 		cat.CancelGCDTimer(sim)
 
 		cat.NextRotationAction(sim, nextGcd)
