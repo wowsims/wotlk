@@ -18,9 +18,6 @@ var castersWithElemental = &proto.Party{
 			Equipment: MoonkinEquipment,
 			Spec: &proto.Player_BalanceDruid{
 				BalanceDruid: &proto.BalanceDruid{
-					Rotation: &proto.BalanceDruid_Rotation{
-						Type: proto.BalanceDruid_Rotation_Default,
-					},
 					Options: &proto.BalanceDruid_Options{
 						InnervateTarget: &proto.UnitReference{},
 					},
@@ -39,9 +36,6 @@ var castersWithElemental = &proto.Party{
 			Equipment: ShadowEquipment,
 			Spec: &proto.Player_ShadowPriest{
 				ShadowPriest: &proto.ShadowPriest{
-					Rotation: &proto.ShadowPriest_Rotation{
-						RotationType: proto.ShadowPriest_Rotation_Ideal,
-					},
 					Options: &proto.ShadowPriest_Options{
 						UseShadowfiend: true,
 					},
@@ -60,12 +54,8 @@ var castersWithElemental = &proto.Party{
 			Equipment: ElementalEquipment,
 			Spec: &proto.Player_ElementalShaman{
 				ElementalShaman: &proto.ElementalShaman{
-					Rotation: &proto.ElementalShaman_Rotation{
-						Type: proto.ElementalShaman_Rotation_Adaptive,
-					},
 					Options: &proto.ElementalShaman_Options{
-						Shield:    proto.ShamanShield_WaterShield,
-						Bloodlust: true,
+						Shield: proto.ShamanShield_WaterShield,
 						Totems: &proto.ShamanTotems{
 							Earth: proto.EarthTotem_TremorTotem,
 							Air:   proto.AirTotem_WrathOfAirTotem,
@@ -91,7 +81,6 @@ var castersWithElemental = &proto.Party{
 					Options: &proto.Mage_Options{
 						Armor: proto.Mage_Options_MageArmor,
 					},
-					Rotation: &proto.Mage_Rotation{},
 				},
 			},
 			Consumes: &proto.Consumes{},
@@ -114,9 +103,6 @@ var castersWithResto = &proto.Party{
 			Equipment: MoonkinEquipment,
 			Spec: &proto.Player_BalanceDruid{
 				BalanceDruid: &proto.BalanceDruid{
-					Rotation: &proto.BalanceDruid_Rotation{
-						Type: proto.BalanceDruid_Rotation_Default,
-					},
 					Options: &proto.BalanceDruid_Options{
 						InnervateTarget: &proto.UnitReference{
 							Type:  proto.UnitReference_Player,
@@ -138,9 +124,6 @@ var castersWithResto = &proto.Party{
 			Equipment: ShadowEquipment,
 			Spec: &proto.Player_ShadowPriest{
 				ShadowPriest: &proto.ShadowPriest{
-					Rotation: &proto.ShadowPriest_Rotation{
-						RotationType: proto.ShadowPriest_Rotation_Ideal,
-					},
 					Options: &proto.ShadowPriest_Options{
 						UseShadowfiend: true,
 					},
@@ -162,7 +145,6 @@ var castersWithResto = &proto.Party{
 					Options: &proto.Mage_Options{
 						Armor: proto.Mage_Options_MageArmor,
 					},
-					Rotation: &proto.Mage_Rotation{},
 				},
 			},
 			Consumes: &proto.Consumes{},
@@ -192,7 +174,6 @@ func BenchmarkSimulate(b *testing.B) {
 							Equipment: EnhancementEquipment,
 							Spec: &proto.Player_EnhancementShaman{
 								EnhancementShaman: &proto.EnhancementShaman{
-									Rotation: &proto.EnhancementShaman_Rotation{},
 									Options: &proto.EnhancementShaman_Options{
 										Shield:    proto.ShamanShield_LightningShield,
 										Bloodlust: true,
