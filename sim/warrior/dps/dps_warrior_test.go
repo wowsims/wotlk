@@ -113,15 +113,14 @@ var PlayerOptionsFury = &proto.Player_Warrior{
 }
 
 var warriorOptions = &proto.Warrior_Options{
-	StartingRage:       50,
-	UseRecklessness:    true,
-	UseShatteringThrow: true,
-	Shout:              proto.WarriorShout_WarriorShoutBattle,
+	StartingRage:    50,
+	UseRecklessness: true,
+	Shout:           proto.WarriorShout_WarriorShoutBattle,
 }
 
 var FullConsumes = &proto.Consumes{
-	Flask:         proto.Flask_FlaskOfEndlessRage,
-	DefaultPotion: proto.Potions_PotionOfSpeed,
-	PrepopPotion:  proto.Potions_PotionOfSpeed,
-	Food:          proto.Food_FoodFishFeast,
+	// Flask:         proto.Flask_FlaskOfEndlessRage,
+	// DefaultPotion: proto.Potions_PotionOfSpeed,
+	// PrepopPotion:  proto.Potions_PotionOfSpeed,
+	// Food:          proto.Food_FoodFishFeast,
 }

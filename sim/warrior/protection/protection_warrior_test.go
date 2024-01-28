@@ -84,8 +84,7 @@ var DefaultTalents = "2500030023-302-053351225000012521030113321"
 
 var PlayerOptionsBasic = &proto.Player_ProtectionWarrior{
 	ProtectionWarrior: &proto.ProtectionWarrior{
-		Options:  warriorOptions,
-		Rotation: &proto.ProtectionWarrior_Rotation{},
+		Options: warriorOptions,
 	},
 }
 
@@ -95,6 +94,6 @@ var warriorOptions = &proto.ProtectionWarrior_Options{
 }
 
 var FullConsumes = &proto.Consumes{
-	BattleElixir:   proto.BattleElixir_ElixirOfMastery,
-	GuardianElixir: proto.GuardianElixir_GiftOfArthas,
+	// BattleElixir:   proto.BattleElixir_ElixirOfMastery,
+	// GuardianElixir: proto.GuardianElixir_GiftOfArthas,
 }

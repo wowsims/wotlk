@@ -1,9 +1,6 @@
 package dps
 
 import (
-	"time"
-
-	"github.com/wowsims/sod/sim/common"
 	"github.com/wowsims/sod/sim/core"
 	"github.com/wowsims/sod/sim/core/proto"
 	"github.com/wowsims/sod/sim/warrior"
@@ -29,19 +26,7 @@ func RegisterDpsWarrior() {
 type DpsWarrior struct {
 	*warrior.Warrior
 
-	Options        *proto.Warrior_Options
-	Rotation       *proto.Warrior_Rotation
-	CustomRotation *common.CustomRotation
-
-	// Prevent swapping stances until this time, to account for human reaction time.
-	canSwapStanceAt time.Duration
-	// Last time sunder was applied. Used for maintaining sunder even if sunder is enabled as debuff in individual sim
-	lastSunderAt time.Duration
-
-	maintainSunder  bool
-	thunderClapNext bool
-
-	castSlamAt time.Duration
+	Options *proto.Warrior_Options
 }
 
 func NewDpsWarrior(character *core.Character, options *proto.Player) *DpsWarrior {
@@ -49,10 +34,9 @@ func NewDpsWarrior(character *core.Character, options *proto.Player) *DpsWarrior
 
 	war := &DpsWarrior{
 		Warrior: warrior.NewWarrior(character, options.TalentsString, warrior.WarriorInputs{
-			ShoutType: warOptions.Options.Shout,
+			StanceSnapshot: warOptions.Options.StanceSnapshot,
 		}),
-		Rotation: warOptions.Rotation,
-		Options:  warOptions.Options,
+		Options: warOptions.Options,
 	}
 
 	rbo := core.RageBarOptions{
@@ -66,7 +50,7 @@ func NewDpsWarrior(character *core.Character, options *proto.Player) *DpsWarrior
 		rbo.OHSwingSpeed = oh.SwingSpeed
 	}
 
-	war.EnableRageBar(rbo, func(sim *core.Simulation) {})
+	war.EnableRageBar(rbo)
 	war.EnableAutoAttacks(war, core.AutoAttackOptions{
 		MainHand:       war.WeaponFromMainHand(war.DefaultMeleeCritMultiplier()),
 		OffHand:        war.WeaponFromOffHand(war.DefaultMeleeCritMultiplier()),
@@ -88,51 +72,25 @@ func (war *DpsWarrior) GetWarrior() *warrior.Warrior {
 func (war *DpsWarrior) Initialize() {
 	war.Warrior.Initialize()
 
-	war.RegisterHSOrCleave(war.Rotation.UseCleave)
-	war.RegisterRendSpell()
-
 	if war.Options.UseRecklessness {
 		war.RegisterRecklessnessCD()
 	}
 
-	// This makes the behavior of these options more intuitive in the individual sim.
-	if war.Env.Raid.Size() == 1 {
-		if war.Rotation.SunderArmor == proto.Warrior_Rotation_SunderArmorHelpStack {
-			war.SunderArmorAuras.Get(war.CurrentTarget).Duration = core.NeverExpires
-		} else if war.Rotation.SunderArmor == proto.Warrior_Rotation_SunderArmorMaintain {
-			war.SunderArmorAuras.Get(war.CurrentTarget).Duration = time.Second * 30
-		}
-	}
-
-	if war.Rotation.StanceOption == proto.Warrior_Rotation_DefaultStance {
-		if war.Warrior.PrimaryTalentTree == warrior.FuryTree {
-			war.Rotation.StanceOption = proto.Warrior_Rotation_BerserkerStance
-		} else {
-			war.Rotation.StanceOption = proto.Warrior_Rotation_BattleStance
-		}
-	}
-
-	if war.Rotation.StanceOption == proto.Warrior_Rotation_BerserkerStance {
+	if war.PrimaryTalentTree == warrior.FuryTree {
 		war.BerserkerStanceAura.BuildPhase = core.CharacterBuildPhaseTalents
-	} else if war.Rotation.StanceOption == proto.Warrior_Rotation_BattleStance {
+	} else if war.PrimaryTalentTree == warrior.ArmsTree {
 		war.BattleStanceAura.BuildPhase = core.CharacterBuildPhaseTalents
 	}
-
-	war.DelayDPSCooldownsForArmorDebuffs(time.Second * 10)
 }
 
 func (war *DpsWarrior) Reset(sim *core.Simulation) {
-	if war.Rotation.StanceOption == proto.Warrior_Rotation_BerserkerStance {
+	if war.PrimaryTalentTree == warrior.FuryTree {
 		war.Warrior.Reset(sim)
 		war.BerserkerStanceAura.Activate(sim)
 		war.Stance = warrior.BerserkerStance
-	} else if war.Rotation.StanceOption == proto.Warrior_Rotation_BattleStance {
+	} else if war.PrimaryTalentTree == warrior.ArmsTree {
 		war.Warrior.Reset(sim)
 		war.BattleStanceAura.Activate(sim)
 		war.Stance = warrior.BattleStance
 	}
-	war.canSwapStanceAt = 0
-	war.maintainSunder = war.Rotation.SunderArmor != proto.Warrior_Rotation_SunderArmorNone
-	war.castSlamAt = 0
-	war.thunderClapNext = false
 }
