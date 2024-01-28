@@ -120,23 +120,7 @@ enum HunterRune {
 
 message Hunter {
 	message Rotation {
-		enum RotationType {
-			UnknownType = 0;
-			SingleTarget = 1;
-			Aoe = 2;
-			Custom = 3;
-		}
-		RotationType type = 1;
-
-		enum StingType {
-			NoSting = 0;
-			ScorpidSting = 1;
-			SerpentSting = 2;
-		}
-		StingType sting = 2;
-		bool multi_dot_serpent_sting = 3;
 	}
-	Rotation rotation = 1;
 	
 	message Options {
 		enum Ammo {

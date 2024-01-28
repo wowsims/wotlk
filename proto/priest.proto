@@ -72,23 +72,7 @@ enum PriestRune {
 
 message ShadowPriest {
 	message Rotation {
-		enum RotationType {
-			Unknown = 0;
-			Basic = 1;
-			Clipping = 2;
-			Ideal = 3;
-			AoE = 4;
-		}
-		enum PreCastOption {
-			Nothing = 0;
-			PrecastVt = 1;
-			PrecastMb = 2;
-		}
-		RotationType rotation_type = 1;
-		PreCastOption precast_type = 2;
-		double latency = 3 [deprecated = true]; // Latency between actions
 	}
-	Rotation rotation = 1;
 	
 	message Options {
 		enum Armor {
@@ -108,28 +92,7 @@ message ShadowPriest {
 
 message HealingPriest {
 	message Rotation {
-		enum RotationType {
-			UnknownType = 0;
-			Cycle = 1;
-			Custom = 2;
-		}
-		RotationType type = 1;
-
-		enum SpellOption {
-			NoSpell = 0;
-			GreaterHeal = 1;
-			FlashHeal = 2;
-			Renew = 3;
-			PowerWordShield = 4;
-			CircleOfHealing = 5;
-			PrayerOfHealing = 6;
-			PrayerOfMending = 7;
-			Penance = 8;
-			BindingHeal = 9;
-		}
-		CustomRotation custom_rotation = 2;
 	}
-	Rotation rotation = 1;
 	
 	message Options {
 		bool use_inner_fire = 3;

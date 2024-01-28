@@ -78,13 +78,7 @@ enum MageRune {
 
 message Mage {
 	message Rotation {
-		enum RotationType {
-			Unknown = 0;
-			Auto = 1;
-		}
-		RotationType rotation_type = 1;
 	}
-	Rotation rotation = 1;
 
 	message Options {
 		enum ArmorType {
