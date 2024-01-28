@@ -18,9 +18,6 @@ import (
 
 var basicSpec = &proto.Player_ElementalShaman{
 	ElementalShaman: &proto.ElementalShaman{
-		Rotation: &proto.ElementalShaman_Rotation{
-			Type: proto.ElementalShaman_Rotation_Adaptive,
-		},
 		Options: &proto.ElementalShaman_Options{
 			Shield: proto.ShamanShield_WaterShield,
 		},
