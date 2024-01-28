@@ -102,7 +102,7 @@ export class ConsumesPicker extends Component {
 		const imbuesElem = this.rootElem.querySelector('.consumes-weapon-imbues') as HTMLElement;
 
 		this.buildPickers({
-			changeEmitters: [this.simUI.player.levelChangeEmitter],
+			changeEmitters: [this.simUI.player.levelChangeEmitter, this.simUI.player.gearChangeEmitter],
 			containerElem: rowElem,
 			options: [
 				{
@@ -182,7 +182,7 @@ export class ConsumesPicker extends Component {
 					),
 				},
 				{
-					getConfig: () => ConsumablesInputs.BoglingRootDebuff,
+					getConfig: () => ConsumablesInputs.BoglingRootBuff,
 				},
 			],
 			parentElem: physicalConsumesElem,
@@ -300,7 +300,9 @@ export class ConsumesPicker extends Component {
 				if (config.type == 'icon') {
 					isShown = !config.showWhen || config.showWhen(this.simUI.player);
 				} else {
-					isShown = config.values.filter(value => !value.showWhen || value.showWhen(this.simUI.player)).length > 1;
+					isShown =
+						(!config.showWhen || config.showWhen(this.simUI.player)) &&
+						config.values.filter(value => !value.showWhen || value.showWhen(this.simUI.player)).length > 1;
 				}
 
 				if (isShown) buildIconInput(parentElem, this.simUI.player, config);

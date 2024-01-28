@@ -61,10 +61,10 @@ export const StaminaBuff = InputHelpers.makeMultiIconInput([
 ], 'Stamina');
 
 // Separate Strength buffs allow us to use boolean pickers for each
-export const StrengthBuffAlliance = InputHelpers.makeMultiIconInput([
+export const PaladinPhysicalBuff = InputHelpers.makeMultiIconInput([
 	makeTristateIndividualBuffInput({actionId: ActionId.fromSpellId(25291), impId: ActionId.fromSpellId(20048), fieldName: 'blessingOfMight', faction: Faction.Alliance}),
 	makeBooleanRaidBuffInput({actionId: ActionId.fromSpellId(425600), fieldName: 'hornOfLordaeron', faction: Faction.Alliance}),
-], 'Strength / Agility');
+], 'Paladin Physical');
 
 export const StrengthBuffHorde = withLabel(
 	makeTristateRaidBuffInput({actionId: ActionId.fromSpellId(25361), impId: ActionId.fromSpellId(16295), fieldName: 'strengthOfEarthTotem', faction: Faction.Horde}),
@@ -332,9 +332,9 @@ export const RAID_BUFFS_CONFIG = [
 		stats: [Stat.StatStamina]
 	},
 	{
-		config: StrengthBuffAlliance,
+		config: PaladinPhysicalBuff,
 		picker: MultiIconPicker,
-		stats: [Stat.StatStrength]
+		stats: [Stat.StatStrength, Stat.StatAgility, Stat.StatAttackPower, Stat.StatRangedAttackPower]
 	},
 	{
 		config: StrengthBuffHorde,

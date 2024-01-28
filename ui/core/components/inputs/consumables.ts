@@ -5,11 +5,11 @@ import {
 	Conjured,
 	Consumes,
 	Explosive,
-	Faction,
 	FirePowerBuff,
 	Flask,
 	Food,
 	FrostPowerBuff,
+	ItemSlot,
 	Potions,
 	ShadowPowerBuff,
 	SpellPowerBuff,
@@ -37,10 +37,8 @@ export interface ConsumableStatOption<T> extends ItemStatOption<T> {
 export interface ConsumeInputFactoryArgs<T extends number> {
 	consumesFieldName: keyof Consumes,
 	// Additional callback if logic besides syncing consumes is required
-	onSet?: (eventactionId: EventID, p: Player<any>, newValue: T) => void
-	minLevel?: number,
-	maxLevel?: number,
-	faction?: Faction,
+	onSet?: (eventactionId: EventID, player: Player<any>, newValue: T) => void
+	showWhen?: (player: Player<any>) => boolean
 }
 
 function makeConsumeInputFactory<T extends number>(args: ConsumeInputFactoryArgs<T>): (options: ConsumableStatOption<T>[], tooltip?: string) => InputHelpers.TypedIconEnumPickerConfig<Player<any>, T> {
@@ -67,6 +65,7 @@ function makeConsumeInputFactory<T extends number>(args: ConsumeInputFactoryArgs
 			equals: (a: T, b: T) => a == b,
 			zeroValue: 0 as T,	
 			changedEvent: (player: Player<any>) => TypedEvent.onAny([player.consumesChangeEmitter, player.levelChangeEmitter, player.gearChangeEmitter]),
+			showWhen: (player: Player<any>) => !args.showWhen || args.showWhen(player),
 			getValue: (player: Player<any>) => player.getConsumes()[args.consumesFieldName] as T,
 			setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
 				const newConsumes = player.getConsumes();
@@ -200,7 +199,7 @@ export const STRENGTH_CONSUMES_CONFIG = [
 export const makeStrengthConsumeInput = makeConsumeInputFactory({consumesFieldName: 'strengthBuff'});
 
 // Other
-export const BoglingRootDebuff = makeBooleanConsumeInput({actionId: ActionId.fromItemId(5206), fieldName: 'boglingRoot'});
+export const BoglingRootBuff = makeBooleanConsumeInput({actionId: ActionId.fromItemId(5206), fieldName: 'boglingRoot'});
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 PET
@@ -293,5 +292,11 @@ export const WEAPON_IMBUES_MH_CONFIG = [
 	{ config: WildStrikes, stats: [Stat.StatMeleeHit] },
 ] as ConsumableStatOption<WeaponImbue>[];
 
-export const makeMainHandImbuesInput = makeConsumeInputFactory({consumesFieldName: 'mainHandImbue'});
-export const makeOffHandImbuesInput = makeConsumeInputFactory({consumesFieldName: 'offHandImbue'});
+export const makeMainHandImbuesInput = makeConsumeInputFactory({
+	consumesFieldName: 'mainHandImbue',
+	showWhen: (player) => !!player.getGear().getEquippedItem(ItemSlot.ItemSlotMainHand),
+});
+export const makeOffHandImbuesInput = makeConsumeInputFactory({
+	consumesFieldName: 'offHandImbue',
+	showWhen: (player) => !!player.getGear().getEquippedItem(ItemSlot.ItemSlotOffHand),
+});
