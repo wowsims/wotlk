@@ -116,47 +116,27 @@ func (hp *HunterPet) OnGCDReady(sim *core.Simulation) {
 	if hp.hasOwnerCooldown && hp.CurrentFocus() < 50 {
 		// When a major ability (Furious Howl or Savage Rend) is ready, pool enough
 		// energy to use on-demand.
-		hp.DoNothing()
 		return
 	}
 
 	target := hp.CurrentTarget
-	if hp.config.RandomSelection {
-		if sim.RandomFloat("Hunter Pet Ability") < 0.5 {
-			if !hp.specialAbility.CanCast(sim, target) || !hp.specialAbility.Cast(sim, target) {
-				if !hp.focusDump.Cast(sim, target) {
-					hp.DoNothing()
-				}
-			}
-		} else {
-			if !hp.focusDump.Cast(sim, target) {
-				if !hp.specialAbility.CanCast(sim, target) || !hp.specialAbility.Cast(sim, target) {
-					hp.DoNothing()
-				}
-			}
-		}
+	if hp.focusDump == nil {
+		hp.specialAbility.Cast(sim, target)
+		return
+	}
+	if hp.specialAbility == nil {
+		hp.focusDump.Cast(sim, target)
 		return
 	}
 
-	if !hp.specialAbility.CanCast(sim, target) || hp.specialAbility.Cast(sim, target) {
-		// For abilities that don't use the GCD.
-		if hp.GCD.IsReady(sim) {
-			if hp.focusDump != nil {
-				if !hp.focusDump.Cast(sim, target) {
-					hp.DoNothing()
-				}
-			} else {
-				hp.DoNothing()
-			}
+	if hp.config.RandomSelection {
+		if sim.RandomFloat("Hunter Pet Ability") < 0.5 {
+			_ = hp.specialAbility.Cast(sim, target) || hp.focusDump.Cast(sim, target)
+		} else {
+			_ = hp.focusDump.Cast(sim, target) || hp.specialAbility.Cast(sim, target)
 		}
 	} else {
-		if hp.focusDump != nil {
-			if !hp.focusDump.Cast(sim, target) {
-				hp.DoNothing()
-			}
-		} else {
-			hp.DoNothing()
-		}
+		_ = hp.specialAbility.Cast(sim, target) || hp.focusDump.Cast(sim, target)
 	}
 }
 

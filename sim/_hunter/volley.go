@@ -19,8 +19,7 @@ func (hunter *Hunter) registerVolleySpell() {
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD:         core.GCDDefault,
-				ChannelTime: time.Second * 6,
+				GCD: core.GCDDefault,
 			},
 		},
 
