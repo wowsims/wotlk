@@ -1,8 +1,6 @@
 package protection
 
 import (
-	"time"
-
 	"github.com/wowsims/sod/sim/core"
 	"github.com/wowsims/sod/sim/core/proto"
 	"github.com/wowsims/sod/sim/paladin"
@@ -29,22 +27,10 @@ func NewProtectionPaladin(character *core.Character, options *proto.Player) *Pro
 	protOptions := options.GetProtectionPaladin()
 
 	prot := &ProtectionPaladin{
-		Paladin:  paladin.NewPaladin(character, options.TalentsString),
-		Rotation: protOptions.Rotation,
-		Options:  protOptions.Options,
-		Seal:     protOptions.Options.Seal,
+		Paladin: paladin.NewPaladin(character, options.TalentsString),
+		Options: protOptions.Options,
+		Seal:    protOptions.Options.Seal,
 	}
-
-	var rotationInput = protOptions.Rotation.CustomRotation
-
-	if rotationInput != nil {
-		prot.RotationInput = make([]int32, len(rotationInput.Spells))
-		for i, customSpellProto := range rotationInput.Spells {
-			prot.RotationInput[i] = customSpellProto.Spell
-		}
-	}
-
-	prot.SelectedRotation = prot.customRotation
 
 	prot.PaladinAura = protOptions.Options.Aura
 
@@ -66,15 +52,11 @@ func NewProtectionPaladin(character *core.Character, options *proto.Player) *Pro
 type ProtectionPaladin struct {
 	*paladin.Paladin
 
-	Rotation *proto.ProtectionPaladin_Rotation
-	Options  *proto.ProtectionPaladin_Options
+	Options *proto.ProtectionPaladin_Options
 
 	Judgement proto.PaladinJudgement
 
 	Seal proto.PaladinSeal
-
-	SelectedRotation func(*core.Simulation)
-	RotationInput    []int32
 }
 
 func (prot *ProtectionPaladin) GetPaladin() *paladin.Paladin {
@@ -88,28 +70,10 @@ func (prot *ProtectionPaladin) Initialize() {
 	if prot.Options.UseAvengingWrath {
 		prot.RegisterAvengingWrathCD()
 	}
-
-	if !prot.IsUsingAPL {
-		prot.RegisterPrepullAction(-3*time.Second, func(sim *core.Simulation) {
-			prot.HolyShield.Cast(sim, nil)
-		})
-	}
-
-	if !prot.IsUsingAPL {
-		prot.RegisterPrepullAction(-1500*time.Millisecond, func(sim *core.Simulation) {
-			prot.DivinePlea.Cast(sim, nil)
-		})
-	}
 }
 
 func (prot *ProtectionPaladin) Reset(sim *core.Simulation) {
 	prot.Paladin.Reset(sim)
-
-	sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int32) {
-		if isExecute == 20 {
-			prot.OnGCDReady(sim)
-		}
-	})
 
 	switch prot.Seal {
 	case proto.PaladinSeal_Vengeance:

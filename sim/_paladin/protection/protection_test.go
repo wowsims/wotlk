@@ -32,7 +32,6 @@ func TestProtection(t *testing.T) {
 							Seal:      proto.PaladinSeal_Command,
 							Aura:      proto.PaladinAura_RetributionAura,
 						},
-						Rotation: defaultProtRotation,
 					},
 				},
 			},
@@ -45,7 +44,6 @@ func TestProtection(t *testing.T) {
 							Seal:      proto.PaladinSeal_Righteousness,
 							Aura:      proto.PaladinAura_RetributionAura,
 						},
-						Rotation: defaultProtRotation,
 					},
 				},
 			},
@@ -98,8 +96,6 @@ func BenchmarkSimulate(b *testing.B) {
 
 var StandardTalents = "-05005135200132311333312321-511302012003"
 
-var defaultProtRotation = &proto.ProtectionPaladin_Rotation{}
-
 var defaultProtOptions = &proto.ProtectionPaladin_Options{
 	Judgement: proto.PaladinJudgement_JudgementOfWisdom,
 	Seal:      proto.PaladinSeal_Vengeance,
@@ -108,8 +104,7 @@ var defaultProtOptions = &proto.ProtectionPaladin_Options{
 
 var DefaultOptions = &proto.Player_ProtectionPaladin{
 	ProtectionPaladin: &proto.ProtectionPaladin{
-		Options:  defaultProtOptions,
-		Rotation: defaultProtRotation,
+		Options: defaultProtOptions,
 	},
 }
 
