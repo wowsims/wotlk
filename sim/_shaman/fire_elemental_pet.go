@@ -90,7 +90,6 @@ func (fireElemental *FireElemental) OnGCDReady(sim *core.Simulation) {
 	fireNovaCasts := fireElemental.FireNova.SpellMetrics[0].Casts
 
 	if fireBlastCasts == maxFireBlastCasts && fireNovaCasts == maxFireNovaCasts {
-		fireElemental.DoNothing()
 		return
 	}
 

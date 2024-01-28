@@ -474,7 +474,7 @@ func (shaman *Shaman) registerManaTideTotemCD() {
 
 			// TODO: Current water totem buff needs to be removed from party/raid.
 			if shaman.Totems.Water != proto.WaterTotem_NoWaterTotem {
-				shaman.NextTotemDrops[WaterTotem] = sim.CurrentTime + time.Second*12
+				shaman.TotemExpirations[WaterTotem] = sim.CurrentTime + time.Second*12
 			}
 		},
 	})

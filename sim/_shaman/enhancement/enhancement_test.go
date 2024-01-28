@@ -80,32 +80,28 @@ var StandardTalents = "053030152-30405003105021333031131031051"
 
 var PlayerOptionsWFWF = &proto.Player_EnhancementShaman{
 	EnhancementShaman: &proto.EnhancementShaman{
-		Options:  enhShamWFWF,
-		Rotation: &proto.EnhancementShaman_Rotation{},
+		Options: enhShamWFWF,
 	},
 }
 
 var PlayerOptionsFTFT = &proto.Player_EnhancementShaman{
 	EnhancementShaman: &proto.EnhancementShaman{
-		Options:  enhShamFTFT,
-		Rotation: &proto.EnhancementShaman_Rotation{},
+		Options: enhShamFTFT,
 	},
 }
 
 var enhShamWFWF = &proto.EnhancementShaman_Options{
-	Shield:    proto.ShamanShield_WaterShield,
-	Bloodlust: true,
-	SyncType:  proto.ShamanSyncType_DelayOffhandSwings,
-	ImbueMh:   proto.ShamanImbue_WindfuryWeapon,
-	ImbueOh:   proto.ShamanImbue_WindfuryWeapon,
+	Shield:   proto.ShamanShield_WaterShield,
+	SyncType: proto.ShamanSyncType_DelayOffhandSwings,
+	ImbueMh:  proto.ShamanImbue_WindfuryWeapon,
+	ImbueOh:  proto.ShamanImbue_WindfuryWeapon,
 }
 
 var enhShamFTFT = &proto.EnhancementShaman_Options{
-	Shield:    proto.ShamanShield_LightningShield,
-	Bloodlust: true,
-	SyncType:  proto.ShamanSyncType_Auto,
-	ImbueMh:   proto.ShamanImbue_FlametongueWeaponDownrank,
-	ImbueOh:   proto.ShamanImbue_FlametongueWeapon,
+	Shield:   proto.ShamanShield_LightningShield,
+	SyncType: proto.ShamanSyncType_Auto,
+	ImbueMh:  proto.ShamanImbue_FlametongueWeaponDownrank,
+	ImbueOh:  proto.ShamanImbue_FlametongueWeapon,
 	Totems: &proto.ShamanTotems{
 		Earth:            proto.EarthTotem_StrengthOfEarthTotem,
 		Air:              proto.AirTotem_WindfuryTotem,
@@ -116,11 +112,10 @@ var enhShamFTFT = &proto.EnhancementShaman_Options{
 }
 
 var enhShamWFFT = &proto.EnhancementShaman_Options{
-	Shield:    proto.ShamanShield_LightningShield,
-	Bloodlust: true,
-	SyncType:  proto.ShamanSyncType_NoSync,
-	ImbueMh:   proto.ShamanImbue_WindfuryWeapon,
-	ImbueOh:   proto.ShamanImbue_FlametongueWeapon,
+	Shield:   proto.ShamanShield_LightningShield,
+	SyncType: proto.ShamanSyncType_NoSync,
+	ImbueMh:  proto.ShamanImbue_WindfuryWeapon,
+	ImbueOh:  proto.ShamanImbue_FlametongueWeapon,
 }
 
 var FullConsumes = &proto.Consumes{

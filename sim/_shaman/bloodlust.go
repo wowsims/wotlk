@@ -12,9 +12,6 @@ func (shaman *Shaman) BloodlustActionID() core.ActionID {
 }
 
 func (shaman *Shaman) registerBloodlustCD() {
-	if !shaman.SelfBuffs.Bloodlust && !shaman.IsUsingAPL {
-		return
-	}
 	actionID := shaman.BloodlustActionID()
 
 	blAuras := []*core.Aura{}
@@ -24,7 +21,7 @@ func (shaman *Shaman) registerBloodlustCD() {
 		}
 	}
 
-	bloodlustSpell := shaman.RegisterSpell(core.SpellConfig{
+	shaman.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 		Flags:    core.SpellFlagAPL,
 
@@ -72,12 +69,4 @@ func (shaman *Shaman) registerBloodlustCD() {
 			}
 		},
 	})
-
-	if !shaman.IsUsingAPL {
-		shaman.AddMajorCooldown(core.MajorCooldown{
-			Spell:    bloodlustSpell,
-			Priority: core.CooldownPriorityBloodlust,
-			Type:     core.CooldownTypeDPS,
-		})
-	}
 }

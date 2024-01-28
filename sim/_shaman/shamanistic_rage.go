@@ -12,11 +12,6 @@ func (shaman *Shaman) registerShamanisticRageCD() {
 		return
 	}
 
-	t10Bonus := false
-	if shaman.HasSetBonus(ItemSetFrostWitchBattlegear, 2) {
-		t10Bonus = true
-	}
-
 	actionID := core.ActionID{SpellID: 30823}
 	ppmm := shaman.AutoAttacks.NewPPMManager(15, core.ProcMaskMelee)
 	manaMetrics := shaman.NewManaMetrics(actionID)
@@ -26,15 +21,9 @@ func (shaman *Shaman) registerShamanisticRageCD() {
 		Duration: time.Second * 15,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.DamageTakenMultiplier *= 0.7
-			if t10Bonus {
-				aura.Unit.PseudoStats.DamageDealtMultiplier *= 1.12
-			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.DamageTakenMultiplier /= 0.7
-			if t10Bonus {
-				aura.Unit.PseudoStats.DamageDealtMultiplier /= 1.12
-			}
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if !result.Landed() {
@@ -66,22 +55,11 @@ func (shaman *Shaman) registerShamanisticRageCD() {
 		},
 	})
 
-	if shaman.IsUsingAPL {
-		shaman.AddMajorCooldown(core.MajorCooldown{
-			Spell: spell,
-			Type:  core.CooldownTypeMana,
-			ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
-				return character.CurrentManaPercent() <= 0.2
-			},
-		})
-	} else {
-		shaman.AddMajorCooldown(core.MajorCooldown{
-			Spell: spell,
-			Type:  core.CooldownTypeMana,
-			ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
-				manaReserve := shaman.ShamanisticRageManaThreshold / 100 * shaman.MaxMana()
-				return character.CurrentMana() <= manaReserve
-			},
-		})
-	}
+	shaman.AddMajorCooldown(core.MajorCooldown{
+		Spell: spell,
+		Type:  core.CooldownTypeMana,
+		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
+			return character.CurrentManaPercent() <= 0.2
+		},
+	})
 }
