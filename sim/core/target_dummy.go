@@ -49,7 +49,3 @@ func (td *TargetDummy) ApplyTalents()                              {}
 func (td *TargetDummy) ApplyRunes()                                {}
 func (td *TargetDummy) Initialize()                                {}
 func (td *TargetDummy) Reset(sim *Simulation)                      {}
-func (td *TargetDummy) OnGCDReady(sim *Simulation) {
-	td.DoNothing()
-}
-func (td *TargetDummy) OnAutoAttack(sim *Simulation, spell *Spell) {}

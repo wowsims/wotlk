@@ -227,50 +227,6 @@ func (mcdm *majorCooldownManager) finalize() {
 	mcdm.majorCooldowns = make([]*MajorCooldown, len(mcdm.initialMajorCooldowns))
 }
 
-// Adds a delay to the first usage of all CDs so that debuffs have time
-// to be applied. MCDs that have a user-specified timing are not delayed.
-//
-// This function should be called from Agent.Init().
-func (mcdm *majorCooldownManager) DelayDPSCooldownsForArmorDebuffs(delay time.Duration) {
-	if mcdm.character.IsUsingAPL {
-		return
-	}
-	mcdm.character.Env.RegisterPostFinalizeEffect(func() {
-		for i := range mcdm.initialMajorCooldowns {
-			mcd := &mcdm.initialMajorCooldowns[i]
-			if len(mcd.timings) == 0 && mcd.Type.Matches(CooldownTypeDPS) && !mcd.Type.Matches(CooldownTypeExplosive) {
-				oldShouldActivate := mcd.ShouldActivate
-				mcd.ShouldActivate = func(sim *Simulation, character *Character) bool {
-					if oldShouldActivate != nil && !oldShouldActivate(sim, character) {
-						return false
-					}
-					return sim.CurrentTime >= delay
-				}
-			}
-		}
-	})
-}
-
-// Adds a delay to the first usage of all CDs overriding shouldActivate for cooldownTypeDPS,
-// MCDs that have a user-specified timing are not delayed.
-// This function should be called from Agent.Init().
-func (mcdm *majorCooldownManager) DelayDPSCooldowns(delay time.Duration) {
-	mcdm.character.Env.RegisterPostFinalizeEffect(func() {
-		for i := range mcdm.initialMajorCooldowns {
-			mcd := &mcdm.initialMajorCooldowns[i]
-			if len(mcd.timings) == 0 && mcd.Type.Matches(CooldownTypeDPS) {
-				oldShouldActivate := mcd.ShouldActivate
-				mcd.ShouldActivate = func(sim *Simulation, character *Character) bool {
-					if oldShouldActivate != nil && !oldShouldActivate(sim, character) {
-						return false
-					}
-					return sim.CurrentTime >= delay
-				}
-			}
-		}
-	})
-}
-
 func findTrinketAura(character *Character, trinketID int32) *Aura {
 	for _, aura := range character.auras {
 		if aura.ActionIDForProc.ItemID == trinketID {
@@ -375,36 +331,6 @@ func (mcdm *majorCooldownManager) getFirstReadyMCD(sim *Simulation) *MajorCooldo
 	}
 
 	return nil
-}
-
-func (mcdm *majorCooldownManager) TryUseCooldowns(sim *Simulation) {
-	if sim.CurrentTime < mcdm.minReady {
-		return
-	}
-
-restart:
-	for _, mcd := range mcdm.majorCooldowns {
-		if !mcd.IsReady(sim) {
-			break
-		}
-
-		if mcd.tryActivateInternal(sim, mcdm.character) {
-			if mcd.IsReady(sim) {
-				continue // activation failed
-			}
-			mcdm.sort()
-
-			if mcd.Spell.DefaultCast.GCD > 0 {
-				// If the GCD was used, don't use any more MCDs until the next cycle so
-				// their durations aren't partially wasted.
-				break
-			}
-
-			// many MCDs are off the GCD, so it makes sense to continue
-			goto restart
-		}
-	}
-	mcdm.minReady = mcdm.majorCooldowns[0].ReadyAt()
 }
 
 // This function should be called if the CD for a major cooldown changes outside

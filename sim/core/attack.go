@@ -267,10 +267,9 @@ func (wa *WeaponAttack) swing(sim *Simulation) time.Duration {
 	attackSpell := wa.spell
 
 	if wa.replaceSwing != nil {
-		if wa.unit.IsUsingAPL {
-			// Need to check APL here to allow last-moment HS queue casts.
-			wa.unit.Rotation.DoNextAction(sim)
-		}
+		// Need to check APL here to allow last-moment HS queue casts.
+		wa.unit.Rotation.DoNextAction(sim)
+
 		// Allow MH swing to be overridden for abilities like Heroic Strike.
 		attackSpell = wa.replaceSwing(sim, attackSpell)
 	}
@@ -282,11 +281,7 @@ func (wa *WeaponAttack) swing(sim *Simulation) time.Duration {
 		attackSpell.Cast(sim, wa.unit.CurrentTarget)
 
 		if !sim.Options.Interactive {
-			if wa.unit.IsUsingAPL {
-				wa.unit.Rotation.DoNextAction(sim)
-			} else {
-				wa.agent.OnAutoAttack(sim, attackSpell)
-			}
+			wa.unit.Rotation.DoNextAction(sim)
 		}
 	} else {
 		// Delay till cast finishes if casting or 500 ms if not
@@ -436,9 +431,6 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 		}
 	}
 }
-
-// Empty handler so Agents don't have to provide one if they have no logic to add.
-func (unit *Unit) OnAutoAttack(_ *Simulation, _ *Spell) {}
 
 func (aa *AutoAttacks) finalize() {
 	if aa.AutoSwingMelee {

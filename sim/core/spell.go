@@ -170,10 +170,6 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		config.DamageMultiplier = 1
 	}
 
-	if unit.IsUsingAPL {
-		config.Cast.DefaultCast.ChannelTime = 0
-	}
-
 	if (config.DamageMultiplier != 0 || config.ThreatMultiplier != 0) && config.ProcMask == ProcMaskUnknown {
 		panic("ProcMask for spell " + config.ActionID.String() + " not set")
 	}
@@ -275,7 +271,7 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		panic("Empty DefaultCast with a cost for spell " + config.ActionID.String())
 	}
 
-	if spell.DefaultCast.GCD == 0 && spell.DefaultCast.CastTime == 0 && spell.DefaultCast.ChannelTime == 0 {
+	if spell.DefaultCast.GCD == 0 && spell.DefaultCast.CastTime == 0 {
 		config.Cast.IgnoreHaste = true
 	}
 
@@ -483,7 +479,7 @@ func (spell *Spell) CanCast(sim *Simulation, target *Unit) bool {
 	}
 
 	// While moving only instant casts are possible
-	if (spell.DefaultCast.CastTime > 0 || spell.DefaultCast.ChannelTime > 0) && spell.Unit.Moving {
+	if (spell.DefaultCast.CastTime > 0) && spell.Unit.Moving {
 		//if sim.Log != nil {
 		//	sim.Log("Cant cast because moving")
 		//}

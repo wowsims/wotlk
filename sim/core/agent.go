@@ -33,15 +33,6 @@ type Agent interface {
 	// and once after the final iteration.
 	Reset(sim *Simulation)
 
-	// Called whenever the GCD becomes ready for this Agent.
-	OnGCDReady(sim *Simulation)
-
-	// Called after each auto attack performed by this Agent.
-	// This is different from Aura.OnSpellHit in that it is invoked fully after
-	// everything related to the attack is complete, and it is only invoked for
-	// auto attacks (white hits or white-hit-replacers).
-	OnAutoAttack(sim *Simulation, spell *Spell)
-
 	// Custom factories for APL values and actions, for cases where the value/action
 	// involves class or spec-specific behavior.
 	//
