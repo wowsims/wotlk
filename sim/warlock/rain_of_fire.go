@@ -31,8 +31,7 @@ func (warlock *Warlock) getRainOfFireBaseConfig(rank int) core.SpellConfig {
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD:         core.GCDDefault,
-				ChannelTime: time.Second * 8,
+				GCD: core.GCDDefault,
 			},
 		},
 		Dot: core.DotConfig{
