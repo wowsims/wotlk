@@ -87,7 +87,6 @@ var PlayerOptionsDisc = &proto.Player_HealingPriest{
 			UseShadowfiend:    true,
 			RapturesPerMinute: 5,
 		},
-		Rotation: &proto.HealingPriest_Rotation{},
 	},
 }
 
@@ -97,6 +96,5 @@ var PlayerOptionsHoly = &proto.Player_HealingPriest{
 			UseInnerFire:   true,
 			UseShadowfiend: true,
 		},
-		Rotation: &proto.HealingPriest_Rotation{},
 	},
 }

@@ -57,13 +57,4 @@ func (spriest *ShadowPriest) Initialize() {
 
 func (spriest *ShadowPriest) Reset(sim *core.Simulation) {
 	spriest.Priest.Reset(sim)
-
-	// Save info related to blood lust timing
-	spriest.BLUsedAt = 0
-	if bloodlustMCD := spriest.GetMajorCooldownIgnoreTag(core.BloodlustActionID); bloodlustMCD != nil {
-		timings := bloodlustMCD.GetTimings()
-		if len(timings) > 0 {
-			spriest.BLUsedAt = timings[0]
-		}
-	}
 }

@@ -48,8 +48,7 @@ func (priest *Priest) makePenanceSpell(isHeal bool) *core.Spell {
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD:         core.GCDDefault,
-				ChannelTime: time.Second * 2,
+				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer:    priest.NewTimer(),

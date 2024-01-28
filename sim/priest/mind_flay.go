@@ -42,7 +42,6 @@ func (priest *Priest) getMindFlaySpellConfig(rank int) core.SpellConfig {
 	level := [7]int{0, 20, 28, 36, 44, 52, 60}[rank]
 
 	tickLength := time.Second
-	channelTime := tickLength * time.Duration(numTicks)
 	mindFlayTickSpell := priest.getMindFlayTickSpell(rank, numTicks, baseDamage)
 
 	return core.SpellConfig{
@@ -56,8 +55,7 @@ func (priest *Priest) getMindFlaySpellConfig(rank int) core.SpellConfig {
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD:         core.GCDDefault,
-				ChannelTime: channelTime,
+				GCD: core.GCDDefault,
 			},
 		},
 		BonusHitRating:   float64(priest.Talents.ShadowFocus) * 2 * core.SpellHitRatingPerHitChance,
@@ -91,10 +89,6 @@ func (priest *Priest) getMindFlaySpellConfig(rank int) core.SpellConfig {
 			return spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicAlwaysHit)
 		},
 	}
-}
-
-func (priest *Priest) MindFlayTickDuration() time.Duration {
-	return priest.ApplyCastSpeed(time.Second)
 }
 
 func (priest *Priest) registerMindFlay() {
