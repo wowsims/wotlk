@@ -170,7 +170,7 @@ export const DefensiveCooldownBuff = InputHelpers.makeMultiIconInput([
 ], 'Defensive CDs');
 
 // Misc Buffs
-export const StrengthOfWrynn = makeBooleanRaidBuffInput(ActionId.fromSpellId(73826), 'strengthOfWrynn');
+export const StrengthOfWrynn = makeBooleanRaidBuffInput(ActionId.fromSpellId(73827), 'strengthOfWrynn');
 export const RetributionAura = makeBooleanRaidBuffInput(ActionId.fromSpellId(54043), 'retributionAura');
 export const BraidedEterniumChain = makeBooleanPartyBuffInput(ActionId.fromSpellId(31025), 'braidedEterniumChain');
 export const ChainOfTheTwilightOwl = makeBooleanPartyBuffInput(ActionId.fromSpellId(31035), 'chainOfTheTwilightOwl');
