@@ -270,8 +270,11 @@ func (wa *WeaponAttack) swing(sim *Simulation) time.Duration {
 		// Need to check APL here to allow last-moment HS queue casts.
 		wa.unit.Rotation.DoNextAction(sim)
 
-		// Allow MH swing to be overridden for abilities like Heroic Strike.
-		attackSpell = wa.replaceSwing(sim, attackSpell)
+		// Need to check this again in case the DoNextAction call swapped items.
+		if wa.replaceSwing != nil {
+			// Allow MH swing to be overridden for abilities like Heroic Strike.
+			attackSpell = wa.replaceSwing(sim, attackSpell)
+		}
 	}
 
 	if attackSpell.CanCast(sim, wa.unit.CurrentTarget) {
