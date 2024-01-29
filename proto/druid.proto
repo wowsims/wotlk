@@ -89,7 +89,14 @@ message BalanceDruid {
 
 message FeralDruid {
   message Rotation {
+		bool maintain_faerie_fire = 1;
+		int32 min_combos_for_rip = 2;
+		float max_wait_time = 3;
+		float preroar_duration = 4;
+		bool precast_tigers_fury = 5;
+		bool use_shred_trick = 6;
   }
+	Rotation rotation = 1;
 
   message Options {
     UnitReference innervate_target = 1;
@@ -101,6 +108,10 @@ message FeralDruid {
 
 message FeralTankDruid {
   message Rotation {
+		// Minimum rage to queue HS or Cleave.
+		int32 maul_rage_threshold = 1;
+		bool maintain_demoralizing_roar = 2;
+		double lacerate_time = 3;
   }
 
   message Options {
