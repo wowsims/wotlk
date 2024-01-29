@@ -1203,6 +1203,7 @@ export class Player<SpecType extends Spec> {
 			PlayerProto.mergePartial(player, {
 				name: this.getName(),
 				race: this.getRace(),
+				level: this.getLevel(),
 				profession1: this.getProfession1(),
 				profession2: this.getProfession2(),
 				reactionTimeMs: this.getReactionTime(),

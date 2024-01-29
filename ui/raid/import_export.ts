@@ -64,7 +64,7 @@ export class RaidJsonExporter extends Exporter {
 	private readonly simUI: RaidSimUI;
 
 	constructor(parent: HTMLElement, simUI: RaidSimUI) {
-		super(parent, simUI, 'JSON Export', true);
+		super(parent, simUI, {title: 'JSON Export', allowDownload: true});
 		this.simUI = simUI;
 		this.init();
 	}
