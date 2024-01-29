@@ -193,7 +193,6 @@ func (apl *APLRotation) DoNextAction(sim *Simulation) {
 
 	i := 0
 	apl.inLoop = true
-	apl.unit.StartAPLLoop(sim)
 
 	for nextAction := apl.getNextAction(sim); nextAction != nil; i, nextAction = i+1, apl.getNextAction(sim) {
 		if i > 1000 {
@@ -212,8 +211,6 @@ func (apl *APLRotation) DoNextAction(sim *Simulation) {
 	if gcdReady {
 		apl.unit.WaitUntil(sim, sim.CurrentTime+time.Millisecond*50)
 	}
-
-	apl.unit.DoneAPLLoop(sim, !gcdReady)
 }
 
 func (apl *APLRotation) getNextAction(sim *Simulation) *APLAction {

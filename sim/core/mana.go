@@ -26,6 +26,10 @@ type manaBar struct {
 	JowiseManaMetrics     *ResourceMetrics
 
 	ReplenishmentAura *Aura
+
+	// For keeping track of OOM status.
+	waitingForMana          float64
+	waitingForManaStartTime time.Duration
 }
 
 // EnableManaBar will setup caster stat dependencies (int->mana and int->spellcrit)
@@ -107,9 +111,13 @@ func (unit *Unit) SpendMana(sim *Simulation, amount float64, metrics *ResourceMe
 	unit.Metrics.ManaSpent += amount
 }
 
-func (mb *manaBar) doneIteration() {
+func (mb *manaBar) doneIteration(sim *Simulation) {
 	if mb.unit == nil {
 		return
+	}
+
+	if mb.waitingForMana != 0 {
+		mb.unit.Metrics.AddOOMTime(sim, sim.CurrentTime-mb.waitingForManaStartTime)
 	}
 
 	manaGainSpell := mb.unit.GetSpell(ActionID{OtherID: proto.OtherAction_OtherActionManaGain})
@@ -275,6 +283,25 @@ func (mb *manaBar) reset() {
 	}
 
 	mb.currentMana = mb.unit.MaxMana()
+	mb.waitingForMana = 0
+	mb.waitingForManaStartTime = 0
+}
+
+func (mb *manaBar) IsOOM() bool {
+	return mb.waitingForMana != 0
+}
+
+func (mb *manaBar) StartOOMEvent(sim *Simulation, requiredMana float64) {
+	mb.waitingForManaStartTime = sim.CurrentTime
+	mb.waitingForMana = requiredMana
+	mb.unit.Metrics.MarkOOM(sim)
+}
+
+func (mb *manaBar) EndOOMEvent(sim *Simulation) {
+	eventDuration := sim.CurrentTime - mb.waitingForManaStartTime
+	mb.unit.Metrics.AddOOMTime(sim, eventDuration)
+	mb.waitingForManaStartTime = 0
+	mb.waitingForMana = 0
 }
 
 type ManaCostOptions struct {
@@ -301,10 +328,28 @@ func newManaCost(spell *Spell, options ManaCostOptions) *ManaCost {
 	}
 }
 
-func (mc *ManaCost) MeetsRequirement(spell *Spell) bool {
+func (mc *ManaCost) MeetsRequirement(sim *Simulation, spell *Spell) bool {
 	spell.CurCast.Cost = spell.ApplyCostModifiers(spell.CurCast.Cost)
-	return spell.Unit.CurrentMana() >= spell.CurCast.Cost
+	meetsRequirement := spell.Unit.CurrentMana() >= spell.CurCast.Cost
+
+	if spell.CurCast.Cost > 0 {
+		if meetsRequirement {
+			if spell.Unit.IsOOM() {
+				spell.Unit.EndOOMEvent(sim)
+			}
+		} else {
+			if spell.Unit.IsOOM() {
+				// Continuation of OOM event.
+				spell.Unit.waitingForMana = min(spell.Unit.waitingForMana, spell.CurCast.Cost)
+			} else {
+				spell.Unit.StartOOMEvent(sim, spell.CurCast.Cost)
+			}
+		}
+	}
+
+	return meetsRequirement
 }
+
 func (mc *ManaCost) CostFailureReason(sim *Simulation, spell *Spell) string {
 	return fmt.Sprintf("not enough mana (Current Mana = %0.03f, Mana Cost = %0.03f)", spell.Unit.CurrentMana(), spell.CurCast.Cost)
 }

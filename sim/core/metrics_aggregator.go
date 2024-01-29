@@ -333,8 +333,10 @@ func (unitMetrics *UnitMetrics) AddFinalPetMetrics(petMetrics *UnitMetrics) {
 }
 
 func (unitMetrics *UnitMetrics) AddOOMTime(sim *Simulation, dur time.Duration) {
-	unitMetrics.CharacterIterationMetrics.OOMTime += dur
-	unitMetrics.MarkOOM(sim)
+	if dur > 0 {
+		unitMetrics.CharacterIterationMetrics.OOMTime += dur
+		unitMetrics.MarkOOM(sim)
+	}
 }
 func (unitMetrics *UnitMetrics) MarkOOM(sim *Simulation) {
 	if !unitMetrics.WentOOM {

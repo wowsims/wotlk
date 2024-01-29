@@ -156,7 +156,7 @@ func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
 		}
 
 		if spell.Cost != nil {
-			if !spell.Cost.MeetsRequirement(spell) {
+			if !spell.Cost.MeetsRequirement(sim, spell) {
 				return spell.castFailureHelper(sim, true, spell.Cost.CostFailureReason(sim, spell))
 			}
 		}
