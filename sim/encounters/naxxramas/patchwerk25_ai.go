@@ -125,11 +125,9 @@ func (ai *Patchwerk25AI) registerFrenzySpell(target *core.Target) {
 
 func (ai *Patchwerk25AI) DoAction(sim *core.Simulation) {
 	if ai.Target.CurrentTarget == nil {
-		ai.Target.DoNothing()
 		return
 	}
 
-	ai.Target.DoNothing()
 	// TODO: Re-enable Frenzy when we have a feature to flag for tank cooldown timing
 	//       Otherwise users get confused why the default settings say they die a lot...
 	//if ai.Frenzy.IsReady(sim) && sim.GetRemainingDurationPercent() < 0.05 {

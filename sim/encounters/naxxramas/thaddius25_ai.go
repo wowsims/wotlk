@@ -57,5 +57,4 @@ func (ai *Thaddius25AI) Reset(*core.Simulation) {
 }
 
 func (ai *Thaddius25AI) DoAction(sim *core.Simulation) {
-	ai.Target.DoNothing()
 }
