@@ -199,15 +199,14 @@ func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
 			spell.Unit.SetGCDTimer(sim, sim.CurrentTime+effectiveTime)
 		}
 
-		// TODO: Fix with removal of ChannelTime?
-		if (spell.CurCast.CastTime > 0 || spell.CurCast.ChannelTime > 0) && spell.Unit.Moving {
+		if (spell.CurCast.CastTime > 0) && spell.Unit.Moving {
 			return spell.castFailureHelper(sim, false, "casting/channeling while moving not allowed!")
 		}
 
 		// TODO: Fix with removal of ChannelTime?
 		// Non melee casts
 		if spell.Flags.Matches(SpellFlagResetAttackSwing) && spell.Unit.AutoAttacks.enabled {
-			restartMeleeAt := sim.CurrentTime + spell.CurCast.CastTime + spell.CurCast.ChannelTime
+			restartMeleeAt := sim.CurrentTime + spell.CurCast.CastTime
 			spell.Unit.AutoAttacks.StopMeleeUntil(sim, restartMeleeAt, false)
 		}
 
@@ -238,9 +237,7 @@ func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
 					}
 
 					if !sim.Options.Interactive {
-						if spell.Unit.IsUsingAPL {
-							spell.Unit.Rotation.DoNextAction(sim)
-						}
+						spell.Unit.Rotation.DoNextAction(sim)
 					}
 				},
 				Target: target,
