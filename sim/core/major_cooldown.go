@@ -333,6 +333,36 @@ func (mcdm *majorCooldownManager) getFirstReadyMCD(sim *Simulation) *MajorCooldo
 	return nil
 }
 
+func (mcdm *majorCooldownManager) TryUseCooldowns(sim *Simulation) {
+	if sim.CurrentTime < mcdm.minReady {
+		return
+	}
+
+restart:
+	for _, mcd := range mcdm.majorCooldowns {
+		if !mcd.IsReady(sim) {
+			break
+		}
+
+		if mcd.tryActivateInternal(sim, mcdm.character) {
+			if mcd.IsReady(sim) {
+				continue // activation failed
+			}
+			mcdm.sort()
+
+			if mcd.Spell.DefaultCast.GCD > 0 {
+				// If the GCD was used, don't use any more MCDs until the next cycle so
+				// their durations aren't partially wasted.
+				break
+			}
+
+			// many MCDs are off the GCD, so it makes sense to continue
+			goto restart
+		}
+	}
+	mcdm.minReady = mcdm.majorCooldowns[0].ReadyAt()
+}
+
 // This function should be called if the CD for a major cooldown changes outside
 // of the TryActivate() call.
 func (mcdm *majorCooldownManager) UpdateMajorCooldowns() {
