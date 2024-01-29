@@ -106,11 +106,9 @@ message WarlockOptions {
 }
 
 message Warlock {
-	WarlockRotation rotation = 1;
 	WarlockOptions options = 2;
 }
 
 message TankWarlock {
-	WarlockRotation rotation = 1;
 	WarlockOptions options = 2;
 }

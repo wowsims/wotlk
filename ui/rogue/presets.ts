@@ -8,13 +8,6 @@ import { SavedTalents } from '../core/proto/ui.js';
 import {
 	Rogue_Options_PoisonImbue as Poison,
 	Rogue_Options as RogueOptions,
-	Rogue_Rotation as RogueRotation,
-	Rogue_Rotation_AssassinationPriority,
-	Rogue_Rotation_CombatBuilder,
-	Rogue_Rotation_CombatPriority,
-	Rogue_Rotation_Frequency,
-	Rogue_Rotation_SubtletyBuilder,
-	Rogue_Rotation_SubtletyPriority,
 } from '../core/proto/rogue.js';
 
 import * as PresetUtils from '../core/preset_utils.js';
@@ -38,19 +31,6 @@ import RuptureMutilateExposeApl from './apls/rupture_mutilate_expose.apl.json';
 export const GearAssassinationDefault = PresetUtils.makePresetGear('Blank', BlankGear, { talentTree: 0 });
 export const GearCombatDefault = PresetUtils.makePresetGear('Blank', BlankGear, { talentTree: 0 });
 export const GearSubtletyDefault = PresetUtils.makePresetGear('Blank', BlankGear, { talentTree: 0 });
-
-export const DefaultRotation = RogueRotation.create({
-	exposeArmorFrequency: Rogue_Rotation_Frequency.Never,
-	minimumComboPointsExposeArmor: 2,
-	tricksOfTheTradeFrequency: Rogue_Rotation_Frequency.Maintain,
-	assassinationFinisherPriority: Rogue_Rotation_AssassinationPriority.EnvenomRupture,
-	combatBuilder: Rogue_Rotation_CombatBuilder.SinisterStrike,
-	combatFinisherPriority: Rogue_Rotation_CombatPriority.RuptureEviscerate,
-	subtletyBuilder: Rogue_Rotation_SubtletyBuilder.Hemorrhage,
-	subtletyFinisherPriority: Rogue_Rotation_SubtletyPriority.SubtletyEviscerate,
-	minimumComboPointsPrimaryFinisher: 4,
-	minimumComboPointsSecondaryFinisher: 4,
-});
 
 export const ROTATION_PRESET_MUTILATE = PresetUtils.makePresetAPLRotation('Mutilate', MutilateApl, { talentTree: 0 });
 export const ROTATION_PRESET_RUPTURE_MUTILATE = PresetUtils.makePresetAPLRotation('Rupture Mutilate', RuptureMutilateApl, { talentTree: 0 });

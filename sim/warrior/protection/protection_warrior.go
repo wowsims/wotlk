@@ -1,7 +1,6 @@
 package protection
 
 import (
-	"github.com/wowsims/sod/sim/common"
 	"github.com/wowsims/sod/sim/core"
 	"github.com/wowsims/sod/sim/core/proto"
 	"github.com/wowsims/sod/sim/warrior"
@@ -27,21 +26,15 @@ func RegisterProtectionWarrior() {
 type ProtectionWarrior struct {
 	*warrior.Warrior
 
-	Rotation *proto.ProtectionWarrior_Rotation
-	Options  *proto.ProtectionWarrior_Options
-
-	CustomRotation *common.CustomRotation
+	Options *proto.ProtectionWarrior_Options
 }
 
 func NewProtectionWarrior(character *core.Character, options *proto.Player) *ProtectionWarrior {
 	warOptions := options.GetProtectionWarrior()
 
 	war := &ProtectionWarrior{
-		Warrior: warrior.NewWarrior(character, options.TalentsString, warrior.WarriorInputs{
-			ShoutType: warOptions.Options.Shout,
-		}),
-		Rotation: warOptions.Rotation,
-		Options:  warOptions.Options,
+		Warrior: warrior.NewWarrior(character, options.TalentsString, warrior.WarriorInputs{}),
+		Options: warOptions.Options,
 	}
 
 	rbo := core.RageBarOptions{
@@ -55,14 +48,7 @@ func NewProtectionWarrior(character *core.Character, options *proto.Player) *Pro
 		rbo.OHSwingSpeed = oh.SwingSpeed
 	}
 
-	war.EnableRageBar(rbo, func(sim *core.Simulation) {
-		if war.GCD.IsReady(sim) {
-			war.TryUseCooldowns(sim)
-			if war.GCD.IsReady(sim) {
-				war.doRotation(sim)
-			}
-		}
-	})
+	war.EnableRageBar(rbo)
 	war.EnableAutoAttacks(war, core.AutoAttackOptions{
 		MainHand:       war.WeaponFromMainHand(war.DefaultMeleeCritMultiplier()),
 		OffHand:        war.WeaponFromOffHand(war.DefaultMeleeCritMultiplier()),
@@ -87,17 +73,9 @@ func (war *ProtectionWarrior) GetWarrior() *warrior.Warrior {
 func (war *ProtectionWarrior) Initialize() {
 	war.Warrior.Initialize()
 
-	war.RegisterHSOrCleave(false)
 	war.RegisterShieldWallCD()
 	war.RegisterShieldBlockCD()
 	war.DefensiveStanceAura.BuildPhase = core.CharacterBuildPhaseTalents
-
-	if !war.IsUsingAPL {
-		war.CustomRotation = war.makeCustomRotation()
-	}
-	if war.Options.UseShatteringThrow {
-		war.RegisterShatteringThrowCD()
-	}
 }
 
 func (war *ProtectionWarrior) Reset(sim *core.Simulation) {

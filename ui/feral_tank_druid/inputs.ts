@@ -2,12 +2,6 @@ import { Spec } from '../core/proto/common.js';
 
 import * as InputHelpers from '../core/components/input_helpers.js';
 
-import {
-	FeralTankDruid,
-	FeralTankDruid_Rotation as DruidRotation,
-	FeralTankDruid_Options as DruidOptions
-} from '../core/proto/druid.js';
-
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
 

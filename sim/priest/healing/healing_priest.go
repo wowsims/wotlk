@@ -1,7 +1,6 @@
 package healing
 
 import (
-	"github.com/wowsims/sod/sim/common"
 	"github.com/wowsims/sod/sim/core"
 	"github.com/wowsims/sod/sim/core/proto"
 	"github.com/wowsims/sod/sim/priest"
@@ -27,13 +26,7 @@ func RegisterHealingPriest() {
 type HealingPriest struct {
 	*priest.Priest
 
-	rotation       *proto.HealingPriest_Rotation
-	CustomRotation *common.CustomRotation
-	Options        *proto.HealingPriest_Options
-
-	// Spells to rotate through for cyclic rotation.
-	spellCycle     []*core.Spell
-	nextCycleIndex int
+	Options *proto.HealingPriest_Options
 }
 
 func NewHealingPriest(character *core.Character, options *proto.Player) *HealingPriest {
@@ -41,12 +34,9 @@ func NewHealingPriest(character *core.Character, options *proto.Player) *Healing
 
 	basePriest := priest.New(character, options.TalentsString)
 	hpriest := &HealingPriest{
-		Priest:   basePriest,
-		rotation: healingOptions.Rotation,
-		Options:  healingOptions.Options,
+		Priest:  basePriest,
+		Options: healingOptions.Options,
 	}
-
-	hpriest.EnableResumeAfterManaWait(hpriest.tryUseGCD)
 
 	return hpriest
 }
@@ -68,26 +58,8 @@ func (hpriest *HealingPriest) Initialize() {
 	hpriest.CurrentTarget = hpriest.GetMainTarget()
 	hpriest.Priest.Initialize()
 	hpriest.Priest.RegisterHealingSpells()
-
-	if hpriest.rotation.Type == proto.HealingPriest_Rotation_Custom {
-		hpriest.CustomRotation = hpriest.makeCustomRotation()
-	}
-
-	if hpriest.CustomRotation == nil {
-		hpriest.rotation.Type = proto.HealingPriest_Rotation_Cycle
-		hpriest.spellCycle = []*core.Spell{
-			hpriest.GreaterHeal,
-			hpriest.FlashHeal,
-			hpriest.CircleOfHealing,
-			hpriest.BindingHeal,
-			hpriest.PrayerOfHealing,
-			hpriest.PrayerOfMending,
-			hpriest.PenanceHeal,
-		}
-	}
 }
 
 func (hpriest *HealingPriest) Reset(sim *core.Simulation) {
 	hpriest.Priest.Reset(sim)
-	hpriest.nextCycleIndex = 0
 }

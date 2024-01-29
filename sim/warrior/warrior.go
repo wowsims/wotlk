@@ -15,7 +15,6 @@ const (
 var TalentTreeSizes = [3]int{31, 27, 27}
 
 type WarriorInputs struct {
-	ShoutType      proto.WarriorShout
 	StanceSnapshot bool
 }
 
@@ -47,7 +46,8 @@ type Warrior struct {
 	lastOverpowerProc  time.Duration
 	LastAMTick         time.Duration
 
-	Shout           *core.Spell
+	BattleShout *core.Spell
+
 	BattleStance    *core.Spell
 	DefensiveStance *core.Spell
 	BerserkerStance *core.Spell
@@ -73,12 +73,11 @@ type Warrior struct {
 	ConcussionBlow       *core.Spell
 	RagingBlow           *core.Spell
 
-	HeroicStrike         *core.Spell
-	QuickStrike          *core.Spell
-	Cleave               *core.Spell
-	hsOrCleaveQueueSpell *core.Spell
-	curQueueAura         *core.Aura
-	curQueuedAutoSpell   *core.Spell
+	HeroicStrike       *core.Spell
+	QuickStrike        *core.Spell
+	Cleave             *core.Spell
+	curQueueAura       *core.Aura
+	curQueuedAutoSpell *core.Spell
 
 	BattleStanceAura    *core.Aura
 	DefensiveStanceAura *core.Aura
@@ -105,19 +104,20 @@ func (warrior *Warrior) Initialize() {
 	warrior.AutoAttacks.MHConfig().CritMultiplier = warrior.autoCritMultiplier(mh)
 	warrior.AutoAttacks.OHConfig().CritMultiplier = warrior.autoCritMultiplier(oh)
 
-	warrior.Shout = warrior.makeShoutSpell()
-
 	primaryTimer := warrior.NewTimer()
 	overpowerRevengeTimer := warrior.NewTimer()
 
 	warrior.reactionTime = time.Millisecond * 500
 
+	warrior.registerShouts()
 	warrior.registerStances()
 	warrior.registerBerserkerRageSpell()
 	warrior.registerBloodthirstSpell(primaryTimer)
+	warrior.registerCleaveSpell()
 	warrior.registerDemoralizingShoutSpell()
 	warrior.registerDevastateSpell()
 	warrior.registerExecuteSpell()
+	warrior.registerHeroicStrikeSpell()
 	warrior.registerMortalStrikeSpell(primaryTimer)
 	warrior.registerOverpowerSpell(overpowerRevengeTimer)
 	warrior.registerRevengeSpell(overpowerRevengeTimer)
@@ -126,6 +126,7 @@ func (warrior *Warrior) Initialize() {
 	warrior.registerThunderClapSpell()
 	warrior.registerWhirlwindSpell()
 	warrior.registerConcussionBlowSpell()
+	warrior.RegisterRendSpell()
 
 	warrior.SunderArmor = warrior.newSunderArmorSpell(false)
 	warrior.SunderArmorDevastate = warrior.newSunderArmorSpell(true)

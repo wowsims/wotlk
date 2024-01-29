@@ -70,10 +70,6 @@ type Paladin struct {
 
 	DemonAndUndeadTargetCount int32
 
-	AvoidClippingConsecration           bool
-	HoldLastAvengingWrathUntilExecution bool
-	CancelChaosBane                     bool
-
 	mutualLockoutDPAW *core.Timer
 }
 

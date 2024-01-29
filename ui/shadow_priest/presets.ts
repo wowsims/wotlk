@@ -14,8 +14,6 @@ import { SavedTalents } from '../core/proto/ui.js';
 
 import {
 	ShadowPriest_Options as Options,
-	ShadowPriest_Rotation as Rotation,
-	ShadowPriest_Rotation_RotationType,
 } from '../core/proto/priest.js';
 
 import * as PresetUtils from '../core/preset_utils.js';
@@ -29,10 +27,6 @@ import DefaultApl from './apls/default.apl.json'
 // keep them in a separate file.
 
 export const BLANK_GEAR_PRESET = PresetUtils.makePresetGear('Blank', BlankGear);
-
-export const DefaultRotation = Rotation.create({
-	rotationType: ShadowPriest_Rotation_RotationType.Ideal,
-});
 
 export const ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Default', DefaultApl);
 

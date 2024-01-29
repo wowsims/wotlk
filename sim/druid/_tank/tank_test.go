@@ -77,7 +77,6 @@ var PlayerOptionsDefault = &proto.Player_FeralTankDruid{
 			InnervateTarget: &proto.UnitReference{}, // no Innervate
 			StartingRage:    20,
 		},
-		Rotation: &proto.FeralTankDruid_Rotation{},
 	},
 }
 

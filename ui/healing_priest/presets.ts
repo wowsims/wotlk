@@ -1,7 +1,5 @@
 import {
 	Consumes,
-	CustomRotation,
-	CustomSpell,
 	Debuffs,
 	IndividualBuffs,
 	Flask,
@@ -13,9 +11,6 @@ import {
 import { SavedTalents } from '../core/proto/ui.js';
 
 import {
-	HealingPriest_Rotation as Rotation,
-	HealingPriest_Rotation_RotationType as RotationType,
-	HealingPriest_Rotation_SpellOption as SpellOption,
 	HealingPriest_Options as Options,
 } from '../core/proto/priest.js';
 
@@ -32,30 +27,6 @@ import HolyApl from './apls/holy.apl.json';
 
 export const DiscDefaultGear = PresetUtils.makePresetGear('Blank', BlankGear, { talentTree: 0 });
 export const HolyDefaultGear = PresetUtils.makePresetGear('Blank', BlankGear, { talentTree: 1 });
-
-export const DiscDefaultRotation = Rotation.create({
-	type: RotationType.Cycle,
-	customRotation: CustomRotation.create({
-		spells: [
-			CustomSpell.create({ spell: SpellOption.PowerWordShield, castsPerMinute: 18 }),
-			CustomSpell.create({ spell: SpellOption.Penance, castsPerMinute: 4 }),
-			CustomSpell.create({ spell: SpellOption.PrayerOfMending, castsPerMinute: 2 }),
-			CustomSpell.create({ spell: SpellOption.GreaterHeal, castsPerMinute: 1 }),
-		],
-	}),
-});
-
-export const HolyDefaultRotation = Rotation.create({
-	type: RotationType.Cycle,
-	customRotation: CustomRotation.create({
-		spells: [
-			CustomSpell.create({ spell: SpellOption.GreaterHeal, castsPerMinute: 10 }),
-			CustomSpell.create({ spell: SpellOption.CircleOfHealing, castsPerMinute: 5 }),
-			CustomSpell.create({ spell: SpellOption.Renew, castsPerMinute: 10 }),
-			CustomSpell.create({ spell: SpellOption.PrayerOfMending, castsPerMinute: 2 }),
-		],
-	}),
-});
 
 export const ROTATION_PRESET_DISC = PresetUtils.makePresetAPLRotation('Disc', DiscApl);
 export const ROTATION_PRESET_HOLY = PresetUtils.makePresetAPLRotation('Holy', HolyApl);

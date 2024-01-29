@@ -111,7 +111,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 		WarlockInputs.ArmorInput,
 		WarlockInputs.WeaponImbueInput,
 	],
-	rotationInputs: WarlockInputs.WarlockRotationConfig,
 
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [

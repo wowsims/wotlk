@@ -54,7 +54,7 @@ func (rot *APLRotation) doAndRecordWarnings(warningsList *[]string, isPrepull bo
 }
 
 func (unit *Unit) newAPLRotation(config *proto.APLRotation) *APLRotation {
-	if config == nil || !unit.IsUsingAPL {
+	if config == nil {
 		return nil
 	}
 
@@ -193,7 +193,6 @@ func (apl *APLRotation) DoNextAction(sim *Simulation) {
 
 	i := 0
 	apl.inLoop = true
-	apl.unit.StartAPLLoop(sim)
 
 	for nextAction := apl.getNextAction(sim); nextAction != nil; i, nextAction = i+1, apl.getNextAction(sim) {
 		if i > 1000 {
@@ -211,11 +210,7 @@ func (apl *APLRotation) DoNextAction(sim *Simulation) {
 	gcdReady := apl.unit.GCD.IsReady(sim)
 	if gcdReady {
 		apl.unit.WaitUntil(sim, sim.CurrentTime+time.Millisecond*50)
-	} else {
-		apl.unit.DoNothing()
 	}
-
-	apl.unit.DoneAPLLoop(sim, !gcdReady)
 }
 
 func (apl *APLRotation) getNextAction(sim *Simulation) *APLAction {

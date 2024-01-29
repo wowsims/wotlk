@@ -34,13 +34,13 @@ export const GearBeastMasteryDefault = PresetUtils.makePresetGear('Blank', Blank
 export const GearMarksmanDefault = PresetUtils.makePresetGear('Blank', BlankGear, { talentTree: 1 })
 export const GearSurvivalDefault = PresetUtils.makePresetGear('Blank', BlankGear, { talentTree: 2 })
 
-export const DefaultRotation = HunterRotation.create({
+export const DefaultSimpleRotation = HunterRotation.create({
 	type: RotationType.SingleTarget,
 	sting: StingType.SerpentSting,
 	multiDotSerpentSting: true,
 });
 
-export const ROTATION_PRESET_SIMPLE_DEFAULT = PresetUtils.makePresetSimpleRotation('Simple Default', Spec.SpecHunter, DefaultRotation);
+export const ROTATION_PRESET_SIMPLE_DEFAULT = PresetUtils.makePresetSimpleRotation('Simple Default', Spec.SpecHunter, DefaultSimpleRotation);
 export const ROTATION_PRESET_BM = PresetUtils.makePresetAPLRotation('BM', BlankApl, { talentTree: 0 });
 export const ROTATION_PRESET_MM = PresetUtils.makePresetAPLRotation('MM', BlankApl, { talentTree: 1 });
 export const ROTATION_PRESET_MM_ADVANCED = PresetUtils.makePresetAPLRotation('MM (Advanced)', BlankApl, { talentTree: 1 });

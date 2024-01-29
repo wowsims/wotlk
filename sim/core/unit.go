@@ -123,8 +123,7 @@ type Unit struct {
 	// Must be enabled to use, with "EnableAutoAttacks()".
 	AutoAttacks AutoAttacks
 
-	IsUsingAPL bool // Used for checks before the finalize() stage, when apl rotations are created.
-	Rotation   *APLRotation
+	Rotation *APLRotation
 
 	// Statistics describing the results of the sim.
 	Metrics UnitMetrics
@@ -134,8 +133,7 @@ type Unit struct {
 	AttackTables                []*AttackTable
 	DynamicDamageTakenModifiers []DynamicDamageTakenModifier
 
-	GCD       *Timer
-	doNothing bool // flags that this character chose to do nothing.
+	GCD *Timer
 
 	// Used for applying the effect of a hardcast spell when casting finishes.
 	//  For channeled spells, only Expires is set.
@@ -145,11 +143,6 @@ type Unit struct {
 	// GCD-related PendingActions.
 	gcdAction      *PendingAction
 	hardcastAction *PendingAction
-
-	// Fields related to waiting for certain events to happen.
-	waitingForEnergy float64
-	waitingForMana   float64
-	waitStartTime    time.Duration
 
 	// Cached mana return values per tick.
 	manaTickWhileCasting    float64
@@ -162,8 +155,6 @@ type Unit struct {
 
 	// The currently-channeled DOT spell, otherwise nil.
 	ChanneledDot *Dot
-
-	ManaRequired float64
 }
 
 // Units can be disabled for several reasons:
@@ -172,14 +163,6 @@ type Unit struct {
 //  3. Dead units (not yet implemented)
 func (unit *Unit) IsEnabled() bool {
 	return unit.enabled
-}
-
-// DoNothing will explicitly declare that the character is intentionally doing nothing.
-//
-//	If the GCD is not used during OnGCDReady and this flag is set, OnGCDReady will not be called again
-//	until it is used in some other way (like from an auto attack or resource regeneration).
-func (unit *Unit) DoNothing() {
-	unit.doNothing = true
 }
 
 func (unit *Unit) IsActive() bool {
@@ -562,12 +545,10 @@ func (unit *Unit) startPull(sim *Simulation) {
 	}
 }
 
-// Advance moves time forward counting down auras, and nothing else, currently.
 func (unit *Unit) doneIteration(sim *Simulation) {
 	unit.Hardcast = Hardcast{}
-	unit.doneIterationGCD(sim)
 
-	unit.manaBar.doneIteration()
+	unit.manaBar.doneIteration(sim)
 	unit.rageBar.doneIteration()
 
 	unit.auraTracker.doneIteration(sim)
@@ -622,17 +603,4 @@ func (unit *Unit) GetMetadata() *proto.UnitMetadata {
 	})
 
 	return metadata
-}
-
-func (unit *Unit) StartAPLLoop(sim *Simulation) {
-	if unit.HasManaBar() {
-		unit.ManaRequired = 0
-	}
-}
-
-func (unit *Unit) DoneAPLLoop(sim *Simulation, usedGCD bool) {
-	if unit.HasManaBar() && !usedGCD && unit.ManaRequired > 0 {
-		unit.WaitForMana(sim, unit.ManaRequired)
-		unit.ManaRequired = 0
-	}
 }

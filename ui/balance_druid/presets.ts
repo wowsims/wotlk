@@ -14,8 +14,6 @@ import { SavedTalents } from '../core/proto/ui.js';
 
 import {
 	BalanceDruid_Options as BalanceDruidOptions,
-	BalanceDruid_Rotation as BalanceDruidRotation,
-	BalanceDruid_Rotation_Type as RotationType
 } from '../core/proto/druid.js';
 
 import * as PresetUtils from '../core/preset_utils.js';
@@ -40,11 +38,6 @@ export const BalanceTalents = {
 		talentsString: '5000500302551351--50050312',
 	}),
 };
-
-export const DefaultRotation = BalanceDruidRotation.create({
-	type: RotationType.Default,
-	playerLatency: 200,
-});
 
 export const DefaultOptions = BalanceDruidOptions.create({
 	innervateTarget: UnitReference.create(),

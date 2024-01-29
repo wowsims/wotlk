@@ -65,20 +65,6 @@ type Warlock struct {
 	PreviousTime  time.Duration
 
 	petStmBonusSP float64
-	acl           []ActionCondition
-}
-
-type ACLaction int
-
-const (
-	ACLCast ACLaction = iota
-	ACLNext
-	ACLRecast
-)
-
-type ActionCondition struct {
-	Spell     *core.Spell
-	Condition func(*core.Simulation) (ACLaction, *core.Unit)
 }
 
 func (warlock *Warlock) GetCharacter() *core.Character {
@@ -164,7 +150,6 @@ func (warlock *Warlock) HasRune(rune proto.WarlockRune) bool {
 }
 
 func (warlock *Warlock) OnGCDReady(sim *core.Simulation) {
-	warlock.DoNothing()
 }
 
 // Agent is a generic way to access underlying warlock on any of the agents.

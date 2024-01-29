@@ -1,10 +1,7 @@
 import {
 	Consumes,
-	CustomRotation,
-	CustomSpell,
 	Flask,
 	Food,
-	Spec
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
@@ -12,9 +9,6 @@ import {
 	PaladinAura,
 	PaladinJudgement,
 	RetributionPaladin_Options as RetributionPaladinOptions,
-	RetributionPaladin_Rotation as RetributionPaladinRotation,
-	RetributionPaladin_Rotation_RotationType as RotationType,
-	RetributionPaladin_Rotation_SpellOption as SpellOption,
 } from '../core/proto/paladin.js';
 
 import * as PresetUtils from '../core/preset_utils.js';
@@ -29,46 +23,6 @@ import DefaultApl from './apls/default.apl.json';
 
 export const DefaultGear = PresetUtils.makePresetGear('Blank', BlankGear);
 
-export const DefaultRotation = RetributionPaladinRotation.create({
-	type: RotationType.Standard,
-	exoSlack: 500,
-	consSlack: 500,
-	useDivinePlea: true,
-	avoidClippingConsecration: true,
-	holdLastAvengingWrathUntilExecution: false,
-	cancelChaosBane: false,
-	divinePleaPercentage: 0.75,
-	holyWrathThreshold: 4,
-	sovTargets: 1,
-	customRotation: CustomRotation.create({
-		spells: [
-			CustomSpell.create({ spell: SpellOption.HammerOfWrath }),
-			CustomSpell.create({ spell: SpellOption.JudgementOfWisdom }),
-			CustomSpell.create({ spell: SpellOption.CrusaderStrike }),
-			CustomSpell.create({ spell: SpellOption.DivineStorm }),
-			CustomSpell.create({ spell: SpellOption.Consecration }),
-			CustomSpell.create({ spell: SpellOption.Exorcism }),
-			CustomSpell.create({ spell: SpellOption.HolyWrath }),
-		],
-	}),
-	customCastSequence: CustomRotation.create({
-		spells: [
-			CustomSpell.create({ spell: SpellOption.JudgementOfWisdom }),
-			CustomSpell.create({ spell: SpellOption.CrusaderStrike }),
-			CustomSpell.create({ spell: SpellOption.DivineStorm }),
-			CustomSpell.create({ spell: SpellOption.Consecration }),
-			CustomSpell.create({ spell: SpellOption.CrusaderStrike }),
-			CustomSpell.create({ spell: SpellOption.Exorcism }),
-			CustomSpell.create({ spell: SpellOption.JudgementOfWisdom }),
-			CustomSpell.create({ spell: SpellOption.CrusaderStrike }),
-			CustomSpell.create({ spell: SpellOption.DivineStorm }),
-			CustomSpell.create({ spell: SpellOption.Consecration }),
-			CustomSpell.create({ spell: SpellOption.CrusaderStrike }),
-		],
-	}),
-});
-
-export const ROTATION_PRESET_LEGACY_DEFAULT = PresetUtils.makePresetLegacyRotation('Legacy Default', Spec.SpecRetributionPaladin, DefaultRotation);
 export const ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Default', DefaultApl);
 
 // Default talents. Uses the wowhead calculator format, make the talents on

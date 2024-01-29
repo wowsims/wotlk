@@ -4,7 +4,7 @@ import (
 	"github.com/wowsims/sod/sim/core"
 )
 
-func (warrior *Warrior) registerHeroicStrikeSpell() *core.Spell {
+func (warrior *Warrior) registerHeroicStrikeSpell() {
 	damage := map[int32]float64{
 		25: 44,
 		40: 80,
@@ -19,7 +19,7 @@ func (warrior *Warrior) registerHeroicStrikeSpell() *core.Spell {
 		60: 11567,
 	}[warrior.Level]
 
-	return warrior.RegisterSpell(core.SpellConfig{
+	warrior.HeroicStrike = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: spellID},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
@@ -52,9 +52,10 @@ func (warrior *Warrior) registerHeroicStrikeSpell() *core.Spell {
 			}
 		},
 	})
+	warrior.makeQueueSpellsAndAura(warrior.HeroicStrike)
 }
 
-func (warrior *Warrior) registerCleaveSpell() *core.Spell {
+func (warrior *Warrior) registerCleaveSpell() {
 	flatDamageBonus := map[int32]float64{
 		25: 5,
 		40: 18,
@@ -73,7 +74,7 @@ func (warrior *Warrior) registerCleaveSpell() *core.Spell {
 	numHits := min(targets, warrior.Env.GetNumTargets())
 	results := make([]*core.SpellResult, numHits)
 
-	return warrior.RegisterSpell(core.SpellConfig{
+	warrior.Cleave = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: spellID},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
@@ -109,6 +110,7 @@ func (warrior *Warrior) registerCleaveSpell() *core.Spell {
 			}
 		},
 	})
+	warrior.makeQueueSpellsAndAura(warrior.Cleave)
 }
 
 func (warrior *Warrior) makeQueueSpellsAndAura(srcSpell *core.Spell) *core.Spell {
@@ -162,16 +164,4 @@ func (warrior *Warrior) TryHSOrCleave(sim *core.Simulation, mhSwingSpell *core.S
 	}
 
 	return warrior.curQueuedAutoSpell
-}
-
-func (warrior *Warrior) RegisterHSOrCleave(useCleave bool) {
-	warrior.HeroicStrike = warrior.registerHeroicStrikeSpell()
-	warrior.Cleave = warrior.registerCleaveSpell()
-
-	if useCleave {
-		warrior.Cleave = warrior.registerCleaveSpell()
-		warrior.hsOrCleaveQueueSpell = warrior.makeQueueSpellsAndAura(warrior.Cleave)
-	} else {
-		warrior.hsOrCleaveQueueSpell = warrior.makeQueueSpellsAndAura(warrior.HeroicStrike)
-	}
 }

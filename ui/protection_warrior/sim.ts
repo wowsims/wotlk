@@ -110,8 +110,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecProtectionWarrior, {
 		}),
 		// Default consumes settings.
 		consumes: Presets.DefaultConsumes,
-		// Default rotation settings.
-		simpleRotation: Presets.DefaultRotation,
 		// Default talents.
 		talents: Presets.StandardTalents.data,
 		// Default spec-specific settings.
@@ -146,10 +144,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecProtectionWarrior, {
 	// IconInputs to include in the 'Player' section on the settings tab.
 	playerIconInputs: [
 		ProtectionWarriorInputs.ShoutPicker,
-		ProtectionWarriorInputs.ShatteringThrow,
 	],
-	// Inputs to include in the 'Rotation' section on the settings tab.
-	rotationInputs: ProtectionWarriorInputs.ProtectionWarriorRotationConfig,
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
 	],
@@ -183,6 +178,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecProtectionWarrior, {
 		// Preset rotations that the user can quickly select.
 		rotations: [
 			Presets.ROTATION_DEFAULT,
+			Presets.ROTATION_PRESET_SIMPLE,
 		],
 		// Preset gear configurations that the user can quickly select.
 		gear: [

@@ -56,8 +56,5 @@ var PlayerOptionsBasic = &proto.Player_ShadowPriest{
 		Options: &proto.ShadowPriest_Options{
 			Armor: proto.ShadowPriest_Options_InnerFire,
 		},
-		Rotation: &proto.ShadowPriest_Rotation{
-			RotationType: proto.ShadowPriest_Rotation_Basic,
-		},
 	},
 }

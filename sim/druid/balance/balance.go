@@ -29,9 +29,8 @@ func NewBalanceDruid(character *core.Character, options *proto.Player) *BalanceD
 	selfBuffs := druid.SelfBuffs{}
 
 	moonkin := &BalanceDruid{
-		Druid:    druid.New(character, druid.Moonkin, selfBuffs, options.TalentsString),
-		Options:  balanceOptions.Options,
-		Rotation: balanceOptions.Rotation,
+		Druid:   druid.New(character, druid.Moonkin, selfBuffs, options.TalentsString),
+		Options: balanceOptions.Options,
 	}
 
 	moonkin.SelfBuffs.InnervateTarget = &proto.UnitReference{}
@@ -39,7 +38,6 @@ func NewBalanceDruid(character *core.Character, options *proto.Player) *BalanceD
 		moonkin.SelfBuffs.InnervateTarget = balanceOptions.Options.InnervateTarget
 	}
 
-	moonkin.EnableResumeAfterManaWait(moonkin.tryUseGCD)
 	return moonkin
 }
 
@@ -51,8 +49,7 @@ type BalanceOnUseTrinket struct {
 type BalanceDruid struct {
 	*druid.Druid
 
-	Options  *proto.BalanceDruid_Options
-	Rotation *proto.BalanceDruid_Rotation
+	Options *proto.BalanceDruid_Options
 }
 
 func (moonkin *BalanceDruid) GetDruid() *druid.Druid {

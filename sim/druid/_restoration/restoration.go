@@ -28,8 +28,7 @@ func NewRestorationDruid(character *core.Character, options *proto.Player) *Rest
 	selfBuffs := druid.SelfBuffs{}
 
 	resto := &RestorationDruid{
-		Druid:    druid.New(character, druid.Tree, selfBuffs, options.TalentsString),
-		Rotation: restoOptions.Rotation,
+		Druid: druid.New(character, druid.Tree, selfBuffs, options.TalentsString),
 	}
 
 	resto.SelfBuffs.InnervateTarget = &proto.UnitReference{}
@@ -37,14 +36,11 @@ func NewRestorationDruid(character *core.Character, options *proto.Player) *Rest
 		resto.SelfBuffs.InnervateTarget = restoOptions.Options.InnervateTarget
 	}
 
-	resto.EnableResumeAfterManaWait(resto.tryUseGCD)
 	return resto
 }
 
 type RestorationDruid struct {
 	*druid.Druid
-
-	Rotation *proto.RestorationDruid_Rotation
 }
 
 func (resto *RestorationDruid) GetDruid() *druid.Druid {

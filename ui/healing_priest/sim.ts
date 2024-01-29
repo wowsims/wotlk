@@ -64,8 +64,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHealingPriest, {
 		}),
 		// Default consumes settings.
 		consumes: Presets.DefaultConsumes,
-		// Default rotation settings.
-		simpleRotation: Presets.DiscDefaultRotation,
 		// Default talents.
 		talents: Presets.DiscTalents.data,
 		// Default spec-specific settings.
@@ -83,8 +81,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHealingPriest, {
 		HealingPriestInputs.InnerFire,
 		HealingPriestInputs.Shadowfiend,
 	],
-	// Inputs to include in the 'Rotation' section on the settings tab.
-	rotationInputs: HealingPriestInputs.HealingPriestRotationConfig,
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
 	],

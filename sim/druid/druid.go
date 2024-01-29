@@ -21,7 +21,6 @@ type Druid struct {
 
 	StartingForm DruidForm
 
-	MaulRageThreshold float64
 	RebirthTiming     float64
 	BleedsActive      int
 	AssumeBleedActive bool
@@ -193,7 +192,7 @@ func (druid *Druid) RegisterFeralCatSpells() {
 	// druid.registerEnrageSpell()
 	// druid.registerFerociousBiteSpell()
 	// druid.registerMangleBearSpell()
-	// druid.registerMaulSpell(0)
+	// druid.registerMaulSpell()
 	// druid.registerLacerateSpell()
 	// druid.registerRakeSpell()
 	druid.registerRipSpell()
@@ -204,7 +203,7 @@ func (druid *Druid) RegisterFeralCatSpells() {
 }
 
 // TODO: Classic feral tank
-func (druid *Druid) RegisterFeralTankSpells(maulRageThreshold float64) {
+func (druid *Druid) RegisterFeralTankSpells() {
 	// druid.registerBarkskinCD()
 	// druid.registerBerserkCD()
 	// druid.registerBearFormSpell()
@@ -212,7 +211,7 @@ func (druid *Druid) RegisterFeralTankSpells(maulRageThreshold float64) {
 	// druid.registerEnrageSpell()
 	// druid.registerFrenziedRegenerationCD()
 	// druid.registerMangleBearSpell()
-	// druid.registerMaulSpell(maulRageThreshold)
+	// druid.registerMaulSpell()
 	// druid.registerLacerateSpell()
 	// druid.registerRakeSpell()
 	// druid.registerRipSpell()

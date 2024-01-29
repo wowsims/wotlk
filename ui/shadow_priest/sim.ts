@@ -103,11 +103,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecShadowPriest, {
 	playerIconInputs: [
 		ShadowPriestInputs.ArmorInput,
 	],
-	rotationIconInputs: [
-		ShadowPriestInputs.MindBlastInput,
-	],
-	// Inputs to include in the 'Rotation' section on the settings tab.
-	rotationInputs: ShadowPriestInputs.ShadowPriestRotationConfig,
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
 		BuffDebuffInputs.BlessingOfWisdom,

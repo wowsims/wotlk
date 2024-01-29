@@ -2,14 +2,9 @@ import { UnitReference, UnitReference_Type as UnitType } from '../core/proto/com
 import { Spec } from '../core/proto/common.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
 import { Player } from '../core/player.js';
-import { EventID, TypedEvent } from '../core/typed_event.js';
+import { EventID } from '../core/typed_event.js';
 
 import * as InputHelpers from '../core/components/input_helpers.js';
-
-import {
-	RestorationDruid_Options as DruidOptions,
-} from '../core/proto/druid.js';
-
 
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
@@ -30,8 +25,3 @@ export const SelfInnervate = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.S
 		player.setSpecOptions(eventID, newOptions);
 	},
 });
-
-export const RestorationDruidRotationConfig = {
-	inputs: [
-	],
-};

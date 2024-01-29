@@ -8,7 +8,6 @@ import { SavedTalents } from '../core/proto/ui.js';
 import {
 	PaladinAura,
 	PaladinJudgement,
-	HolyPaladin_Rotation as HolyPaladinRotation,
 	HolyPaladin_Options as HolyPaladinOptions,
 } from '../core/proto/paladin.js';
 
@@ -31,9 +30,6 @@ export const StandardTalents = {
 		talentsString: '50350151020013053100515221-50023131203',
 	}),
 };
-
-export const DefaultRotation = HolyPaladinRotation.create({
-});
 
 export const DefaultOptions = HolyPaladinOptions.create({
 	aura: PaladinAura.DevotionAura,

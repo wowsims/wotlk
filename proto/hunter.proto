@@ -123,10 +123,10 @@ message Hunter {
 		enum RotationType {
 			UnknownType = 0;
 			SingleTarget = 1;
-			Aoe = 2;
-			Custom = 3;
+			Aoe = 3;
+			Custom = 2;
 		}
-		RotationType type = 1;
+		RotationType type = 9;
 
 		enum StingType {
 			NoSting = 0;
@@ -136,7 +136,6 @@ message Hunter {
 		StingType sting = 2;
 		bool multi_dot_serpent_sting = 3;
 	}
-	Rotation rotation = 1;
 	
 	message Options {
 		enum Ammo {

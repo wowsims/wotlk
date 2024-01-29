@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
-	"github.com/wowsims/sod/sim/core/proto"
 )
 
 const ShoutExpirationThreshold = time.Second * 3
@@ -36,14 +35,8 @@ func (warrior *Warrior) makeShoutSpellHelper(actionID core.ActionID, allyAuras c
 	})
 }
 
-func (warrior *Warrior) makeShoutSpell() *core.Spell {
-	battleShout := warrior.makeShoutSpellHelper(core.ActionID{SpellID: 47436}, warrior.NewAllyAuraArray(func(unit *core.Unit) *core.Aura {
+func (warrior *Warrior) registerShouts() {
+	warrior.BattleShout = warrior.makeShoutSpellHelper(core.ActionID{SpellID: 47436}, warrior.NewAllyAuraArray(func(unit *core.Unit) *core.Aura {
 		return core.BattleShoutAura(unit, warrior.Talents.ImprovedBattleShout, warrior.Talents.BoomingVoice, warrior.Level)
 	}))
-
-	if warrior.ShoutType == proto.WarriorShout_WarriorShoutBattle {
-		return battleShout
-	} else {
-		return nil
-	}
 }

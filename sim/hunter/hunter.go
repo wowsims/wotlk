@@ -30,9 +30,8 @@ func RegisterHunter() {
 type Hunter struct {
 	core.Character
 
-	Talents  *proto.HunterTalents
-	Options  *proto.Hunter_Options
-	Rotation *proto.Hunter_Rotation
+	Talents *proto.HunterTalents
+	Options *proto.Hunter_Options
 
 	pet *HunterPet
 
@@ -41,8 +40,6 @@ type Hunter struct {
 	NormalizedAmmoDamageBonus float64
 
 	highestSerpentStingRank int
-
-	currentAspect *core.Aura
 
 	curQueueAura       *core.Aura
 	curQueuedAutoSpell *core.Spell
@@ -133,10 +130,6 @@ func (hunter *Hunter) Initialize() {
 
 	hunter.registerKillCommand()
 	//hunter.registerRapidFireCD()
-
-	if !hunter.IsUsingAPL {
-		hunter.DelayDPSCooldownsForArmorDebuffs(time.Second * 10)
-	}
 }
 
 func (hunter *Hunter) Reset(sim *core.Simulation) {
@@ -149,10 +142,6 @@ func NewHunter(character *core.Character, options *proto.Player) *Hunter {
 		Character: *character,
 		Talents:   &proto.HunterTalents{},
 		Options:   hunterOptions.Options,
-		Rotation:  hunterOptions.Rotation,
-	}
-	if hunter.Rotation == nil {
-		hunter.Rotation = &proto.Hunter_Rotation{}
 	}
 	core.FillTalentsProto(hunter.Talents.ProtoReflect(), options.TalentsString, TalentTreeSizes)
 	hunter.EnableManaBar()

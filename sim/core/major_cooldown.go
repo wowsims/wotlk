@@ -227,50 +227,6 @@ func (mcdm *majorCooldownManager) finalize() {
 	mcdm.majorCooldowns = make([]*MajorCooldown, len(mcdm.initialMajorCooldowns))
 }
 
-// Adds a delay to the first usage of all CDs so that debuffs have time
-// to be applied. MCDs that have a user-specified timing are not delayed.
-//
-// This function should be called from Agent.Init().
-func (mcdm *majorCooldownManager) DelayDPSCooldownsForArmorDebuffs(delay time.Duration) {
-	if mcdm.character.IsUsingAPL {
-		return
-	}
-	mcdm.character.Env.RegisterPostFinalizeEffect(func() {
-		for i := range mcdm.initialMajorCooldowns {
-			mcd := &mcdm.initialMajorCooldowns[i]
-			if len(mcd.timings) == 0 && mcd.Type.Matches(CooldownTypeDPS) && !mcd.Type.Matches(CooldownTypeExplosive) {
-				oldShouldActivate := mcd.ShouldActivate
-				mcd.ShouldActivate = func(sim *Simulation, character *Character) bool {
-					if oldShouldActivate != nil && !oldShouldActivate(sim, character) {
-						return false
-					}
-					return sim.CurrentTime >= delay
-				}
-			}
-		}
-	})
-}
-
-// Adds a delay to the first usage of all CDs overriding shouldActivate for cooldownTypeDPS,
-// MCDs that have a user-specified timing are not delayed.
-// This function should be called from Agent.Init().
-func (mcdm *majorCooldownManager) DelayDPSCooldowns(delay time.Duration) {
-	mcdm.character.Env.RegisterPostFinalizeEffect(func() {
-		for i := range mcdm.initialMajorCooldowns {
-			mcd := &mcdm.initialMajorCooldowns[i]
-			if len(mcd.timings) == 0 && mcd.Type.Matches(CooldownTypeDPS) {
-				oldShouldActivate := mcd.ShouldActivate
-				mcd.ShouldActivate = func(sim *Simulation, character *Character) bool {
-					if oldShouldActivate != nil && !oldShouldActivate(sim, character) {
-						return false
-					}
-					return sim.CurrentTime >= delay
-				}
-			}
-		}
-	})
-}
-
 func findTrinketAura(character *Character, trinketID int32) *Aura {
 	for _, aura := range character.auras {
 		if aura.ActionIDForProc.ItemID == trinketID {

@@ -45,11 +45,7 @@ func (warrior *Warrior) registerBloodthirstSpell(cdTimer *core.Timer) {
 			core.StartDelayedAction(sim, core.DelayedActionOptions{
 				DoAt: sim.CurrentTime + warrior.Bloodthirst.CD.Duration,
 				OnAction: func(_ *core.Simulation) {
-					if warrior.IsUsingAPL {
-						warrior.Rotation.DoNextAction(sim)
-					} else if warrior.Bloodthirst.CanCast(sim, target) {
-						warrior.Bloodthirst.Cast(sim, target)
-					}
+					warrior.Rotation.DoNextAction(sim)
 				},
 			})
 		},

@@ -124,7 +124,6 @@ func (ai *Patchwerk10AI) registerFrenzySpell(target *core.Target) {
 
 func (ai *Patchwerk10AI) DoAction(sim *core.Simulation) {
 	if ai.Target.CurrentTarget == nil {
-		ai.Target.DoNothing()
 		return
 	}
 

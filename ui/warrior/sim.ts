@@ -120,8 +120,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarrior, {
 		WarriorInputs.ShoutPicker,
 		WarriorInputs.Recklessness,
 	],
-	// Inputs to include in the 'Rotation' section on the settings tab.
-	rotationInputs: WarriorInputs.WarriorRotationConfig,
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
 	],

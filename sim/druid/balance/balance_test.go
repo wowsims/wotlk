@@ -40,7 +40,6 @@ var PlayerOptionsAdaptive = &proto.Player_BalanceDruid{
 		Options: &proto.BalanceDruid_Options{
 			OkfUptime: 0.2,
 		},
-		Rotation: &proto.BalanceDruid_Rotation{},
 	},
 }
 

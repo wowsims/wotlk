@@ -27,9 +27,8 @@ func NewHolyPaladin(character *core.Character, options *proto.Player) *HolyPalad
 	holyOptions := options.GetHolyPaladin()
 
 	holy := &HolyPaladin{
-		Paladin:  paladin.NewPaladin(character, options.TalentsString),
-		Rotation: holyOptions.Rotation,
-		Options:  holyOptions.Options,
+		Paladin: paladin.NewPaladin(character, options.TalentsString),
+		Options: holyOptions.Options,
 	}
 
 	holy.PaladinAura = holyOptions.Options.Aura
@@ -40,8 +39,7 @@ func NewHolyPaladin(character *core.Character, options *proto.Player) *HolyPalad
 type HolyPaladin struct {
 	*paladin.Paladin
 
-	Rotation *proto.HolyPaladin_Rotation
-	Options  *proto.HolyPaladin_Options
+	Options *proto.HolyPaladin_Options
 }
 
 func (holy *HolyPaladin) GetPaladin() *paladin.Paladin {
