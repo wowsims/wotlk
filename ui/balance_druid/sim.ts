@@ -16,7 +16,6 @@ import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.j
 import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs';
 import * as ConsumablesInputs from '../core/components/inputs/consumables.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
-import * as DruidInputs from './inputs.js';
 import * as Presets from './presets.js';
 
 const SPEC_CONFIG = registerSpecConfig(Spec.SpecBalanceDruid, {
@@ -66,8 +65,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecBalanceDruid, {
 		}),
 		// Default consumes settings.
 		consumes: Presets.DefaultConsumes,
-		// Default rotation settings.
-		simpleRotation: Presets.DefaultRotation,
 		// Default talents.
 		talents: Presets.BalanceTalents.data,
 		// Default spec-specific settings.
@@ -83,8 +80,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecBalanceDruid, {
 	// IconInputs to include in the 'Player' section on the settings tab.
 	playerIconInputs: [
 	],
-	// Inputs to include in the 'Rotation' section on the settings tab.
-	rotationInputs: DruidInputs.BalanceDruidRotationConfig,
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
 	],

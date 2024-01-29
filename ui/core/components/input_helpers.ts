@@ -1,10 +1,8 @@
 import { ActionId } from '../proto_utils/action_id.js';
-import { CustomRotation } from '../proto/common.js';
 import { Spec } from '../proto/common.js';
 import { Player } from '../player.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 import { SpecOptions, SpecRotation } from '../proto_utils/utils.js';
-import { CustomRotationPickerConfig } from './individual_sim_ui/custom_rotation_picker.js';
 import { IconPickerConfig } from './icon_picker.js';
 import { IconEnumPickerConfig, IconEnumPickerDirection, IconEnumValueConfig } from './icon_enum_picker.js';
 import { EnumPickerConfig, EnumValueConfig } from './enum_picker.js';
@@ -82,11 +80,11 @@ export function makeRotationBooleanInput<SpecType extends Spec>(config: PlayerBo
 		label: config.label,
 		labelTooltip: config.labelTooltip,
 		getModObject: (player: Player<SpecType>) => player,
-		getValue: config.getValue || ((player: Player<SpecType>) => player.getRotation()[config.fieldName] as unknown as boolean),
+		getValue: config.getValue || ((player: Player<SpecType>) => player.getSimpleRotation()[config.fieldName] as unknown as boolean),
 		setValue: config.setValue || ((eventID: EventID, player: Player<SpecType>, newVal: boolean) => {
-			const newMessage = player.getRotation();
+			const newMessage = player.getSimpleRotation();
 			(newMessage[config.fieldName] as unknown as boolean) = newVal;
-			player.setRotation(eventID, newMessage);
+			player.setSimpleRotation(eventID, newMessage);
 		}),
 		changedEvent: config.changeEmitter || ((player: Player<SpecType>) => player.rotationChangeEmitter),
 		enableWhen: config.enableWhen,
@@ -165,11 +163,11 @@ export function makeRotationNumberInput<SpecType extends Spec>(config: PlayerNum
 		float: config.float,
 		positive: config.positive,
 		getModObject: (player: Player<SpecType>) => player,
-		getValue: config.getValue || ((player: Player<SpecType>) => player.getRotation()[config.fieldName] as unknown as number),
+		getValue: config.getValue || ((player: Player<SpecType>) => player.getSimpleRotation()[config.fieldName] as unknown as number),
 		setValue: config.setValue || ((eventID: EventID, player: Player<SpecType>, newVal: number) => {
-			const newMessage = player.getRotation();
+			const newMessage = player.getSimpleRotation();
 			(newMessage[config.fieldName] as unknown as number) = newVal;
-			player.setRotation(eventID, newMessage);
+			player.setSimpleRotation(eventID, newMessage);
 		}),
 		changedEvent: config.changeEmitter || ((player: Player<SpecType>) => player.rotationChangeEmitter),
 		enableWhen: config.enableWhen,
@@ -247,11 +245,11 @@ export function makeRotationEnumInput<SpecType extends Spec>(config: PlayerEnumI
 		labelTooltip: config.labelTooltip,
 		values: config.values,
 		getModObject: (player: Player<SpecType>) => player,
-		getValue: config.getValue || ((player: Player<SpecType>) => player.getRotation()[config.fieldName] as unknown as number),
+		getValue: config.getValue || ((player: Player<SpecType>) => player.getSimpleRotation()[config.fieldName] as unknown as number),
 		setValue: config.setValue || ((eventID: EventID, player: Player<SpecType>, newVal: number) => {
-			const newMessage = player.getRotation();
+			const newMessage = player.getSimpleRotation();
 			(newMessage[config.fieldName] as unknown as number) = newVal;
-			player.setRotation(eventID, newMessage);
+			player.setSimpleRotation(eventID, newMessage);
 		}),
 		changedEvent: config.changeEmitter || ((player: Player<SpecType>) => player.rotationChangeEmitter),
 		enableWhen: config.enableWhen,
@@ -455,42 +453,11 @@ export function makeRotationEnumIconInput<SpecType extends Spec, T>(config: Play
 	return makeEnumIconInput<SpecType, SpecRotation<SpecType>, Player<SpecType>, T>({
 		showWhen: config.showWhen,
 		getModObject: (player: Player<SpecType>) => player,
-		getValue: (player: Player<SpecType>) => player.getRotation(),
-		setValue: (eventID: EventID, player: Player<SpecType>, newVal: SpecRotation<SpecType>) => player.setRotation(eventID, newVal),
+		getValue: (player: Player<SpecType>) => player.getSimpleRotation(),
+		setValue: (eventID: EventID, player: Player<SpecType>, newVal: SpecRotation<SpecType>) => player.setSimpleRotation(eventID, newVal),
 		getFieldValue: config.getValue,
 		setFieldValue: config.setValue,
 		changeEmitter: config.changeEmitter || ((player: Player<SpecType>) => player.rotationChangeEmitter),
 		extraCssClasses: config.extraCssClasses,
 	}, config.fieldName, config.values, config.numColumns);
-}
-
-export interface TypedCustomRotationPickerConfig<SpecType extends Spec, T> extends CustomRotationPickerConfig<SpecType, T> {
-	type: 'customRotation',
-}
-
-interface WrappedCustomRotationInputConfig<SpecType extends Spec, T> {
-	fieldName: keyof SpecRotation<SpecType>,
-	getValue?: (player: Player<SpecType>) => CustomRotation,
-	setValue?: (eventID: EventID, player: Player<SpecType>, newValue: CustomRotation) => void,
-
-	numColumns: number,
-	showCastsPerMinute?: boolean,
-	values: Array<IconEnumValueConfig<Player<SpecType>, T>>;
-
-	showWhen?: (player: Player<SpecType>) => boolean,
-}
-export function makeCustomRotationInput<SpecType extends Spec, T>(config: WrappedCustomRotationInputConfig<SpecType, T>): TypedCustomRotationPickerConfig<SpecType, T> {
-	return {
-		type: 'customRotation',
-		getValue: config.getValue || ((player: Player<SpecType>) => (player.getRotation()[config.fieldName] as unknown as CustomRotation) || CustomRotation.create()),
-		setValue: config.setValue || ((eventID: EventID, player: Player<SpecType>, newValue: CustomRotation) => {
-			const rotation = player.getRotation();
-			(rotation[config.fieldName] as unknown as CustomRotation) = newValue;
-			player.setRotation(eventID, rotation);
-		}),
-		showWhen: config.showWhen,
-		numColumns: config.numColumns,
-		showCastsPerMinute: config.showCastsPerMinute || false,
-		values: config.values,
-	}
 }

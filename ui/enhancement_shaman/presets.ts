@@ -1,7 +1,5 @@
 import {
 	Consumes,
-	CustomRotation,
-	CustomSpell,
 	Debuffs,
 	Flask,
 	Food,
@@ -11,19 +9,10 @@ import {
 import { SavedTalents } from '../core/proto/ui.js';
 
 import {
-	AirTotem,
-	EnhancementShaman_Rotation_CustomRotationSpell as CustomRotationSpell,
-	EarthTotem,
 	EnhancementShaman_Options as EnhancementShamanOptions,
-	EnhancementShaman_Rotation as EnhancementShamanRotation,
-	FireTotem,
-	EnhancementShaman_Rotation_PrimaryShock as PrimaryShock,
-	EnhancementShaman_Rotation_RotationType as RotationType,
 	ShamanImbue,
 	ShamanShield,
 	ShamanSyncType,
-	ShamanTotems,
-	WaterTotem
 } from '../core/proto/shaman.js';
 
 import * as PresetUtils from '../core/preset_utils.js';
@@ -39,41 +28,6 @@ import Phase3Apl from './apls/phase_3.apl.json';
 // keep them in a separate file.
 
 export const DefaultGear = PresetUtils.makePresetGear('Blank', BlankGear);
-
-export const DefaultRotation = EnhancementShamanRotation.create({
-	totems: ShamanTotems.create({
-		earth: EarthTotem.StrengthOfEarthTotem,
-		air: AirTotem.WindfuryTotem,
-		fire: FireTotem.MagmaTotem,
-		water: WaterTotem.ManaSpringTotem,
-		useFireElemental: true,
-	}),
-	maelstromweaponMinStack: 3,
-	lightningboltWeave: true,
-	autoWeaveDelay: 500,
-	delayGcdWeave: 750,
-	lavaburstWeave: false,
-	firenovaManaThreshold: 3000,
-	shamanisticRageManaThreshold: 25,
-	primaryShock: PrimaryShock.Earth,
-	weaveFlameShock: true,
-	rotationType: RotationType.Priority,
-	customRotation: CustomRotation.create({
-		spells: [
-			CustomSpell.create({ spell: CustomRotationSpell.LightningBolt }),
-			CustomSpell.create({ spell: CustomRotationSpell.StormstrikeDebuffMissing }),
-			CustomSpell.create({ spell: CustomRotationSpell.LightningBoltWeave }),
-			CustomSpell.create({ spell: CustomRotationSpell.Stormstrike }),
-			CustomSpell.create({ spell: CustomRotationSpell.FlameShock }),
-			CustomSpell.create({ spell: CustomRotationSpell.EarthShock }),
-			CustomSpell.create({ spell: CustomRotationSpell.MagmaTotem }),
-			CustomSpell.create({ spell: CustomRotationSpell.LightningShield }),
-			CustomSpell.create({ spell: CustomRotationSpell.FireNova }),
-			CustomSpell.create({ spell: CustomRotationSpell.LightningBoltDelayedWeave }),
-			CustomSpell.create({ spell: CustomRotationSpell.LavaLash }),
-		],
-	}),
-});
 
 export const ROTATION_FT_DEFAULT = PresetUtils.makePresetAPLRotation('Default FT', DefaultFt);
 export const ROTATION_WF_DEFAULT = PresetUtils.makePresetAPLRotation('Default WF', DefaultWf);
@@ -97,7 +51,6 @@ export const Phase3Talents = {
 
 export const DefaultOptions = EnhancementShamanOptions.create({
 	shield: ShamanShield.LightningShield,
-	bloodlust: true,
 	imbueMh: ShamanImbue.WindfuryWeapon,
 	imbueOh: ShamanImbue.FlametongueWeapon,
 	syncType: ShamanSyncType.Auto,

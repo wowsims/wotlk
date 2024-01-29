@@ -1,7 +1,7 @@
 import { ItemSlot, Spec } from '../core/proto/common.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
 import { Player } from '../core/player.js';
-import { EventID, TypedEvent } from '../core/typed_event.js';
+import { TypedEvent } from '../core/typed_event.js';
 import { makePetTypeInputConfig } from '../core/talents/hunter_pet.js';
 
 import * as InputHelpers from '../core/components/input_helpers.js';
@@ -91,7 +91,7 @@ export const HunterRotationConfig = {
 				{ name: 'Scorpid Sting', value: StingType.ScorpidSting },
 				{ name: 'Serpent Sting', value: StingType.SerpentSting },
 			],
-			showWhen: (player: Player<Spec.SpecHunter>) => player.getRotation().type == RotationType.SingleTarget,
+			showWhen: (player: Player<Spec.SpecHunter>) => player.getSimpleRotation().type == RotationType.SingleTarget,
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecHunter>({
 			fieldName: 'multiDotSerpentSting',

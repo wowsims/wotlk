@@ -17,7 +17,6 @@ import { Player } from '../core/player.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import { getSpecIcon, specNames } from '../core/proto_utils/utils.js';
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
-import { TypedEvent } from '../core/typed_event.js';
 import { TotemsSection } from '../core/components/totem_inputs.js';
 
 import * as OtherInputs from '../core/components/other_inputs.js';
@@ -32,22 +31,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecElementalShaman, {
 	knownIssues: [
 	],
 	warnings: [
-		// Warning to use all 4 totems if T6 2pc bonus is active.
-		(simUI: IndividualSimUI<Spec.SpecElementalShaman>) => {
-			return {
-				updateOn: TypedEvent.onAny([simUI.player.rotationChangeEmitter, simUI.player.currentStatsEmitter]),
-				getContent: () => {
-					const hasT62P = simUI.player.getCurrentStats().sets.includes('Skyshatter Regalia (2pc)');
-					const totems = simUI.player.getRotation().totems!;
-					const hasAll4Totems = totems && totems.earth && totems.air && totems.fire && totems.water;
-					if (hasT62P && !hasAll4Totems) {
-						return 'T6 2pc bonus is equipped, but inactive because not all 4 totem types are being used.';
-					} else {
-						return '';
-					}
-				},
-			};
-		},
 	],
 
 	// All stats for which EP should be calculated.
@@ -95,8 +78,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecElementalShaman, {
 		}),
 		// Default consumes settings.
 		consumes: Presets.DefaultConsumes,
-		// Default rotation settings.
-		simpleRotation: Presets.DefaultRotation,
 		// Default talents.
 		talents: Presets.StandardTalents.data,
 		// Default spec-specific settings.
@@ -125,8 +106,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecElementalShaman, {
 	playerIconInputs: [
 		ShamanInputs.ShamanShieldInput,
 	],
-	// Inputs to include in the 'Rotation' section on the settings tab.
-	rotationInputs: ShamanInputs.ElementalShamanRotationConfig,
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
 	],
@@ -155,7 +134,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecElementalShaman, {
 		],
 		// Preset rotations that the user can quickly select.
 		rotations: [
-			Presets.ROTATION_PRESET_LEGACY,
 			Presets.ROTATION_PRESET_DEFAULT,
 			Presets.ROTATION_PRESET_ADVANCED,
 		],

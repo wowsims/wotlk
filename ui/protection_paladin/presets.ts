@@ -1,7 +1,5 @@
 import {
 	Consumes,
-	CustomRotation,
-	CustomSpell,
 	Flask,
 	Food
 } from '../core/proto/common.js';
@@ -11,8 +9,6 @@ import {
 	PaladinAura,
 	PaladinJudgement,
 	ProtectionPaladin_Options as ProtectionPaladinOptions,
-	ProtectionPaladin_Rotation as ProtectionPaladinRotation,
-	ProtectionPaladin_Rotation_SpellOption as SpellOption,
 } from '../core/proto/paladin.js';
 
 import * as PresetUtils from '../core/preset_utils.js';
@@ -26,25 +22,6 @@ import DefaultApl from './apls/default.apl.json';
 // keep them in a separate file.
 
 export const DefaultGear = PresetUtils.makePresetGear('Blank', BlankGear);
-
-export const DefaultRotation = ProtectionPaladinRotation.create({
-	hammerFirst: false,
-	squeezeHolyWrath: true,
-	waitSlack: 300,
-	useCustomPrio: false,
-	customRotation: CustomRotation.create({
-		spells: [
-			CustomSpell.create({ spell: SpellOption.ShieldOfRighteousness }),
-			CustomSpell.create({ spell: SpellOption.HammerOfTheRighteous }),
-			CustomSpell.create({ spell: SpellOption.HolyShield }),
-			CustomSpell.create({ spell: SpellOption.HammerOfWrath }),
-			CustomSpell.create({ spell: SpellOption.Consecration }),
-			CustomSpell.create({ spell: SpellOption.AvengersShield }),
-			CustomSpell.create({ spell: SpellOption.JudgementOfWisdom }),
-			CustomSpell.create({ spell: SpellOption.Exorcism })
-		],
-	}),
-});
 
 export const ROTATION_DEFAULT = PresetUtils.makePresetAPLRotation('Default (969)', DefaultApl);
 

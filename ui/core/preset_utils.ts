@@ -78,7 +78,6 @@ function makePresetGearHelper(name: string, gear: EquipmentSpec, options: Preset
 
 export function makePresetAPLRotation(name: string, rotationJson: any, options?: PresetRotationOptions): PresetRotation {
     const rotation = SavedRotation.create({
-        specRotationOptionsJson: '{}',
         rotation: APLRotation.fromJson(rotationJson),
     });
     return makePresetRotationHelper(name, rotation, options);
@@ -92,13 +91,6 @@ export function makePresetSimpleRotation<SpecType extends Spec>(name: string, sp
 				specRotationJson: JSON.stringify(specTypeFunctions[spec].rotationToJson(simpleRotation)),
 			},
 		},
-    });
-    return makePresetRotationHelper(name, rotation, options);
-}
-
-export function makePresetLegacyRotation<SpecType extends Spec>(name: string, spec: SpecType, simpleRotation: SpecRotation<SpecType>, options?: PresetRotationOptions): PresetRotation {
-    const rotation = SavedRotation.create({
-        specRotationOptionsJson: JSON.stringify(specTypeFunctions[spec].rotationToJson(simpleRotation)),
     });
     return makePresetRotationHelper(name, rotation, options);
 }

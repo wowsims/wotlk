@@ -41,7 +41,3 @@ export const PetInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecWarlo
 	],
 	changeEmitter: (player: Player<Spec.SpecWarlock>) => player.changeEmitter,
 });
-
-export const WarlockRotationConfig = {
-	inputs: [],
-};

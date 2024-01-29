@@ -1,12 +1,14 @@
 import {
 	AuraStats as AuraStatsProto,
+	Player as PlayerProto,
+	PlayerStats,
 	SpellStats as SpellStatsProto,
+	StatWeightsResult,
 	UnitMetadata as UnitMetadataProto,
 } from './proto/api.js';
 import {
 	APLRotation,
 	APLRotation_Type as APLRotationType,
-	APLValue,
 	SimpleRotation,
 } from './proto/apl.js';
 import {
@@ -26,7 +28,6 @@ import {
 	Spec,
 	Stat,
 	UnitReference,
-	UnitReference_Type,
 	UnitStats,
 } from './proto/common.js';
 import {
@@ -38,18 +39,13 @@ import {
 	UIItem_FactionRestriction,
 } from './proto/ui.js';
 
-import { LaunchStatus, aplLaunchStatuses } from './launched_sims';
-import { Player as PlayerProto, PlayerStats, StatWeightsResult } from './proto/api.js';
 import { ActionId } from './proto_utils/action_id.js';
+import { Database } from './proto_utils/database.js';
 import { EquippedItem, getWeaponDPS } from './proto_utils/equipped_item.js';
-
 import { Gear, ItemSwapGear } from './proto_utils/gear.js';
 import { Stats } from './proto_utils/stats.js';
-import { playerTalentStringToProto } from './talents/factory.js';
-
 import {
 	ClassSpecs,
-	ShamanSpecs,
 	SpecOptions,
 	SpecRotation,
 	SpecTalents,
@@ -72,14 +68,14 @@ import {
 } from './proto_utils/utils.js';
 
 import { getLanguageCode } from './constants/lang.js';
-import * as Mechanics from './constants/mechanics.js';
+import { Sim, SimSettingCategories } from './sim.js';
 import { MAX_PARTY_SIZE, Party } from './party.js';
-import { ElementalShaman_Options, ElementalShaman_Options_ThunderstormRange, ElementalShaman_Rotation, ElementalShaman_Rotation_BloodlustUse, EnhancementShaman_Rotation, EnhancementShaman_Rotation_BloodlustUse, RestorationShaman_Rotation, RestorationShaman_Rotation_BloodlustUse } from './proto/shaman.js';
 import { Raid } from './raid.js';
-import { Sim } from './sim.js';
+import { playerTalentStringToProto } from './talents/factory.js';
 import { EventID, TypedEvent } from './typed_event.js';
 import { stringComparator } from './utils.js';
-import { Database } from './proto_utils/database.js';
+
+import * as Mechanics from './constants/mechanics.js';
 
 export interface AuraStats {
 	data: AuraStatsProto,
@@ -237,11 +233,9 @@ export class Player<SpecType extends Spec> {
 	private level: number;
 	private profession1: Profession = 0;
 	private profession2: Profession = 0;
-	private rotation: SpecRotation<SpecType>;
 	aplRotation: APLRotation = APLRotation.create();
 	private talentsString: string = '';
 	private specOptions: SpecOptions<SpecType>;
-	private cooldowns: Cooldowns = Cooldowns.create();
 	private reactionTime: number = 0;
 	private channelClipDelay: number = 0;
 	private inFrontOfTarget: boolean = false;
@@ -278,7 +272,6 @@ export class Player<SpecType extends Spec> {
 	readonly rotationChangeEmitter = new TypedEvent<void>('PlayerRotation');
 	readonly talentsChangeEmitter = new TypedEvent<void>('PlayerTalents');
 	readonly specOptionsChangeEmitter = new TypedEvent<void>('PlayerSpecOptions');
-	readonly cooldownsChangeEmitter = new TypedEvent<void>('PlayerCooldowns');
 	readonly inFrontOfTargetChangeEmitter = new TypedEvent<void>('PlayerInFrontOfTarget');
 	readonly distanceFromTargetChangeEmitter = new TypedEvent<void>('PlayerDistanceFromTarget');
 	readonly healingModelChangeEmitter = new TypedEvent<void>('PlayerHealingModel');
@@ -301,7 +294,6 @@ export class Player<SpecType extends Spec> {
 		this.race = specToEligibleRaces[this.spec][0];
 		this.level = Mechanics.CURRENT_LEVEL_CAP;
 		this.specTypeFunctions = specTypeFunctions[this.spec] as SpecTypeFunctions<SpecType>;
-		this.rotation = this.specTypeFunctions.rotationCreate();
 		this.specOptions = this.specTypeFunctions.optionsCreate();
 
 		const specConfig = SPEC_CONFIGS[this.spec] as PlayerConfig<SpecType>;
@@ -309,7 +301,7 @@ export class Player<SpecType extends Spec> {
 			throw new Error('Could not find spec config for spec: ' + this.spec);
 		}
 		this.autoRotationGenerator = specConfig.autoRotation;
-		if (aplLaunchStatuses[this.spec] == LaunchStatus.Launched && specConfig.simpleRotation) {
+		if (specConfig.simpleRotation) {
 			this.simpleRotationGenerator = specConfig.simpleRotation;
 		} else {
 			this.simpleRotationGenerator = null;
@@ -332,7 +324,6 @@ export class Player<SpecType extends Spec> {
 			this.rotationChangeEmitter,
 			this.talentsChangeEmitter,
 			this.specOptionsChangeEmitter,
-			this.cooldownsChangeEmitter,
 			this.miscOptionsChangeEmitter,
 			this.inFrontOfTargetChangeEmitter,
 			this.distanceFromTargetChangeEmitter,
@@ -600,33 +591,6 @@ export class Player<SpecType extends Spec> {
 		this.consumesChangeEmitter.emit(eventID);
 	}
 
-	getCooldowns(): Cooldowns {
-		// Make a defensive copy
-		if (aplLaunchStatuses[this.spec] == LaunchStatus.Launched) {
-			return Cooldowns.clone(this.aplRotation.simple?.cooldowns || Cooldowns.create());
-		} else {
-			return Cooldowns.clone(this.cooldowns);
-		}
-	}
-
-	setCooldowns(eventID: EventID, newCooldowns: Cooldowns) {
-		if (Cooldowns.equals(this.getCooldowns(), newCooldowns))
-			return;
-
-		if (aplLaunchStatuses[this.spec] == LaunchStatus.Launched) {
-			if (!this.aplRotation.simple) {
-				this.aplRotation.simple = SimpleRotation.create();
-			}
-			this.aplRotation.simple.cooldowns = newCooldowns;
-			this.rotationChangeEmitter.emit(eventID);
-		} else {
-			// Make a defensive copy
-			this.cooldowns = Cooldowns.clone(newCooldowns);
-		}
-
-		this.cooldownsChangeEmitter.emit(eventID);
-	}
-
 	canDualWield2H(): boolean {
 		return false;
 	}
@@ -759,27 +723,23 @@ export class Player<SpecType extends Spec> {
 		return this.getMeleeCritCapInfo().playerCritCapDelta
 	}
 
-	getRotation(): SpecRotation<SpecType> {
-		if (aplLaunchStatuses[this.spec] == LaunchStatus.Launched) {
-			const jsonStr = this.aplRotation.simple?.specRotationJson || '';
-			if (!jsonStr) {
-				return this.specTypeFunctions.rotationCreate();
-			}
+	getSimpleRotation(): SpecRotation<SpecType> {
+		const jsonStr = this.aplRotation.simple?.specRotationJson || '';
+		if (!jsonStr) {
+			return this.specTypeFunctions.rotationCreate();
+		}
 
-			try {
-				const json = JSON.parse(jsonStr);
-				return this.specTypeFunctions.rotationFromJson(json);
-			} catch (e) {
-				console.warn(`Error parsing rotation spec options: ${e}\n\nSpec options: '${jsonStr}'`);
-				return this.specTypeFunctions.rotationCreate();
-			}
-		} else {
-			return this.specTypeFunctions.rotationCopy(this.rotation);
+		try {
+			const json = JSON.parse(jsonStr);
+			return this.specTypeFunctions.rotationFromJson(json);
+		} catch (e) {
+			console.warn(`Error parsing rotation spec options: ${e}\n\nSpec options: '${jsonStr}'`);
+			return this.specTypeFunctions.rotationCreate();
 		}
 	}
 
-	setRotation(eventID: EventID, newRotation: SpecRotation<SpecType>) {
-		if (this.specTypeFunctions.rotationEquals(newRotation, this.getRotation()))
+	setSimpleRotation(eventID: EventID, newRotation: SpecRotation<SpecType>) {
+		if (this.specTypeFunctions.rotationEquals(newRotation, this.getSimpleRotation()))
 			return;
 
 		if (!this.aplRotation.simple) {
@@ -787,6 +747,22 @@ export class Player<SpecType extends Spec> {
 		}
 		this.aplRotation.simple.specRotationJson = JSON.stringify(this.specTypeFunctions.rotationToJson(newRotation));
 
+		this.rotationChangeEmitter.emit(eventID);
+	}
+
+	getSimpleCooldowns(): Cooldowns {
+		// Make a defensive copy
+		return Cooldowns.clone(this.aplRotation.simple?.cooldowns || Cooldowns.create());
+	}
+
+	setSimpleCooldowns(eventID: EventID, newCooldowns: Cooldowns) {
+		if (Cooldowns.equals(this.getSimpleCooldowns(), newCooldowns))
+			return;
+
+		if (!this.aplRotation.simple) {
+			this.aplRotation.simple = SimpleRotation.create();
+		}
+		this.aplRotation.simple.cooldowns = newCooldowns;
 		this.rotationChangeEmitter.emit(eventID);
 	}
 
@@ -799,10 +775,8 @@ export class Player<SpecType extends Spec> {
 	}
 
 	getRotationType(): APLRotationType {
-		if (this.aplRotation.enabled) {
+		if (this.aplRotation.type == APLRotationType.TypeUnknown) {
 			return APLRotationType.TypeAPL;
-		} else if (this.aplRotation.type == APLRotationType.TypeUnknown) {
-			return APLRotationType.TypeLegacy;
 		} else {
 			return this.aplRotation.type;
 		}
@@ -816,11 +790,15 @@ export class Player<SpecType extends Spec> {
 		const type = this.getRotationType();
 		if (type == APLRotationType.TypeAuto && this.autoRotationGenerator) {
 			// Clone to avoid modifying preset rotations, which are often returned directly.
-			return APLRotation.clone(this.autoRotationGenerator(this));
+			const rot = APLRotation.clone(this.autoRotationGenerator(this));
+			rot.type = APLRotationType.TypeAuto;
+			return rot;
 		} else if (type == APLRotationType.TypeSimple && this.simpleRotationGenerator) {
 			// Clone to avoid modifying preset rotations, which are often returned directly.
-			const rot = APLRotation.clone(this.simpleRotationGenerator(this, this.getRotation(), this.getCooldowns()));
-			rot.type = APLRotationType.TypeAPL; // Set this here for convenience, so the generator functions don't need to.
+			const simpleRot = this.getSimpleRotation();
+			const rot = APLRotation.clone(this.simpleRotationGenerator(this, simpleRot, this.getSimpleCooldowns()));
+			rot.simple = this.aplRotation.simple;
+			rot.type = APLRotationType.TypeSimple;
 			return rot;
 		} else {
 			return this.aplRotation;
@@ -1184,28 +1162,47 @@ export class Player<SpecType extends Spec> {
 		return Database.mergeSimDatabases(dbGear, dbItemSwapGear);
 	}
 
-	toProto(forExport?: boolean, forSimming?: boolean): PlayerProto {
-		const aplIsLaunched = aplLaunchStatuses[this.spec] == LaunchStatus.Launched;
+	toProto(forExport?: boolean, forSimming?: boolean, exportCategories?: Array<SimSettingCategories>): PlayerProto {
+		const exportCategory = (cat: SimSettingCategories) =>
+				!exportCategories
+				|| exportCategories.length == 0
+				|| exportCategories.includes(cat);
+
 		const gear = this.getGear();
 		const aplRotation = forSimming ? this.getResolvedAplRotation() : this.aplRotation;
-		return withSpecProto(
-			this.spec,
-			PlayerProto.create({
-				name: this.getName(),
-				race: this.getRace(),
-				level: this.getLevel(),
-				class: this.getClass(),
+
+		let player = PlayerProto.create({
+			class: this.getClass(),
+			database: forExport ? undefined : this.toDatabase(),
+		});
+		if (exportCategory(SimSettingCategories.Gear)) {
+			PlayerProto.mergePartial(player, {
 				equipment: gear.asSpec(),
-				consumes: this.getConsumes(),
 				bonusStats: this.getBonusStats().toProto(),
 				enableItemSwap: this.getEnableItemSwap(),
 				itemSwap: this.getItemSwapGear().toProto(),
-				buffs: this.getBuffs(),
-				cooldowns: (aplIsLaunched || (forSimming && aplRotation.type == APLRotationType.TypeAPL))
-					? Cooldowns.create({ hpPercentForDefensives: this.getCooldowns().hpPercentForDefensives })
-					: this.getCooldowns(),
+			});
+		}
+		if (exportCategory(SimSettingCategories.Talents)) {
+			PlayerProto.mergePartial(player, {
 				talentsString: this.getTalentsString(),
+			});
+		}
+		if (exportCategory(SimSettingCategories.Rotation)) {
+			PlayerProto.mergePartial(player, {
+				cooldowns: Cooldowns.create({ hpPercentForDefensives: this.getSimpleCooldowns().hpPercentForDefensives }),
 				rotation: aplRotation,
+			});
+		}
+		if (exportCategory(SimSettingCategories.Consumes)) {
+			PlayerProto.mergePartial(player, {
+				consumes: this.getConsumes(),
+			});
+		}
+		if (exportCategory(SimSettingCategories.Miscellaneous)) {
+			PlayerProto.mergePartial(player, {
+				name: this.getName(),
+				race: this.getRace(),
 				profession1: this.getProfession1(),
 				profession2: this.getProfession2(),
 				reactionTimeMs: this.getReactionTime(),
@@ -1213,166 +1210,65 @@ export class Player<SpecType extends Spec> {
 				inFrontOfTarget: this.getInFrontOfTarget(),
 				distanceFromTarget: this.getDistanceFromTarget(),
 				healingModel: this.getHealingModel(),
-				database: forExport ? SimDatabase.create() : this.toDatabase(),
-			}),
-			(aplIsLaunched || (forSimming && aplRotation.type == APLRotationType.TypeAPL))
-				? this.specTypeFunctions.rotationCreate()
-				: this.getRotation(),
-			this.getSpecOptions());
+			});
+			player = withSpecProto(this.spec, player, this.getSpecOptions());
+		}
+		if (exportCategory(SimSettingCategories.External)) {
+			PlayerProto.mergePartial(player, {
+				buffs: this.getBuffs(),
+			});
+		}
+		return player;
 	}
 
-	fromProto(eventID: EventID, proto: PlayerProto) {
-		if (proto.rotation) {
-			proto.rotation.prepullActions.forEach(ppa => {
-				if (ppa.doAt) {
-					ppa.doAtValue = APLValue.create({
-						value: {oneofKind: 'const', const: { val: ppa.doAt }}
-					});
-					ppa.doAt = '';
-				}
-			});
-			if (proto.rotation.enabled) {
-				proto.rotation.enabled = false;
-				proto.rotation.type = APLRotationType.TypeAPL;
-			}
-		}
+	fromProto(eventID: EventID, proto: PlayerProto, includeCategories?: Array<SimSettingCategories>) {
+		const loadCategory = (cat: SimSettingCategories) =>
+				!includeCategories
+				|| includeCategories.length == 0
+				|| includeCategories.includes(cat);
 
-		const rot = this.specTypeFunctions.rotationFromPlayer(proto);
-		if (rot && !this.specTypeFunctions.rotationEquals(rot, this.specTypeFunctions.rotationCreate())) {
-			if (proto.rotation?.type == APLRotationType.TypeAPL) {
-				// Do nothing
-			} else if (this.simpleRotationGenerator) {
-				proto.rotation = APLRotation.create({
-					type: APLRotationType.TypeSimple,
-					simple: {
-						specRotationJson: JSON.stringify(this.specTypeFunctions.rotationToJson(rot)),
-						cooldowns: proto.cooldowns,
-					},
-				});
-			} else {
-				proto.rotation = APLRotation.create({
-					type: APLRotationType.TypeAuto,
-				});
-			}
+		// For backwards compatibility with legacy rotations (removed on 2024/01/15).
+		if (proto.rotation?.type == APLRotationType.TypeLegacy) {
+			proto.rotation.type = APLRotationType.TypeAuto;
 		}
 
 		TypedEvent.freezeAllAndDo(() => {
-			this.setName(eventID, proto.name);
-			this.setRace(eventID, proto.race);
-			this.setLevel(eventID, proto.level);
-			this.setGear(eventID, proto.equipment ? this.sim.db.lookupEquipmentSpec(proto.equipment) : new Gear({}));
-			this.setEnableItemSwap(eventID, proto.enableItemSwap);
-			this.setItemSwapGear(eventID, proto.itemSwap ? this.sim.db.lookupItemSwap(proto.itemSwap) : new ItemSwapGear({}));
-			//this.setBulkEquipmentSpec(eventID, BulkEquipmentSpec.create()); // Do not persist the bulk equipment settings.
-			this.setConsumes(eventID, proto.consumes || Consumes.create());
-			this.setBonusStats(eventID, Stats.fromProto(proto.bonusStats || UnitStats.create()));
-			this.setBuffs(eventID, proto.buffs || IndividualBuffs.create());
-			this.setTalentsString(eventID, proto.talentsString);
-			this.setProfession1(eventID, proto.profession1);
-			this.setProfession2(eventID, proto.profession2);
-			this.setReactionTime(eventID, proto.reactionTimeMs);
-			this.setChannelClipDelay(eventID, proto.channelClipDelayMs);
-			this.setInFrontOfTarget(eventID, proto.inFrontOfTarget);
-			this.setDistanceFromTarget(eventID, proto.distanceFromTarget);
-			this.setHealingModel(eventID, proto.healingModel || HealingModel.create());
-			this.setSpecOptions(eventID, this.specTypeFunctions.optionsFromPlayer(proto));
-
-			if (aplLaunchStatuses[this.spec] == LaunchStatus.Launched) {
+			if (loadCategory(SimSettingCategories.Gear)) {
+				this.setGear(eventID, proto.equipment ? this.sim.db.lookupEquipmentSpec(proto.equipment) : new Gear({}));
+				this.setEnableItemSwap(eventID, proto.enableItemSwap);
+				this.setItemSwapGear(eventID, proto.itemSwap ? this.sim.db.lookupItemSwap(proto.itemSwap) : new ItemSwapGear({}));
+				this.setBonusStats(eventID, Stats.fromProto(proto.bonusStats || UnitStats.create()));
+				//this.setBulkEquipmentSpec(eventID, BulkEquipmentSpec.create()); // Do not persist the bulk equipment settings.
+			}
+			if (loadCategory(SimSettingCategories.Talents)) {
+				this.setTalentsString(eventID, proto.talentsString);
+			}
+			if (loadCategory(SimSettingCategories.Rotation)) {
 				if (proto.rotation?.type == APLRotationType.TypeUnknown || proto.rotation?.type == APLRotationType.TypeLegacy) {
 					if (!proto.rotation) {
 						proto.rotation = APLRotation.create();
 					}
 					proto.rotation.type = APLRotationType.TypeAuto;
 				}
-			} else {
-				this.setCooldowns(eventID, proto.cooldowns || Cooldowns.create());
-				this.setRotation(eventID, this.specTypeFunctions.rotationFromPlayer(proto));
+				this.setAplRotation(eventID, proto.rotation || APLRotation.create())
 			}
-			this.setAplRotation(eventID, proto.rotation || APLRotation.create())
-
-			const options = this.getSpecOptions();
-			for (let key in options) {
-				if ((options[key] as any)?.['targetIndex']) {
-					const targetIndex = (options[key] as any)['targetIndex'] as number;
-					if (targetIndex == -1) {
-						(options[key] as any) = UnitReference.create();
-					} else {
-						(options[key] as any) = UnitReference.create({type: UnitReference_Type.Player, index: targetIndex});
-					}
-					this.setSpecOptions(eventID, options);
-					break;
-				}
+			if (loadCategory(SimSettingCategories.Consumes)) {
+				this.setConsumes(eventID, proto.consumes || Consumes.create());
 			}
-
-			if (this.spec == Spec.SpecBalanceDruid) {
-				const rot = this.getRotation() as SpecRotation<Spec.SpecBalanceDruid>;
-				if (rot.okfPpm) {
-					rot.okfPpm = 0;
-					this.setRotation(eventID, rot as SpecRotation<SpecType>);
-				}
+			if (loadCategory(SimSettingCategories.Miscellaneous)) {
+				this.setSpecOptions(eventID, this.specTypeFunctions.optionsFromPlayer(proto));
+				this.setName(eventID, proto.name);
+				this.setRace(eventID, proto.race);
+				this.setProfession1(eventID, proto.profession1);
+				this.setProfession2(eventID, proto.profession2);
+				this.setReactionTime(eventID, proto.reactionTimeMs);
+				this.setChannelClipDelay(eventID, proto.channelClipDelayMs);
+				this.setInFrontOfTarget(eventID, proto.inFrontOfTarget);
+				this.setDistanceFromTarget(eventID, proto.distanceFromTarget);
+				this.setHealingModel(eventID, proto.healingModel || HealingModel.create());
 			}
-
-			if (this.spec == Spec.SpecHunter) {
-				// no-op
-			}
-
-			if (this.spec == Spec.SpecShadowPriest) {
-				// no-op
-			}
-
-			if ([Spec.SpecEnhancementShaman, Spec.SpecRestorationShaman, Spec.SpecElementalShaman].includes(this.spec)) {
-				const rot = this.getRotation() as SpecRotation<ShamanSpecs>;
-				if (rot.totems) {
-					const options = this.getSpecOptions() as SpecOptions<ShamanSpecs>;
-					options.totems = rot.totems;
-					this.setSpecOptions(eventID, options as SpecOptions<SpecType>);
-					rot.totems = undefined;
-					this.setRotation(eventID, rot as SpecRotation<SpecType>);
-				}
-				const opt = this.getSpecOptions() as SpecOptions<ShamanSpecs>;
-
-				// Update Bloodlust to be part of rotation instead of options to support APL casting bloodlust.
-				if (opt.bloodlust) {
-					opt.bloodlust = false;
-
-					var tRot = this.getRotation();
-					if (this.spec == Spec.SpecElementalShaman) {
-						(tRot as ElementalShaman_Rotation).bloodlust = ElementalShaman_Rotation_BloodlustUse.UseBloodlust;
-					} else if (this.spec == Spec.SpecEnhancementShaman) {
-						(tRot as EnhancementShaman_Rotation).bloodlust = EnhancementShaman_Rotation_BloodlustUse.UseBloodlust;
-					} else if (this.spec == Spec.SpecRestorationShaman) {
-						(tRot as RestorationShaman_Rotation).bloodlust = RestorationShaman_Rotation_BloodlustUse.UseBloodlust;
-					}
-
-					this.setRotation(eventID, tRot as SpecRotation<SpecType>);
-					this.setSpecOptions(eventID, opt as SpecOptions<SpecType>);
-				}
-
-				// Update Ele TS range option.
-				if (this.spec == Spec.SpecElementalShaman) {
-					var eleOpt = this.getSpecOptions() as ElementalShaman_Options;
-					var eleRot = this.getRotation() as ElementalShaman_Rotation;
-					if (eleRot.inThunderstormRange) {
-						eleOpt.thunderstormRange = ElementalShaman_Options_ThunderstormRange.TSInRange;
-						eleRot.inThunderstormRange = false;
-						this.setRotation(eventID, eleRot as SpecRotation<SpecType>);
-						this.setSpecOptions(eventID, eleOpt as SpecOptions<SpecType>);
-					}
-				}
-			}
-
-			if (this.spec == Spec.SpecEnhancementShaman) {
-				const rot = this.getRotation() as SpecRotation<Spec.SpecEnhancementShaman>;
-				if (rot.enableItemSwap) {
-					this.setEnableItemSwap(eventID, rot.enableItemSwap);
-					rot.enableItemSwap = false;
-					this.setRotation(eventID, rot as SpecRotation<SpecType>)
-				}
-				if (rot.itemSwap) {
-					this.setItemSwapGear(eventID, this.sim.db.lookupItemSwap(rot.itemSwap));
-					rot.itemSwap = undefined;
-					this.setRotation(eventID, rot as SpecRotation<SpecType>)
-				}
+			if (loadCategory(SimSettingCategories.External)) {
+				this.setBuffs(eventID, proto.buffs || IndividualBuffs.create());
 			}
 		});
 	}
@@ -1392,10 +1288,13 @@ export class Player<SpecType extends Spec> {
 			this.setHealingModel(eventID, HealingModel.create({
 				burstWindow: isTankSpec(this.spec) ? 6 : 0,
 			}));
-			this.setCooldowns(eventID, Cooldowns.create({
+			this.setSimpleCooldowns(eventID, Cooldowns.create({
 				hpPercentForDefensives: isTankSpec(this.spec) ? 0.35 : 0,
 			}));
 			this.setBonusStats(eventID, new Stats());
+			this.setAplRotation(eventID, APLRotation.create({
+				type: APLRotationType.TypeAuto,
+			}))
 		});
 	}
 }

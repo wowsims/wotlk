@@ -3,7 +3,6 @@ import {
   Flask,
   Food,
   Profession,
-  Spec
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
@@ -11,9 +10,7 @@ import {
   AirTotem,
   EarthTotem,
   ElementalShaman_Options as ElementalShamanOptions,
-  ElementalShaman_Rotation as ElementalShamanRotation,
   FireTotem,
-  ElementalShaman_Rotation_RotationType as RotationType,
   ShamanShield,
   ShamanTotems,
   WaterTotem,
@@ -32,23 +29,6 @@ import DefaultApl from './apls/default.apl.json';
 
 export const DefaultGear = PresetUtils.makePresetGear('Blank', BlankGear);
 
-export const DefaultRotation = ElementalShamanRotation.create({
-  totems: ShamanTotems.create({
-    earth: EarthTotem.StrengthOfEarthTotem,
-    air: AirTotem.WrathOfAirTotem,
-    fire: FireTotem.TotemOfWrath,
-    water: WaterTotem.ManaSpringTotem,
-    useFireElemental: true,
-  }),
-  type: RotationType.Adaptive,
-  fnMinManaPer: 66,
-  clMinManaPer: 33,
-  useChainLightning: false,
-  useFireNova: false,
-  useThunderstorm: true,
-});
-
-export const ROTATION_PRESET_LEGACY = PresetUtils.makePresetLegacyRotation('Legacy', Spec.SpecElementalShaman, DefaultRotation);
 export const ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Default', DefaultApl);
 export const ROTATION_PRESET_ADVANCED = PresetUtils.makePresetAPLRotation('Advanced', AdvancedApl);
 
@@ -70,7 +50,6 @@ export const Phase4Talents = {
 
 export const DefaultOptions = ElementalShamanOptions.create({
   shield: ShamanShield.WaterShield,
-  bloodlust: true,
   totems: ShamanTotems.create({
     earth: EarthTotem.StrengthOfEarthTotem,
     air: AirTotem.WrathOfAirTotem,

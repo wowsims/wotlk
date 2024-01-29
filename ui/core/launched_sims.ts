@@ -36,29 +36,6 @@ export const simLaunchStatuses: Record<Spec, LaunchStatus> = {
 	[Spec.SpecProtectionWarrior]: LaunchStatus.Unlaunched,
 };
 
-// Alpha and Beta show an info notice at the top of the page.
-export const aplLaunchStatuses: Record<Spec, LaunchStatus> = {
-	[Spec.SpecBalanceDruid]: LaunchStatus.Beta,
-	[Spec.SpecFeralDruid]: LaunchStatus.Launched,
-	[Spec.SpecFeralTankDruid]: LaunchStatus.Alpha,
-	[Spec.SpecRestorationDruid]: LaunchStatus.Launched,
-	[Spec.SpecElementalShaman]: LaunchStatus.Beta,
-	[Spec.SpecEnhancementShaman]: LaunchStatus.Beta,
-	[Spec.SpecRestorationShaman]: LaunchStatus.Launched,
-	[Spec.SpecHunter]: LaunchStatus.Launched,
-	[Spec.SpecMage]: LaunchStatus.Launched,
-	[Spec.SpecRogue]: LaunchStatus.Beta,
-	[Spec.SpecHolyPaladin]: LaunchStatus.Launched,
-	[Spec.SpecProtectionPaladin]: LaunchStatus.Launched,
-	[Spec.SpecRetributionPaladin]: LaunchStatus.Beta,
-	[Spec.SpecHealingPriest]: LaunchStatus.Launched,
-	[Spec.SpecShadowPriest]: LaunchStatus.Launched,
-	[Spec.SpecWarlock]: LaunchStatus.Beta,
-	[Spec.SpecTankWarlock]: LaunchStatus.Beta,
-	[Spec.SpecWarrior]: LaunchStatus.Alpha,
-	[Spec.SpecProtectionWarrior]: LaunchStatus.Launched,
-};
-
 export function getLaunchedSims(): Array<Spec> {
 	return Object.keys(simLaunchStatuses)
 		.map(specStr => parseInt(specStr) as Spec)

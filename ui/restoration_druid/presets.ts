@@ -13,7 +13,6 @@ import { SavedTalents } from '../core/proto/ui.js';
 
 import {
 	RestorationDruid_Options as RestorationDruidOptions,
-	RestorationDruid_Rotation as RestorationDruidRotation,
 } from '../core/proto/druid.js';
 
 import * as PresetUtils from '../core/preset_utils.js';
@@ -25,9 +24,6 @@ import BlankGear from './gear_sets/blank.gear.json';
 // keep them in a separate file.
 
 export const DefaultGear = PresetUtils.makePresetGear('Blank', BlankGear);
-
-export const DefaultRotation = RestorationDruidRotation.create({
-});
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/classic/talent-calc and copy the numbers in the url.

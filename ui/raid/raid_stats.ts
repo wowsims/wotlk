@@ -21,10 +21,9 @@ import { sum } from '../core/utils.js';
 
 import { Hunter_Rotation_StingType as HunterStingType, Hunter_Options_PetType as HunterPetType } from '../core/proto/hunter.js';
 import { PaladinAura } from '../core/proto/paladin.js';
-import { Rogue_Rotation_Frequency as ExposeFrequency } from '../core/proto/rogue.js';
 import { EarthTotem, WaterTotem } from '../core/proto/shaman.js';
 import { WarlockOptions_Summon as WarlockSummon } from '../core/proto/warlock.js';
-import { WarriorShout, Warrior_Rotation_SunderArmor as SunderArmor } from '../core/proto/warrior.js';
+import { WarriorShout } from '../core/proto/warrior.js';
 
 import { RaidSimUI } from './raid_sim_ui.js';
 import { Tooltip } from 'bootstrap';
@@ -296,7 +295,7 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 						{
 							label: 'Bloodlust',
 							actionId: ActionId.fromSpellId(2825),
-							playerData: playerClass(Class.ClassShaman, player => player.getSpecOptions().bloodlust),
+							playerData: playerClass(Class.ClassShaman),
 						},
 					],
 				},
@@ -571,12 +570,12 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 						{
 							label: 'Sunder Armor',
 							actionId: ActionId.fromSpellId(7386),
-							playerData: playerClass(Class.ClassWarrior, player => player.isSpec(Spec.SpecProtectionWarrior) || (player as Player<Spec.SpecWarrior>).getRotation().sunderArmor == SunderArmor.SunderArmorMaintain),
+							playerData: playerClass(Class.ClassWarrior),
 						},
 						{
 							label: 'Expose Armor',
 							actionId: ActionId.fromSpellId(8647),
-							playerData: playerClass(Class.ClassRogue, player => player.getRotation().exposeArmorFrequency == ExposeFrequency.Maintain),
+							playerData: playerClass(Class.ClassRogue),
 						},
 					],
 				},
@@ -586,13 +585,12 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 						{
 							label: 'Faerie Fire',
 							actionId: ActionId.fromSpellId(770),
-							playerData: playerClass(Class.ClassDruid, player => player.spec == Spec.SpecFeralTankDruid ||
-								(player.spec != Spec.SpecRestorationDruid && (player as Player<Spec.SpecBalanceDruid | Spec.SpecFeralDruid>).getRotation().maintainFaerieFire)),
+							playerData: playerClass(Class.ClassDruid, player => player.spec != Spec.SpecRestorationDruid),
 						},
 						// {
 						// 	label: 'Curse of Weakness',
 						// 	actionId: ActionId.fromSpellId(50511),
-						// 	playerData: playerClass(Class.ClassWarlock, player => player.getRotation().curse == WarlockCurse.Weakness),
+						// 	playerData: playerClass(Class.ClassWarlock, player => player.getSimpleRotation().curse == WarlockCurse.Weakness),
 						// },
 						{
 							label: 'Spore Cloud',
@@ -627,32 +625,32 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 						{
 							label: 'Improved Demoralizing Shout',
 							actionId: ActionId.fromSpellId(12879),
-							playerData: playerClassAndTalent(Class.ClassWarrior, 'improvedDemoralizingShout', player => (player.spec == Spec.SpecWarrior && (player as Player<Spec.SpecWarrior>).getRotation().maintainDemoShout) || (player.spec == Spec.SpecProtectionWarrior && (player as Player<Spec.SpecProtectionWarrior>).getRotation().demoShoutChoice != 0)),
+							playerData: playerClassAndTalent(Class.ClassWarrior, 'improvedDemoralizingShout'),
 						},
 						{
 							label: 'Demoralizing Shout',
 							actionId: ActionId.fromSpellId(11556),
-							playerData: playerClassAndMissingTalent(Class.ClassWarrior, 'improvedDemoralizingShout', player => (player.spec == Spec.SpecWarrior && (player as Player<Spec.SpecWarrior>).getRotation().maintainDemoShout) || (player.spec == Spec.SpecProtectionWarrior && (player as Player<Spec.SpecProtectionWarrior>).getRotation().demoShoutChoice != 0)),
+							playerData: playerClassAndMissingTalent(Class.ClassWarrior, 'improvedDemoralizingShout'),
 						},
 						{
 							label: 'Improved Demoralizing Roar',
 							actionId: ActionId.fromSpellId(16862),
-							playerData: playerSpecAndTalent(Spec.SpecFeralTankDruid, 'feralAggression', player => player.getRotation().maintainDemoralizingRoar),
+							playerData: playerSpecAndTalent(Spec.SpecFeralTankDruid, 'feralAggression', player => player.getSimpleRotation().maintainDemoralizingRoar),
 						},
 						{
 							label: 'Demoralizing Roar',
 							actionId: ActionId.fromSpellId(9898),
-							playerData: playerSpecAndMissingTalent(Spec.SpecFeralTankDruid, 'feralAggression', player => player.getRotation().maintainDemoralizingRoar),
+							playerData: playerSpecAndMissingTalent(Spec.SpecFeralTankDruid, 'feralAggression', player => player.getSimpleRotation().maintainDemoralizingRoar),
 						},
 						// {
 						// 	label: 'Improved Curse of Weakness',
 						// 	actionId: ActionId.fromSpellId(18180),
-						// 	playerData: playerClassAndTalent(Class.ClassWarlock, 'improvedCurseOfWeakness', player => player.getRotation().curse == WarlockCurse.Weakness),
+						// 	playerData: playerClassAndTalent(Class.ClassWarlock, 'improvedCurseOfWeakness', player => player.getSimpleRotation().curse == WarlockCurse.Weakness),
 						// },
 						// {
 						// 	label: 'Curse of Weakness',
 						// 	actionId: ActionId.fromSpellId(50511),
-						// 	playerData: playerClassAndTalent(Class.ClassWarlock, 'improvedCurseOfWeakness', player => player.getRotation().curse == WarlockCurse.Weakness),
+						// 	playerData: playerClassAndTalent(Class.ClassWarlock, 'improvedCurseOfWeakness', player => player.getSimpleRotation().curse == WarlockCurse.Weakness),
 						// },
 						{
 							label: 'Demoralizing Screech',
@@ -667,12 +665,12 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 						{
 							label: 'Improved Thunder Clap',
 							actionId: ActionId.fromSpellId(12666),
-							playerData: playerClassAndTalent(Class.ClassWarrior, 'improvedThunderClap', player => (player.spec == Spec.SpecWarrior && (player as Player<Spec.SpecWarrior>).getRotation().maintainThunderClap) || (player.spec == Spec.SpecProtectionWarrior && (player as Player<Spec.SpecProtectionWarrior>).getRotation().thunderClapChoice != 0)),
+							playerData: playerClassAndTalent(Class.ClassWarrior, 'improvedThunderClap'),
 						},
 						{
 							label: 'Thunder Clap',
 							actionId: ActionId.fromSpellId(47502),
-							playerData: playerClassAndMissingTalent(Class.ClassWarrior, 'improvedThunderClap', player => (player.spec == Spec.SpecWarrior && (player as Player<Spec.SpecWarrior>).getRotation().maintainThunderClap) || (player.spec == Spec.SpecProtectionWarrior && (player as Player<Spec.SpecProtectionWarrior>).getRotation().thunderClapChoice != 0)),
+							playerData: playerClassAndMissingTalent(Class.ClassWarrior, 'improvedThunderClap'),
 						},
 					],
 				},
@@ -687,7 +685,7 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 						{
 							label: 'Scorpid Sting',
 							actionId: ActionId.fromSpellId(3043),
-							playerData: playerClass(Class.ClassHunter, player => player.getRotation().sting == HunterStingType.ScorpidSting),
+							playerData: playerClass(Class.ClassHunter, player => player.getSimpleRotation().sting == HunterStingType.ScorpidSting),
 						},
 					],
 				},

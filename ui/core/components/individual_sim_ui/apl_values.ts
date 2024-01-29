@@ -40,7 +40,6 @@ import {
 	APLValueSpellTimeToReady,
 	APLValueSpellCastTime,
 	APLValueSpellTravelTime,
-	APLValueSpellChannelTime,
 	APLValueSpellCPM,
 	APLValueSpellIsChanneling,
 	APLValueSpellChanneledTicks,
@@ -711,15 +710,6 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		newValue: APLValueSpellCPM.create,
 		fields: [
 			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells', ''),
-		],
-	}),
-	'spellChannelTime': inputBuilder({
-		label: 'Channel Time',
-		submenu: ['Spell'],
-		shortDescription: 'Amount of time to fully channel the spell including any haste and spell cast time adjustments.',
-		newValue: APLValueSpellChannelTime.create,
-		fields: [
-			AplHelpers.actionIdFieldConfig('spellId', 'channel_spells', ''),
 		],
 	}),
 	'spellIsChanneling': inputBuilder({

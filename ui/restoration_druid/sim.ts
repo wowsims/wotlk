@@ -62,8 +62,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRestorationDruid, {
 		}),
 		// Default consumes settings.
 		consumes: Presets.DefaultConsumes,
-		// Default rotation settings.
-		simpleRotation: Presets.DefaultRotation,
 		// Default talents.
 		talents: Presets.CelestialFocusTalents.data,
 		// Default spec-specific settings.
@@ -84,8 +82,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRestorationDruid, {
 	playerIconInputs: [
 		DruidInputs.SelfInnervate,
 	],
-	// Inputs to include in the 'Rotation' section on the settings tab.
-	rotationInputs: DruidInputs.RestorationDruidRotationConfig,
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
 	],
