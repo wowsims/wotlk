@@ -8,7 +8,7 @@ import { TypedEvent } from "../../typed_event";
 import { EventID } from '../../typed_event.js';
 
 import { BulkComboResult, BulkSettings, ItemSpecWithSlot, ProgressMetrics, TalentLoadout } from "../../proto/api";
-import { EquipmentSpec, Faction, GemColor, ItemSlot, ItemSpec, SimDatabase, SimEnchant, SimGem, SimItem, Spec } from "../../proto/common";
+import { EquipmentSpec, Faction, GemColor, Glyphs, ItemSlot, ItemSpec, SimDatabase, SimEnchant, SimGem, SimItem, Spec } from "../../proto/common";
 
 import { ItemData, ItemList, ItemRenderer, SelectorModal, SelectorModalTabs } from "../gear_picker";
 import { SimTab } from "../sim_tab";
@@ -712,10 +712,9 @@ export class BulkTab extends SimTab {
 				let index = this.savedTalents.findIndex(talent => JSON.stringify(talent) === JSON.stringify(loadout));
 				const talentFragment = document.createElement('fragment');
 				talentFragment.innerHTML = `
-            <div class="saved-data-set-chip badge rounded-pill ${index !== -1 ? 'active' : ''}">
-                <a href="javascript:void(0)" class="saved-data-set-name" role="button">${name}</a>
-            </div>
-        `;
+					<div class="saved-data-set-chip badge rounded-pill ${index !== -1 ? 'active' : ''}">
+						<a href="javascript:void(0)" class="saved-data-set-name" role="button">${name}</a>
+					</div>`;
 
 				console.log("Adding event for loadout", loadout);
 				// Wrap the event listener addition in an IIFE
