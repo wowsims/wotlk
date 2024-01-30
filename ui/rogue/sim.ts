@@ -25,7 +25,7 @@ import {
 	Rogue_Options_PoisonImbue,
 } from '../core/proto/rogue.js';
 
-import * as IconInputs from '../core/components/icon_inputs.js';
+import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
 
 import * as RogueInputs from './inputs.js';
@@ -253,10 +253,10 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 	],
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
-		IconInputs.SpellCritBuff,
-		IconInputs.SpellCritDebuff,
-		IconInputs.SpellHitDebuff,
-		IconInputs.SpellDamageDebuff
+		BuffDebuffInputs.SpellCritBuff,
+		BuffDebuffInputs.SpellCritDebuff,
+		BuffDebuffInputs.SpellHitDebuff,
+		BuffDebuffInputs.SpellDamageDebuff
 	],
 	excludeBuffDebuffInputs: [
 	],
