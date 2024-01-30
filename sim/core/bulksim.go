@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"math"
-	"reflect"
 	"runtime"
 	"runtime/debug"
 	"sort"
@@ -198,7 +197,7 @@ func (b *bulkSimRunner) Run(pctx context.Context, progress chan *proto.ProgressM
 					for _, talent := range talentsToSim {
 						sr := goproto.Clone(substitutedRequest).(*proto.RaidSimRequest)
 						cl := *changeLog
-						if sr.Raid.Parties[0].Players[0].TalentsString == talent.TalentsString && reflect.DeepEqual(talent.Glyphs, sr.Raid.Parties[0].Players[0].Glyphs) {
+						if sr.Raid.Parties[0].Players[0].TalentsString == talent.TalentsString && goproto.Equal(talent.Glyphs, sr.Raid.Parties[0].Players[0].Glyphs) {
 							continue
 						}
 
