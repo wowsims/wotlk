@@ -82,14 +82,17 @@ class BulkSimResultRenderer {
 		parent.bodyElement.appendChild(itemsContainer);
 		parent.bodyElement.appendChild(dpsDivParent);
 
+		const talentText = document.createElement('p');
+		talentText.classList.add('talent-loadout-text')
 		if (result.talentLoadout && typeof result.talentLoadout === 'object') {
-			const talentText = document.createElement('p');
 			if (typeof result.talentLoadout.name === 'string') {
 				talentText.textContent = 'Talent loadout used: ' + result.talentLoadout.name;
 			}
-			parent.bodyElement.appendChild(talentText);
+		} else {
+			talentText.textContent = 'Current talents'
 		}
 
+		dpsDiv.appendChild(talentText);
 		if (result.itemsAdded && result.itemsAdded.length > 0) {
 			const equipBtn = document.createElement('button');
 			equipBtn.textContent = 'Equip';
