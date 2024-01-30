@@ -98,6 +98,7 @@ func (b *bulkSimRunner) Run(pctx context.Context, progress chan *proto.ProgressM
 
 	// Gemming for now can happen before slots are decided.
 	// We might have to add logic after slot decisions if we want to enforce keeping meta gem active.
+
 	if b.Request.BulkSettings.AutoGem {
 		for _, replaceItem := range b.Request.BulkSettings.Items {
 			itemData := ItemsByID[replaceItem.Id]
@@ -184,7 +185,29 @@ func (b *bulkSimRunner) Run(pctx context.Context, progress chan *proto.ProgressM
 		}
 		substitutedRequest, changeLog := createNewRequestWithSubstitution(b.Request.BaseSettings, sub, b.Request.BulkSettings.AutoEnchant)
 		if isValidEquipment(substitutedRequest.Raid.Parties[0].Players[0].Equipment) {
+			// Need to sim base dps of gear loudout
 			validCombos = append(validCombos, singleBulkSim{req: substitutedRequest, cl: changeLog, eq: sub})
+			// Todo(Netzone-GehennasEU): Make this its own step?
+			if !b.Request.BulkSettings.SimTalents {
+
+			} else {
+				var talentsToSim = b.Request.BulkSettings.GetTalentsToSim()
+
+				if len(talentsToSim) > 0 {
+					for _, talent := range talentsToSim {
+						sr := goproto.Clone(substitutedRequest).(*proto.RaidSimRequest)
+						cl := *changeLog
+						if sr.Raid.Parties[0].Players[0].TalentsString == talent.TalentsString && goproto.Equal(talent.Glyphs, sr.Raid.Parties[0].Players[0].Glyphs) {
+							continue
+						}
+
+						sr.Raid.Parties[0].Players[0].TalentsString = talent.TalentsString
+						sr.Raid.Parties[0].Players[0].Glyphs = talent.Glyphs
+						cl.TalentLoadout = talent
+						validCombos = append(validCombos, singleBulkSim{req: sr, cl: &cl, eq: sub})
+					}
+				}
+			}
 		}
 	}
 
@@ -275,10 +298,10 @@ func (b *bulkSimRunner) Run(pctx context.Context, progress chan *proto.ProgressM
 		um.Auras = nil
 		um.Resources = nil
 		um.Pets = nil
-
 		result.Results = append(result.Results, &proto.BulkComboResult{
-			ItemsAdded:  r.ChangeLog.AddedItems,
-			UnitMetrics: um,
+			ItemsAdded:    r.ChangeLog.AddedItems,
+			UnitMetrics:   um,
+			TalentLoadout: r.ChangeLog.TalentLoadout,
 		})
 	}
 
@@ -337,6 +360,7 @@ func (b *bulkSimRunner) getRankedResults(pctx context.Context, validCombos []sin
 		for _, singleCombo := range validCombos {
 			<-tickets
 			singleSimProgress := make(chan *proto.ProgressMetrics)
+
 			// watches this progress and pushes up to main reporter.
 			go func(prog chan *proto.ProgressMetrics) {
 				var prevDone int32
@@ -352,6 +376,7 @@ func (b *bulkSimRunner) getRankedResults(pctx context.Context, validCombos []sin
 			// actually run the sim in here.
 			go func(sub singleBulkSim) {
 				// overwrite the requests iterations with the input for this function.
+
 				sub.req.SimOptions.Iterations = int32(iterations)
 				results <- &itemSubstitutionSimResult{
 					Request:      sub.req,
@@ -374,7 +399,7 @@ func (b *bulkSimRunner) getRankedResults(pctx context.Context, validCombos []sin
 			cancel() // cancel reporter
 			return nil, nil, errors.New("simulation failed: " + result.Result.ErrorResult)
 		}
-		if !result.Substitution.HasItemReplacements() {
+		if !result.Substitution.HasItemReplacements() && result.ChangeLog.TalentLoadout == nil {
 			baseResult = result
 		}
 		rankedResults[i] = result
@@ -620,7 +645,8 @@ type itemWithSlot struct {
 // raidSimRequestChangeLog stores a change log of which items were added and removed from the base
 // equipment set.
 type raidSimRequestChangeLog struct {
-	AddedItems []*proto.ItemSpecWithSlot
+	AddedItems    []*proto.ItemSpecWithSlot
+	TalentLoadout *proto.TalentLoadout
 }
 
 // createNewRequestWithSubstitution creates a copy of the input RaidSimRequest and applis the given
