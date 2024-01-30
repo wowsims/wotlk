@@ -23,7 +23,7 @@ import {
 	FeralDruid_Rotation as DruidRotation,
 } from '../core/proto/druid.js';
 
-import * as IconInputs from '../core/components/icon_inputs.js';
+import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
 import * as AplUtils from '../core/proto_utils/apl_utils.js';
 
@@ -136,9 +136,9 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 	rotationInputs: DruidInputs.FeralDruidRotationConfig,
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
-		IconInputs.IntellectBuff,
-		IconInputs.MP5Buff,
-		IconInputs.JudgementOfWisdom,
+		BuffDebuffInputs.IntellectBuff,
+		BuffDebuffInputs.MP5Buff,
+		BuffDebuffInputs.JudgementOfWisdom,
 	],
 	excludeBuffDebuffInputs: [
 	],

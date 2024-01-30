@@ -14,7 +14,8 @@ import { Stats } from '../core/proto_utils/stats.js';
 import { Player } from '../core/player.js';
 import { getSpecIcon, specNames } from '../core/proto_utils/utils.js';
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
-import * as IconInputs from '../core/components/icon_inputs.js';
+
+import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
 import * as Mechanics from '../core/constants/mechanics.js';
 
@@ -99,13 +100,13 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecShadowPriest, {
 	],
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
-		IconInputs.ReplenishmentBuff,
-		IconInputs.MeleeHasteBuff,
-		IconInputs.MeleeCritBuff,
-		IconInputs.MP5Buff,
-		IconInputs.AttackPowerPercentBuff,
-		IconInputs.AttackPowerBuff,
-		IconInputs.StaminaBuff,
+		BuffDebuffInputs.ReplenishmentBuff,
+		BuffDebuffInputs.MeleeHasteBuff,
+		BuffDebuffInputs.MeleeCritBuff,
+		BuffDebuffInputs.MP5Buff,
+		BuffDebuffInputs.AttackPowerPercentBuff,
+		BuffDebuffInputs.AttackPowerBuff,
+		BuffDebuffInputs.StaminaBuff,
 	],
 	excludeBuffDebuffInputs: [
 	],

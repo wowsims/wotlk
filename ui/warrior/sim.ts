@@ -20,12 +20,10 @@ import { Stats } from '../core/proto_utils/stats.js';
 import { Player } from '../core/player.js';
 import { getSpecIcon } from '../core/proto_utils/utils.js';
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
-import { TypedEvent } from '../core/typed_event.js';
 import { Gear } from '../core/proto_utils/gear.js';
 import { PhysicalDPSGemOptimizer } from '../core/components/suggest_gems_action.js';
 
-
-import * as IconInputs from '../core/components/icon_inputs.js';
+import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
 import * as Mechanics from '../core/constants/mechanics.js';
 
@@ -146,8 +144,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarrior, {
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
 		// just for Bryntroll
-		IconInputs.SpellDamageDebuff,
-		IconInputs.SpellHitDebuff,
+		BuffDebuffInputs.SpellDamageDebuff,
+		BuffDebuffInputs.SpellHitDebuff,
 	],
 	excludeBuffDebuffInputs: [
 	],

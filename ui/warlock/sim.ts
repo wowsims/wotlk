@@ -15,7 +15,9 @@ import { Stats } from '../core/proto_utils/stats.js';
 import { Player } from '../core/player.js';
 import { getSpecIcon } from '../core/proto_utils/utils.js';
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
-import * as IconInputs from '../core/components/icon_inputs.js';
+
+import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs.js';
+import * as ConsumablesInputs from '../core/components/inputs/consumables.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
 import * as WarlockInputs from './inputs.js';
 import * as Presets from './presets.js';
@@ -96,22 +98,22 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
-		IconInputs.ReplenishmentBuff,
-		IconInputs.MajorArmorDebuff,
-		IconInputs.MinorArmorDebuff,
-		IconInputs.PhysicalDamageDebuff,
-		IconInputs.MeleeHasteBuff,
-		IconInputs.MeleeCritBuff,
-		IconInputs.MP5Buff,
-		IconInputs.AttackPowerPercentBuff,
-		IconInputs.AttackPowerBuff,
-		IconInputs.StrengthAndAgilityBuff,
-		IconInputs.StaminaBuff,
+		BuffDebuffInputs.ReplenishmentBuff,
+		BuffDebuffInputs.MajorArmorDebuff,
+		BuffDebuffInputs.MinorArmorDebuff,
+		BuffDebuffInputs.PhysicalDamageDebuff,
+		BuffDebuffInputs.MeleeHasteBuff,
+		BuffDebuffInputs.MeleeCritBuff,
+		BuffDebuffInputs.MP5Buff,
+		BuffDebuffInputs.AttackPowerPercentBuff,
+		BuffDebuffInputs.AttackPowerBuff,
+		BuffDebuffInputs.StrengthAndAgilityBuff,
+		BuffDebuffInputs.StaminaBuff,
 	],
 	excludeBuffDebuffInputs: [
 	],
 	petConsumeInputs: [
-		IconInputs.SpicedMammothTreats,
+		ConsumablesInputs.SpicedMammothTreats,
 	],
 	// Inputs to include in the 'Other' section on the settings tab.
 	otherInputs: {

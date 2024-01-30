@@ -27,7 +27,7 @@ import {
 	FeralTankDruid_Rotation as DruidRotation,
 } from '../core/proto/druid.js';
 
-import * as IconInputs from '../core/components/icon_inputs.js';
+import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
 import * as AplUtils from '../core/proto_utils/apl_utils.js';
 
@@ -156,11 +156,11 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralTankDruid, {
 	rotationInputs: DruidInputs.FeralTankDruidRotationConfig,
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
-		IconInputs.HealthBuff,
-		IconInputs.SpellCritBuff,
-		IconInputs.SpellCritDebuff,
-		IconInputs.SpellHitDebuff,
-		IconInputs.SpellDamageDebuff,
+		BuffDebuffInputs.HealthBuff,
+		BuffDebuffInputs.SpellCritBuff,
+		BuffDebuffInputs.SpellCritDebuff,
+		BuffDebuffInputs.SpellHitDebuff,
+		BuffDebuffInputs.SpellDamageDebuff,
 	],
 	excludeBuffDebuffInputs: [
 	],
