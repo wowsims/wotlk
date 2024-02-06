@@ -20,7 +20,7 @@ func (rogue *Rogue) registerPreparationCD() {
 			},
 			CD: core.Cooldown{
 				Timer:    rogue.NewTimer(),
-				Duration: time.Minute*8 - time.Second*time.Duration(90*rogue.Talents.FilthyTricks),
+				Duration: time.Minute * 10,
 			},
 			IgnoreHaste: true,
 		},

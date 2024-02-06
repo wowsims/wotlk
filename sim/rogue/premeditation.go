@@ -41,8 +41,5 @@ func (rogue *Rogue) registerPremeditation() {
 		Spell:    rogue.Premeditation,
 		Type:     core.CooldownTypeDPS,
 		Priority: core.CooldownPriorityLow,
-		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return rogue.ComboPoints() <= 2 && rogue.ShadowDanceAura.IsActive()
-		},
 	})
 }

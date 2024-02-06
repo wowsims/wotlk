@@ -25,8 +25,8 @@ func (rogue *Rogue) registerHemorrhageSpell() {
 	var hemoAuras core.AuraArray
 
 	if numPlayers >= 2 {
-		bonusDamage := 75.0
-		hemoAuras = rogue.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
+		// bonusDamage := 75.0
+		/**hemoAuras = rogue.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
 			return target.GetOrRegisterAura(core.Aura{
 				Label:     "Hemorrhage",
 				ActionID:  actionID,
@@ -49,7 +49,7 @@ func (rogue *Rogue) registerHemorrhageSpell() {
 					aura.RemoveStack(sim)
 				},
 			})
-		})
+		})*/
 	}
 
 	rogue.Hemorrhage = rogue.RegisterSpell(core.SpellConfig{
@@ -59,7 +59,7 @@ func (rogue *Rogue) registerHemorrhageSpell() {
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | SpellFlagBuilder | SpellFlagColdBlooded | core.SpellFlagAPL,
 
 		EnergyCost: core.EnergyCostOptions{
-			Cost:   rogue.costModifier(35 - float64(rogue.Talents.SlaughterFromTheShadows)),
+			Cost:   rogue.costModifier(35),
 			Refund: 0.8,
 		},
 		Cast: core.CastConfig{
@@ -69,13 +69,6 @@ func (rogue *Rogue) registerHemorrhageSpell() {
 			IgnoreHaste: true,
 		},
 
-		BonusCritRating: core.TernaryFloat64(rogue.HasSetBonus(Tier9, 4), 5*core.CritRatingPerCritChance, 0) +
-			[]float64{0, 2, 4, 6}[rogue.Talents.TurnTheTables]*core.CritRatingPerCritChance,
-
-		DamageMultiplier: core.TernaryFloat64(rogue.HasDagger(core.MainHand), 1.6, 1.1) * (1 +
-			0.02*float64(rogue.Talents.FindWeakness) +
-			core.TernaryFloat64(rogue.HasSetBonus(Tier6, 4), 0.06, 0)) *
-			(1 + 0.02*float64(rogue.Talents.SinisterCalling)),
 		CritMultiplier:   rogue.MeleeCritMultiplier(true),
 		ThreatMultiplier: 1,
 

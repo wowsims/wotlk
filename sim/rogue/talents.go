@@ -30,8 +30,6 @@ func (rogue *Rogue) ApplyTalents() {
 	rogue.registerColdBloodCD()
 	rogue.registerBladeFlurryCD()
 	rogue.registerAdrenalineRushCD()
-	rogue.registerShadowstepCD()
-	rogue.registerMasterOfSubtletyCD()
 	rogue.registerPreparationCD()
 	rogue.registerPremeditation()
 	rogue.registerGhostlyStrikeSpell()
@@ -53,8 +51,8 @@ func (rogue *Rogue) makeFinishingMoveEffectApplier() func(sim *core.Simulation, 
 				rogue.AddComboPoints(sim, 1, ruthlessnessMetrics)
 			}
 		}
-		if t := rogue.Talents.RelentlessStrikes; t > 0 {
-			if sim.RandomFloat("RelentlessStrikes") < 0.2*float64(t*numPoints) {
+		if t := rogue.Talents.RelentlessStrikes; t == true {
+			if sim.RandomFloat("RelentlessStrikes") < 0.2 {
 				rogue.AddEnergy(sim, 25, relentlessStrikesMetrics)
 			}
 		}
@@ -69,6 +67,7 @@ func (rogue *Rogue) makeCostModifier() func(baseCost float64) float64 {
 
 // Murder talent
 // Does this need per target checking based on talent limitations of type?
+// Humanoid, Giant, Beast, Dragonkin
 func (rogue *Rogue) applyMurder() {
 	rogue.PseudoStats.DamageDealtMultiplier *= rogue.murderMultiplier()
 }
@@ -205,7 +204,7 @@ func (rogue *Rogue) applyWeaponSpecializations() {
 		}
 	}
 
-	if daggerSpec := rogue.Talents.CloseQuartersCombat; daggerSpec > 0 {
+	if daggerSpec := rogue.Talents.DaggerSpecialization; daggerSpec > 0 {
 		switch rogue.GetProcMaskForTypes(proto.WeaponType_WeaponTypeDagger) {
 		case core.ProcMaskMelee:
 			rogue.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*float64(daggerSpec))
@@ -233,7 +232,7 @@ func (rogue *Rogue) applyWeaponSpecializations() {
 	}
 }
 
-func (rogue *Rogue) applyCombatPotency() {
+/**func (rogue *Rogue) applyCombatPotency() {
 	if rogue.Talents.CombatPotency == 0 {
 		return
 	}
@@ -259,9 +258,9 @@ func (rogue *Rogue) applyCombatPotency() {
 			}
 		},
 	})
-}
+}*/
 
-func (rogue *Rogue) applyFocusedAttacks() {
+/**func (rogue *Rogue) applyFocusedAttacks() {
 	if rogue.Talents.FocusedAttacks == 0 {
 		return
 	}
@@ -288,7 +287,7 @@ func (rogue *Rogue) applyFocusedAttacks() {
 			}
 		},
 	})
-}
+}*/
 
 var BladeFlurryActionID = core.ActionID{SpellID: 13877}
 var BladeFlurryHitID = core.ActionID{SpellID: 22482}
@@ -444,6 +443,7 @@ func (rogue *Rogue) registerAdrenalineRushCD() {
 	})
 }
 
+/**
 func (rogue *Rogue) registerHonorAmongThieves() {
 	// When anyone in your group critically hits with a damage or healing spell or ability,
 	// you have a [33%/66%/100%] chance to gain a combo point on your current target.
@@ -508,4 +508,4 @@ func (rogue *Rogue) registerHonorAmongThieves() {
 			}
 		},
 	})
-}
+} */

@@ -1,19 +1,13 @@
 package rogue
 
-import (
-	"math"
-	"time"
-
-	"github.com/wowsims/sod/sim/core"
-)
-
+/**
 func (rogue *Rogue) registerKillingSpreeSpell() {
 	mhWeaponSwing := rogue.GetOrRegisterSpell(core.SpellConfig{
 		ActionID:         core.ActionID{SpellID: 51690, Tag: 1}, // actual spellID is 57841
 		SpellSchool:      core.SpellSchoolPhysical,
 		ProcMask:         core.ProcMaskMeleeMHSpecial,
 		Flags:            core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
-		DamageMultiplier: 1 + 0.02*float64(rogue.Talents.FindWeakness),
+		DamageMultiplier: 1,
 		CritMultiplier:   rogue.MeleeCritMultiplier(false),
 		ThreatMultiplier: 1,
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
@@ -29,7 +23,7 @@ func (rogue *Rogue) registerKillingSpreeSpell() {
 		SpellSchool:      core.SpellSchoolPhysical,
 		ProcMask:         core.ProcMaskMeleeOHSpecial,
 		Flags:            core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
-		DamageMultiplier: (1 + 0.02*float64(rogue.Talents.FindWeakness)) * rogue.dwsMultiplier(),
+		DamageMultiplier: (1) * rogue.dwsMultiplier(),
 		CritMultiplier:   rogue.MeleeCritMultiplier(false),
 		ThreatMultiplier: 1,
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
@@ -103,4 +97,4 @@ func (rogue *Rogue) registerKillingSpreeSpell() {
 			return true
 		},
 	})
-}
+} */

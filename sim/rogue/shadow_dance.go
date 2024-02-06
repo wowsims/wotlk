@@ -1,11 +1,6 @@
 package rogue
 
-import (
-	"time"
-
-	"github.com/wowsims/sod/sim/core"
-)
-
+/**
 func (rogue *Rogue) registerShadowDanceCD() {
 	if !rogue.Talents.ShadowDance {
 		return
@@ -49,3 +44,4 @@ func (rogue *Rogue) registerShadowDanceCD() {
 		},
 	})
 }
+*/

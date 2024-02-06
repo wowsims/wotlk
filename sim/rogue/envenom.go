@@ -13,10 +13,10 @@ func (rogue *Rogue) registerEnvenom() {
 		Label:    "Envenom",
 		ActionID: core.ActionID{SpellID: 57993},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			rogue.instantPoisonProcChanceBonus(0.75)
+			rogue.instantPoisonProcChanceBonus = 0.75
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			rogue.instantPoisonProcChanceBonus(0.0)
+			rogue.instantPoisonProcChanceBonus = 0.0
 		},
 	})
 

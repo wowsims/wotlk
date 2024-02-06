@@ -30,9 +30,7 @@ func (rogue *Rogue) registerShivSpell() {
 			IgnoreHaste: true,
 		},
 
-		DamageMultiplier: (1 +
-			0.02*float64(rogue.Talents.FindWeakness) +
-			core.TernaryFloat64(rogue.Talents.SurpriseAttacks, 0.1, 0)) * rogue.dwsMultiplier(),
+		DamageMultiplier: (1 * rogue.dwsMultiplier()),
 		CritMultiplier:   rogue.MeleeCritMultiplier(true),
 		ThreatMultiplier: 1,
 

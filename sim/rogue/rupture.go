@@ -20,7 +20,7 @@ func (rogue *Rogue) registerRupture() {
 
 		EnergyCost: core.EnergyCostOptions{
 			Cost:          RuptureEnergyCost,
-			Refund:        0.4 * float64(rogue.Talents.QuickRecovery),
+			Refund:        0,
 			RefundMetrics: rogue.QuickRecoveryMetrics,
 		},
 		Cast: core.CastConfig{

@@ -40,25 +40,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 	warnings: [
 		(simUI: IndividualSimUI<Spec.SpecRogue>) => {
 			return {
-				updateOn: simUI.sim.encounter.changeEmitter,
-				getContent: () => {
-					let hasNoArmor = false
-					for (const target of simUI.sim.encounter.targets) {
-						if (new Stats(target.stats).getStat(Stat.StatArmor) <= 0) {
-							hasNoArmor = true
-							break
-						}
-					}
-					if (hasNoArmor) {
-						return 'One or more targets have no armor. Check advanced encounter settings.';
-					} else {
-						return '';
-					}
-				},
-			};
-		},
-		(simUI: IndividualSimUI<Spec.SpecRogue>) => {
-			return {
 				updateOn: simUI.player.changeEmitter,
 				getContent: () => {
 					if (simUI.player.getTalents().maceSpecialization) {
@@ -107,8 +88,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 		Stat.StatSpellHit,
 		Stat.StatSpellCrit,
 		Stat.StatMeleeHaste,
-		Stat.StatArmorPenetration,
-		Stat.StatExpertise,
 	],
 	epPseudoStats: [
 		PseudoStat.PseudoStatMainHandDps,
@@ -128,8 +107,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 		Stat.StatMeleeCrit,
 		Stat.StatSpellCrit,
 		Stat.StatMeleeHaste,
-		Stat.StatArmorPenetration,
-		Stat.StatExpertise,
 	],
 
 	defaults: {
@@ -145,8 +122,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 			[Stat.StatMeleeHit]: 1.39,
 			[Stat.StatMeleeCrit]: 1.32,
 			[Stat.StatMeleeHaste]: 1.48,
-			[Stat.StatArmorPenetration]: 0.84,
-			[Stat.StatExpertise]: 0.98,
 		}, {
 			[PseudoStat.PseudoStatMainHandDps]: 2.94,
 			[PseudoStat.PseudoStatOffHandDps]: 2.45,
@@ -154,7 +129,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 		// Default consumes settings.
 		consumes: Presets.DefaultConsumes,
 		// Default talents.
-		talents: Presets.AssassinationTalents137.data,
+		talents: Presets.CombatHackTalents.data,
 		// Default spec-specific settings.
 		specOptions: Presets.DefaultOptions,
 		// Default raid/party buffs settings.
@@ -208,26 +183,10 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 	presets: {
 		// Preset talents that the user can quickly select.
 		talents: [
-			Presets.AssassinationTalents137,
-			Presets.AssassinationTalents182,
-			Presets.AssassinationTalentsBF,
 			Presets.CombatHackTalents,
-			Presets.CombatCQCTalents,
-			Presets.SubtletyTalents,
-			Presets.HemoSubtletyTalents,
 		],
 		// Preset rotations that the user can quickly select.
-		rotations: [
-			Presets.ROTATION_PRESET_MUTILATE,
-			Presets.ROTATION_PRESET_MUTILATE_EXPOSE,
-			Presets.ROTATION_PRESET_RUPTURE_MUTILATE,
-			Presets.ROTATION_PRESET_RUPTURE_MUTILATE_EXPOSE,
-			Presets.ROTATION_PRESET_COMBAT,
-			Presets.ROTATION_PRESET_COMBAT_EXPOSE,
-			Presets.ROTATION_PRESET_COMBAT_CLEAVE_SND,
-			Presets.ROTATION_PRESET_COMBAT_CLEAVE_SND_EXPOSE,
-			Presets.ROTATION_PRESET_AOE,
-		],
+		rotations: [],
 		// Preset gear configurations that the user can quickly select.
 		gear: [
 			Presets.GearAssassinationDefault,
@@ -258,7 +217,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 			defaultName: 'Assassination',
 			iconUrl: getSpecIcon(Class.ClassRogue, 0),
 
-			talents: Presets.AssassinationTalents137.data,
+			talents: Presets.CombatHackTalents.data,
 			specOptions: Presets.DefaultOptions,
 			consumes: Presets.DefaultConsumes,
 			defaultFactionRaces: {
@@ -282,7 +241,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 			defaultName: 'Combat',
 			iconUrl: getSpecIcon(Class.ClassRogue, 1),
 
-			talents: Presets.CombatCQCTalents.data,
+			talents: Presets.CombatHackTalents.data,
 			specOptions: Presets.DefaultOptions,
 			consumes: Presets.DefaultConsumes,
 			defaultFactionRaces: {

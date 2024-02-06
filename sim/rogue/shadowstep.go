@@ -1,19 +1,14 @@
 package rogue
 
-import (
-	"time"
-
-	"github.com/wowsims/sod/sim/core"
-)
-
 // TODO: Link to Rune of Shadowstep (assuming it is added Phase 2)
+/**
 func (rogue *Rogue) registerShadowstepCD() {
 	if !rogue.Talents.Shadowstep {
 		return
 	}
 
 	actionID := core.ActionID{SpellID: 36554}
-	baseCost := 10 - 5*float64(rogue.Talents.FilthyTricks)
+	baseCost := 10
 	var affectedSpells []*core.Spell
 
 	rogue.ShadowstepAura = rogue.RegisterAura(core.Aura{
@@ -73,3 +68,4 @@ func (rogue *Rogue) registerShadowstepCD() {
 		},
 	})
 }
+*/

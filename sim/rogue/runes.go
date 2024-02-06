@@ -1,11 +1,6 @@
 package rogue
 
-import (
-	"time"
-
-	"github.com/wowsims/sod/sim/core"
-	"github.com/wowsims/sod/sim/core/stats"
-)
+import "github.com/wowsims/sod/sim/core/proto"
 
 func (rogue *Rogue) ApplyRunes() {
 	// Apply runes here :)

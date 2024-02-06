@@ -45,53 +45,11 @@ export const ROTATION_PRESET_AOE = PresetUtils.makePresetAPLRotation('Fan AOE', 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/classic/talent-calc and copy the numbers in the url.
 export const CombatHackTalents = {
-	name: 'Combat Axes/Swords',
+	name: 'Combat Swords',
 	data: SavedTalents.create({
-		talentsString: '00532010414-0252051000035015223100501251',
+		talentsString: '0-0230350020050150221',
 	}),
 };
-
-export const CombatCQCTalents = {
-	name: 'Combat Fists',
-	data: SavedTalents.create({
-		talentsString: '00532010414-0252051050035010223100501251',
-	}),
-};
-
-export const AssassinationTalents137 = {
-	name: 'Assassination 13/7',
-	data: SavedTalents.create({
-		talentsString: '005303104352100520103331051-005005003-502',
-	}),
-};
-
-export const AssassinationTalents182 = {
-	name: 'Assassination 18/2',
-	data: SavedTalents.create({
-		talentsString: '005303104352100520103331051-005005005003-2',
-	}),
-};
-
-export const AssassinationTalentsBF = {
-	name: 'Assassination Blade Flurry',
-	data: SavedTalents.create({
-		talentsString: '005303104352100520103231-005205005003001-501',
-	}),
-};
-
-export const SubtletyTalents = {
-	name: 'Subtlety',
-	data: SavedTalents.create({
-		talentsString: '30532010114--5022012030321121350115031151',
-	}),
-}
-
-export const HemoSubtletyTalents = {
-	name: 'Hemo Sub',
-	data: SavedTalents.create({
-		talentsString: '30532010135--502201203032112135011503122',
-	}),
-}
 
 export const DefaultOptions = RogueOptions.create({
 	mhImbue: Poison.DeadlyPoison,

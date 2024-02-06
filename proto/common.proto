@@ -264,6 +264,7 @@ enum Conjured {
 	ConjuredUnknown = 0;
 	ConjuredMinorRecombobulator = 1;
 	ConjuredDemonicRune = 2;
+	ConjuredRogueThistleTea = 3;
 }
 
 enum Flask {

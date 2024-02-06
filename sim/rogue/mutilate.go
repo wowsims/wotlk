@@ -1,8 +1,6 @@
 package rogue
 
 import (
-	"time"
-
 	"github.com/wowsims/sod/sim/core"
 )
 
@@ -48,6 +46,7 @@ func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
 	})
 }
 
+/**
 func (rogue *Rogue) registerMutilateSpell() {
 	if !rogue.Talents.Mutilate {
 		return
@@ -88,4 +87,4 @@ func (rogue *Rogue) registerMutilateSpell() {
 			spell.DealOutcome(sim, result)
 		},
 	})
-}
+} */

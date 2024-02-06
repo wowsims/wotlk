@@ -34,39 +34,6 @@ func (rogue *Rogue) registerVanishSpell() {
 		Spell:    rogue.Vanish,
 		Type:     core.CooldownTypeDPS,
 		Priority: core.CooldownPriorityDrums,
-
-		ShouldActivate: func(s *core.Simulation, c *core.Character) bool {
-			if rogue.Talents.Overkill {
-				return !(rogue.StealthAura.IsActive() || rogue.OverkillAura.IsActive()) && rogue.CurrentEnergy() > 50
-			}
-			if rogue.Talents.MasterOfSubtlety > 0 {
-				// Chained cast checks
-				// heuristically, 3 Garrote ticks are better DPE than regular builders
-				const garroteMinDuration = time.Second * 9
-
-				if rogue.MasterOfSubtletyAura.IsActive() {
-					return false // possible after preparation
-				}
-
-				if s.GetRemainingDuration() < garroteMinDuration {
-					return true // getting the buff up under non-ideal circumstances is fine at end of combat
-				}
-
-				wantPremed, premedCPs := checkPremediation(s, rogue)
-				if wantPremed && premedCPs == 0 {
-					return false // essentially sync with premed if possible
-				}
-
-				wantGarrote, garroteCPs := checkGarrote(s, rogue)
-				if wantGarrote && garroteCPs == 0 {
-					return false
-				}
-
-				return rogue.ComboPoints()+garroteCPs+premedCPs <= 5+1 // heuristically, "<= 5" is too strict (since omitting premed is fine)
-			}
-
-			return false
-		},
 	})
 }
 

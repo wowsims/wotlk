@@ -210,6 +210,7 @@ func NewRogue(character *core.Character, options *proto.Player) *Rogue {
 
 // Apply the effects of the Cut to the Chase talent
 // TODO: Put a fresh instance of SnD rather than use the original as per client
+/**
 func (rogue *Rogue) ApplyCutToTheChase(sim *core.Simulation) {
 	if rogue.Talents.CutToTheChase > 0 && rogue.SliceAndDiceAura.IsActive() {
 		procChance := float64(rogue.Talents.CutToTheChase) * 0.2
@@ -218,7 +219,7 @@ func (rogue *Rogue) ApplyCutToTheChase(sim *core.Simulation) {
 			rogue.SliceAndDiceAura.Activate(sim)
 		}
 	}
-}
+} */
 
 // Deactivate Stealth if it is active. This must be added to all abilities that cause Stealth to fade.
 func (rogue *Rogue) BreakStealth(sim *core.Simulation) {

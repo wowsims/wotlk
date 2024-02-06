@@ -17,7 +17,7 @@ func (rogue *Rogue) registerThistleTeaCD() {
 	energyMetrics := rogue.NewEnergyMetrics(actionID)
 
 	// Restores 100 Energy with penalty of 2 per level over 40
-	const energyRegen = 100 - math.Max(float64(rogue.Level-40), 0.0)*2
+	energyRegen := 100 - math.Max(float64(rogue.Level-40), 0.0)*2
 
 	thistleTeaSpell := rogue.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,

@@ -1,11 +1,6 @@
 package rogue
 
-import (
-	"time"
-
-	"github.com/wowsims/sod/sim/core"
-)
-
+/**
 func (rogue *Rogue) registerTricksOfTheTradeSpell() {
 	actionID := core.ActionID{SpellID: 57934}
 	energyMetrics := rogue.NewEnergyMetrics(actionID)
@@ -71,3 +66,4 @@ func (rogue *Rogue) registerTricksOfTheTradeSpell() {
 		},
 	})
 }
+*/
