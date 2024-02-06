@@ -7,14 +7,28 @@ import (
 )
 
 func (rogue *Rogue) registerBackstabSpell() {
+	flatDamageBonus := map[int32]int32{
+		25: 32,
+		40: 60,
+		50: 90,
+		60: 140,
+	}[rogue.Level]
+
+	spellID := map[int32]int32{
+		25: 2590,
+		40: 8721,
+		50: 11279,
+		60: 11281,
+	}[rogue.Level]
+
 	rogue.Backstab = rogue.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48657},
+		ActionID:    core.ActionID{SpellID: spellID},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | SpellFlagBuilder | SpellFlagColdBlooded | core.SpellFlagAPL,
 
 		EnergyCost: core.EnergyCostOptions{
-			Cost:   rogue.costModifier(60 - 4*float64(rogue.Talents.SlaughterFromTheShadows)),
+			Cost:   rogue.costModifier(60),
 			Refund: 0.8,
 		},
 		Cast: core.CastConfig{
@@ -32,19 +46,14 @@ func (rogue *Rogue) registerBackstabSpell() {
 			10*core.CritRatingPerCritChance*float64(rogue.Talents.PuncturingWounds),
 		// All of these use "Apply Aura: Modifies Damage/Healing Done", and stack additively (up to 142%).
 		DamageMultiplier: 1.5 * (1 +
-			0.02*float64(rogue.Talents.FindWeakness) +
-			0.1*float64(rogue.Talents.Opportunity) +
-			0.03*float64(rogue.Talents.Aggression) +
-			0.05*float64(rogue.Talents.BladeTwisting) +
-			core.TernaryFloat64(rogue.Talents.SurpriseAttacks, 0.1, 0) +
-			core.TernaryFloat64(rogue.HasSetBonus(Tier6, 4), 0.06, 0)) *
-			(1 + 0.02*float64(rogue.Talents.SinisterCalling)),
+			0.04*float64(rogue.Talents.Opportunity) +
+			0.02*float64(rogue.Talents.Aggression)),
 		CritMultiplier:   rogue.MeleeCritMultiplier(true),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			rogue.BreakStealth(sim)
-			baseDamage := 310 +
+			baseDamage := float64(flatDamageBonus) +
 				spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
 				spell.BonusWeaponDamage()
 
