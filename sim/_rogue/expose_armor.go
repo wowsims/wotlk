@@ -6,6 +6,8 @@ import (
 	"github.com/wowsims/sod/sim/core"
 )
 
+// TODO: Add level based scaling to armor reduction
+// TODO: spellIDs
 func (rogue *Rogue) registerExposeArmorSpell() {
 	rogue.ExposeArmorAuras = rogue.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
 		return core.ExposeArmorAura(target)
@@ -27,9 +29,8 @@ func (rogue *Rogue) registerExposeArmorSpell() {
 		MetricSplits: 6,
 
 		EnergyCost: core.EnergyCostOptions{
-			Cost:          25.0 - 5*float64(rogue.Talents.ImprovedExposeArmor),
-			Refund:        0.4 * float64(rogue.Talents.QuickRecovery),
-			RefundMetrics: rogue.QuickRecoveryMetrics,
+			Cost:   25.0,
+			Refund: 0,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{

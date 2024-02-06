@@ -6,6 +6,8 @@ import (
 	"github.com/wowsims/sod/sim/core"
 )
 
+// TODO: Link to Rune of Envenom
+// TODO: Level based damage scaling
 func (rogue *Rogue) registerEnvenom() {
 	rogue.EnvenomAura = rogue.RegisterAura(core.Aura{
 		Label:    "Envenom",
@@ -18,8 +20,6 @@ func (rogue *Rogue) registerEnvenom() {
 		},
 	})
 
-	chanceToRetainStacks := []float64{0, 0.33, 0.66, 1}[rogue.Talents.MasterPoisoner]
-
 	rogue.Envenom = rogue.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 57993},
 		SpellSchool:  core.SpellSchoolNature,
@@ -28,9 +28,8 @@ func (rogue *Rogue) registerEnvenom() {
 		MetricSplits: 6,
 
 		EnergyCost: core.EnergyCostOptions{
-			Cost:          35,
-			Refund:        0.4 * float64(rogue.Talents.QuickRecovery),
-			RefundMetrics: rogue.QuickRecoveryMetrics,
+			Cost:   35,
+			Refund: 0,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -46,8 +45,7 @@ func (rogue *Rogue) registerEnvenom() {
 		},
 
 		DamageMultiplier: 1 +
-			0.02*float64(rogue.Talents.FindWeakness) +
-			[]float64{0.0, 0.07, 0.14, 0.2}[rogue.Talents.VilePoisons],
+			[]float64{0.0, 0.04, 0.08, 0.12, 0.16, 0.2}[rogue.Talents.VilePoisons],
 		CritMultiplier:   rogue.MeleeCritMultiplier(false),
 		ThreatMultiplier: 1,
 
