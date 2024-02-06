@@ -9,11 +9,27 @@ import (
 // TODO: Add level based damage and debuff value
 // TODO: Remove dagger scaling
 func (rogue *Rogue) registerHemorrhageSpell() {
+	// Minimum level of 30 to talent Hemorrhage
+	if rogue.Level < 30 {
+		return
+	}
+
 	if !rogue.Talents.Hemorrhage {
 		return
 	}
 
-	actionID := core.ActionID{SpellID: 48660}
+	debuffBonusDamage := map[int32]float64{
+		40: 3,
+		50: 5,
+		60: 7,
+	}[rogue.Level]
+
+	spellID := map[int32]int32{
+		40: 16511,
+		50: 17347,
+		60: 17348,
+	}[rogue.Level]
+	actionID := core.ActionID{SpellID: spellID}
 
 	var numPlayers int
 	for _, u := range rogue.Env.Raid.AllUnits {
@@ -25,18 +41,17 @@ func (rogue *Rogue) registerHemorrhageSpell() {
 	var hemoAuras core.AuraArray
 
 	if numPlayers >= 2 {
-		// bonusDamage := 75.0
-		/**hemoAuras = rogue.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
+		hemoAuras = rogue.NewEnemyAuraArray(func(target *core.Unit, level int32) *core.Aura {
 			return target.GetOrRegisterAura(core.Aura{
 				Label:     "Hemorrhage",
 				ActionID:  actionID,
 				Duration:  time.Second * 15,
-				MaxStacks: 10,
+				MaxStacks: 30,
 				OnGain: func(aura *core.Aura, sim *core.Simulation) {
-					aura.Unit.PseudoStats.BonusPhysicalDamageTaken += bonusDamage
+					aura.Unit.PseudoStats.BonusPhysicalDamageTaken += debuffBonusDamage
 				},
 				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-					aura.Unit.PseudoStats.BonusPhysicalDamageTaken -= bonusDamage
+					aura.Unit.PseudoStats.BonusPhysicalDamageTaken -= debuffBonusDamage
 				},
 				OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 					if spell.SpellSchool != core.SpellSchoolPhysical {
@@ -49,7 +64,7 @@ func (rogue *Rogue) registerHemorrhageSpell() {
 					aura.RemoveStack(sim)
 				},
 			})
-		})*/
+		})
 	}
 
 	rogue.Hemorrhage = rogue.RegisterSpell(core.SpellConfig{

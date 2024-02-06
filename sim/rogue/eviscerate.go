@@ -8,6 +8,27 @@ import (
 
 // TODO: Add level based damage
 func (rogue *Rogue) registerEviscerate() {
+	flatDamage := map[int32]float64{
+		25: 10,
+		40: 22,
+		50: 34,
+		60: 54,
+	}[rogue.Level]
+
+	comboDamageBonus := map[int32]float64{
+		25: 31,
+		40: 77,
+		50: 110,
+		60: 170,
+	}[rogue.Level]
+
+	damageVariance := map[int32]float64{
+		25: 20,
+		40: 44,
+		50: 68,
+		60: 108,
+	}[rogue.Level]
+
 	rogue.Eviscerate = rogue.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 48668},
 		SpellSchool:  core.SpellSchoolPhysical,
@@ -33,7 +54,6 @@ func (rogue *Rogue) registerEviscerate() {
 			return rogue.ComboPoints() > 0
 		},
 
-		BonusCritRating: 0.0,
 		DamageMultiplier: 1 +
 			[]float64{0.0, 0.07, 0.14, 0.2}[rogue.Talents.ImprovedEviscerate] +
 			0.02*float64(rogue.Talents.Aggression),
@@ -43,12 +63,12 @@ func (rogue *Rogue) registerEviscerate() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			rogue.BreakStealth(sim)
 			comboPoints := rogue.ComboPoints()
-			flatBaseDamage := 127 + 370*float64(comboPoints)
+			flatBaseDamage := flatDamage + comboDamageBonus*float64(comboPoints)
 			// tooltip implies 3..7% AP scaling, but testing shows it's fixed at 7% (3.4.0.46158)
 			apRatio := 0.07 * float64(comboPoints)
 
 			baseDamage := flatBaseDamage +
-				254.0*sim.RandomFloat("Eviscerate") +
+				damageVariance*sim.RandomFloat("Eviscerate") +
 				apRatio*spell.MeleeAttackPower() +
 				spell.BonusWeaponDamage()
 
