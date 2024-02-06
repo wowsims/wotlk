@@ -64,6 +64,22 @@ message RogueTalents {
 	bool premeditation = 51;
 }
 
+enum RogueRune {
+	RogueRuneNone = 0;
+	RuneDeadlyBrew = 1;
+	RuneJustAFleshWound = 2;
+	RuneQuickDraw = 3;
+	RuneSlaughterFromTheShadows = 4;
+	RuneBetweenTheEyes = 5;
+	RuneBladeDance = 6;
+	RuneEnvenom = 7;
+	RuneMainGauche = 8;
+	RuneMutilate = 9;
+	RuneSaberSlash = 10;
+	RuneShadowstrike = 11;
+	RuneShiv = 12;
+}
+
 message Rogue {
 	message Rotation {
 	}
