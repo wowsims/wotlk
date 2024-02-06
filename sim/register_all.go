@@ -3,6 +3,7 @@ package sim
 import (
 	_ "github.com/wowsims/sod/sim/common"
 	"github.com/wowsims/sod/sim/druid/balance"
+	dpsRogue "github.com/wowsims/sod/sim/rogue"
 
 	"github.com/wowsims/sod/sim/druid/feral"
 	// restoDruid "github.com/wowsims/sod/sim/druid/restoration"
@@ -16,7 +17,6 @@ import (
 	// "github.com/wowsims/sod/sim/paladin/retribution"
 	// healingPriest "github.com/wowsims/sod/sim/priest/healing"
 	"github.com/wowsims/sod/sim/priest/shadow"
-	// "github.com/wowsims/sod/sim/rogue"
 	// "github.com/wowsims/sod/sim/shaman/elemental"
 	// "github.com/wowsims/sod/sim/shaman/enhancement"
 	// restoShaman "github.com/wowsims/sod/sim/shaman/restoration"
@@ -45,7 +45,7 @@ func RegisterAll() {
 	mage.RegisterMage()
 	// healingPriest.RegisterHealingPriest()
 	shadow.RegisterShadowPriest()
-	// rogue.RegisterRogue()
+	dpsRogue.RegisterRogue()
 	dpsWarrior.RegisterDpsWarrior()
 	// protectionWarrior.RegisterProtectionWarrior()
 	// holyPaladin.RegisterHolyPaladin()
