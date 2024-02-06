@@ -8,7 +8,21 @@ import (
 
 // TODO: Add level based scaling
 func (rogue *Rogue) registerSliceAndDice() {
-	actionID := core.ActionID{SpellID: 6774}
+	hasteBonusByRank := map[int32]float64{
+		25: 20,
+		40: 20,
+		50: 30,
+		60: 30,
+	}[rogue.Level]
+
+	spellID := map[int32]int32{
+		25: 5171,
+		40: 5171,
+		50: 6774,
+		60: 6774,
+	}[rogue.Level]
+
+	actionID := core.ActionID{SpellID: spellID}
 
 	durationMultiplier := 1.0 + 0.15*float64(rogue.Talents.ImprovedSliceAndDice)
 	durationBonus := time.Duration(0)
@@ -21,8 +35,8 @@ func (rogue *Rogue) registerSliceAndDice() {
 		time.Duration(float64(time.Second*21+durationBonus) * durationMultiplier),
 	}
 
-	hasteBonus := 1.4
-	inverseHasteBonus := 1.0 / hasteBonus
+	hasteBonus := 1.0 + hasteBonusByRank
+	inverseHasteBonus := 1.0 / hasteBonusByRank
 
 	rogue.SliceAndDiceAura = rogue.RegisterAura(core.Aura{
 		Label:    "Slice and Dice",
