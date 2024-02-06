@@ -1,16 +1,19 @@
 package rogue
 
 import (
+	"time"
+
 	"github.com/wowsims/sod/sim/core"
+	"github.com/wowsims/sod/sim/core/proto"
 )
 
-var MutilateSpellID int32 = 48666
+var MutilateSpellID int32 = 399956
 
 func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
-	actionID := core.ActionID{SpellID: 48665}
+	actionID := core.ActionID{SpellID: 399960}
 	procMask := core.ProcMaskMeleeMHSpecial
 	if !isMH {
-		actionID = core.ActionID{SpellID: 48664}
+		actionID = core.ActionID{SpellID: 399961}
 		procMask = core.ProcMaskMeleeOHSpecial
 	}
 
@@ -29,12 +32,13 @@ func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
 		CritMultiplier:   rogue.MeleeCritMultiplier(true),
 		ThreatMultiplier: 1,
 
+		// TODO: Update base damage with level scaling amount
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			var baseDamage float64
 			if isMH {
-				baseDamage = 181 + spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower())
+				baseDamage = 20 + spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower())
 			} else {
-				baseDamage = 181 + spell.Unit.OHNormalizedWeaponDamage(sim, spell.MeleeAttackPower())
+				baseDamage = 20 + spell.Unit.OHNormalizedWeaponDamage(sim, spell.MeleeAttackPower())
 			}
 			// TODO: Add support for all poison effects
 			if rogue.DeadlyPoison.Dot(target).IsActive() || rogue.woundPoisonDebuffAuras.Get(target).IsActive() {
@@ -46,9 +50,8 @@ func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
 	})
 }
 
-/**
 func (rogue *Rogue) registerMutilateSpell() {
-	if !rogue.Talents.Mutilate {
+	if !rogue.HasRune(proto.RogueRune_RuneMutilate) {
 		return
 	}
 
@@ -62,7 +65,7 @@ func (rogue *Rogue) registerMutilateSpell() {
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagAPL,
 
 		EnergyCost: core.EnergyCostOptions{
-			Cost:   rogue.costModifier(60),
+			Cost:   rogue.costModifier(40),
 			Refund: 0.8,
 		},
 		Cast: core.CastConfig{
@@ -79,12 +82,12 @@ func (rogue *Rogue) registerMutilateSpell() {
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMeleeSpecialHit) // Miss/Dodge/Parry/Hit
 			if result.Landed() {
 				rogue.AddComboPoints(sim, 2, spell.ComboPointMetrics())
-				rogue.MutilateOH.Cast(sim, target)
 				rogue.MutilateMH.Cast(sim, target)
+				rogue.MutilateOH.Cast(sim, target)
 			} else {
 				spell.IssueRefund(sim)
 			}
 			spell.DealOutcome(sim, result)
 		},
 	})
-} */
+}
