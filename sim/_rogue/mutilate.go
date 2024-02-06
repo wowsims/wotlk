@@ -22,14 +22,10 @@ func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
 		ProcMask:    procMask,
 		Flags:       core.SpellFlagMeleeMetrics | SpellFlagBuilder | SpellFlagColdBlooded,
 
-		BonusCritRating: core.TernaryFloat64(rogue.HasSetBonus(Tier9, 4), 5*core.CritRatingPerCritChance, 0) +
-			[]float64{0, 2, 4, 6}[rogue.Talents.TurnTheTables]*core.CritRatingPerCritChance +
-			5*core.CritRatingPerCritChance*float64(rogue.Talents.PuncturingWounds),
+		BonusCritRating: 10 * core.CritRatingPerCritChance * float64(rogue.Talents.ImprovedBackstab),
 
 		DamageMultiplierAdditive: 1 +
-			0.1*float64(rogue.Talents.Opportunity) +
-			0.02*float64(rogue.Talents.FindWeakness) +
-			core.TernaryFloat64(rogue.HasSetBonus(Tier6, 4), 0.06, 0),
+			0.04*float64(rogue.Talents.Opportunity),
 		DamageMultiplier: 1 *
 			core.TernaryFloat64(isMH, 1, rogue.dwsMultiplier()),
 		CritMultiplier:   rogue.MeleeCritMultiplier(true),

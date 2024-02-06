@@ -6,6 +6,7 @@ import (
 	"github.com/wowsims/sod/sim/core"
 )
 
+// TODO: Add level based scaling
 func (rogue *Rogue) registerSliceAndDice() {
 	actionID := core.ActionID{SpellID: 6774}
 
@@ -21,9 +22,6 @@ func (rogue *Rogue) registerSliceAndDice() {
 	}
 
 	hasteBonus := 1.4
-	if rogue.HasSetBonus(Tier6, 2) {
-		hasteBonus += 0.05
-	}
 	inverseHasteBonus := 1.0 / hasteBonus
 
 	rogue.SliceAndDiceAura = rogue.RegisterAura(core.Aura{

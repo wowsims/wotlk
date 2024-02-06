@@ -43,7 +43,7 @@ func (rogue *Rogue) registerAmbushSpell() {
 
 		BonusCritRating: 15 * core.CritRatingPerCritChance * float64(rogue.Talents.ImprovedAmbush),
 		// All of these use "Apply Aura: Modifies Damage/Healing Done", and stack additively.
-		DamageMultiplier: 2.5 * (1 + 0.1*float64(rogue.Talents.Opportunity)),
+		DamageMultiplier: 2.5 * (1 + 0.04*float64(rogue.Talents.Opportunity)),
 		CritMultiplier:   rogue.MeleeCritMultiplier(true),
 		ThreatMultiplier: 1,
 

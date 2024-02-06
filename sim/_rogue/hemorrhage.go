@@ -6,6 +6,8 @@ import (
 	"github.com/wowsims/sod/sim/core"
 )
 
+// TODO: Add level based damage and debuff value
+// TODO: Remove dagger scaling
 func (rogue *Rogue) registerHemorrhageSpell() {
 	if !rogue.Talents.Hemorrhage {
 		return

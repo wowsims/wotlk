@@ -42,18 +42,10 @@ func (rogue *Rogue) dwsMultiplier() float64 {
 	return 1 + 0.1*float64(rogue.Talents.DualWieldSpecialization)
 }
 
-// TODO: Fix id
-func getRelentlessStrikesSpellID(talentPoints int32) int32 {
-	if talentPoints == 1 {
-		return 14179
-	}
-	return 58420 + talentPoints
-}
-
 // Post-cast effects from casting a Finishing Move
 func (rogue *Rogue) makeFinishingMoveEffectApplier() func(sim *core.Simulation, numPoints int32) {
 	ruthlessnessMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 14161})
-	relentlessStrikesMetrics := rogue.NewEnergyMetrics(core.ActionID{SpellID: getRelentlessStrikesSpellID(rogue.Talents.RelentlessStrikes)})
+	relentlessStrikesMetrics := rogue.NewEnergyMetrics(core.ActionID{SpellID: 14179})
 
 	return func(sim *core.Simulation, numPoints int32) {
 		if t := rogue.Talents.Ruthlessness; t > 0 {
@@ -62,7 +54,7 @@ func (rogue *Rogue) makeFinishingMoveEffectApplier() func(sim *core.Simulation, 
 			}
 		}
 		if t := rogue.Talents.RelentlessStrikes; t > 0 {
-			if sim.RandomFloat("RelentlessStrikes") < 0.04*float64(t*numPoints) {
+			if sim.RandomFloat("RelentlessStrikes") < 0.2*float64(t*numPoints) {
 				rogue.AddEnergy(sim, 25, relentlessStrikesMetrics)
 			}
 		}
@@ -76,6 +68,7 @@ func (rogue *Rogue) makeCostModifier() func(baseCost float64) float64 {
 }
 
 // Murder talent
+// Does this need per target checking based on talent limitations of type?
 func (rogue *Rogue) applyMurder() {
 	rogue.PseudoStats.DamageDealtMultiplier *= rogue.murderMultiplier()
 }

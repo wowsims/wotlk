@@ -6,6 +6,7 @@ import (
 	"github.com/wowsims/sod/sim/core"
 )
 
+// TODO: Add level based scaling
 func (rogue *Rogue) registerGarrote() {
 	numTicks := int32(6)
 	rogue.Garrote = rogue.GetOrRegisterSpell(core.SpellConfig{
@@ -28,10 +29,7 @@ func (rogue *Rogue) registerGarrote() {
 			return !rogue.PseudoStats.InFrontOfTarget && rogue.IsStealthed()
 		},
 
-		DamageMultiplier: 1 +
-			0.15*float64(rogue.Talents.BloodSpatter) +
-			0.10*float64(rogue.Talents.Opportunity) +
-			0.02*float64(rogue.Talents.FindWeakness),
+		DamageMultiplier: 1 + 0.04*float64(rogue.Talents.Opportunity),
 		ThreatMultiplier: 1,
 
 		Dot: core.DotConfig{
