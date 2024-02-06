@@ -6,6 +6,7 @@ import (
 	"github.com/wowsims/sod/sim/core"
 )
 
+// TODO: Add level based damage
 func (rogue *Rogue) registerEviscerate() {
 	rogue.Eviscerate = rogue.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 48668},
@@ -16,7 +17,7 @@ func (rogue *Rogue) registerEviscerate() {
 
 		EnergyCost: core.EnergyCostOptions{
 			Cost:          35,
-			Refund:        0.4 * float64(rogue.Talents.QuickRecovery),
+			Refund:        0,
 			RefundMetrics: rogue.QuickRecoveryMetrics,
 		},
 		Cast: core.CastConfig{
@@ -35,8 +36,7 @@ func (rogue *Rogue) registerEviscerate() {
 		BonusCritRating: 0.0,
 		DamageMultiplier: 1 +
 			[]float64{0.0, 0.07, 0.14, 0.2}[rogue.Talents.ImprovedEviscerate] +
-			0.02*float64(rogue.Talents.FindWeakness) +
-			0.03*float64(rogue.Talents.Aggression),
+			0.02*float64(rogue.Talents.Aggression),
 		CritMultiplier:   rogue.MeleeCritMultiplier(false),
 		ThreatMultiplier: 1,
 
@@ -56,7 +56,6 @@ func (rogue *Rogue) registerEviscerate() {
 
 			if result.Landed() {
 				rogue.ApplyFinisher(sim, spell)
-				rogue.ApplyCutToTheChase(sim)
 			} else {
 				spell.IssueRefund(sim)
 			}

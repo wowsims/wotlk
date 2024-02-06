@@ -36,12 +36,7 @@ func (rogue *Rogue) registerRupture() {
 			return rogue.ComboPoints() > 0
 		},
 
-		DamageMultiplier: 1 +
-			0.15*float64(rogue.Talents.BloodSpatter) +
-			0.02*float64(rogue.Talents.FindWeakness) +
-			core.TernaryFloat64(rogue.HasSetBonus(Tier7, 2), 0.1, 0) +
-			core.TernaryFloat64(rogue.HasSetBonus(Tier8, 4), 0.2, 0) +
-			0.1*float64(rogue.Talents.SerratedBlades),
+		DamageMultiplier: 1 + 0.1*float64(rogue.Talents.SerratedBlades),
 		CritMultiplier:   rogue.MeleeCritMultiplier(false),
 		ThreatMultiplier: 1,
 
