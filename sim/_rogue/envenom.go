@@ -72,14 +72,6 @@ func (rogue *Rogue) registerEnvenom() {
 
 			if result.Landed() {
 				rogue.ApplyFinisher(sim, spell)
-				rogue.ApplyCutToTheChase(sim)
-				if !sim.Proc(chanceToRetainStacks, "Master Poisoner") {
-					if newStacks := dp.GetStacks() - comboPoints; newStacks > 0 {
-						dp.SetStacks(sim, newStacks)
-					} else {
-						dp.Cancel(sim)
-					}
-				}
 			} else {
 				spell.IssueRefund(sim)
 			}

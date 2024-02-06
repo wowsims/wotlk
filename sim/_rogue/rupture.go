@@ -9,6 +9,7 @@ import (
 const RuptureEnergyCost = 25.0
 const RuptureSpellID = 48672
 
+// TODO: Add phase based damage
 func (rogue *Rogue) registerRupture() {
 	rogue.Rupture = rogue.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: RuptureSpellID},

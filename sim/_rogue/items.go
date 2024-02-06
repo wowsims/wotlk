@@ -7,6 +7,8 @@ import (
 	"github.com/wowsims/sod/sim/core/stats"
 )
 
+// TODO: Update Sets with Old Raid Tier sets and any new SoD sets
+
 var Arena = core.NewItemSet(core.ItemSet{
 	Name: "Gladiator's Vestments",
 	Bonuses: map[int32]core.ApplyEffect{

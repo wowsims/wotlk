@@ -7,6 +7,7 @@ import (
 )
 
 // Each rank is a different ID. 31223 is 3/3
+// TODO: Link to Rune of Master of Subtlety (assuming it is added Phase 2)
 func getMasterOfSubtletySpellID(talentPoints int32) int32 {
 	return []int32{0, 31221, 31222, 31223}[talentPoints]
 }

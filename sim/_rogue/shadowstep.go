@@ -6,6 +6,7 @@ import (
 	"github.com/wowsims/sod/sim/core"
 )
 
+// TODO: Link to Rune of Shadowstep (assuming it is added Phase 2)
 func (rogue *Rogue) registerShadowstepCD() {
 	if !rogue.Talents.Shadowstep {
 		return
