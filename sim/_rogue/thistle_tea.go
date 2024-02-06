@@ -1,6 +1,7 @@
 package rogue
 
 import (
+	"math"
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
@@ -15,7 +16,8 @@ func (rogue *Rogue) registerThistleTeaCD() {
 	actionID := core.ActionID{ItemID: 7676}
 	energyMetrics := rogue.NewEnergyMetrics(actionID)
 
-	const energyRegen = 20.0
+	// Restores 100 Energy with penalty of 2 per level over 40
+	const energyRegen = 100 - math.Max(float64(rogue.Level-40), 0.0)*2
 
 	thistleTeaSpell := rogue.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
