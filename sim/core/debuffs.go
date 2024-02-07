@@ -58,7 +58,7 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 	if targetIdx == 0 {
 		if debuffs.ExposeArmor != proto.TristateEffect_TristateEffectMissing {
 			// Improved EA
-			aura := ExposeArmorAura(target, TernaryInt32(debuffs.ExposeArmor == proto.TristateEffect_TristateEffectRegular, 0, 2), level)
+			aura := ExposeArmorAura(target, TernaryInt32(debuffs.ExposeArmor == proto.TristateEffect_TristateEffectRegular, 0, 2), 5, level)
 			ScheduledMajorArmorAura(aura, PeriodicActionOptions{
 				Period:   time.Second * 3,
 				NumTicks: 1,
@@ -470,7 +470,7 @@ func SunderArmorAura(target *Unit, playerLevel int32) *Aura {
 	return aura
 }
 
-func ExposeArmorAura(target *Unit, improvedEA int32, playerLevel int32) *Aura {
+func ExposeArmorAura(target *Unit, improvedEA int32, comboPoints int32, playerLevel int32) *Aura {
 	spellID := map[int32]int32{
 		25: 8647,
 		40: 8650,
@@ -484,6 +484,8 @@ func ExposeArmorAura(target *Unit, improvedEA int32, playerLevel int32) *Aura {
 		50: 1375,
 		60: 1700,
 	}[playerLevel]
+
+	arpen *= float64(comboPoints) / 5
 
 	arpen *= 1 + 0.25*float64(improvedEA)
 

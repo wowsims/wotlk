@@ -57,7 +57,7 @@ func TestExposeArmor(t *testing.T) {
 	if target.Armor() != expectedArmor {
 		t.Fatalf("Armor value for target should be %f but found %f", 10643.0, target.Armor())
 	}
-	exposeAura := ExposeArmorAura(&target, false, 63)
+	exposeAura := ExposeArmorAura(&target, 0, 5, 60)
 	exposeAura.Activate(&sim)
 	tolerance := 0.001
 	expectedArmor = baseArmor * (1.0 - 0.2)

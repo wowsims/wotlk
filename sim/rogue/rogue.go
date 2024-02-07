@@ -44,7 +44,6 @@ type Rogue struct {
 	bleedCategory *core.ExclusiveCategory
 
 	sliceAndDiceDurations [6]time.Duration
-	exposeArmorDurations  [6]time.Duration
 
 	Backstab         *core.Spell
 	BladeFlurry      *core.Spell
@@ -141,7 +140,6 @@ func (rogue *Rogue) Initialize() {
 	rogue.registerGarrote()
 	rogue.registerHemorrhageSpell()
 	rogue.registerInstantPoisonSpell()
-	rogue.registerWoundPoisonSpell()
 	rogue.registerRupture()
 	rogue.registerSinisterStrikeSpell()
 	rogue.registerSliceAndDice()

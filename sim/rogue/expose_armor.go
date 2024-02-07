@@ -9,17 +9,9 @@ import (
 // TODO: Add level based scaling to armor reduction
 // TODO: spellIDs
 func (rogue *Rogue) registerExposeArmorSpell() {
-	rogue.ExposeArmorAuras = rogue.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
-		return core.ExposeArmorAura(target)
+	rogue.ExposeArmorAuras = rogue.NewEnemyAuraArray(func(target *core.Unit, level int32) *core.Aura {
+		return core.ExposeArmorAura(target, rogue.Talents.ImprovedExposeArmor, rogue.ComboPoints(), rogue.Level)
 	})
-	rogue.exposeArmorDurations = [6]time.Duration{
-		0,
-		time.Second * 6,
-		time.Second * 12,
-		time.Second * 18,
-		time.Second * 24,
-		time.Second * 30,
-	}
 
 	rogue.ExposeArmor = rogue.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 8647},
@@ -52,7 +44,7 @@ func (rogue *Rogue) registerExposeArmorSpell() {
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMeleeSpecialHit)
 			if result.Landed() {
 				debuffAura := rogue.ExposeArmorAuras.Get(target)
-				debuffAura.Duration = rogue.exposeArmorDurations[rogue.ComboPoints()]
+				debuffAura.Duration = time.Second * 30
 				debuffAura.Activate(sim)
 				rogue.ApplyFinisher(sim, spell)
 			} else {
