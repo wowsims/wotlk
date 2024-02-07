@@ -45,36 +45,40 @@ type Rogue struct {
 
 	sliceAndDiceDurations [6]time.Duration
 
-	Backstab         *core.Spell
-	BladeFlurry      *core.Spell
-	DeadlyPoison     *core.Spell
-	FanOfKnives      *core.Spell
-	Feint            *core.Spell
-	Garrote          *core.Spell
-	Ambush           *core.Spell
-	Hemorrhage       *core.Spell
-	GhostlyStrike    *core.Spell
-	HungerForBlood   *core.Spell
-	InstantPoison    [3]*core.Spell
-	WoundPoison      [3]*core.Spell
-	Mutilate         *core.Spell
-	MutilateMH       *core.Spell
-	MutilateOH       *core.Spell
-	Shiv             *core.Spell
-	SinisterStrike   *core.Spell
+	SinisterStrike *core.Spell
+	Backstab       *core.Spell
+	Hemorrhage     *core.Spell
+
+	FanOfKnives *core.Spell
+	Feint       *core.Spell
+
+	Garrote *core.Spell
+	Ambush  *core.Spell
+
+	GhostlyStrike *core.Spell
+	DeadlyPoison  *core.Spell
+	InstantPoison [3]*core.Spell
+	WoundPoison   [2]*core.Spell
+
+	Mutilate   *core.Spell
+	MutilateMH *core.Spell
+	MutilateOH *core.Spell
+	Shiv       *core.Spell
+
 	TricksOfTheTrade *core.Spell
 	Shadowstep       *core.Spell
 	Preparation      *core.Spell
 	Premeditation    *core.Spell
 	ShadowDance      *core.Spell
 	ColdBlood        *core.Spell
+	BladeFlurry      *core.Spell
 	Vanish           *core.Spell
 
-	Envenom      *core.Spell
 	Eviscerate   *core.Spell
 	ExposeArmor  *core.Spell
 	Rupture      *core.Spell
 	SliceAndDice *core.Spell
+	Envenom      *core.Spell
 
 	lastDeadlyPoisonProcMask core.ProcMask
 
@@ -91,11 +95,7 @@ type Rogue struct {
 	HonorAmongThieves    *core.Aura
 	StealthAura          *core.Aura
 
-	masterPoisonerDebuffAuras core.AuraArray
-	savageCombatDebuffAuras   core.AuraArray
-	woundPoisonDebuffAuras    core.AuraArray
-
-	QuickRecoveryMetrics *core.ResourceMetrics
+	woundPoisonDebuffAuras core.AuraArray
 
 	costModifier               func(float64) float64
 	finishingMoveEffectApplier func(sim *core.Simulation, numPoints int32)
@@ -132,19 +132,25 @@ func (rogue *Rogue) Initialize() {
 	rogue.costModifier = rogue.makeCostModifier()
 
 	rogue.registerStealthAura()
+
+	rogue.registerSinisterStrikeSpell()
 	rogue.registerBackstabSpell()
-	rogue.registerDeadlyPoisonSpell()
+	rogue.registerHemorrhageSpell()
+
+	rogue.registerSliceAndDice()
 	rogue.registerEviscerate()
 	rogue.registerExposeArmorSpell()
+	rogue.registerRupture()
+
 	rogue.registerFeintSpell()
 	rogue.registerGarrote()
-	rogue.registerHemorrhageSpell()
-	rogue.registerInstantPoisonSpell()
-	rogue.registerRupture()
-	rogue.registerSinisterStrikeSpell()
-	rogue.registerSliceAndDice()
-	rogue.registerThistleTeaCD()
 	rogue.registerAmbushSpell()
+
+	rogue.registerDeadlyPoisonSpell()
+	rogue.registerInstantPoisonSpell()
+
+	rogue.registerThistleTeaCD()
+
 	rogue.registerVanishSpell()
 
 	rogue.finishingMoveEffectApplier = rogue.makeFinishingMoveEffectApplier()

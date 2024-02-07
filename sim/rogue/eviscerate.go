@@ -6,7 +6,6 @@ import (
 	"github.com/wowsims/sod/sim/core"
 )
 
-// TODO: Add level based damage
 func (rogue *Rogue) registerEviscerate() {
 	flatDamage := map[int32]float64{
 		25: 10,
@@ -37,9 +36,8 @@ func (rogue *Rogue) registerEviscerate() {
 		MetricSplits: 6,
 
 		EnergyCost: core.EnergyCostOptions{
-			Cost:          35,
-			Refund:        0,
-			RefundMetrics: rogue.QuickRecoveryMetrics,
+			Cost:   35,
+			Refund: 0,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -55,7 +53,7 @@ func (rogue *Rogue) registerEviscerate() {
 		},
 
 		DamageMultiplier: 1 +
-			[]float64{0.0, 0.07, 0.14, 0.2}[rogue.Talents.ImprovedEviscerate] +
+			[]float64{0.0, 0.05, 0.10, 0.15}[rogue.Talents.ImprovedEviscerate] +
 			0.02*float64(rogue.Talents.Aggression),
 		CritMultiplier:   rogue.MeleeCritMultiplier(false),
 		ThreatMultiplier: 1,

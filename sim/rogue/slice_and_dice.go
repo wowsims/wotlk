@@ -6,13 +6,12 @@ import (
 	"github.com/wowsims/sod/sim/core"
 )
 
-// TODO: Add level based scaling
 func (rogue *Rogue) registerSliceAndDice() {
 	hasteBonusByRank := map[int32]float64{
-		25: 20,
-		40: 20,
-		50: 30,
-		60: 30,
+		25: 0.20,
+		40: 0.20,
+		50: 0.30,
+		60: 0.30,
 	}[rogue.Level]
 
 	spellID := map[int32]int32{

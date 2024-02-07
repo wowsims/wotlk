@@ -6,7 +6,6 @@ import (
 	"github.com/wowsims/sod/sim/core"
 )
 
-// TODO: Add phase based damage
 func (rogue *Rogue) registerRupture() {
 
 	spellID := map[int32]int32{
@@ -24,9 +23,8 @@ func (rogue *Rogue) registerRupture() {
 		MetricSplits: 6,
 
 		EnergyCost: core.EnergyCostOptions{
-			Cost:          25.0,
-			Refund:        0,
-			RefundMetrics: rogue.QuickRecoveryMetrics,
+			Cost:   25.0,
+			Refund: 0,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
