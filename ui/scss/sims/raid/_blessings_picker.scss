@@ -6,7 +6,7 @@
 		justify-content: space-between;
 
 		&:not(:last-child) {
-			margin-bottom: map.get($spacers, 1);
+			margin-bottom: map-get($spacers, 1);
 		}
 
 		.blessings-picker-spec {
@@ -21,7 +21,7 @@
 		.blessings-picker-container {
 			display: grid;
 			grid-template-columns: repeat(4, 1fr);
-			grid-column-gap: map.get($spacers, 1);
+			grid-column-gap: map-get($spacers, 1);
 
 			.blessing-picker {
 				&:not(.disabled) .icon-picker-button {

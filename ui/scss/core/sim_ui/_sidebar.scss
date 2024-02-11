@@ -15,12 +15,12 @@
     padding-top: $gap-width;
     padding-left: $gap-width;
     padding-right: $gap-width;
-    padding-bottom: map.get($spacers, 3);
+    padding-bottom: map-get($spacers, 3);
     display: flex;
     flex-direction: column;
 
     &> *:not(:last-child) {
-      margin-bottom: map.get($spacers, 4);
+      margin-bottom: map-get($spacers, 4);
     }
 
     .sim-sidebar-actions {

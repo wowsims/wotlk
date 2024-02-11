@@ -58,7 +58,7 @@
 		}
 
 		.results-reference {
-			margin-bottom: map.get($spacers, 2);
+			margin-bottom: map-get($spacers, 2);
 			font-weight: normal;
 
 			.results-reference-diff {
@@ -68,7 +68,7 @@
 	}
 
 	.results-sim-reference {
-		margin-top: map.get($spacers, 2);
+		margin-top: map-get($spacers, 2);
 		font-weight: normal;
 
 		&.has-reference {
