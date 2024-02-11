@@ -15,6 +15,6 @@
   }
 
   .input-root:not(:last-child) {
-    margin-right: map.get($spacers, 1);
+    margin-right: map-get($spacers, 1);
   }
 }

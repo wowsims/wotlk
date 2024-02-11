@@ -56,13 +56,13 @@
   }
 
   .saved-data-set-name {
-    padding: map.get($spacers, 2);
+    padding: map-get($spacers, 2);
     color: $body-color;
   }
 
   .saved-data-set-delete {
-    padding: map.get($spacers, 2) 0;
-    margin-right: map.get($spacers, 2);
+    padding: map-get($spacers, 2) 0;
+    margin-right: map-get($spacers, 2);
     color: $body-color;
   }
 }

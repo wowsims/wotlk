@@ -181,7 +181,7 @@ $navbar-dark-active-color: $primary;
 $navbar-padding-y: 0;
 
 $nav-link-font-size: .875rem;
-$nav-link-padding-y: map.get($spacers, 3);
+$nav-link-padding-y: map-get($spacers, 3);
 $nav-link-transition: $link-transition;
 
 $nav-tabs-border-color: $border-color;
@@ -190,8 +190,8 @@ $nav-tabs-link-active-color: white;
 
 $popover-bg: #424557;
 $popover-body-color: white;
-$popover-body-padding-x: map.get($spacers, 2);
-$popover-body-padding-y: map.get($spacers, 2);
+$popover-body-padding-x: map-get($spacers, 2);
+$popover-body-padding-y: map-get($spacers, 2);
 
 $tooltip-bg: $popover-bg;
 $tooltip-max-width: 15vw;

@@ -9,7 +9,7 @@
 		}
 
 		.raid-stats-section-content {
-			padding: map.get($spacers, 2);
+			padding: map-get($spacers, 2);
 			border: $border-default;
 			display: grid;
 			grid-template-columns: repeat(4, 1fr);
@@ -64,11 +64,11 @@
 		align-items: center;
 
 		&:not(:last-child) {
-			margin-bottom: map.get($spacers, 1);
+			margin-bottom: map-get($spacers, 1);
 		}
 
 		&> :not(:last-child) {
-			margin-right: map.get($spacers, 1);
+			margin-right: map-get($spacers, 1);
 		}
 
 		.raid-stats-effect-counter {

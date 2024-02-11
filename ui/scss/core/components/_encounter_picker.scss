@@ -51,7 +51,7 @@
 			width: 33.33%;
 
 			&:not(:last-child) {
-				margin-right: map.get($spacers, 3);
+				margin-right: map-get($spacers, 3);
 			}
 
 			&.target-picker-section2 {

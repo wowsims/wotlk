@@ -80,7 +80,7 @@
 		font-size: $content-font-size;
 
 		.sim-toolbar-item, .sim-toolbar-socials {
-			margin-left: map.get($spacers, 3);
+			margin-left: map-get($spacers, 3);
 			display: flex;
 
 			a {
