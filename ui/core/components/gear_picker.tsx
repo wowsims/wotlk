@@ -2,7 +2,6 @@ import { difficultyNames, professionNames, slotNames } from '../proto_utils/name
 import { BaseModal } from './base_modal';
 import { Component } from './component';
 import { FiltersMenu } from './filters_menu';
-import { Input, InputConfig } from './input';
 import {
 	makePhaseSelector,
 	makeShow1hWeaponsSelector,
@@ -21,18 +20,15 @@ import { formatDeltaTextElem } from '../utils';
 import { ActionId } from '../proto_utils/action_id';
 import { getEnchantDescription, getUniqueEnchantString } from '../proto_utils/enchants';
 import { EquippedItem } from '../proto_utils/equipped_item';
-import { ItemSwapGear } from '../proto_utils/gear'
 import { getEmptyGemSocketIconUrl, gemMatchesSocket } from '../proto_utils/gems';
 import { Stats } from '../proto_utils/stats';
 
 import {
 	Class,
-	Spec,
 	GemColor,
 	ItemQuality,
 	ItemSlot,
 	ItemSpec,
-	ItemSwap,
 	ItemType,
 } from '../proto/common';
 import {
@@ -43,6 +39,7 @@ import {
 } from '../proto/ui.js';
 import { IndividualSimUI } from '../individual_sim_ui.js';
 import { Tooltip } from 'bootstrap';
+// eslint-disable-next-line unused-imports/no-unused-imports
 import { element, fragment, ref } from 'tsx-vanilla';
 
 import { Clusterize } from './virtual_scroll/clusterize.js';
@@ -331,12 +328,10 @@ export class IconItemSwapPicker extends Component {
 			this._items = this.player.getItems(slot);
 			this._enchants = this.player.getEnchants(slot);
 			const gearData = {
-				equipItem: (eventID: EventID, equippedItem: EquippedItem | null) => {
-					let curIsg = player.getItemSwapGear();
-					curIsg = curIsg.withEquippedItem(slot, equippedItem, player.canDualWield2H())
-					player.setItemSwapGear(eventID, curIsg);
+				equipItem: (eventID: EventID, newItem: EquippedItem | null) => {
+					player.equipItemSwapitem(eventID, this.slot, newItem)
 				},
-				getEquippedItem: () => this.player.getItemSwapGear().getEquippedItem(this.slot),
+				getEquippedItem: () => player.getItemSwapItem(this.slot),
 				changeEvent: player.itemSwapChangeEmitter,
 			}
 

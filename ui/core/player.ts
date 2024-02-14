@@ -624,6 +624,14 @@ export class Player<SpecType extends Spec> {
 		this.itemSwapChangeEmitter.emit(eventID);
 	}
 
+	equipItemSwapitem(eventID: EventID, slot: ItemSlot, newItem: EquippedItem | null) {
+		this.setItemSwapGear(eventID, this.itemSwapGear.withEquippedItem(slot, newItem, this.canDualWield2H()));
+	}
+
+	getItemSwapItem(slot: ItemSlot): EquippedItem | null {
+		return this.itemSwapGear.getEquippedItem(slot);
+	}
+
 	getItemSwapGear(): ItemSwapGear {
 		return this.itemSwapGear;
 	}
