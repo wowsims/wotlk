@@ -52,10 +52,10 @@ export class SettingsTab extends SimTab {
 	protected buildTabContent() {
 		this.buildEncounterSettings();
 		this.buildConsumesSettings();
-		this.buildOtherSettings();
 
 		this.buildTankSettings();
 		this.buildAssignmentSettings();
+		this.buildOtherSettings();
 
 		this.buildBlessingsPicker();
 		this.buildSavedDataPickers();
@@ -90,10 +90,11 @@ export class SettingsTab extends SimTab {
 	}
 
 	private buildOtherSettings() {
-		// const raid = this.simUI.sim.raid;
-		// const contentBlock = new ContentBlock(this.column1, 'other-settings', {
-		//   header: {title: 'Other'}
-		// });
+		const contentBlock = new ContentBlock(this.column2, 'other-settings', {
+		  header: {title: 'Other'}
+		});
+
+		this.makeBooleanRaidIconBuffInput(contentBlock.bodyElement, ActionId.fromSpellId(73828), 'strengthOfWrynn');
 
 		// new BooleanPicker(contentBlock.bodyElement, this.simUI.sim.raid, {
 		// 	label: 'Stagger Stormstrikes',
