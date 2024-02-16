@@ -166,7 +166,7 @@ export const StrengthAndAgilityBuff = InputHelpers.makeMultiIconInput([
 ], 'Str/Agi');
 
 // Misc Buffs
-export const StrengthOfWrynn = makeBooleanRaidBuffInput({actionId: ActionId.fromSpellId(73827), fieldName: 'strengthOfWrynn'});
+export const StrengthOfWrynn = makeBooleanRaidBuffInput({actionId: ActionId.fromSpellId(73828), fieldName: 'strengthOfWrynn'});
 export const RetributionAura = makeBooleanRaidBuffInput({actionId: ActionId.fromSpellId(54043), fieldName: 'retributionAura'});
 export const BraidedEterniumChain = makeBooleanPartyBuffInput({actionId: ActionId.fromSpellId(31025), fieldName: 'braidedEterniumChain'});
 export const ChainOfTheTwilightOwl = makeBooleanPartyBuffInput({actionId: ActionId.fromSpellId(31035), fieldName: 'chainOfTheTwilightOwl'});
