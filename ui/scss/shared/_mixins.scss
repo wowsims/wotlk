@@ -37,6 +37,23 @@
     --bs-btn-disabled-color:        #{$text-color};
   }
 
+  .btn-outline-primary {
+    --bs-btn-border-color:          #{$base-color};
+    --bs-btn-color:                 #{$base-color};
+
+    --bs-btn-hover-bg:              #{$hover-color};
+    --bs-btn-hover-border-color:    #{$hover-color};
+    --bs-btn-hover-color:           #{$text-color};
+
+    --bs-btn-active-bg:             #{$interact-color};
+    --bs-btn-active-border-color:   #{$interact-color};
+    --bs-btn-active-color:          #{$text-color};
+
+    --bs-btn-disabled-bg:           #{mix(gray, $base-color, 50%)};
+    --bs-btn-disabled-border-color: #{mix(gray, $base-color, 50%)};
+    --bs-btn-disabled-color:        #{$text-color};
+  }
+
   .modal {
     --bs-modal-border-color: #{$base-color};
   }
