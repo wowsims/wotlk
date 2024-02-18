@@ -56,13 +56,15 @@ export class TalentsPicker<TalentsProto> extends Input<Player<Spec>, string> {
 
 		const actionsContainerRef = ref<HTMLDivElement>();
 		this.rootElem.appendChild(
-			<>
+			<div id="talents-carousel" className="carousel slide">
 				<div className="talents-picker-header">
 					<div>
 						<label>Points Remaining:</label>
 						{PointsRemainingElem()}
 					</div>
 					<div className="talents-picker-actions" ref={actionsContainerRef}></div>
+				</div>
+				<div className="carousel-inner">
 				</div>
 				<div id="talents-carousel" className="carousel slide">
 					<div className="carousel-inner">
@@ -76,7 +78,7 @@ export class TalentsPicker<TalentsProto> extends Input<Player<Spec>, string> {
 						<span className="visually-hidden">Next</span>
 					</button>
 				</div>
-			</>
+			</div>
 		);
 
 		new CopyButton(actionsContainerRef.value!, {
