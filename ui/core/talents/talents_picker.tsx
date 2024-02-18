@@ -66,14 +66,18 @@ export class TalentsPicker<TalentsProto> extends Input<Player<Spec>, string> {
 				</div>
 				<div className="carousel-inner">
 				</div>
-				<button className="carousel-control-prev" type="button">
-					<span className="carousel-control-prev-icon" attributes={{'aria-hidden':true}}></span>
-					<span className="visually-hidden">Previous</span>
-				</button>
-				<button className="carousel-control-next" type="button">
-					<span className="carousel-control-next-icon" attributes={{'aria-hidden':true}}></span>
-					<span className="visually-hidden">Next</span>
-				</button>
+				<div id="talents-carousel" className="carousel slide">
+					<div className="carousel-inner">
+					</div>
+					<button className="carousel-control-prev" type="button">
+						<span className="carousel-control-prev-icon" attributes={{'aria-hidden':true}}></span>
+						<span className="visually-hidden">Previous</span>
+					</button>
+					<button className="carousel-control-next" type="button">
+						<span className="carousel-control-next-icon" attributes={{'aria-hidden':true}}></span>
+						<span className="visually-hidden">Next</span>
+					</button>
+				</div>
 			</div>
 		);
 
