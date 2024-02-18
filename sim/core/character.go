@@ -102,10 +102,10 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 
 			StatDependencyManager: stats.NewStatDependencyManager(),
 
-			ReactionTime:       max(0, time.Duration(player.ReactionTimeMs)*time.Millisecond),
-			ChannelClipDelay:   max(0, time.Duration(player.ChannelClipDelayMs)*time.Millisecond),
-			DistanceFromTarget: player.DistanceFromTarget,
-			IsUsingAPL:         player.Rotation != nil && player.Rotation.Type == proto.APLRotation_TypeAPL,
+			ReactionTime:         max(0, time.Duration(player.ReactionTimeMs)*time.Millisecond),
+			ChannelClipDelay:     max(0, time.Duration(player.ChannelClipDelayMs)*time.Millisecond),
+			DistanceFromTarget:   player.DistanceFromTarget,
+			NibelungAverageCasts: player.NibelungAverageCasts,
 		},
 
 		Name:  player.Name,
@@ -176,6 +176,10 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 		}
 	}
 	character.PseudoStats.InFrontOfTarget = player.InFrontOfTarget
+
+	if player.EnableItemSwap && player.ItemSwap != nil {
+		character.enableItemSwap(player.ItemSwap, character.DefaultMeleeCritMultiplier(), character.DefaultMeleeCritMultiplier(), 0)
+	}
 
 	return character
 }
@@ -312,7 +316,6 @@ func (character *Character) applyItemEffects(agent Agent) {
 			}
 		}
 
-		// TODO: should we use eq.Enchant.EffectID because some enchants use a spellID instead of itemID?
 		if applyEnchantEffect, ok := enchantEffects[eq.Enchant.EffectID]; ok {
 			applyEnchantEffect(agent)
 		}
@@ -345,18 +348,6 @@ func (character *Character) AddPet(pet PetAgent) {
 	character.Pets = append(character.Pets, pet.GetPet())
 }
 
-func (character *Character) MultiplyMeleeSpeed(sim *Simulation, amount float64) {
-	character.Unit.MultiplyMeleeSpeed(sim, amount)
-}
-
-func (character *Character) MultiplyRangedSpeed(sim *Simulation, amount float64) {
-	character.Unit.MultiplyRangedSpeed(sim, amount)
-}
-
-func (character *Character) MultiplyAttackSpeed(sim *Simulation, amount float64) {
-	character.Unit.MultiplyAttackSpeed(sim, amount)
-}
-
 func (character *Character) GetBaseStats() stats.Stats {
 	return character.baseStats
 }
@@ -364,6 +355,7 @@ func (character *Character) GetBaseStats() stats.Stats {
 // Returns the crit multiplier for a spell.
 // https://web.archive.org/web/20081014064638/http://elitistjerks.com/f31/t12595-relentless_earthstorm_diamond_-_melee_only/p4/
 // https://github.com/TheGroxEmpire/TBC_DPS_Warrior_Sim/issues/30
+// TODO "primaryModifiers" could be modelled as a PseudoStat, since they're unit-specific. "secondaryModifiers" apply to a specific set of spells.
 func (character *Character) calculateCritMultiplier(normalCritDamage float64, primaryModifiers float64, secondaryModifiers float64) float64 {
 	if character.HasMetaGemEquipped(34220) ||
 		character.HasMetaGemEquipped(32409) ||
@@ -424,13 +416,18 @@ func (character *Character) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 
 func (character *Character) initialize(agent Agent) {
 	character.majorCooldownManager.initialize(character)
-	if !character.IsUsingAPL {
-		character.DesyncTrinketProcs()
-	}
+	character.ItemSwap.initialize(character)
 
 	character.gcdAction = &PendingAction{
 		Priority: ActionPriorityGCD,
 		OnAction: func(sim *Simulation) {
+			if hc := &character.Hardcast; hc.Expires != startingCDTime && hc.Expires <= sim.CurrentTime {
+				hc.Expires = startingCDTime
+				if hc.OnComplete != nil {
+					hc.OnComplete(sim, hc.Target)
+				}
+			}
+
 			if sim.CurrentTime < 0 {
 				return
 			}
@@ -438,7 +435,6 @@ func (character *Character) initialize(agent Agent) {
 			if sim.Options.Interactive {
 				if character.GCD.IsReady(sim) {
 					sim.NeedsInput = true
-					character.doNothing = false
 				}
 				return
 			}
@@ -446,17 +442,6 @@ func (character *Character) initialize(agent Agent) {
 			if character.Rotation != nil {
 				character.Rotation.DoNextAction(sim)
 				return
-			}
-
-			character.TryUseCooldowns(sim)
-			if character.GCD.IsReady(sim) {
-				agent.OnGCDReady(sim)
-
-				if !character.doNothing && character.GCD.IsReady(sim) && (!character.IsWaiting() && !character.IsWaitingForMana()) {
-					msg := fmt.Sprintf("Character `%s` did not perform any actions. Either this is a bug or agent should use 'WaitUntil' or 'WaitForMana' to explicitly wait.\n\tIf character has no action to perform use 'DoNothing'.", character.Label)
-					panic(msg)
-				}
-				character.doNothing = false
 			}
 		},
 	}
@@ -471,8 +456,15 @@ func (character *Character) Finalize() {
 
 	character.Unit.finalize()
 
+	// For now, restrict this optimization to rogues only. Ferals will require
+	// some extra logic to handle their ExcessEnergy() calc.
+	if character.Class == proto.Class_ClassRogue {
+		character.Env.RegisterPostFinalizeEffect(func() {
+			character.energyBar.setupEnergyThresholds()
+		})
+	}
+
 	character.majorCooldownManager.finalize()
-	character.ItemSwap.finalize()
 }
 
 func (character *Character) FillPlayerStats(playerStats *proto.PlayerStats) {
@@ -500,10 +492,6 @@ func (character *Character) FillPlayerStats(playerStats *proto.PlayerStats) {
 	}
 }
 
-func (character *Character) init(sim *Simulation) {
-	character.Unit.init(sim)
-}
-
 func (character *Character) reset(sim *Simulation, agent Agent) {
 	character.Unit.reset(sim, agent)
 	character.majorCooldownManager.reset(sim)
@@ -514,17 +502,6 @@ func (character *Character) reset(sim *Simulation, agent Agent) {
 
 	for _, petAgent := range character.PetAgents {
 		petAgent.GetPet().reset(sim, petAgent)
-	}
-}
-
-// Advance moves time forward counting down auras, CDs, mana regen, etc
-func (character *Character) advance(sim *Simulation) {
-	character.Unit.advance(sim)
-
-	for _, pet := range character.Pets {
-		if pet.enabled {
-			pet.advance(sim)
-		}
 	}
 }
 
@@ -617,7 +594,7 @@ func (character *Character) GetProcMaskForItem(itemID int32) ProcMask {
 
 func (character *Character) GetProcMaskForTypes(weaponTypes ...proto.WeaponType) ProcMask {
 	return character.getProcMaskFor(func(weapon *Item) bool {
-		return slices.Contains(weaponTypes, weapon.WeaponType)
+		return weapon == nil || slices.Contains(weaponTypes, weapon.WeaponType)
 	})
 }
 
@@ -643,16 +620,15 @@ func (character *Character) doneIteration(sim *Simulation) {
 }
 
 func (character *Character) GetPseudoStatsProto() []float64 {
-	vals := make([]float64, stats.PseudoStatsLen)
-	vals[proto.PseudoStat_PseudoStatMainHandDps] = character.AutoAttacks.MH.DPS()
-	vals[proto.PseudoStat_PseudoStatOffHandDps] = character.AutoAttacks.OH.DPS()
-	vals[proto.PseudoStat_PseudoStatRangedDps] = character.AutoAttacks.Ranged.DPS()
-	vals[proto.PseudoStat_PseudoStatBlockValueMultiplier] = character.PseudoStats.BlockValueMultiplier
-	// Base values are modified by Enemy attackTables, but we display for LVL 80 enemy as paperdoll default
-	vals[proto.PseudoStat_PseudoStatDodge] = character.PseudoStats.BaseDodge + character.GetDiminishedDodgeChance()
-	vals[proto.PseudoStat_PseudoStatParry] = character.PseudoStats.BaseParry + character.GetDiminishedParryChance()
-	//vals[proto.PseudoStat_PseudoStatMiss] = 0.05 + character.GetDiminishedMissChance() + character.PseudoStats.ReducedPhysicalHitTakenChance
-	return vals
+	return []float64{
+		proto.PseudoStat_PseudoStatMainHandDps:          character.AutoAttacks.MH().DPS(),
+		proto.PseudoStat_PseudoStatOffHandDps:           character.AutoAttacks.OH().DPS(),
+		proto.PseudoStat_PseudoStatRangedDps:            character.AutoAttacks.Ranged().DPS(),
+		proto.PseudoStat_PseudoStatBlockValueMultiplier: character.PseudoStats.BlockValueMultiplier,
+		// Base values are modified by Enemy attackTables, but we display for LVL 80 enemy as paperdoll default
+		proto.PseudoStat_PseudoStatDodge: character.PseudoStats.BaseDodge + character.GetDiminishedDodgeChance(),
+		proto.PseudoStat_PseudoStatParry: character.PseudoStats.BaseParry + character.GetDiminishedParryChance(),
+	}
 }
 
 func (character *Character) GetMetricsProto() *proto.UnitMetrics {
@@ -717,7 +693,11 @@ func FillTalentsProto(data protoreflect.Message, talentsStr string, treeSizes [3
 	for treeIdx, treeStr := range treeStrs {
 		for talentIdx, talentValStr := range treeStr {
 			talentVal, _ := strconv.Atoi(string(talentValStr))
-			fd := fieldDescriptors.ByNumber(protowire.Number(offset + talentIdx + 1))
+			talentOffset := offset + talentIdx + 1
+			fd := fieldDescriptors.ByNumber(protowire.Number(talentOffset))
+			if fd == nil {
+				panic(fmt.Sprintf("Couldn't find proto field for talent #%d, full string: %s", talentOffset, talentsStr))
+			}
 			if fd.Kind() == protoreflect.BoolKind {
 				data.Set(fd, protoreflect.ValueOfBool(talentVal == 1))
 			} else { // Int32Kind

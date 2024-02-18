@@ -1,11 +1,10 @@
-import { BooleanPicker } from '../components/boolean_picker.js';
-import { EnumPicker } from '../components/enum_picker.js';
-import { UnitReference } from '../proto/common.js';
-import { Player } from '../player.js';
-import { Sim } from '../sim.js';
-import { EventID, TypedEvent } from '../typed_event.js';
-import { emptyUnitReference } from '../proto_utils/utils.js';
-import { APLRotation_Type } from '../proto/apl.js';
+import {BooleanPicker} from '../components/boolean_picker.js';
+import {EnumPicker} from '../components/enum_picker.js';
+import {ItemSlot, UnitReference} from '../proto/common.js';
+import {Player} from '../player.js';
+import {Sim} from '../sim.js';
+import {EventID} from '../typed_event.js';
+import {emptyUnitReference} from '../proto_utils/utils.js';
 
 export function makeShow1hWeaponsSelector(parent: HTMLElement, sim: Sim): BooleanPicker<Sim> {
 	return new BooleanPicker<Sim>(parent, sim, {
@@ -127,6 +126,19 @@ export const DistanceFromTarget = {
 	},
 };
 
+export const nibelungAverageCasts =  {
+	type: 'number' as const,
+	label: "Nibelung's Valkyr Survival (in # of casts)",
+	labelTooltip: 'Number of casts of Nibelung\'s summoned Valkyrs get out before they die (max 16)',
+	changedEvent: (player: Player<any>) => player.changeEmitter,
+	getValue: (player: Player<any>) => player.getNibelungAverageCasts(),
+	setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
+		player.setNibelungAverageCastsSet(eventID, true);
+		player.setNibelungAverageCasts(eventID, newValue);
+	},
+	showWhen: (player: Player<any>) => [49992, 50648].includes(player.getEquippedItem(ItemSlot.ItemSlotMainHand)?.id || 0)
+}
+
 export const TankAssignment = {
 	type: 'enum' as const,
 	extraCssClasses: [
@@ -238,12 +250,12 @@ export const HpPercentForDefensives = {
 		<p>% of Maximum Health, below which defensive cooldowns are allowed to be used.</p>
 		<p>If set to 0, this restriction is disabled.</p>
 	`,
-	changedEvent: (player: Player<any>) => player.cooldownsChangeEmitter,
-	getValue: (player: Player<any>) => player.getCooldowns().hpPercentForDefensives * 100,
+	changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
+	getValue: (player: Player<any>) => player.getSimpleCooldowns().hpPercentForDefensives * 100,
 	setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
-		const cooldowns = player.getCooldowns();
+		const cooldowns = player.getSimpleCooldowns();
 		cooldowns.hpPercentForDefensives = newValue / 100;
-		player.setCooldowns(eventID, cooldowns);
+		player.setSimpleCooldowns(eventID, cooldowns);
 	},
 };
 

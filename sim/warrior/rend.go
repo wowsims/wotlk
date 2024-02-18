@@ -8,7 +8,7 @@ import (
 )
 
 // TODO (maybe) https://github.com/magey/wotlk-warrior/issues/23 - Rend is not benefitting from Two-Handed Weapon Specialization
-func (warrior *Warrior) RegisterRendSpell(rageThreshold float64, healthThreshold float64) {
+func (warrior *Warrior) RegisterRendSpell() {
 	dotDuration := time.Second * 15
 	dotTicks := int32(5)
 	if warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfRending) {
@@ -48,7 +48,7 @@ func (warrior *Warrior) RegisterRendSpell(rageThreshold float64, healthThreshold
 			NumberOfTicks: dotTicks,
 			TickLength:    time.Second * 3,
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
-				dot.SnapshotBaseDamage = (380 + warrior.AutoAttacks.MH.CalculateAverageWeaponDamage(dot.Spell.MeleeAttackPower())) / 5
+				dot.SnapshotBaseDamage = (380 + warrior.AutoAttacks.MH().CalculateAverageWeaponDamage(dot.Spell.MeleeAttackPower())) / 5
 				// 135% damage multiplier is applied at the beginning of the fight and removed when target is at 75% health
 				if sim.GetRemainingDurationPercent() > 0.75 {
 					dot.SnapshotBaseDamage *= 1.35
@@ -70,27 +70,6 @@ func (warrior *Warrior) RegisterRendSpell(rageThreshold float64, healthThreshold
 			}
 
 			spell.DealOutcome(sim, result)
-
-			// Queue Overpower to be cast at 3s after rend if talented for 3/3 TfB
-			if warrior.Talents.TasteForBlood == 3 {
-				core.StartDelayedAction(sim, core.DelayedActionOptions{
-					DoAt: sim.CurrentTime + time.Second*3,
-					OnAction: func(_ *core.Simulation) {
-						// Force to use OP on first 3s due to AM ticks that happens before TfB procs and break that
-						if warrior.Overpower.CanCast(sim, target) && (warrior.ShouldOverpower(sim) || sim.CurrentTime >= time.Second*3 && sim.CurrentTime <= time.Second*4) {
-							warrior.CastFullTfbOverpower(sim, target)
-						}
-					},
-				})
-			}
 		},
 	})
-
-	warrior.RendHealthThresholdAbove = healthThreshold / 100
-	warrior.RendRageThresholdBelow = max(warrior.Rend.DefaultCast.Cost, rageThreshold)
-}
-
-func (warrior *Warrior) ShouldRend(sim *core.Simulation) bool {
-	return warrior.Rend.IsReady(sim) && sim.CurrentTime >= (warrior.RendValidUntil-warrior.RendCdThreshold) &&
-		warrior.CurrentRage() >= warrior.Rend.DefaultCast.Cost && warrior.RendHealthThresholdAbove < sim.GetRemainingDurationPercent()
 }

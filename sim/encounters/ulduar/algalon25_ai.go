@@ -190,7 +190,7 @@ func (ai *Algalon25AI) registerCosmicSmashSpell(target *core.Target) {
 	})
 }
 
-func (ai *Algalon25AI) DoAction(sim *core.Simulation) {
+func (ai *Algalon25AI) ExecuteCustomRotation(sim *core.Simulation) {
 	if ai.Target.CurrentTarget != nil {
 		if ai.BlackHoleExplosion.IsReady(sim) && sim.CurrentTime >= ai.BlackHoleExplosion.CD.Duration {
 			ai.BlackHoleExplosion.Cast(sim, ai.Target.CurrentTarget)
@@ -237,5 +237,4 @@ func (ai *Algalon25AI) DoAction(sim *core.Simulation) {
 
 		ai.Target.WaitUntil(sim, nextEventAt)
 	}
-
 }

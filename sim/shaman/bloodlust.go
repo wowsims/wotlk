@@ -12,9 +12,6 @@ func (shaman *Shaman) BloodlustActionID() core.ActionID {
 }
 
 func (shaman *Shaman) registerBloodlustCD() {
-	if !shaman.SelfBuffs.Bloodlust && !shaman.IsUsingAPL {
-		return
-	}
 	actionID := shaman.BloodlustActionID()
 
 	blAuras := []*core.Aura{}
@@ -24,7 +21,7 @@ func (shaman *Shaman) registerBloodlustCD() {
 		}
 	}
 
-	bloodlustSpell := shaman.RegisterSpell(core.SpellConfig{
+	shaman.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 		Flags:    core.SpellFlagAPL,
 
@@ -42,42 +39,23 @@ func (shaman *Shaman) registerBloodlustCD() {
 			},
 		},
 		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			// Need to check if any raid member has lust, not just self, because of
-			// major CD ordering issues with the shared bloodlust.
-
-			// If all players in all parties already have sated, don't cast.
-			allSated := true
-			for _, party := range shaman.Env.Raid.Parties {
-				for _, partyMember := range party.Players {
-					// If anyone currently has bloodlust, don't cast this.
-					if partyMember.GetCharacter().HasActiveAuraWithTag(core.BloodlustAuraTag) {
-						return false
-					}
-					if !partyMember.GetCharacter().HasActiveAura(core.SatedAuraLabel) {
-						allSated = false
-					}
+			// Only cast if there is a player missing Sated.
+			for _, playerUnit := range shaman.Env.Raid.AllPlayerUnits {
+				if !playerUnit.HasActiveAura(core.SatedAuraLabel) {
+					return true
 				}
 			}
-			return true && !allSated
+			return false
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			for _, blAura := range blAuras {
 				target := blAura.Unit
-				// Only activate bloodlust on units without bloodlust and without sated.
-				if !target.HasActiveAura(core.SatedAuraLabel) && !target.HasActiveAuraWithTag(core.BloodlustAuraTag) {
+				// Only activate bloodlust on units without sated.
+				if !target.HasActiveAura(core.SatedAuraLabel) {
 					blAura.Activate(sim)
 				}
-
 			}
 		},
 	})
-
-	if !shaman.IsUsingAPL {
-		shaman.AddMajorCooldown(core.MajorCooldown{
-			Spell:    bloodlustSpell,
-			Priority: core.CooldownPriorityBloodlust,
-			Type:     core.CooldownTypeDPS,
-		})
-	}
 }

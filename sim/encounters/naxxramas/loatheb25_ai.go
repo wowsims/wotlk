@@ -57,6 +57,5 @@ func (ai *Loatheb25AI) Initialize(target *core.Target, config *proto.Target) {
 func (ai *Loatheb25AI) Reset(*core.Simulation) {
 }
 
-func (ai *Loatheb25AI) DoAction(sim *core.Simulation) {
-	ai.Target.DoNothing()
+func (ai *Loatheb25AI) ExecuteCustomRotation(sim *core.Simulation) {
 }

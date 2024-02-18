@@ -42,6 +42,6 @@
 .player-icon {
   width: 2rem;
   height: 2rem;
-  margin-right: map.get($spacers, 1);
+  margin-right: map-get($spacers, 1);
   border-radius: 100%;
 }

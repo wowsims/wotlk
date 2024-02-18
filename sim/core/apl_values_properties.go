@@ -25,3 +25,23 @@ func (value *APLValueChannelClipDelay) GetDuration(sim *Simulation) time.Duratio
 func (value *APLValueChannelClipDelay) String() string {
 	return "Channel Clip Delay()"
 }
+
+type APLValueFrontOfTarget struct {
+	DefaultAPLValueImpl
+	unit *Unit
+}
+
+func (rot *APLRotation) newValueFrontOfTarget(config *proto.APLValueFrontOfTarget) APLValue {
+	return &APLValueFrontOfTarget{
+		unit: rot.unit,
+	}
+}
+func (value *APLValueFrontOfTarget) Type() proto.APLValueType {
+	return proto.APLValueType_ValueTypeBool
+}
+func (value *APLValueFrontOfTarget) GetBool(sim *Simulation) bool {
+	return value.unit.PseudoStats.InFrontOfTarget
+}
+func (value *APLValueFrontOfTarget) String() string {
+	return "Front of Target()"
+}

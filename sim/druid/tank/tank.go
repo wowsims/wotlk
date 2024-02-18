@@ -28,9 +28,8 @@ func NewFeralTankDruid(character *core.Character, options *proto.Player) *FeralT
 	selfBuffs := druid.SelfBuffs{}
 
 	bear := &FeralTankDruid{
-		Druid:    druid.New(character, druid.Bear, selfBuffs, options.TalentsString),
-		Rotation: tankOptions.Rotation,
-		Options:  tankOptions.Options,
+		Druid:   druid.New(character, druid.Bear, selfBuffs, options.TalentsString),
+		Options: tankOptions.Options,
 	}
 
 	bear.SelfBuffs.InnervateTarget = &proto.UnitReference{}
@@ -38,28 +37,16 @@ func NewFeralTankDruid(character *core.Character, options *proto.Player) *FeralT
 		bear.SelfBuffs.InnervateTarget = tankOptions.Options.InnervateTarget
 	}
 
-	rbo := core.RageBarOptions{
+	bear.EnableRageBar(core.RageBarOptions{
 		StartingRage:   bear.Options.StartingRage,
 		RageMultiplier: 1,
 		MHSwingSpeed:   2.5,
-	}
-
-	bear.EnableRageBar(rbo, func(sim *core.Simulation) {
-		if bear.GCD.IsReady(sim) {
-			bear.TryUseCooldowns(sim)
-			if bear.GCD.IsReady(sim) {
-				bear.doRotation(sim)
-			}
-		}
 	})
-
 	bear.EnableAutoAttacks(bear, core.AutoAttackOptions{
 		// Base paw weapon.
 		MainHand:       bear.GetBearWeapon(),
 		AutoSwingMelee: true,
-		ReplaceMHSwing: func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
-			return bear.TryMaul(sim, mhSwingSpell)
-		},
+		ReplaceMHSwing: bear.TryMaul,
 	})
 	bear.ReplaceBearMHFunc = bear.TryMaul
 
@@ -76,8 +63,7 @@ func NewFeralTankDruid(character *core.Character, options *proto.Player) *FeralT
 type FeralTankDruid struct {
 	*druid.Druid
 
-	Rotation *proto.FeralTankDruid_Rotation
-	Options  *proto.FeralTankDruid_Options
+	Options *proto.FeralTankDruid_Options
 }
 
 func (bear *FeralTankDruid) GetDruid() *druid.Druid {
@@ -86,7 +72,7 @@ func (bear *FeralTankDruid) GetDruid() *druid.Druid {
 
 func (bear *FeralTankDruid) Initialize() {
 	bear.Druid.Initialize()
-	bear.RegisterFeralTankSpells(float64(bear.Rotation.MaulRageThreshold))
+	bear.RegisterFeralTankSpells()
 }
 
 func (bear *FeralTankDruid) Reset(sim *core.Simulation) {

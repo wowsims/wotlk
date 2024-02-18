@@ -111,6 +111,19 @@ func (dot *Dot) Rollover(sim *Simulation) {
 	sim.AddPendingAction(dot.tickAction)
 }
 
+func (dot *Dot) RescheduleNextTick(sim *Simulation) {
+	dot.RecomputeAuraDuration()
+
+	dot.tickAction.Cancel(sim) // remove old PA ticker
+
+	// recreate with new period, resetting the next tick.
+	periodicOptions := dot.basePeriodicOptions()
+	periodicOptions.Period = dot.tickPeriod
+	dot.tickAction = NewPeriodicAction(sim, periodicOptions)
+	dot.tickAction.NextActionAt = dot.lastTickTime + dot.tickPeriod
+	sim.AddPendingAction(dot.tickAction)
+}
+
 func (dot *Dot) Apply(sim *Simulation) {
 	dot.TakeSnapshot(sim, false)
 
@@ -191,7 +204,7 @@ func (dot *Dot) TickOnce(sim *Simulation) {
 	dot.lastTickTime = sim.CurrentTime
 	dot.OnTick(sim, dot.Unit, dot)
 
-	if dot.isChanneled && dot.Spell.Unit.IsUsingAPL {
+	if dot.isChanneled {
 		// Note: even if the clip delay is 0ms, need a WaitUntil so that APL is called after the channel aura fully fades.
 		if dot.MaxTicksRemaining() == 0 {
 			if dot.Spell.Unit.GCD.IsReady(sim) {
@@ -265,10 +278,8 @@ func newDot(config Dot) *Dot {
 		}
 		if dot.isChanneled {
 			dot.Spell.Unit.ChanneledDot = nil
-			if dot.Spell.Unit.IsUsingAPL {
-				dot.Spell.Unit.Rotation.interruptChannelIf = nil
-				dot.Spell.Unit.Rotation.allowChannelRecastOnInterrupt = false
-			}
+			dot.Spell.Unit.Rotation.interruptChannelIf = nil
+			dot.Spell.Unit.Rotation.allowChannelRecastOnInterrupt = false
 		}
 	})
 

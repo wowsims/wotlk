@@ -65,7 +65,6 @@ func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool) *core.
 					if dk.Env.GetNumTargets() > 1 {
 						dk.HeartStrikeOffHit.Cast(sim, dk.Env.NextTargetUnit(target))
 					}
-					dk.LastOutcome = result.Outcome
 				}
 			}
 		},
@@ -80,10 +79,6 @@ func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool) *core.
 	}
 
 	if isDrw {
-		if !dk.Inputs.NewDrw {
-			conf.DamageMultiplier *= 0.5
-			conf.Flags |= core.SpellFlagIgnoreAttackerModifiers
-		}
 		return dk.RuneWeapon.RegisterSpell(conf)
 	} else {
 		return dk.RegisterSpell(conf)

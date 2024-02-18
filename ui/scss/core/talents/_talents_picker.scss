@@ -12,7 +12,22 @@ $talent-full-color: #ffd100;
   width: unset;
   margin-right: $block-spacer;
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
+
+  .talents-picker-header {
+    width: 100%;
+    margin-bottom: map-get($spacers, 1);
+    display: flex;
+    align-items: center;
+
+    .talents-picker-actions {
+      margin-left: auto;
+
+      button.copy-talents {
+        width: 6rem;
+      }
+    }
+  }
 
   #talents-carousel {
     flex: 1;
@@ -28,8 +43,18 @@ $talent-full-color: #ffd100;
       width: unset;
       margin-right: unset;
       float: unset;
+
+      // Offset to keep the border sizes consistent
+      &:not(:first-child) {
+        margin-left: -1px;
+      }
     }
   }
+}
+
+.talent-tree-points {
+  font-weight: bold;
+  white-space: nowrap;
 }
 
 .talent-tree-picker-root {
@@ -62,11 +87,6 @@ $talent-full-color: #ffd100;
     .talent-tree-title {
       margin-right: $talent-tree-header-padding-x;
       flex: 1;
-      font-weight: bold;
-      white-space: nowrap;
-    }
-
-    .talent-tree-points {
       font-weight: bold;
       white-space: nowrap;
     }

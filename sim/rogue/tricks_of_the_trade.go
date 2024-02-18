@@ -40,9 +40,11 @@ func (rogue *Rogue) registerTricksOfTheTradeSpell() {
 		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.TricksOfTheTrade.CD.Set(core.NeverExpires)
+			rogue.UpdateMajorCooldowns()
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.TricksOfTheTrade.CD.Set(sim.CurrentTime + time.Second*time.Duration(30-5*rogue.Talents.FilthyTricks))
+			rogue.UpdateMajorCooldowns()
 		},
 	})
 
@@ -70,21 +72,4 @@ func (rogue *Rogue) registerTricksOfTheTradeSpell() {
 			}
 		},
 	})
-
-	if rogue.Rotation.TricksOfTheTradeFrequency != proto.Rogue_Rotation_Never {
-		// TODO: Support Rogue_Rotation_Once
-		tricksSpell := rogue.TricksOfTheTrade
-		rogue.AddMajorCooldown(core.MajorCooldown{
-			Spell:    tricksSpell,
-			Priority: core.CooldownPriorityBloodlust,
-			Type:     core.CooldownTypeDPS,
-			ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
-				if hasShadowblades {
-					return rogue.CurrentEnergy() <= rogue.maxEnergy-15-rogue.EnergyTickMultiplier*10
-				} else {
-					return true
-				}
-			},
-		})
-	}
 }

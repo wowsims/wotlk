@@ -18,7 +18,7 @@ func TestElemental(t *testing.T) {
 		Race:       proto.Race_RaceTroll,
 		OtherRaces: []proto.Race{proto.Race_RaceOrc},
 
-		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
+		GearSet:     core.GetGearSet("../../../ui/elemental_shaman/gear_sets", "p1"),
 		Talents:     StandardTalents,
 		Glyphs:      StandardGlyphs,
 		Consumes:    FullConsumes,
@@ -27,6 +27,9 @@ func TestElemental(t *testing.T) {
 			{Label: "EleFireElemental", SpecOptions: PlayerOptionsAdaptiveFireElemental},
 		},
 		Rotation: core.GetAplRotation("../../../ui/elemental_shaman/apls", "default"),
+		OtherRotations: []core.RotationCombo{
+			core.GetAplRotation("../../../ui/elemental_shaman/apls", "advanced"),
+		},
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{
@@ -60,7 +63,7 @@ func BenchmarkSimulate(b *testing.B) {
 			&proto.Player{
 				Race:          proto.Race_RaceOrc,
 				Class:         proto.Class_ClassShaman,
-				Equipment:     P1Gear,
+				Equipment:     core.GetGearSet("../../../ui/elemental_shaman/gear_sets", "p1").GearSet,
 				TalentsString: StandardTalents,
 				Glyphs:        StandardGlyphs,
 				Consumes:      FullConsumes,
@@ -108,22 +111,18 @@ var FireElementalBasicTotems = &proto.ShamanTotems{
 var PlayerOptionsAdaptive = &proto.Player_ElementalShaman{
 	ElementalShaman: &proto.ElementalShaman{
 		Options: &proto.ElementalShaman_Options{
-			Shield:    proto.ShamanShield_WaterShield,
-			Bloodlust: true,
-			Totems:    BasicTotems,
+			Shield: proto.ShamanShield_WaterShield,
+			Totems: BasicTotems,
 		},
-		Rotation: &proto.ElementalShaman_Rotation{},
 	},
 }
 
 var PlayerOptionsAdaptiveFireElemental = &proto.Player_ElementalShaman{
 	ElementalShaman: &proto.ElementalShaman{
 		Options: &proto.ElementalShaman_Options{
-			Shield:    proto.ShamanShield_WaterShield,
-			Bloodlust: true,
-			Totems:    FireElementalBasicTotems,
+			Shield: proto.ShamanShield_WaterShield,
+			Totems: FireElementalBasicTotems,
 		},
-		Rotation: &proto.ElementalShaman_Rotation{},
 	},
 }
 
@@ -134,23 +133,3 @@ var FullConsumes = &proto.Consumes{
 	PrepopPotion:    proto.Potions_DestructionPotion,
 	DefaultConjured: proto.Conjured_ConjuredDarkRune,
 }
-
-var P1Gear = core.EquipmentSpecFromJsonString(`{"items": [
-	{"id":40516,"enchant":3820,"gems":[41285,40027]},
-	{"id":44661,"gems":[39998]},
-	{"id":40286,"enchant":3810},
-	{"id":44005,"enchant":3722,"gems":[40027]},
-	{"id":40514,"enchant":3832,"gems":[42144,42144]},
-	{"id":40324,"enchant":2332,"gems":[42144,0]},
-	{"id":40302,"enchant":3246,"gems":[0]},
-	{"id":40301,"gems":[40014]},
-	{"id":40560,"enchant":3721},
-	{"id":40519,"enchant":3826},
-	{"id":37694},
-	{"id":40399},
-	{"id":40432},
-	{"id":40255},
-	{"id":40395,"enchant":3834},
-	{"id":40401,"enchant":1128},
-	{"id":40267}
-]}`)

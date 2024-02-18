@@ -37,10 +37,16 @@ func (action *APLAction) GetAllActions() []*APLAction {
 func (action *APLAction) GetAllAPLValues() []APLValue {
 	var values []APLValue
 	for _, a := range action.GetAllActions() {
-		values = append(values, a.impl.GetAPLValues()...)
+		unprocessed := a.impl.GetAPLValues()
 		if a.condition != nil {
-			values = append(values, a.condition)
-			values = append(values, a.condition.GetInnerValues()...)
+			unprocessed = append(unprocessed, a.condition)
+		}
+
+		for len(unprocessed) > 0 {
+			next := unprocessed[len(unprocessed)-1]
+			unprocessed = unprocessed[:len(unprocessed)-1]
+			values = append(values, next)
+			unprocessed = append(unprocessed, next.GetInnerValues()...)
 		}
 	}
 	return FilterSlice(values, func(val APLValue) bool { return val != nil })
@@ -126,7 +132,7 @@ func (rot *APLRotation) newAPLActionImpl(config *proto.APLAction) APLActionImpl 
 		return nil
 	}
 
-	customAction := rot.unit.Env.Raid.GetPlayerFromUnit(rot.unit).NewAPLAction(rot, config)
+	customAction := rot.unit.Env.GetAgentFromUnit(rot.unit).NewAPLAction(rot, config)
 	if customAction != nil {
 		return customAction
 	}
@@ -169,6 +175,12 @@ func (rot *APLRotation) newAPLActionImpl(config *proto.APLAction) APLActionImpl 
 		return rot.newActionCancelAura(config.GetCancelAura())
 	case *proto.APLAction_TriggerIcd:
 		return rot.newActionTriggerICD(config.GetTriggerIcd())
+	case *proto.APLAction_ItemSwap:
+		return rot.newActionItemSwap(config.GetItemSwap())
+
+	case *proto.APLAction_CustomRotation:
+		return rot.newActionCustomRotation(config.GetCustomRotation())
+
 	default:
 		return nil
 	}

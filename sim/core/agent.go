@@ -32,21 +32,16 @@ type Agent interface {
 	// and once after the final iteration.
 	Reset(sim *Simulation)
 
-	// Called whenever the GCD becomes ready for this Agent.
-	OnGCDReady(sim *Simulation)
-
-	// Called after each auto attack performed by this Agent.
-	// This is different from Aura.OnSpellHit in that it is invoked fully after
-	// everything related to the attack is complete, and it is only invoked for
-	// auto attacks (white hits or white-hit-replacers).
-	OnAutoAttack(sim *Simulation, spell *Spell)
-
 	// Custom factories for APL values and actions, for cases where the value/action
 	// involves class or spec-specific behavior.
 	//
 	// Should return nil when the config doesn't match any custom behaviors.
 	NewAPLValue(rot *APLRotation, config *proto.APLValue) APLValue
 	NewAPLAction(rot *APLRotation, config *proto.APLAction) APLActionImpl
+
+	// Implements custom rotation behavior. Usually for pets and targets but can be used
+	// for players too.
+	ExecuteCustomRotation(sim *Simulation)
 }
 
 type ActionID struct {

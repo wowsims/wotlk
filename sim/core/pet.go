@@ -110,10 +110,6 @@ func (pet *Pet) reset(sim *Simulation, agent PetAgent) {
 		pet.Enable(sim, agent)
 	}
 }
-func (pet *Pet) advance(sim *Simulation) {
-	pet.Character.advance(sim)
-}
-
 func (pet *Pet) doneIteration(sim *Simulation) {
 	pet.Character.doneIteration(sim)
 	pet.isReset = false
@@ -172,6 +168,12 @@ func (pet *Pet) Enable(sim *Simulation, petAgent PetAgent) {
 		pet.Log(sim, "Pet inherited stats: %s", pet.ApplyStatDependencies(pet.inheritedStats))
 		pet.Log(sim, "Pet summoned")
 	}
+
+	sim.addTracker(&pet.auraTracker)
+
+	if pet.HasFocusBar() {
+		pet.focusBar.enable(sim)
+	}
 }
 
 // Helper for enabling a pet that will expire after a certain duration.
@@ -213,7 +215,7 @@ func (pet *Pet) Disable(sim *Simulation) {
 
 	// Remove inherited stats on dismiss if not permanent
 	if pet.isGuardian || pet.timeoutAction != nil {
-		pet.AddStatsDynamic(sim, pet.inheritedStats.Multiply(-1))
+		pet.AddStatsDynamic(sim, pet.inheritedStats.Invert())
 		pet.inheritedStats = stats.Stats{}
 	}
 
@@ -232,10 +234,9 @@ func (pet *Pet) Disable(sim *Simulation) {
 	}
 
 	pet.CancelGCDTimer(sim)
-	pet.focusBar.Cancel(sim)
+	pet.focusBar.disable(sim)
 	pet.AutoAttacks.CancelAutoSwing(sim)
 	pet.enabled = false
-	pet.DoNothing() // mark it is as doing nothing now.
 
 	// If a pet is immediately re-summoned it might try to use GCD, so we need to clear it.
 	pet.Hardcast = Hardcast{}
@@ -249,12 +250,13 @@ func (pet *Pet) Disable(sim *Simulation) {
 		pet.OnPetDisable(sim)
 	}
 
+	pet.auraTracker.expireAll(sim)
+
+	sim.removeTracker(&pet.auraTracker)
+
 	if sim.Log != nil {
 		pet.Log(sim, "Pet dismissed")
-
-		if sim.Log != nil {
-			pet.Log(sim, pet.GetStats().String())
-		}
+		pet.Log(sim, pet.GetStats().String())
 	}
 }
 
@@ -265,3 +267,4 @@ func (pet *Pet) GetCharacter() *Character {
 func (pet *Pet) AddRaidBuffs(_ *proto.RaidBuffs)   {}
 func (pet *Pet) AddPartyBuffs(_ *proto.PartyBuffs) {}
 func (pet *Pet) ApplyTalents()                     {}
+func (pet *Pet) OnGCDReady(_ *Simulation)          {}

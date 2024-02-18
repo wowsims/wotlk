@@ -466,11 +466,6 @@ func registerPotionCD(agent Agent, consumes *proto.Consumes) {
 	startingMCD := makePotionActivation(startingPotion, character, potionCD)
 	if startingMCD.Spell != nil {
 		startingMCD.Spell.Flags |= SpellFlagPrepullPotion
-		if !character.IsUsingAPL {
-			character.RegisterPrepullAction(-1*time.Second, func(sim *Simulation) {
-				startingMCD.Spell.Cast(sim, nil)
-			})
-		}
 	}
 
 	var defaultMCD MajorCooldown
@@ -498,6 +493,10 @@ func (character *Character) HasAlchStone() bool {
 func makePotionActivation(potionType proto.Potions, character *Character, potionCD *Timer) MajorCooldown {
 	mcd := makePotionActivationInternal(potionType, character, potionCD)
 	if mcd.Spell != nil {
+		// Mark as 'Encounter Only' so that users are forced to select the generic Potion
+		// placeholder action instead of specific potion spells, in APL prepull. This
+		// prevents a mismatch between Consumes and Rotation settings.
+		mcd.Spell.Flags |= SpellFlagEncounterOnly | SpellFlagPotion
 		oldApplyEffects := mcd.Spell.ApplyEffects
 		mcd.Spell.ApplyEffects = func(sim *Simulation, target *Unit, spell *Spell) {
 			oldApplyEffects(sim, target, spell)

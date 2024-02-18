@@ -265,8 +265,6 @@ message IndividualSimSettings {
 	Player player = 3;
 	Encounter encounter = 4;
 	int32 target_dummies = 9;
-	// Deprecate after 2 months (on 2023/02/13)
-	repeated double ep_weights = 6;
 	UnitStats ep_weights_stats = 10;
 	repeated double ep_ratios = 11;
 	Stat dps_ref_stat = 12;
@@ -277,8 +275,6 @@ message IndividualSimSettings {
 // Local storage data for gear settings.
 message SavedGearSet {
 	EquipmentSpec gear = 1;
-	// Deprecate after 2 months (on 2023/02/13)
-	repeated double bonus_stats = 2;
 	UnitStats bonus_stats_stats = 3;
 }
 
@@ -290,15 +286,18 @@ message SavedSettings {
 	IndividualBuffs player_buffs = 3;
 	Consumes consumes = 4;
 	Race race = 5;
-	Cooldowns cooldowns = 6;
-	string rotation_json = 8;
 	repeated Profession professions = 9;
+	bool enable_item_swap = 18;
+	ItemSwap item_swap = 17;
 
 	int32 reaction_time_ms = 10;
 	int32 channel_clip_delay_ms = 14;
 	bool in_front_of_target = 11;
 	double distance_from_target = 12;
 	HealingModel healing_model = 13;
+	double nibelung_average_casts = 15;
+	// hack to set a proper default value
+	bool nibelung_average_casts_set = 16;
 }
 
 message SavedTalents {
@@ -308,8 +307,6 @@ message SavedTalents {
 
 message SavedRotation {
 	APLRotation rotation = 1;
-	string spec_rotation_options_json = 2;
-	Cooldowns cooldowns = 3;
 }
 
 message BlessingsAssignment {

@@ -38,13 +38,13 @@ func (value *APLValueTotemRemainingTime) Type() proto.APLValueType {
 }
 func (value *APLValueTotemRemainingTime) GetDuration(sim *core.Simulation) time.Duration {
 	if value.totemType == proto.ShamanTotems_Earth {
-		return max(0, value.shaman.NextTotemDrops[EarthTotem]-sim.CurrentTime)
+		return max(0, value.shaman.TotemExpirations[EarthTotem]-sim.CurrentTime)
 	} else if value.totemType == proto.ShamanTotems_Air {
-		return max(0, value.shaman.NextTotemDrops[AirTotem]-sim.CurrentTime)
+		return max(0, value.shaman.TotemExpirations[AirTotem]-sim.CurrentTime)
 	} else if value.totemType == proto.ShamanTotems_Fire {
-		return max(0, value.shaman.NextTotemDrops[FireTotem]-sim.CurrentTime)
+		return max(0, value.shaman.TotemExpirations[FireTotem]-sim.CurrentTime)
 	} else if value.totemType == proto.ShamanTotems_Water {
-		return max(0, value.shaman.NextTotemDrops[WaterTotem]-sim.CurrentTime)
+		return max(0, value.shaman.TotemExpirations[WaterTotem]-sim.CurrentTime)
 	} else {
 		return 0
 	}

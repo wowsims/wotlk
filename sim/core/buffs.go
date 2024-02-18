@@ -91,6 +91,12 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 		character.MultiplyStat(stats.RangedAttackPower, 1.1)
 	}
 
+	if raidBuffs.StrengthOfWrynn {
+		character.MultiplyStat(stats.Health, 1.30)
+		character.PseudoStats.DamageDealtMultiplier *= 1.30
+		character.PseudoStats.HealingTakenMultiplier *= 1.30
+	}
+
 	if raidBuffs.ArcaneEmpowerment || raidBuffs.FerociousInspiration || raidBuffs.SanctifiedRetribution {
 		character.PseudoStats.DamageDealtMultiplier *= 1.03
 	}
@@ -218,16 +224,8 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 	if raidBuffs.TotemOfWrath {
 		MakePermanent(TotemOfWrathAura(character))
 	}
-	if raidBuffs.DemonicPactOld > 0 || raidBuffs.DemonicPact > 0 || raidBuffs.DemonicPactSp > 0 {
-		// Use DemonicPactSp if set.
+	if raidBuffs.DemonicPactSp > 0 {
 		power := raidBuffs.DemonicPactSp
-		if power == 0 {
-			power = raidBuffs.DemonicPact // fallback to old setting.
-		}
-		if power == 0 {
-			power = raidBuffs.DemonicPactOld
-		}
-
 		dpAura := DemonicPactAura(character)
 		dpAura.ExclusiveEffects[0].Priority = float64(power)
 		MakePermanent(dpAura)
@@ -620,14 +618,10 @@ func BloodlustAura(character *Character, actionTag int32) *Aura {
 				}
 			}
 
-			if character.HasActiveAura(SatedAuraLabel) {
-				aura.Deactivate(sim) // immediately remove it person already has sated.
-				return
-			}
+			sated.Activate(sim)
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			character.MultiplyAttackSpeed(sim, 1.0/1.3)
-			sated.Activate(sim)
 		},
 	})
 	multiplyCastSpeedEffect(aura, 1.3)

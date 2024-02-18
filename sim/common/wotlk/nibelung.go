@@ -1,9 +1,10 @@
 package wotlk
 
 import (
+	"time"
+
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/stats"
-	"time"
 )
 
 var valkyrStats = stats.Stats{
@@ -71,12 +72,8 @@ func (valkyr *ValkyrPet) Initialize() {}
 
 func (valkyr *ValkyrPet) Reset(_ *core.Simulation) {}
 
-func (valkyr *ValkyrPet) OnGCDReady(sim *core.Simulation) {
-	target := valkyr.CurrentTarget
-
-	if valkyr.smite.CanCast(sim, target) {
-		valkyr.smite.Cast(sim, target)
-	}
+func (valkyr *ValkyrPet) ExecuteCustomRotation(sim *core.Simulation) {
+	valkyr.smite.Cast(sim, valkyr.CurrentTarget)
 }
 
 func (valkyr *ValkyrPet) GetPet() *core.Pet {
@@ -114,7 +111,14 @@ func MakeNibelungTriggerAura(agent core.Agent, isHeroic bool) {
 			for _, petAgent := range character.PetAgents {
 				if valkyr, ok := petAgent.(*ValkyrPet); ok && !valkyr.IsEnabled() {
 					valkyr.registerSmite(isHeroic)
-					valkyr.EnableWithTimeout(sim, petAgent, valkyrAura.Duration)
+
+					averageCasts := character.NibelungAverageCasts
+					duration := min(time.Duration(averageCasts/16*30)*time.Second, time.Second*30)
+					valkyrAura.Duration = max(duration, time.Millisecond*250)
+
+					if averageCasts > 0 {
+						valkyr.EnableWithTimeout(sim, petAgent, valkyrAura.Duration)
+					}
 					break
 				}
 			}

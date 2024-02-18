@@ -23,12 +23,9 @@ type Druid struct {
 	StartingForm DruidForm
 
 	RebirthUsed       bool
-	MaulRageThreshold float64
 	RebirthTiming     float64
 	BleedsActive      int
 	AssumeBleedActive bool
-	RaidBuffTargets   int
-	PrePopBerserk     bool
 
 	ReplaceBearMHFunc core.ReplaceMHSwing
 
@@ -103,7 +100,6 @@ type Druid struct {
 	Treant1                 *TreantPet
 	Treant2                 *TreantPet
 	Treant3                 *TreantPet
-	OwlkinFrenzyTimings     []float64
 
 	form         DruidForm
 	disabledMCDs []*core.MajorCooldown
@@ -207,11 +203,6 @@ func (druid *Druid) Initialize() {
 	druid.registerRebirthSpell()
 	druid.registerInnervateCD()
 	druid.registerFakeGotw()
-
-	if druid.RaidBuffTargets == 0 {
-		// 17 is an arbitrary compromise between 10 and 25, plus pets
-		druid.RaidBuffTargets = max(17, len(druid.Env.Raid.AllUnits))
-	}
 }
 
 func (druid *Druid) RegisterBalanceSpells() {
@@ -233,7 +224,7 @@ func (druid *Druid) RegisterFeralCatSpells() {
 	druid.registerFerociousBiteSpell()
 	druid.registerMangleBearSpell()
 	druid.registerMangleCatSpell()
-	druid.registerMaulSpell(0)
+	druid.registerMaulSpell()
 	druid.registerLacerateSpell()
 	druid.registerRakeSpell()
 	druid.registerRipSpell()
@@ -244,7 +235,7 @@ func (druid *Druid) RegisterFeralCatSpells() {
 	druid.registerTigersFurySpell()
 }
 
-func (druid *Druid) RegisterFeralTankSpells(maulRageThreshold float64) {
+func (druid *Druid) RegisterFeralTankSpells() {
 	druid.registerBarkskinCD()
 	druid.registerBerserkCD()
 	druid.registerBearFormSpell()
@@ -252,7 +243,7 @@ func (druid *Druid) RegisterFeralTankSpells(maulRageThreshold float64) {
 	druid.registerEnrageSpell()
 	druid.registerFrenziedRegenerationCD()
 	druid.registerMangleBearSpell()
-	druid.registerMaulSpell(maulRageThreshold)
+	druid.registerMaulSpell()
 	druid.registerLacerateSpell()
 	druid.registerRakeSpell()
 	druid.registerRipSpell()

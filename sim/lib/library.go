@@ -154,7 +154,6 @@ func new(json *C.char) {
 	}
 	sim.RegisterAll()
 	_active_sim = core.NewSim(input)
-	_active_sim.Init()
 	_active_sim.Reseed(_active_seed)
 	_active_seed += 1
 	_active_sim.Reset()
@@ -194,8 +193,6 @@ func trySpell(act int) bool {
 
 //export doNothing
 func doNothing() bool {
-	player := _active_sim.Raid.Parties[0].Players[0]
-	player.GetCharacter().DoNothing()
 	return true
 }
 
@@ -342,7 +339,7 @@ func getSpellMetrics() *C.char {
 
 //export step
 func step() bool {
-	return _active_sim.Step(core.NeverExpires)
+	return _active_sim.Step()
 }
 
 //export needsInput

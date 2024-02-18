@@ -49,7 +49,7 @@ func (hunter *Hunter) registerAspectOfTheDragonhawkSpell() {
 			}
 
 			aura.OnSpellHitDealt = func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if spell != hunter.AutoAttacks.RangedAuto {
+				if spell != hunter.AutoAttacks.RangedAuto() {
 					return
 				}
 
@@ -78,9 +78,9 @@ func (hunter *Hunter) registerAspectOfTheViperSpell() {
 	baseManaRegenMultiplier := 0.01 *
 		core.TernaryFloat64(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfAspectOfTheViper), 1.1, 1) *
 		core.TernaryFloat64(hunter.HasSetBonus(ItemSetGronnstalker, 2), 1.25, 1)
-	manaPerRangedHitMultiplier := baseManaRegenMultiplier * hunter.AutoAttacks.Ranged.SwingSpeed
-	manaPerMHHitMultiplier := baseManaRegenMultiplier * hunter.AutoAttacks.MH.SwingSpeed
-	manaPerOHHitMultiplier := baseManaRegenMultiplier * hunter.AutoAttacks.OH.SwingSpeed
+	manaPerRangedHitMultiplier := baseManaRegenMultiplier * hunter.AutoAttacks.Ranged().SwingSpeed
+	manaPerMHHitMultiplier := baseManaRegenMultiplier * hunter.AutoAttacks.MH().SwingSpeed
+	manaPerOHHitMultiplier := baseManaRegenMultiplier * hunter.AutoAttacks.OH().SwingSpeed
 	var tickPA *core.PendingAction
 
 	hasCryptstalker4pc := hunter.HasSetBonus(ItemSetCryptstalkerBattlegear, 4)
@@ -134,7 +134,7 @@ func (hunter *Hunter) registerAspectOfTheViperSpell() {
 }
 
 func (hunter *Hunter) applySharedAspectConfig(isHawk bool, aura *core.Aura) {
-	if isHawk != (hunter.Rotation.ViperStartManaPercent >= 1) {
+	if isHawk {
 		aura.OnReset = func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		}
@@ -142,8 +142,4 @@ func (hunter *Hunter) applySharedAspectConfig(isHawk bool, aura *core.Aura) {
 
 	aura.Duration = core.NeverExpires
 	aura.NewExclusiveEffect("Aspect", true, core.ExclusiveEffect{})
-
-	aura.ApplyOnGain(func(aura *core.Aura, sim *core.Simulation) {
-		hunter.currentAspect = aura
-	})
 }

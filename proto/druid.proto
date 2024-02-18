@@ -146,68 +146,12 @@ enum DruidMinorGlyph {
 
 message BalanceDruid {
   message Rotation {
-		enum Type {
-			Unknown = 0;
-			Default = 1;
-			Manual = 2;
-		}
-		Type type = 1;
-
-		enum MfUsage {
-			NoMf = 0;
-			BeforeLunar = 1;
-			MaximizeMf = 2;
-			MultidotMf = 3;
-		}
-		MfUsage mf_usage = 2;
-
-		enum IsUsage {
-			NoIs = 0;
-			BeforeSolar = 1;
-			OptimizeIs = 2;
-			MultidotIs = 3;
-		}
-		IsUsage is_usage = 3;
-
-		bool use_battle_res = 4;
-		enum WrathUsage {
-			NoWrath = 0;
-			FishingForLunar= 1;
-			RegularWrath = 2;
-		}
-		WrathUsage wrath_usage = 5;
-		bool use_starfire = 6;
-		bool use_typhoon = 7;
-		bool use_hurricane = 8;
-		bool use_smart_cooldowns = 9;
-		bool maintain_faerie_fire = 10;
-		int32 player_latency = 11;
-		float okf_ppm = 14;
-
-		enum EclipsePrio {
-			Lunar = 0;
-			Solar = 1;
-		}
-		EclipsePrio eclipse_prio = 12;
-		bool eclipse_shuffling = 13;
-
-		enum MfExtension {
-			ExtendFishingForLunar = 0;
-			ExtendFishingForSolar = 1;
-			ExtendDuringLunar = 2;
-			ExtendDuringSolar = 3;
-			ExtendAlways = 4;
-			ExtendOutsideSolar = 5;
-			DontExtend = 6;
-		}
-		MfExtension mf_extension = 15;
-		bool snapshot_mf = 16;
-	}
-  Rotation rotation = 1;
+  }
 
   message Options {
     UnitReference innervate_target = 1;
-	}
+	float okf_uptime = 2;
+  }
   Options options = 3;
 }
 
@@ -268,7 +212,6 @@ message FeralTankDruid {
 		bool maintain_demoralizing_roar = 2;
 		double lacerate_time = 3;
   }
-  Rotation rotation = 1;
 
   message Options {
     UnitReference innervate_target = 1;
@@ -280,7 +223,6 @@ message FeralTankDruid {
 message RestorationDruid {
   message Rotation {
   }
-  Rotation rotation = 1;
 
   message Options {
     UnitReference innervate_target = 1;

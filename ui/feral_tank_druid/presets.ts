@@ -1,15 +1,16 @@
-import { Consumes } from '../core/proto/common.js';
-import { BattleElixir } from '../core/proto/common.js';
-import { GuardianElixir } from '../core/proto/common.js';
-import { Food } from '../core/proto/common.js';
-import { EquipmentSpec } from '../core/proto/common.js';
-import { Potions } from '../core/proto/common.js';
-import { Conjured } from '../core/proto/common.js';
-import { Explosive } from '../core/proto/common.js';
-import { UnitReference } from '../core/proto/common.js';
-import { Glyphs } from '../core/proto/common.js';
-import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
-import { APLRotation } from '../core/proto/apl.js';
+import {
+	BattleElixir,
+	Conjured,
+	Consumes,
+	Explosive,
+	Food,
+	Glyphs,
+	GuardianElixir,
+	Potions,
+	Spec,
+	UnitReference,
+} from '../core/proto/common.js';
+import { SavedTalents } from '../core/proto/ui.js';
 
 import {
 	FeralTankDruid_Rotation as DruidRotation,
@@ -18,13 +19,31 @@ import {
 	DruidMinorGlyph,
 } from '../core/proto/druid.js';
 
-import * as Tooltips from '../core/constants/tooltips.js';
-
-import DefaultApl from './apls/default.apl.json';
+import * as PresetUtils from '../core/preset_utils.js';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
 // keep them in a separate file.
+
+import P1Gear from './gear_sets/p1.gear.json';
+export const P1_PRESET = PresetUtils.makePresetGear('P1', P1Gear);
+import P2Gear from './gear_sets/p2.gear.json';
+export const P2_PRESET = PresetUtils.makePresetGear('P2', P2Gear);
+import P3Gear from './gear_sets/p3.gear.json';
+export const P3_PRESET = PresetUtils.makePresetGear('P3', P3Gear);
+import P4Gear from './gear_sets/p4.gear.json';
+export const P4_PRESET = PresetUtils.makePresetGear('P4', P4Gear);
+
+export const DefaultSimpleRotation = DruidRotation.create({
+	maulRageThreshold: 25,
+	maintainDemoralizingRoar: true,
+	lacerateTime: 8.0,
+});
+
+import DefaultApl from './apls/default.apl.json';
+export const ROTATION_DEFAULT = PresetUtils.makePresetAPLRotation('APL Default', DefaultApl);
+
+export const ROTATION_PRESET_SIMPLE = PresetUtils.makePresetSimpleRotation('Simple Default', Spec.SpecFeralTankDruid, DefaultSimpleRotation);
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
@@ -43,21 +62,6 @@ export const StandardTalents = {
 	}),
 };
 
-export const DefaultRotation = DruidRotation.create({
-	maulRageThreshold: 25,
-	maintainDemoralizingRoar: true,
-	lacerateTime: 8.0,
-});
-
-export const ROTATION_DEFAULT = {
-	name: 'Default',
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: DruidRotation.toJsonString(DruidRotation.create({
-		})),
-		rotation: APLRotation.fromJsonString(JSON.stringify(DefaultApl)),
-	}),
-};
-
 export const DefaultOptions = DruidOptions.create({
 	innervateTarget: UnitReference.create(),
 	startingRage: 20,
@@ -73,51 +77,3 @@ export const DefaultConsumes = Consumes.create({
 	thermalSapper: true,
 	fillerExplosive: Explosive.ExplosiveSaroniteBomb,
 });
-
-export const P1_PRESET = {
-	name: 'P1 Boss Tanking',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{"id":40329,"enchant":67839,"gems":[41339,40008]},
-		{"id":40387},
-		{"id":40494,"enchant":44957,"gems":[40008]},
-		{"id":40252,"enchant":3294},
-		{"id":40471,"enchant":3832,"gems":[42702,40088]},
-		{"id":40186,"enchant":3850,"gems":[40008,0]},
-		{"id":40472,"enchant":63770,"gems":[40008,0]},
-		{"id":43591,"gems":[40008,40008,40008]},
-		{"id":44011,"enchant":38373,"gems":[40008,40008]},
-		{"id":40243,"enchant":55016,"gems":[40008]},
-		{"id":40370},
-		{"id":37784},
-		{"id":44253},
-		{"id":37220},
-		{"id":40280,"enchant":2673},
-		{},
-		{"id":38365}
-	]}`),
-};
-
-export const P2_PRESET = {
-	name: 'P2 Boss Tanking',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{"id":41678,"enchant":67839,"gems":[41339,45880]},
-		{"id":45517,"gems":[40008]},
-		{"id":45245,"enchant":44957,"gems":[40008,40008]},
-		{"id":45496,"enchant":3294,"gems":[42702]},
-		{"id":45473,"enchant":3832,"gems":[40008,40008,40008]},
-		{"id":45611,"enchant":3850,"gems":[40008,0]},
-		{"id":46043,"enchant":63770,"gems":[40008,40008,0]},
-		{"id":46095,"gems":[40008,40008,40008]},
-		{"id":45536,"enchant":38373,"gems":[40008,40008,40008]},
-		{"id":45232,"enchant":55016,"gems":[40008]},
-		{"id":45471,"gems":[40091]},
-		{"id":45608,"gems":[40008]},
-		{"id":45158},
-		{"id":46021},
-		{"id":45533,"enchant":3870,"gems":[40008,40008]},
-		{},
-		{"id":45509}
-	]}`),
-};

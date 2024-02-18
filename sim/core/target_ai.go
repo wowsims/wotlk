@@ -1,15 +1,15 @@
 package core
 
 import (
-	"fmt"
-	"github.com/wowsims/wotlk/sim/core/proto"
 	"log"
+
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 type TargetAI interface {
 	Initialize(*Target, *proto.Target)
 	Reset(*Simulation)
-	DoAction(*Simulation)
+	ExecuteCustomRotation(*Simulation)
 }
 
 func (target *Target) initialize(config *proto.Target) {
@@ -44,15 +44,7 @@ func (target *Target) initialize(config *proto.Target) {
 		target.gcdAction = &PendingAction{
 			Priority: ActionPriorityGCD,
 			OnAction: func(sim *Simulation) {
-				if target.GCD.IsReady(sim) {
-					target.OnGCDReady(sim)
-
-					if !target.doNothing && target.GCD.IsReady(sim) && (!target.IsWaiting() && !target.IsWaitingForMana()) {
-						msg := fmt.Sprintf("Target `%s` did not perform any actions. Either this is a bug or agent should use 'WaitUntil' or 'WaitForMana' to explicitly wait.\n\tIf character has no action to perform use 'DoNothing'.", target.Label)
-						panic(msg)
-					}
-					target.doNothing = false
-				}
+				target.Rotation.DoNextAction(sim)
 			},
 		}
 	}
@@ -65,20 +57,9 @@ func (target *Target) ApplyTalents()                     {}
 func (target *Target) GetCharacter() *Character          { return nil }
 func (target *Target) Initialize()                       {}
 
-func (target *Target) DoNothing() {
-	target.doNothing = true
-}
-
-func (target *Target) OnAutoAttack(sim *Simulation, _ *Spell) {
-	if target.GCD.IsReady(sim) {
-		if target.AI != nil {
-			target.AI.DoAction(sim)
-		}
-	}
-}
-func (target *Target) OnGCDReady(sim *Simulation) {
+func (target *Target) ExecuteCustomRotation(sim *Simulation) {
 	if target.AI != nil {
-		target.AI.DoAction(sim)
+		target.AI.ExecuteCustomRotation(sim)
 	}
 }
 

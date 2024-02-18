@@ -23,7 +23,28 @@ func init() {
 	)
 }
 
-func NewFakeElementalShaman(char *Character, options *proto.Player) Agent {
+type FakeAgent struct {
+	Spell *Spell
+	Dot   *Dot
+	Character
+	Init func()
+}
+
+func (fa *FakeAgent) GetCharacter() *Character {
+	return &fa.Character
+}
+
+func (fa *FakeAgent) Initialize() {
+	if fa.Init != nil {
+		fa.Init()
+	}
+}
+
+func (fa *FakeAgent) ApplyTalents()            {}
+func (fa *FakeAgent) Reset(_ *Simulation)      {}
+func (fa *FakeAgent) OnGCDReady(_ *Simulation) {}
+
+func NewFakeElementalShaman(char *Character, _ *proto.Player) Agent {
 	fa := &FakeAgent{
 		Character: *char,
 	}

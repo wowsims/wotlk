@@ -50,7 +50,6 @@ type Sindragosa25HAI struct {
 	FrostAura         *core.Spell
 	FrostBreath       *core.Spell
 	FrostBreathDebuff *core.Aura
-	FirstBreath       time.Duration
 
 	IncludeMysticBuffet bool
 	MysticBuffetAuras   []*core.Aura
@@ -88,7 +87,9 @@ func (ai *Sindragosa25HAI) Reset(sim *core.Simulation) {
 	breathPeriod := time.Millisecond * 22680
 	maxBreathsPossible := (sim.Duration - time.Millisecond*1500) / breathPeriod
 	latestAllowedBreath := sim.Duration - time.Millisecond*1500 - breathPeriod*maxBreathsPossible - time.Millisecond*1620
-	ai.FirstBreath = core.DurationFromSeconds(sim.RandomFloat("Frost Breath Timing") * latestAllowedBreath.Seconds())
+	firstBreath := core.DurationFromSeconds(sim.RandomFloat("Frost Breath Timing") * latestAllowedBreath.Seconds())
+
+	ai.FrostBreath.CD.Set(firstBreath)
 }
 
 func (ai *Sindragosa25HAI) registerPermeatingChillAura(target *core.Target) {
@@ -162,42 +163,50 @@ func (ai *Sindragosa25HAI) registerMysticBuffetAuras() {
 	}
 
 	ai.MysticBuffetAuras = make([]*core.Aura, 0)
+	pendingActions := make([]*core.PendingAction, len(ai.Target.Env.AllUnits))
 
-	for _, party := range ai.Target.Env.Raid.Parties {
-		for _, player := range party.PlayersAndPets {
-			character := player.GetCharacter()
-			aura := character.GetOrRegisterAura(core.Aura{
-				Label:     "Mystic Buffet",
-				ActionID:  core.ActionID{SpellID: 70127},
-				MaxStacks: math.MaxInt32,
-				Duration:  time.Second * 8,
-				OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
-					aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFrost] /= 1.0 + 0.2*float64(oldStacks)
-					aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFrost] *= 1.0 + 0.2*float64(newStacks)
-				},
-				OnGain: func(aura *core.Aura, sim *core.Simulation) {
-					period := time.Second * 6
-					numTicks := int(sim.GetRemainingDuration() / period)
-					core.StartPeriodicAction(sim, core.PeriodicActionOptions{
-						NumTicks: numTicks,
-						Period:   period,
-						OnAction: func(sim *core.Simulation) {
-							aura.Refresh(sim)
-							aura.AddStack(sim)
-						},
-					})
-				},
-			})
-			ai.MysticBuffetAuras = append(ai.MysticBuffetAuras, aura)
-		}
+	for _, raidUnit := range ai.Target.Env.Raid.AllUnits {
+		ai.MysticBuffetAuras = append(ai.MysticBuffetAuras, raidUnit.GetOrRegisterAura(core.Aura{
+			Label:     "Mystic Buffet",
+			ActionID:  core.ActionID{SpellID: 70127},
+			MaxStacks: math.MaxInt32,
+			Duration:  time.Second * 8,
+			OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFrost] /= 1.0 + 0.2*float64(oldStacks)
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFrost] *= 1.0 + 0.2*float64(newStacks)
+			},
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				period := time.Second * 6
+				numTicks := int(sim.GetRemainingDuration() / period)
+
+				if pendingActions[aura.Unit.UnitIndex] != nil {
+					pendingActions[aura.Unit.UnitIndex].Cancel(sim)
+				}
+
+				pendingActions[aura.Unit.UnitIndex] = core.StartPeriodicAction(sim, core.PeriodicActionOptions{
+					NumTicks: numTicks,
+					Period:   period,
+					OnAction: func(sim *core.Simulation) {
+						aura.Refresh(sim)
+						aura.AddStack(sim)
+					},
+				})
+			},
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				pendingActions[aura.Unit.UnitIndex].Cancel(sim)
+			},
+			OnReset: func(aura *core.Aura, sim *core.Simulation) {
+				if pendingActions[aura.Unit.UnitIndex] != nil {
+					pendingActions[aura.Unit.UnitIndex].Cancel(sim)
+				}
+			},
+		}))
 	}
 }
 
 func (ai *Sindragosa25HAI) registerFrostAuraSpell(target *core.Target) {
-	actionID := core.ActionID{SpellID: 70084}
-
 	ai.FrostAura = target.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
+		ActionID:    core.ActionID{SpellID: 70084},
 		SpellSchool: core.SpellSchoolFrost,
 		ProcMask:    core.ProcMaskSpellDamage,
 		Flags:       core.SpellFlagNone,
@@ -274,7 +283,7 @@ func (ai *Sindragosa25HAI) registerFrostBreathSpell(target *core.Target) {
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolFrost,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       core.SpellFlagNone,
+		Flags:       core.SpellFlagAPL,
 
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
@@ -299,23 +308,23 @@ func (ai *Sindragosa25HAI) registerFrostBreathSpell(target *core.Target) {
 	})
 }
 
-func (ai *Sindragosa25HAI) DoAction(sim *core.Simulation) {
-	if ai.Target.GCD.IsReady(sim) {
-		// Cast Frost Aura once at the start of the encounter.
-		if sim.CurrentTime < time.Millisecond*1620 {
-			ai.FrostAura.Cast(sim, &ai.Target.Unit)
-			return
-		}
-
-		if ai.Target.CurrentTarget != nil {
-			if ai.FrostBreath.IsReady(sim) && sim.CurrentTime >= ai.FirstBreath {
-				ai.Target.Unit.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime+time.Millisecond*1500, false)
-				ai.FrostBreath.Cast(sim, ai.Target.CurrentTarget)
-				return
-			}
-		}
-
-		// Sindragosa follows the standard Classic WoW boss AI behavior of evaluating actions on a 1.62 second server tick.
-		ai.Target.WaitUntil(sim, sim.CurrentTime+time.Millisecond*1620)
+func (ai *Sindragosa25HAI) ExecuteCustomRotation(sim *core.Simulation) {
+	if !ai.Target.GCD.IsReady(sim) {
+		return
 	}
+
+	// Cast Frost Aura once at the start of the encounter.
+	if sim.CurrentTime < time.Millisecond*1620 {
+		ai.FrostAura.Cast(sim, &ai.Target.Unit)
+		return
+	}
+
+	if ai.Target.CurrentTarget != nil && ai.FrostBreath.IsReady(sim) {
+		ai.Target.Unit.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime+time.Millisecond*1500, false)
+		ai.FrostBreath.Cast(sim, ai.Target.CurrentTarget)
+		return
+	}
+
+	// Sindragosa follows the standard Classic WoW boss AI behavior of evaluating actions on a 1.62 second server tick.
+	ai.Target.WaitUntil(sim, sim.CurrentTime+time.Millisecond*1620)
 }

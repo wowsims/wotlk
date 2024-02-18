@@ -56,7 +56,7 @@ func (rot *APLRotation) newAPLValue(config *proto.APLValue) APLValue {
 		return nil
 	}
 
-	customValue := rot.unit.Env.Raid.GetPlayerFromUnit(rot.unit).NewAPLValue(rot, config)
+	customValue := rot.unit.Env.GetAgentFromUnit(rot.unit).NewAPLValue(rot, config)
 	if customValue != nil {
 		return customValue
 	}
@@ -93,6 +93,12 @@ func (rot *APLRotation) newAPLValue(config *proto.APLValue) APLValue {
 		return rot.newValueIsExecutePhase(config.GetIsExecutePhase())
 	case *proto.APLValue_NumberTargets:
 		return rot.newValueNumberTargets(config.GetNumberTargets())
+
+	// Boss
+	case *proto.APLValue_BossSpellIsCasting:
+		return rot.newValueBossSpellIsCasting(config.GetBossSpellIsCasting())
+	case *proto.APLValue_BossSpellTimeToReady:
+		return rot.newValueBossSpellTimeToReady(config.GetBossSpellTimeToReady())
 
 	// Resources
 	case *proto.APLValue_CurrentHealth:
@@ -151,8 +157,6 @@ func (rot *APLRotation) newAPLValue(config *proto.APLValue) APLValue {
 		return rot.newValueSpellTimeToReady(config.GetSpellTimeToReady())
 	case *proto.APLValue_SpellCastTime:
 		return rot.newValueSpellCastTime(config.GetSpellCastTime())
-	case *proto.APLValue_SpellChannelTime:
-		return rot.newValueSpellChannelTime(config.GetSpellChannelTime())
 	case *proto.APLValue_SpellTravelTime:
 		return rot.newValueSpellTravelTime(config.GetSpellTravelTime())
 	case *proto.APLValue_SpellCpm:

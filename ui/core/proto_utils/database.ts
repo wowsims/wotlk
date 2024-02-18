@@ -3,8 +3,10 @@ import {
 	GemColor,
 	ItemSlot,
 	ItemSpec,
+	ItemSwap,
 	PresetEncounter,
 	PresetTarget,
+	SimDatabase,
 } from '../proto/common.js';
 import {
 	GlyphID,
@@ -23,8 +25,9 @@ import {
 } from './utils.js';
 import { gemEligibleForSocket, gemMatchesSocket } from './gems.js';
 import { EquippedItem } from './equipped_item.js';
-import { Gear } from './gear.js';
+import { Gear, ItemSwapGear } from './gear.js';
 import { CHARACTER_LEVEL } from '../constants/mechanics.js';
+import { distinct } from '../utils.js';
 
 const dbUrlJson = '/wotlk/assets/database/db.json';
 const dbUrlBin = '/wotlk/assets/database/db.bin';
@@ -216,6 +219,14 @@ export class Database {
 		return new Gear(gearMap);
 	}
 
+	lookupItemSwap(itemSwap: ItemSwap): ItemSwapGear {
+		return new ItemSwapGear({
+			[ItemSlot.ItemSlotMainHand]: itemSwap.mhItem ? this.lookupItemSpec(itemSwap.mhItem): null,
+			[ItemSlot.ItemSlotOffHand]: itemSwap.ohItem ? this.lookupItemSpec(itemSwap.ohItem): null,
+			[ItemSlot.ItemSlotRanged]: itemSwap.rangedItem ? this.lookupItemSpec(itemSwap.rangedItem): null,
+		});
+	}
+
 	enchantSpellIdToEffectId(enchantSpellId: number): number {
 		const enchant = Object.values(this.enchantsBySlot).flat().find(enchant => enchant.spellId == enchantSpellId);
 		return enchant ? enchant.effectId : 0;
@@ -277,5 +288,13 @@ export class Database {
 			console.error('Error while fetching url: ' + url + '\n\n' + e);
 			return IconData.create();
 		}
+	}
+
+	public static mergeSimDatabases(db1: SimDatabase, db2: SimDatabase): SimDatabase {
+		return SimDatabase.create({
+			items: distinct(db1.items.concat(db2.items), (a, b) => a.id == b.id),
+			enchants: distinct(db1.enchants.concat(db2.enchants), (a, b) => a.effectId == b.effectId),
+			gems: distinct(db1.gems.concat(db2.gems), (a, b) => a.id == b.id),
+		})
 	}
 }

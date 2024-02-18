@@ -1,6 +1,8 @@
 package deathknight
 
 import (
+	"time"
+
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -8,13 +10,11 @@ import (
 
 type GhoulPet struct {
 	core.Pet
-	focusBar
 
 	dkOwner *Deathknight
 
 	GhoulFrenzyAura *core.Aura
-
-	ClawAbility PetAbility
+	Claw            *core.Spell
 
 	uptimePercent float64
 }
@@ -126,9 +126,8 @@ func (dk *Deathknight) NewGhoulPet(permanent bool) *GhoulPet {
 
 func (dk *Deathknight) SetupGhoul(ghoulPet *GhoulPet) {
 	ghoulPet.Pet.OnPetEnable = ghoulPet.enable
-	ghoulPet.Pet.OnPetDisable = ghoulPet.disable
 
-	ghoulPet.EnableFocusBar(func(sim *core.Simulation) {
+	ghoulPet.Unit.EnableFocusBar(2, func(sim *core.Simulation) {
 		if ghoulPet.GCD.IsReady(sim) {
 			ghoulPet.OnGCDReady(sim)
 		}
@@ -142,7 +141,7 @@ func (ghoulPet *GhoulPet) GetPet() *core.Pet {
 }
 
 func (ghoulPet *GhoulPet) Initialize() {
-	ghoulPet.ClawAbility = ghoulPet.NewPetAbility(Claw)
+	ghoulPet.Claw = ghoulPet.registerClaw()
 }
 
 func (ghoulPet *GhoulPet) Reset(_ *core.Simulation) {
@@ -153,26 +152,22 @@ func (ghoulPet *GhoulPet) Reset(_ *core.Simulation) {
 	}
 }
 
-func (ghoulPet *GhoulPet) OnGCDReady(sim *core.Simulation) {
-	// Apply uptime for permanent pet ghoul
-	if !ghoulPet.IsGuardian() {
-		percentRemaining := sim.GetRemainingDurationPercent()
-		if percentRemaining < 1.0-ghoulPet.uptimePercent { // once fight is % completed, disable pet.
+func (ghoulPet *GhoulPet) ExecuteCustomRotation(sim *core.Simulation) {
+	if ghoulPet.uptimePercent < 1.0 { // Apply uptime for permanent pet ghoul
+		if sim.GetRemainingDurationPercent() < 1.0-ghoulPet.uptimePercent { // once fight is % completed, disable pet.
 			ghoulPet.Pet.Disable(sim)
 			return
 		}
 	}
 
-	target := ghoulPet.CurrentTarget
-
-	if !ghoulPet.ClawAbility.TryCast(sim, target, ghoulPet) {
-		ghoulPet.DoNothing()
+	if ghoulPet.CurrentFocus() < ghoulPet.Claw.DefaultCast.Cost {
+		return
 	}
+
+	ghoulPet.Claw.Cast(sim, ghoulPet.CurrentTarget)
 }
 
 func (ghoulPet *GhoulPet) enable(sim *core.Simulation) {
-	ghoulPet.focusBar.Enable(sim)
-
 	if ghoulPet.IsGuardian() {
 		ghoulPet.PseudoStats.MeleeSpeedMultiplier = 1 // guardians are not affected by raid buffs
 		ghoulPet.MultiplyMeleeSpeed(sim, ghoulPet.dkOwner.PseudoStats.MeleeSpeedMultiplier)
@@ -188,10 +183,6 @@ func (ghoulPet *GhoulPet) enable(sim *core.Simulation) {
 			sim.Log("Ghoul MeleeSpeedMultiplier: %f, ownerMeleeMultiplier: %f\n", ghoulPet.Character.PseudoStats.MeleeSpeedMultiplier, ghoulPet.dkOwner.PseudoStats.MeleeSpeedMultiplier)
 		}
 	})
-}
-
-func (ghoulPet *GhoulPet) disable(sim *core.Simulation) {
-	ghoulPet.focusBar.Disable(sim)
 }
 
 func (dk *Deathknight) ghoulStatInheritance() core.PetStatInheritance {
@@ -211,7 +202,7 @@ func (dk *Deathknight) ghoulStatInheritance() core.PetStatInheritance {
 			stats.MeleeHit:  ownerStats[stats.MeleeHit],
 			stats.Expertise: ownerStats[stats.MeleeHit] * PetExpertiseScale,
 
-			stats.MeleeHaste: ownerStats[stats.MeleeHaste], // fishy: should use PetHasteScale as well (?)
+			stats.MeleeHaste: ownerStats[stats.MeleeHaste],
 		}
 	}
 }
@@ -225,8 +216,43 @@ func (dk *Deathknight) armyGhoulStatInheritance() core.PetStatInheritance {
 			stats.MeleeHit:  ownerStats[stats.MeleeHit],
 			stats.Expertise: ownerStats[stats.MeleeHit] * PetExpertiseScale,
 
-			stats.MeleeHaste: ownerStats[stats.MeleeHaste], // fishy: should use PetHasteScale as well (?)
-			stats.SpellHaste: ownerStats[stats.MeleeHaste], // extra-fishy: this shouldn't be here, should also use PetHasteScale, but have no influence whatsoever - which it does
+			stats.MeleeHaste: ownerStats[stats.MeleeHaste],
 		}
 	}
+}
+
+func (ghoulPet *GhoulPet) registerClaw() *core.Spell {
+	return ghoulPet.RegisterSpell(core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 47468},
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
+
+		FocusCost: core.FocusCostOptions{
+			Cost:   40,
+			Refund: 0.8,
+		},
+
+		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				GCD: time.Second,
+			},
+			IgnoreHaste: true,
+		},
+
+		DamageMultiplier: 1.5,
+		CritMultiplier:   2,
+		ThreatMultiplier: 1,
+
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 0 +
+				spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +
+				spell.BonusWeaponDamage()
+
+			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+			if !result.Landed() {
+				spell.IssueRefund(sim)
+			}
+		},
+	})
 }

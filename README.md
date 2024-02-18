@@ -149,10 +149,7 @@ This project uses [Google Protocol Buffers](https://developers.google.com/protoc
 
 For a new sim, make the following changes:
   - Add a new value to the `Spec` enum in proto/common.proto. __NOTE: The name you give to this enum value is not just a name, it is used in our templating system. This guide will refer to this name as `$SPEC` elsewhere.__
-  - Add a 'proto/YOUR_CLASS.proto' file if it doesn't already exist and add data messages containing all the class/spec-specific information needed to run your sim. In general, there will be 3 pieces of information you need:
-    - Talents
-    - Rotation (the order in which your sim will use spells/abilities)
-    - Options (additional choices your sim needs to make)
+  - Add a 'proto/YOUR_CLASS.proto' file if it doesn't already exist and add data messages containing all the class/spec-specific information needed to run your sim.
   - Update the `PlayerOptions.spec` field in `proto/api.proto` to include your shiny new message as an option.
 
 That's it! Now when you run `make` there will be generated .go and .ts code in `sim/core/proto` and `ui/core/proto` respectively. If you aren't familiar with protos, take a quick look at them to see what's happening.

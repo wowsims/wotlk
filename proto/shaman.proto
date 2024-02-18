@@ -2,7 +2,6 @@ syntax = "proto3";
 package proto;
 
 option go_package = "./proto";
-import "common.proto";
 
 message ShamanTalents {
 	// Elemental
@@ -176,23 +175,9 @@ message ShamanTotems {
 	FireTotem fire = 3;
 	WaterTotem water = 4;
 
-	// If set, will use mana tide when appropriate.
-	bool use_mana_tide = 5;
-
 	// If set, will use fire elemental totem at the start and revert to regular
 	// fire totems when it expires.
 	bool use_fire_elemental = 6;
-
-	// If set, will revert to regular fire totems when fire elemental goes OOM,
-	// instead of waiting the full 2 minutes.
-	bool recall_fire_elemental_on_oom = 7;
-
-	// If set, any time a 2-minute totem is about to expire, will recall and
-	// replace all totems.
-	bool recall_totems = 8;
-
-	// If set will use fire totems as an MCD instead of manually controlling when to place them.
-	bool use_fire_mcd = 9;
 
 	// Bonus spell power for fire elemental snapshotting.
 	int32 bonus_spellpower = 10;
@@ -224,39 +209,10 @@ enum ShamanSyncType {
 
 message ElementalShaman {
 	message Rotation {
-		// Deprecated as of 2023-08-29
-		ShamanTotems totems = 3 [deprecated = true];
-
-		enum RotationType {
-			Unknown = 0;
-			Adaptive = 1;
-			Manual = 2;
-		}
-		RotationType type = 1;
-		bool in_thunderstorm_range = 2 [deprecated = true];
-
-		// These options are used for the manual rotation.
-		bool use_fire_nova = 4;
-		double fn_min_mana_per = 9;
-		bool use_chain_lightning = 5;
-		bool use_cl_only_gap = 11;
-		double cl_min_mana_per = 10;
-		bool overwrite_flameshock = 6;
-		bool always_crit_lvb = 7;
-		bool use_thunderstorm = 8;
-		double lvb_fs_wait_ms = 12;
-		
-		enum BloodlustUse {
-			UnsetBloodlust = 0;
-			UseBloodlust = 1;
-			NoBloodlust = 2;
-		}
-		BloodlustUse bloodlust = 13;
 	}
 
 	message Options {
 		ShamanShield shield = 1;
-		bool bloodlust = 2 [deprecated = true];
 		ShamanTotems totems = 3;
 		
 		enum ThunderstormRange {
@@ -267,83 +223,21 @@ message ElementalShaman {
 		ThunderstormRange thunderstormRange = 4;
 	}
 
-	Rotation rotation = 1;
 	Options options = 3;
 }
 
 message EnhancementShaman {
 	message Rotation {
-		// Deprecated as of 2023-08-29
-		ShamanTotems totems = 1 [deprecated = true];
-		
-		enum RotationType {
-			Unknown = 0;
-			Priority = 1;
-			Custom = 2;
-		}
-		RotationType rotation_type = 2;
-
-		//TODO: add spells here for custom rotation (if necessary?)
-		enum CustomRotationSpell {
-			NoSpell = 0;
-			Stormstrike = 1;
-			StormstrikeDebuffMissing = 2; //find a way to differentiate tooltips for this, lightning bolt weaves, and downranked flametongue
-			LightningBolt = 3;
-			LightningBoltWeave = 4;
-			FlameShock = 5;
-			EarthShock = 6;
-			LavaLash = 7;
-			LavaBurst = 8;
-			LightningShield = 9;
-			FireNova = 10;
-			ChainLightning = 11;
-			FrostShock = 12;
-			MagmaTotem = 13;
-			LightningBoltDelayedWeave = 14;
-		}
-		CustomRotation custom_rotation = 3;
-
-		//weaving options
-		bool lavaburst_weave = 4;
-		bool lightningbolt_weave = 5;
-		int32 maelstromweapon_min_stack = 6;
-		double auto_weave_delay = 7;
-
-		//other general rotation config options
-		double firenova_mana_threshold = 8;
-		double shamanistic_rage_mana_threshold = 9;
-
-		enum PrimaryShock {
-			None = 0;
-			Earth = 1;
-			Frost = 2;
-		}
-
-		bool weave_flame_shock = 10;
-		PrimaryShock primary_shock = 11;
-		int32 flame_shock_clip_ticks = 12;
-		double delay_gcd_weave = 13;
-		ItemSwap item_swap = 14;
-		bool enable_item_swap = 15;
-
-		enum BloodlustUse {
-			UnsetBloodlust = 0;
-			UseBloodlust = 1;
-			NoBloodlust = 2;
-		}
-		BloodlustUse bloodlust = 16;
 	}
 
 	message Options {
 		ShamanShield shield = 1;
-		bool bloodlust = 2 [deprecated = true];
 		ShamanSyncType sync_type = 3;
 		ShamanImbue imbue_mh = 4;
 		ShamanImbue imbue_oh = 5;
 		ShamanTotems totems = 6;
 	}
 
-	Rotation rotation = 1;
 	Options options = 3;
 }
 
@@ -356,28 +250,14 @@ enum ShamanHealSpell {
 
 message RestorationShaman {
 	message Rotation {
-		// Deprecated as of 2023-08-29
-		ShamanTotems totems = 1 [deprecated = true];
-		bool use_earth_shield = 2;
-		ShamanHealSpell primary_heal = 3;
-		bool use_riptide = 4;
-
-		enum BloodlustUse {
-			UnsetBloodlust = 0;
-			UseBloodlust = 1;
-			NoBloodlust = 2;
-		}
-		BloodlustUse bloodlust = 5;
 	}
 
 	message Options {
 		ShamanShield shield = 1;
-		bool bloodlust = 2 [deprecated = true];
 		ShamanImbue imbue_mh = 4;
 		int32 earth_shield_p_p_m = 5;
 		ShamanTotems totems = 6;
 	}
 
-	Rotation rotation = 1;
 	Options options = 3;
 }

@@ -57,7 +57,7 @@ func (bloodworm *BloodwormPet) Initialize() {
 func (bloodworm *BloodwormPet) Reset(_ *core.Simulation) {
 }
 
-func (bloodworm *BloodwormPet) OnGCDReady(_ *core.Simulation) {
+func (bloodworm *BloodwormPet) ExecuteCustomRotation(_ *core.Simulation) {
 }
 
 func (bloodworm *BloodwormPet) enable(sim *core.Simulation) {

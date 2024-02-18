@@ -3,7 +3,6 @@ package hunter
 import (
 	"time"
 
-	"github.com/wowsims/wotlk/sim/common"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -33,21 +32,14 @@ func RegisterHunter() {
 type Hunter struct {
 	core.Character
 
-	Talents  *proto.HunterTalents
-	Options  *proto.Hunter_Options
-	Rotation *proto.Hunter_Rotation
+	Talents *proto.HunterTalents
+	Options *proto.Hunter_Options
 
 	pet *HunterPet
 
 	AmmoDPS                   float64
 	AmmoDamageBonus           float64
 	NormalizedAmmoDamageBonus float64
-
-	currentAspect *core.Aura
-
-	// Used for deciding when we can use hawk for the rest of the fight.
-	manaSpentPerSecondAtFirstAspectSwap float64
-	permaHawk                           bool
 
 	// The most recent time at which moving could have started, for trap weaving.
 	mayMoveAt time.Duration
@@ -83,10 +75,6 @@ type Hunter struct {
 	RapidFireAura             *core.Aura
 	ScorpidStingAuras         core.AuraArray
 	TalonOfAlarAura           *core.Aura
-
-	CustomRotation     *common.CustomRotation
-	rotationConditions map[*core.Spell]RotationCondition
-	rotationPriority   []*core.Spell
 }
 
 func (hunter *Hunter) GetCharacter() *core.Character {
@@ -117,9 +105,9 @@ func (hunter *Hunter) AddPartyBuffs(_ *proto.PartyBuffs) {
 
 func (hunter *Hunter) Initialize() {
 	// Update auto crit multipliers now that we have the targets.
-	hunter.AutoAttacks.MHConfig.CritMultiplier = hunter.critMultiplier(false, false, false)
-	hunter.AutoAttacks.OHConfig.CritMultiplier = hunter.critMultiplier(false, false, false)
-	hunter.AutoAttacks.RangedConfig.CritMultiplier = hunter.critMultiplier(false, false, false)
+	hunter.AutoAttacks.MHConfig().CritMultiplier = hunter.critMultiplier(false, false, false)
+	hunter.AutoAttacks.OHConfig().CritMultiplier = hunter.critMultiplier(false, false, false)
+	hunter.AutoAttacks.RangedConfig().CritMultiplier = hunter.critMultiplier(false, false, false)
 
 	hunter.registerAspectOfTheDragonhawkSpell()
 	hunter.registerAspectOfTheViperSpell()
@@ -146,16 +134,6 @@ func (hunter *Hunter) Initialize() {
 	hunter.registerKillCommandCD()
 	hunter.registerRapidFireCD()
 
-	if !hunter.IsUsingAPL {
-		hunter.DelayDPSCooldownsForArmorDebuffs(time.Second * 10)
-	}
-
-	hunter.initRotation()
-	hunter.CustomRotation = hunter.makeCustomRotation()
-	if hunter.CustomRotation == nil {
-		hunter.Rotation.Type = proto.Hunter_Rotation_SingleTarget
-	}
-
 	if hunter.Options.UseHuntersMark {
 		hunter.RegisterPrepullAction(0, func(sim *core.Simulation) {
 			huntersMarkAura := core.HuntersMarkAura(hunter.CurrentTarget, hunter.Talents.ImprovedHuntersMark, hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfHuntersMark))
@@ -166,8 +144,6 @@ func (hunter *Hunter) Initialize() {
 
 func (hunter *Hunter) Reset(_ *core.Simulation) {
 	hunter.mayMoveAt = 0
-	hunter.manaSpentPerSecondAtFirstAspectSwap = 0
-	hunter.permaHawk = false
 }
 
 func NewHunter(character *core.Character, options *proto.Player) *Hunter {
@@ -177,10 +153,6 @@ func NewHunter(character *core.Character, options *proto.Player) *Hunter {
 		Character: *character,
 		Talents:   &proto.HunterTalents{},
 		Options:   hunterOptions.Options,
-		Rotation:  hunterOptions.Rotation,
-	}
-	if hunter.Rotation == nil {
-		hunter.Rotation = &proto.Hunter_Rotation{}
 	}
 	core.FillTalentsProto(hunter.Talents.ProtoReflect(), options.TalentsString, TalentTreeSizes)
 	hunter.EnableManaBar()
@@ -216,15 +188,13 @@ func NewHunter(character *core.Character, options *proto.Player) *Hunter {
 	hunter.EnableAutoAttacks(hunter, core.AutoAttackOptions{
 		// We don't know crit multiplier until later when we see the target so just
 		// use 0 for now.
-		MainHand: hunter.WeaponFromMainHand(0),
-		OffHand:  hunter.WeaponFromOffHand(0),
-		Ranged:   rangedWeapon,
-		ReplaceMHSwing: func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
-			return hunter.TryRaptorStrike(sim, mhSwingSpell)
-		},
+		MainHand:        hunter.WeaponFromMainHand(0),
+		OffHand:         hunter.WeaponFromOffHand(0),
+		Ranged:          rangedWeapon,
+		ReplaceMHSwing:  hunter.TryRaptorStrike,
 		AutoSwingRanged: true,
 	})
-	hunter.AutoAttacks.RangedConfig.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+	hunter.AutoAttacks.RangedConfig().ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 		baseDamage := hunter.RangedWeaponDamage(sim, spell.RangedAttackPower(target)) +
 			hunter.AmmoDamageBonus +
 			spell.BonusWeaponDamage()

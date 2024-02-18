@@ -18,7 +18,7 @@ func TestHoly(t *testing.T) {
 		Race:       proto.Race_RaceBloodElf,
 		OtherRaces: []proto.Race{proto.Race_RaceHuman},
 
-		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
+		GearSet:     core.GetGearSet("../../../ui/holy_paladin/gear_sets", "p1"),
 		Talents:     StandardTalents,
 		Glyphs:      StandardGlyphs,
 		Consumes:    FullConsumes,
@@ -49,7 +49,7 @@ func BenchmarkSimulate(b *testing.B) {
 			&proto.Player{
 				Race:          proto.Race_RaceBloodElf,
 				Class:         proto.Class_ClassPaladin,
-				Equipment:     P1Gear,
+				Equipment:     core.GetGearSet("../../../ui/holy_paladin/gear_sets", "p1").GearSet,
 				Consumes:      FullConsumes,
 				Spec:          BasicOptions,
 				TalentsString: StandardTalents,
@@ -87,8 +87,7 @@ var defaultProtOptions = &proto.HolyPaladin_Options{
 
 var BasicOptions = &proto.Player_HolyPaladin{
 	HolyPaladin: &proto.HolyPaladin{
-		Options:  defaultProtOptions,
-		Rotation: &proto.HolyPaladin_Rotation{},
+		Options: defaultProtOptions,
 	},
 }
 
@@ -106,23 +105,3 @@ var DefaultRotation = core.APLRotationFromJsonString(`{
 		{"action":{"autocastOtherCooldowns":{}}}
 	]
 }`)
-
-var P1Gear = core.EquipmentSpecFromJsonString(`{"items": [
-	{"id":40298,"enchant":3819,"gems":[41401,40012]},
-	{"id":44662,"gems":[40012]},
-	{"id":40573,"enchant":3809,"gems":[40012]},
-	{"id":44005,"enchant":3831,"gems":[40012]},
-	{"id":40569,"enchant":3832,"gems":[40012,40012]},
-	{"id":40332,"enchant":1119,"gems":[40012,0]},
-	{"id":40570,"enchant":3604,"gems":[40012,0]},
-	{"id":40259,"gems":[40012]},
-	{"id":40572,"enchant":3721,"gems":[40027,40012]},
-	{"id":40592,"enchant":3606},
-	{"id":40399},
-	{"id":40375},
-	{"id":44255},
-	{"id":37111},
-	{"id":40395,"enchant":2666},
-	{"id":40401,"enchant":1128},
-	{"id":40705}
-]}`)

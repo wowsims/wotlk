@@ -52,7 +52,7 @@ func (tm *TooltipManager) FetchFromWeb(idsToFetch []string) map[string]string {
 	return newTooltips
 }
 
-func (tm *TooltipManager) Fetch(minId, maxId int32) {
+func (tm *TooltipManager) Fetch(minId, maxId int32, otherIds []string) {
 	strDB := tools.ReadMapOrNil(tm.FilePath)
 
 	var idsToFetch []string
@@ -63,6 +63,7 @@ func (tm *TooltipManager) Fetch(minId, maxId int32) {
 			idsToFetch = append(idsToFetch, id)
 		}
 	}
+	idsToFetch = append(idsToFetch, otherIds...)
 
 	newTooltips := tm.FetchFromWeb(idsToFetch)
 

@@ -3,8 +3,6 @@ package proto;
 
 option go_package = "./proto";
 
-import "common.proto";
-
 message WarriorTalents {
 	// Arms
 	int32 improved_heroic_strike = 1;
@@ -148,78 +146,7 @@ enum WarriorShout {
 
 message Warrior {
 	message Rotation {
-		bool use_cleave = 1;
-		bool use_rend = 2;
-		bool use_ms = 18;
-		bool use_slam = 3;
-
-		enum MainGcd {
-			None = 0;
-			Slam = 1;
-			Bloodthirst = 2;
-			Whirlwind = 3;
-		}
-		MainGcd main_gcd = 4;
-
-		enum SunderArmor {
-			SunderArmorNone = 0;
-			SunderArmorHelpStack = 1;
-			SunderArmorMaintain = 2;
-		}
-		SunderArmor sunderArmor = 5;
-		bool maintain_demo_shout = 6;
-		bool maintain_thunder_clap = 7;
-
-		// Queue HS or Cleave when over this threshold.
-		double hs_rage_threshold = 8;
-
-		// Use Mortal Strike when over this threshold.
-		double ms_rage_threshold = 9;
-
-		// Use Rend when below this threshold.
-		double rend_rage_threshold_below = 10;
-
-		// Use Slam when over this threshold.
-		double slam_rage_threshold = 11;
-
-		// Refresh Rend when remaining duration is less than this threshold.
-		double rend_cd_threshold = 12;
-
-		bool use_hs_during_execute = 13;
-		bool use_bt_during_execute = 14;
-		bool spam_execute = 15;
-		bool use_ww_during_execute = 16;
-		bool use_slam_over_execute = 17;
-
-		enum StanceOption {
-			DefaultStance = 0;
-			BattleStance = 1;
-			BerserkerStance = 2;
-		}
-		StanceOption stance_option = 19;
-		double rend_health_threshold_above = 20;
-
-		// Only used for Fury
-		bool use_overpower = 21;
-		bool execute_phase_overpower = 22;
-		double bloodsurge_duration_threshold = 25;
-
-		enum SpellOption {
-			NoSpell = 0;
-			BloodthirstCustom = 1;
-			MortalStrike = 2;
-			WhirlwindCustom = 3;
-			SlamCustom = 4;
-			Rend = 5;
-			Overpower = 6;
-			Execute = 7;
-			ThunderClap = 8;
-			SlamExpiring = 9;
-		}
-		CustomRotation custom_rotation = 23;
-		bool custom_rotation_option = 24;
 	}
-	Rotation rotation = 1;
 
 	message Options {
 		double starting_rage = 1;
@@ -234,39 +161,7 @@ message Warrior {
 
 message ProtectionWarrior {
 	message Rotation {
-		enum DemoShoutChoice {
-			DemoShoutChoiceNone = 0;
-			DemoShoutChoiceMaintain = 1;
-			DemoShoutChoiceFiller = 2;
-		}
-		DemoShoutChoice demo_shout_choice = 1;
-
-		enum ThunderClapChoice {
-			ThunderClapChoiceNone = 0;
-			ThunderClapChoiceMaintain = 1;
-			ThunderClapChoiceOnCD = 2;
-		}
-		ThunderClapChoice thunder_clap_choice = 2;
-
-		enum SpellOption {
-			NoSpell = 0;
-			Revenge = 1;
-			ShieldSlam = 2;
-			Devastate = 3;
-			SunderArmor = 4;
-			Shout = 5;
-			DemoralizingShout = 6;
-			ThunderClap = 7;
-			MortalStrike = 8;
-			ConcussionBlow = 9;
-			Shockwave = 10;
-		}
-		CustomRotation custom_rotation = 3;
-
-		double hs_rage_threshold = 4;
-		bool prio_sslam_on_shield_block = 5;
 	}
-	Rotation rotation = 1;
 
 	message Options {
 		double starting_rage = 1;

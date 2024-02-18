@@ -218,6 +218,11 @@ func (dk *Deathknight) registerScourgelordsBattlegearProc() {
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.DamageDealtMultiplier /= bonusCoeff
 		},
+		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+			if spell.DefaultCast.GCD > 0 && dk.AllRunesSpent() {
+				aura.Refresh(sim)
+			}
+		},
 	})
 
 	dk.onRuneSpendT10 = func(sim *core.Simulation, changeType core.RuneChangeType) {
@@ -490,7 +495,9 @@ func (dk *Deathknight) registerItems() {
 		IcyTouchActionID,
 	}
 
-	cinderProcAura := dk.GetOrRegisterAura(core.Aura{
+	targetsHit := 0
+
+	dk.RegisterAura(core.Aura{
 		ActionID:  core.ActionID{SpellID: 53386},
 		Label:     "Cinderglacier",
 		Duration:  time.Second * 30,
@@ -508,9 +515,15 @@ func (dk *Deathknight) registerItems() {
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell.ActionID == HowlingBlastActionID || spell.ActionID == BloodBoilActionID {
+				if result.Target.Index == 0 {
+					targetsHit = 0
+				}
+				if result.Landed() {
+					targetsHit++
+				}
 				if result.Target.Index == sim.GetNumTargets()-1 {
 					// Last target, consume a stack for every target hit
-					for i := int32(0); i < dk.AoESpellNumTargetsHit; i++ {
+					for i := 0; i < targetsHit; i++ {
 						if aura.IsActive() {
 							aura.RemoveStack(sim)
 						}
@@ -519,7 +532,7 @@ func (dk *Deathknight) registerItems() {
 				return
 			}
 
-			if !result.Outcome.Matches(core.OutcomeLanded) {
+			if !result.Landed() {
 				return
 			}
 
@@ -543,6 +556,8 @@ func (dk *Deathknight) registerItems() {
 
 		procMask := character.GetProcMaskForEnchant(3369)
 		ppmm := character.AutoAttacks.NewPPMManager(1.0, procMask)
+		// have to fetch it dynamically, otherwise aura reference becomes stale? not quite sure why
+		proc := character.GetAura("Cinderglacier")
 
 		core.MakePermanent(character.GetOrRegisterAura(core.Aura{
 			Label: "Rune of Cinderglacier",
@@ -552,7 +567,7 @@ func (dk *Deathknight) registerItems() {
 				}
 
 				if ppmm.Proc(sim, spell.ProcMask, "rune of cinderglacier") {
-					cinderProcAura.Activate(sim)
+					proc.Activate(sim)
 				}
 			},
 		}))

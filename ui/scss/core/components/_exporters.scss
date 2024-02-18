@@ -1,7 +1,17 @@
 .exporter {
 	.exporter-textarea {
 		width: 100%;
-		height: 40vh;
+		height: 60vh;
 		resize: none;
+	}
+
+	.link-exporter-pickers {
+		display: grid;
+		grid-template-columns: repeat(3,1fr);
+		column-gap: 1.25rem;
+	}
+
+	button {
+		width: 12rem;
 	}
 }

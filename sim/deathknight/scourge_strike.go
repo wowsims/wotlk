@@ -21,7 +21,7 @@ func (dk *Deathknight) registerScourgeStrikeShadowDamageSpell() *core.Spell {
 	return dk.Unit.RegisterSpell(core.SpellConfig{
 		ActionID:    ScourgeStrikeActionID.WithTag(2),
 		SpellSchool: core.SpellSchoolShadow,
-		ProcMask:    core.ProcMaskSpellDamage,
+		ProcMask:    core.ProcMaskSpellDamage | core.ProcMaskProc,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreAttackerModifiers,
 
 		DamageMultiplier: 1,
@@ -82,7 +82,6 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 
 			spell.SpendRefundableCost(sim, result)
 
-			dk.LastOutcome = result.Outcome
 			if result.Landed() && dk.DiseasesAreActive(target) {
 				dk.LastScourgeStrikeDamage = result.Damage
 				shadowDamageSpell.Cast(sim, target)

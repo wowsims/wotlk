@@ -26,8 +26,8 @@
 		grid-template-columns: repeat(5, 1fr);
 	
 		.class-presets-container {
-			padding: map.get($spacers, 1) 0;
-			border-radius: map.get($spacers, 1);
+			padding: map-get($spacers, 1) 0;
+			border-radius: map-get($spacers, 1);
 			display: flex;
 			justify-content: space-evenly;
 		}
@@ -56,7 +56,7 @@
 
 	.players-container {
 		display: grid;
-		grid-gap: map.get($spacers, 1);
+		grid-gap: map-get($spacers, 1);
 	}
 }
 
@@ -66,13 +66,13 @@
 		align-items: center;
 
 		&> :not(:last-child) {
-			margin-right: map.get($spacers, 1);
+			margin-right: map-get($spacers, 1);
 		}
 	}
 }
 
 .party-results {
-	margin-bottom: map.get($spacers, 1);
+	margin-bottom: map-get($spacers, 1);
 	line-height: 1rem;
 }
 
@@ -85,7 +85,7 @@
 
 .party-results-reference-delta,
 .player-results-reference-delta {
-	margin-left: map.get($spacers, 1);
+	margin-left: map-get($spacers, 1);
 	font-size: .75rem;
 	line-height: .875rem;
 }

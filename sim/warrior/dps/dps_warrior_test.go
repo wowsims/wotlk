@@ -20,13 +20,10 @@ func TestFury(t *testing.T) {
 
 		Talents:     FuryTalents,
 		Glyphs:      FuryGlyphs,
-		GearSet:     core.GearSetCombo{Label: "Fury P1", GearSet: FuryP1Gear},
+		GearSet:     core.GetGearSet("../../../ui/warrior/gear_sets", "p1_fury"),
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsFury},
-
-		OtherRotations: []core.RotationCombo{
-			core.GetAplRotation("../../../ui/warrior/apls", "fury"),
-		},
+		Rotation:    core.GetAplRotation("../../../ui/warrior/apls", "fury"),
 
 		ItemFilter: core.ItemFilter{
 			ArmorType: proto.ArmorType_ArmorTypePlate,
@@ -50,9 +47,10 @@ func TestArms(t *testing.T) {
 
 		Talents:     ArmsTalents,
 		Glyphs:      ArmsGlyphs,
-		GearSet:     core.GearSetCombo{Label: "Arms P1", GearSet: FuryP1Gear},
+		GearSet:     core.GetGearSet("../../../ui/warrior/gear_sets", "p1_arms"),
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsArms},
+		Rotation:    core.GetAplRotation("../../../ui/warrior/apls", "arms"),
 
 		ItemFilter: core.ItemFilter{
 			ArmorType: proto.ArmorType_ArmorTypePlate,
@@ -74,7 +72,7 @@ func BenchmarkSimulate(b *testing.B) {
 			&proto.Player{
 				Race:          proto.Race_RaceOrc,
 				Class:         proto.Class_ClassWarrior,
-				Equipment:     FuryP1Gear,
+				Equipment:     core.GetGearSet("../../../ui/warrior/gear_sets", "p1_fury").GearSet,
 				Consumes:      FullConsumes,
 				Spec:          PlayerOptionsFury,
 				TalentsString: FuryTalents,
@@ -112,60 +110,14 @@ var ArmsGlyphs = &proto.Glyphs{
 
 var PlayerOptionsArms = &proto.Player_Warrior{
 	Warrior: &proto.Warrior{
-		Options:  warriorOptions,
-		Rotation: armsRotation,
+		Options: warriorOptions,
 	},
 }
 
 var PlayerOptionsFury = &proto.Player_Warrior{
 	Warrior: &proto.Warrior{
-		Options:  warriorOptions,
-		Rotation: furyRotation,
+		Options: warriorOptions,
 	},
-}
-
-var armsRotation = &proto.Warrior_Rotation{
-	UseRend:   true,
-	UseMs:     true,
-	UseCleave: false,
-
-	HsRageThreshold:          50,
-	MsRageThreshold:          35,
-	SlamRageThreshold:        25,
-	RendCdThreshold:          0,
-	RendHealthThresholdAbove: 0,
-
-	SpamExecute: false,
-
-	UseHsDuringExecute: true,
-
-	MaintainDemoShout:   false,
-	MaintainThunderClap: false,
-
-	StanceOption: proto.Warrior_Rotation_DefaultStance,
-}
-
-var furyRotation = &proto.Warrior_Rotation{
-	UseRend:               true,
-	UseCleave:             false,
-	UseOverpower:          true,
-	ExecutePhaseOverpower: false,
-
-	HsRageThreshold:          30,
-	RendRageThresholdBelow:   100,
-	SlamRageThreshold:        25,
-	RendCdThreshold:          0,
-	RendHealthThresholdAbove: 20,
-
-	UseHsDuringExecute: true,
-	UseWwDuringExecute: true,
-	UseBtDuringExecute: true,
-	UseSlamOverExecute: true,
-
-	MaintainDemoShout:   false,
-	MaintainThunderClap: false,
-
-	StanceOption: proto.Warrior_Rotation_DefaultStance,
 }
 
 var warriorOptions = &proto.Warrior_Options{
@@ -181,23 +133,3 @@ var FullConsumes = &proto.Consumes{
 	PrepopPotion:  proto.Potions_PotionOfSpeed,
 	Food:          proto.Food_FoodFishFeast,
 }
-
-var FuryP1Gear = core.EquipmentSpecFromJsonString(`{"items":[
-	{"id":44006,"enchant":3817,"gems":[41285,42702]},
-	{"id":44664,"gems":[39996]},
-	{"id":40530,"enchant":3808,"gems":[40037]},
-	{"id":40403,"enchant":3605},
-	{"id":40539,"enchant":3832,"gems":[42142]},
-	{"id":39765,"enchant":3845,"gems":[39996,0]},
-	{"id":40541,"enchant":3604,"gems":[0]},
-	{"id":40205,"gems":[42142]},
-	{"id":40529,"enchant":3823,"gems":[39996,40022]},
-	{"id":40591,"enchant":3606},
-	{"id":43993,"gems":[42142]},
-	{"id":40717},
-	{"id":42987},
-	{"id":40256},
-	{"id":40384,"enchant":3789},
-	{"id":40384,"enchant":3789},
-	{"id":40385}
-]}`)

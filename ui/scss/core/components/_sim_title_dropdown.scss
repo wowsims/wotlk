@@ -41,25 +41,3 @@
     }
   }
 }
-
-@include media-breakpoint-down(xxl) {
-  .sim-title {
-    .sim-link {
-      .sim-link-content {
-        padding-left: $gap-width-sm * 2;
-        padding-right: $gap-width-sm * 2;
-      }
-    }
-  }
-}
-
-@include media-breakpoint-down(lg) {
-  .sim-title {
-    .sim-link {
-      .sim-link-content {
-        padding-left: $gap-width-sm;
-        padding-right: $gap-width-sm;
-      }
-    }
-  }
-}

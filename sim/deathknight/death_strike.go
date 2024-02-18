@@ -66,7 +66,6 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool) *core.Spell {
 
 			if isMH {
 				spell.SpendRefundableCostAndConvertFrostOrUnholyRune(sim, result, deathConvertChance)
-				dk.LastOutcome = result.Outcome
 
 				if result.Landed() {
 					healingAmount := 0.05 * dk.dkCountActiveDiseases(target) * dk.MaxHealth() * (1.0 + 0.5*float64(dk.Talents.ImprovedDeathStrike))
@@ -121,9 +120,4 @@ func (dk *Deathknight) registerDrwDeathStrikeSpell() {
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
 		},
 	})
-
-	if !dk.Inputs.NewDrw {
-		dk.RuneWeapon.DeathStrike.DamageMultiplier *= 0.5
-		dk.RuneWeapon.DeathStrike.Flags |= core.SpellFlagIgnoreAttackerModifiers
-	}
 }

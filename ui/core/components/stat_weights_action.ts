@@ -679,7 +679,7 @@ class EpWeightsMenu extends BaseModal {
 			if (equippedItem == null) {
 				return;
 			}
-			const item = equippedItem.item;
+			//const item = equippedItem.item;
 			const socketColors = equippedItem.curSocketColors(isBlacksmithing);
 
 			// Compare whether its better to match sockets + get socket bonus, or just use best gems.

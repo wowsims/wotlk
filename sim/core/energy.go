@@ -1,6 +1,9 @@
 package core
 
 import (
+	"fmt"
+	"math"
+	"slices"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -10,9 +13,6 @@ import (
 const EnergyTickDuration = time.Millisecond * 100
 const EnergyPerTick = 1.0
 
-// OnEnergyGain is called any time energy is increased.
-type OnEnergyGain func(sim *Simulation)
-
 type energyBar struct {
 	unit *Unit
 
@@ -21,8 +21,16 @@ type energyBar struct {
 
 	comboPoints int32
 
-	onEnergyGain OnEnergyGain
-	tickAction   *PendingAction
+	// List of energy levels that might affect APL decisions. E.g:
+	// [10, 15, 20, 30, 60, 85]
+	energyDecisionThresholds []int
+
+	// Slice with len == maxEnergy+1 with each index corresponding to an amount of energy. Looks like this:
+	// [0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, ...]
+	// Increments by 1 at each value of energyDecisionThresholds.
+	cumulativeEnergyDecisionThresholds []int
+
+	nextEnergyTick time.Duration
 
 	// Multiplies energy regen from ticks.
 	EnergyTickMultiplier float64
@@ -31,28 +39,82 @@ type energyBar struct {
 	EnergyRefundMetrics *ResourceMetrics
 }
 
-func (unit *Unit) EnableEnergyBar(maxEnergy float64, onEnergyGain OnEnergyGain) {
+func (unit *Unit) EnableEnergyBar(maxEnergy float64) {
 	unit.SetCurrentPowerBar(EnergyBar)
 
 	unit.energyBar = energyBar{
-		unit:      unit,
-		maxEnergy: max(100, maxEnergy),
-		onEnergyGain: func(sim *Simulation) {
-			if sim.CurrentTime < 0 {
-				return
-			}
-
-			if !sim.Options.Interactive && (!unit.IsWaitingForEnergy() || unit.DoneWaitingForEnergy(sim)) {
-				if unit.IsUsingAPL {
-					unit.Rotation.DoNextAction(sim)
-				} else {
-					onEnergyGain(sim)
-				}
-			}
-		},
+		unit:                 unit,
+		maxEnergy:            max(100, maxEnergy),
 		EnergyTickMultiplier: 1,
 		regenMetrics:         unit.NewEnergyMetrics(ActionID{OtherID: proto.OtherAction_OtherActionEnergyRegen}),
 		EnergyRefundMetrics:  unit.NewEnergyMetrics(ActionID{OtherID: proto.OtherAction_OtherActionRefund}),
+	}
+}
+
+// Computes the energy thresholds.
+func (eb *energyBar) setupEnergyThresholds() {
+	if eb.unit == nil {
+		return
+	}
+	var energyThresholds []int
+
+	// Energy thresholds from spell costs.
+	for _, action := range eb.unit.Rotation.allAPLActions() {
+		for _, spell := range action.GetAllSpells() {
+			if _, ok := spell.Cost.(*EnergyCost); ok {
+				energyThresholds = append(energyThresholds, int(math.Ceil(spell.DefaultCast.Cost)))
+			}
+		}
+	}
+
+	// Energy thresholds from conditional comparisons.
+	for _, action := range eb.unit.Rotation.allAPLActions() {
+		for _, value := range action.GetAllAPLValues() {
+			if cmpValue, ok := value.(*APLValueCompare); ok {
+				_, lhsIsEnergy := cmpValue.lhs.(*APLValueCurrentEnergy)
+				_, rhsIsEnergy := cmpValue.rhs.(*APLValueCurrentEnergy)
+				if !lhsIsEnergy && !rhsIsEnergy {
+					continue
+				}
+
+				lhsConstVal := getConstAPLFloatValue(cmpValue.lhs)
+				rhsConstVal := getConstAPLFloatValue(cmpValue.rhs)
+
+				if lhsIsEnergy && rhsConstVal != -1 {
+					energyThresholds = append(energyThresholds, int(math.Ceil(rhsConstVal)))
+				} else if rhsIsEnergy && lhsConstVal != -1 {
+					energyThresholds = append(energyThresholds, int(math.Ceil(lhsConstVal)))
+				}
+			}
+		}
+	}
+
+	slices.SortStableFunc(energyThresholds, func(t1, t2 int) int {
+		return t1 - t2
+	})
+
+	// Add each unique value to the final thresholds list.
+	curVal := 0
+	for _, threshold := range energyThresholds {
+		if threshold > curVal {
+			eb.energyDecisionThresholds = append(eb.energyDecisionThresholds, threshold)
+			curVal = threshold
+		}
+	}
+
+	curEnergy := 0
+	cumulativeVal := 0
+	eb.cumulativeEnergyDecisionThresholds = make([]int, int(eb.maxEnergy)+1)
+	for _, threshold := range eb.energyDecisionThresholds {
+		for curEnergy < threshold {
+			eb.cumulativeEnergyDecisionThresholds[curEnergy] = cumulativeVal
+			curEnergy++
+		}
+		cumulativeVal++
+	}
+	for curEnergy < len(eb.cumulativeEnergyDecisionThresholds) {
+		eb.cumulativeEnergyDecisionThresholds[curEnergy] = cumulativeVal
+		curEnergy++
 	}
 }
 
@@ -65,10 +127,20 @@ func (eb *energyBar) CurrentEnergy() float64 {
 }
 
 func (eb *energyBar) NextEnergyTickAt() time.Duration {
-	return eb.tickAction.NextActionAt
+	return eb.nextEnergyTick
 }
 
-func (eb *energyBar) addEnergyInternal(sim *Simulation, amount float64, metrics *ResourceMetrics) {
+func (eb *energyBar) onEnergyGain(sim *Simulation, crossedThreshold bool) {
+	if sim.CurrentTime < 0 {
+		return
+	}
+
+	if !sim.Options.Interactive && crossedThreshold {
+		eb.unit.Rotation.DoNextAction(sim)
+	}
+}
+
+func (eb *energyBar) addEnergyInternal(sim *Simulation, amount float64, metrics *ResourceMetrics) bool {
 	if amount < 0 {
 		panic("Trying to add negative energy!")
 	}
@@ -80,11 +152,14 @@ func (eb *energyBar) addEnergyInternal(sim *Simulation, amount float64, metrics 
 		eb.unit.Log(sim, "Gained %0.3f energy from %s (%0.3f --> %0.3f).", amount, metrics.ActionID, eb.currentEnergy, newEnergy)
 	}
 
+	crossedThreshold := eb.cumulativeEnergyDecisionThresholds == nil || eb.cumulativeEnergyDecisionThresholds[int(eb.currentEnergy)] != eb.cumulativeEnergyDecisionThresholds[int(newEnergy)]
 	eb.currentEnergy = newEnergy
+
+	return crossedThreshold
 }
 func (eb *energyBar) AddEnergy(sim *Simulation, amount float64, metrics *ResourceMetrics) {
-	eb.addEnergyInternal(sim, amount, metrics)
-	eb.onEnergyGain(sim)
+	crossedThreshold := eb.addEnergyInternal(sim, amount, metrics)
+	eb.onEnergyGain(sim, crossedThreshold)
 }
 
 func (eb *energyBar) SpendEnergy(sim *Simulation, amount float64, metrics *ResourceMetrics) {
@@ -111,10 +186,11 @@ func (eb *energyBar) ResetEnergyTick(sim *Simulation) {
 	timeSinceLastTick := sim.CurrentTime - (eb.NextEnergyTickAt() - EnergyTickDuration)
 	partialTickAmount := (EnergyPerTick * eb.EnergyTickMultiplier) * (float64(timeSinceLastTick) / float64(EnergyTickDuration))
 
-	eb.addEnergyInternal(sim, partialTickAmount, eb.regenMetrics)
-	eb.onEnergyGain(sim)
+	crossedThreshold := eb.addEnergyInternal(sim, partialTickAmount, eb.regenMetrics)
+	eb.onEnergyGain(sim, crossedThreshold)
 
-	eb.newTickAction(sim, false, sim.CurrentTime)
+	eb.nextEnergyTick = sim.CurrentTime + EnergyTickDuration
+	sim.RescheduleTask(eb.nextEnergyTick)
 }
 
 func (eb *energyBar) AddComboPoints(sim *Simulation, pointsToAdd int32, metrics *ResourceMetrics) {
@@ -136,29 +212,16 @@ func (eb *energyBar) SpendComboPoints(sim *Simulation, metrics *ResourceMetrics)
 	eb.comboPoints = 0
 }
 
-func (eb *energyBar) newTickAction(sim *Simulation, randomTickTime bool, startAt time.Duration) {
-	if eb.tickAction != nil {
-		eb.tickAction.Cancel(sim)
+func (eb *energyBar) RunTask(sim *Simulation) time.Duration {
+	if sim.CurrentTime < eb.nextEnergyTick {
+		return eb.nextEnergyTick
 	}
 
-	nextTickDuration := EnergyTickDuration
-	if randomTickTime {
-		nextTickDuration = time.Duration(sim.RandomFloat("Energy Tick") * float64(EnergyTickDuration))
-	}
+	crossedThreshold := eb.addEnergyInternal(sim, EnergyPerTick*eb.EnergyTickMultiplier, eb.regenMetrics)
+	eb.onEnergyGain(sim, crossedThreshold)
 
-	pa := &PendingAction{
-		NextActionAt: startAt + nextTickDuration,
-		Priority:     ActionPriorityRegen,
-	}
-	pa.OnAction = func(sim *Simulation) {
-		eb.addEnergyInternal(sim, EnergyPerTick*eb.EnergyTickMultiplier, eb.regenMetrics)
-		eb.onEnergyGain(sim)
-
-		pa.NextActionAt = sim.CurrentTime + EnergyTickDuration
-		sim.AddPendingAction(pa)
-	}
-	eb.tickAction = pa
-	sim.AddPendingAction(pa)
+	eb.nextEnergyTick = sim.CurrentTime + EnergyTickDuration
+	return eb.nextEnergyTick
 }
 
 func (eb *energyBar) reset(sim *Simulation) {
@@ -168,7 +231,25 @@ func (eb *energyBar) reset(sim *Simulation) {
 
 	eb.currentEnergy = eb.maxEnergy
 	eb.comboPoints = 0
-	eb.newTickAction(sim, true, sim.Environment.PrepullStartTime())
+
+	if eb.unit.Type != PetUnit {
+		eb.enable(sim, sim.Environment.PrepullStartTime())
+	}
+}
+
+func (eb *energyBar) enable(sim *Simulation, startAt time.Duration) {
+	sim.AddTask(eb)
+	eb.nextEnergyTick = startAt + time.Duration(sim.RandomFloat("Energy Tick")*float64(EnergyTickDuration))
+	sim.RescheduleTask(eb.nextEnergyTick)
+
+	if eb.cumulativeEnergyDecisionThresholds != nil && sim.Log != nil {
+		eb.unit.Log(sim, "[DEBUG] APL Energy decision thresholds: %v", eb.energyDecisionThresholds)
+	}
+}
+
+func (eb *energyBar) disable(sim *Simulation) {
+	eb.nextEnergyTick = NeverExpires
+	sim.RemoveTask(eb)
 }
 
 type EnergyCostOptions struct {
@@ -198,19 +279,15 @@ func newEnergyCost(spell *Spell, options EnergyCostOptions) *EnergyCost {
 	}
 }
 
-func (ec *EnergyCost) MeetsRequirement(spell *Spell) bool {
+func (ec *EnergyCost) MeetsRequirement(_ *Simulation, spell *Spell) bool {
 	spell.CurCast.Cost = spell.ApplyCostModifiers(spell.CurCast.Cost)
 	return spell.Unit.CurrentEnergy() >= spell.CurCast.Cost
 }
-func (ec *EnergyCost) LogCostFailure(sim *Simulation, spell *Spell) {
-	spell.Unit.Log(sim,
-		"Failed casting %s, not enough energy. (Current Energy = %0.03f, Energy Cost = %0.03f)",
-		spell.ActionID, spell.Unit.CurrentEnergy(), spell.CurCast.Cost)
+func (ec *EnergyCost) CostFailureReason(_ *Simulation, spell *Spell) string {
+	return fmt.Sprintf("not enough energy (Current Energy = %0.03f, Energy Cost = %0.03f)", spell.Unit.CurrentEnergy(), spell.CurCast.Cost)
 }
 func (ec *EnergyCost) SpendCost(sim *Simulation, spell *Spell) {
-	if spell.CurCast.Cost > 0 {
-		spell.Unit.SpendEnergy(sim, spell.CurCast.Cost, ec.ResourceMetrics)
-	}
+	spell.Unit.SpendEnergy(sim, spell.CurCast.Cost, ec.ResourceMetrics)
 }
 func (ec *EnergyCost) IssueRefund(sim *Simulation, spell *Spell) {
 	if ec.Refund > 0 {

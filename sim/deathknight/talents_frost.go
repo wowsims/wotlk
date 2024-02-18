@@ -31,7 +31,7 @@ func (dk *Deathknight) ApplyFrostTalents() {
 	// Nerves Of Cold Steel
 	if dk.nervesOfColdSteelActive() {
 		dk.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*float64(dk.Talents.NervesOfColdSteel))
-		dk.AutoAttacks.OHConfig.DamageMultiplier *= dk.nervesOfColdSteelBonus()
+		dk.AutoAttacks.OHConfig().DamageMultiplier *= dk.nervesOfColdSteelBonus()
 	}
 
 	// Icy Talons

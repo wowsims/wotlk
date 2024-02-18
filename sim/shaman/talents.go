@@ -39,16 +39,15 @@ func (shaman *Shaman) ApplyTalents() {
 		shaman.AddStatDependency(stats.AttackPower, stats.SpellPower, 0.1*float64(shaman.Talents.MentalQuickness))
 	}
 	if shaman.Talents.MentalDexterity > 0 {
-		shaman.AddStatDependency(stats.Intellect, stats.AttackPower, 0.3333*float64(shaman.Talents.MentalDexterity))
+		shaman.AddStatDependency(stats.Intellect, stats.AttackPower, []float64{0, 0.33, 0.66, 1}[shaman.Talents.MentalDexterity])
 	}
 	if shaman.Talents.NaturesBlessing > 0 {
 		shaman.AddStatDependency(stats.Intellect, stats.SpellPower, 0.1*float64(shaman.Talents.NaturesBlessing))
 	}
 
 	if shaman.Talents.SpiritWeapons {
+		shaman.PseudoStats.ThreatMultiplier *= 0.7
 		shaman.PseudoStats.CanParry = true
-		shaman.AutoAttacks.MHConfig.ThreatMultiplier *= 0.7
-		shaman.AutoAttacks.OHConfig.ThreatMultiplier *= 0.7
 	}
 
 	shaman.applyElementalFocus()
@@ -483,7 +482,7 @@ func (shaman *Shaman) registerManaTideTotemCD() {
 
 			// TODO: Current water totem buff needs to be removed from party/raid.
 			if shaman.Totems.Water != proto.WaterTotem_NoWaterTotem {
-				shaman.NextTotemDrops[WaterTotem] = sim.CurrentTime + time.Second*12
+				shaman.TotemExpirations[WaterTotem] = sim.CurrentTime + time.Second*12
 			}
 		},
 	})

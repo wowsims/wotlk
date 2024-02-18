@@ -8,38 +8,14 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-// TODO see Mind Flay: Mind Sear (53023) now "periodically triggers" Mind Sear (53022).
-// Since Mind Flay no longer is a binary spell, Mind Sear likely isn't, either.
+func (priest *Priest) getMindSearMiseryCoefficient() float64 {
+	return 0.2861 * (1 + 0.05*float64(priest.Talents.Misery))
+}
 
-func (priest *Priest) newMindSearSpell(numTicksIdx int32) *core.Spell {
-	numTicks := numTicksIdx
-	flags := core.SpellFlagChanneled
-	if numTicksIdx == 0 {
-		numTicks = 5
-		flags |= core.SpellFlagAPL
-	}
-
-	channelTime := time.Second * time.Duration(numTicks)
-	miseryCoeff := 0.2861 * (1 + 0.05*float64(priest.Talents.Misery))
-	hasGlyphOfShadow := priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow))
-
-	return priest.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 53023, Tag: numTicksIdx},
-		SpellSchool: core.SpellSchoolShadow,
-		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       flags,
-
-		ManaCost: core.ManaCostOptions{
-			BaseCost:   0.28,
-			Multiplier: 1 - 0.05*float64(priest.Talents.FocusedMind),
-		},
-		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				GCD:         core.GCDDefault,
-				ChannelTime: channelTime,
-			},
-		},
-
+func (priest *Priest) getMindSearBaseConfig() core.SpellConfig {
+	return core.SpellConfig{
+		SpellSchool:     core.SpellSchoolShadow,
+		ProcMask:        core.ProcMaskProc,
 		BonusHitRating:  float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
 		BonusCritRating: float64(priest.Talents.MindMelt) * 2 * core.CritRatingPerCritChance,
 		DamageMultiplier: 1 +
@@ -47,47 +23,78 @@ func (priest *Priest) newMindSearSpell(numTicksIdx int32) *core.Spell {
 			0.01*float64(priest.Talents.TwinDisciplines),
 		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
 		CritMultiplier:   priest.DefaultSpellCritMultiplier(),
-		Dot: core.DotConfig{
-			Aura: core.Aura{
-				Label: "MindSear-" + strconv.Itoa(int(numTicksIdx)),
-			},
-			NumberOfTicks:       numTicks,
-			TickLength:          time.Second,
-			AffectedByCastSpeed: true,
+	}
+}
 
-			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
-				dot.SnapshotBaseDamage = sim.Roll(212, 228) + miseryCoeff*dot.Spell.SpellPower()
-				dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
-				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
-			},
-			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-				result := dot.CalcSnapshotDamage(sim, target, dot.OutcomeMagicHitAndSnapshotCrit)
-				dot.Spell.DealDamage(sim, result)
+func (priest *Priest) getMindSearTickSpell(numTicks int32) *core.Spell {
+	hasGlyphOfShadow := priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow))
+	miseryCoeff := priest.getMindSearMiseryCoefficient()
 
-				if result.Landed() {
-					priest.AddShadowWeavingStack(sim)
-				}
-				if result.DidCrit() && hasGlyphOfShadow {
-					priest.ShadowyInsightAura.Activate(sim)
-				}
-			},
+	config := priest.getMindSearBaseConfig()
+	config.ActionID = core.ActionID{SpellID: 53022}.WithTag(numTicks)
+	config.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+		damage := sim.Roll(212, 228) + miseryCoeff*spell.SpellPower()
+		result := spell.CalcAndDealDamage(sim, target, damage, spell.OutcomeMagicHitAndCrit)
+
+		if result.Landed() {
+			priest.AddShadowWeavingStack(sim)
+		}
+		if result.DidCrit() && hasGlyphOfShadow {
+			priest.ShadowyInsightAura.Activate(sim)
+		}
+	}
+	return priest.GetOrRegisterSpell(config)
+}
+
+func (priest *Priest) newMindSearSpell(numTicksIdx int32) *core.Spell {
+	numTicks := numTicksIdx
+	flags := core.SpellFlagChanneled | core.SpellFlagNoMetrics
+	if numTicksIdx == 0 {
+		numTicks = 5
+		flags |= core.SpellFlagAPL
+	}
+
+	miseryCoeff := priest.getMindSearMiseryCoefficient()
+	mindSearTickSpell := priest.getMindSearTickSpell(numTicksIdx)
+
+	config := priest.getMindSearBaseConfig()
+	config.ActionID = core.ActionID{SpellID: 53023}.WithTag(numTicksIdx)
+	config.Flags = flags
+	config.ManaCost = core.ManaCostOptions{
+		BaseCost:   0.28,
+		Multiplier: 1 - 0.05*float64(priest.Talents.FocusedMind),
+	}
+	config.Cast = core.CastConfig{
+		DefaultCast: core.Cast{
+			GCD: core.GCDDefault,
 		},
-		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+	}
+	config.Dot = core.DotConfig{
+		Aura: core.Aura{
+			Label: "MindSear-" + strconv.Itoa(int(numTicksIdx)),
+		},
+		NumberOfTicks:       numTicks,
+		TickLength:          time.Second,
+		AffectedByCastSpeed: true,
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 			for _, aoeTarget := range sim.Encounter.TargetUnits {
-				if aoeTarget != sim.Encounter.TargetUnits[0] {
-
-					result := spell.CalcOutcome(sim, aoeTarget, spell.OutcomeMagicHit)
-					if result.Landed() {
-						spell.SpellMetrics[aoeTarget.UnitIndex].Hits--
-						spell.Dot(aoeTarget).Apply(sim)
-					}
-					spell.DealOutcome(sim, result)
+				if aoeTarget != target {
+					mindSearTickSpell.Cast(sim, aoeTarget)
+					mindSearTickSpell.SpellMetrics[target.UnitIndex].Casts -= 1
 				}
 			}
 		},
-		ExpectedTickDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, _ bool) *core.SpellResult {
-			baseDamage := sim.Roll(212, 228) + miseryCoeff*spell.SpellPower()
-			return spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicCrit)
-		},
-	})
+	}
+	config.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+		result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
+		if result.Landed() {
+			spell.Dot(target).Apply(sim)
+			mindSearTickSpell.SpellMetrics[target.UnitIndex].Casts += 1
+		}
+	}
+	config.ExpectedTickDamage = func(sim *core.Simulation, target *core.Unit, spell *core.Spell, _ bool) *core.SpellResult {
+		baseDamage := sim.Roll(212, 228) + miseryCoeff*spell.SpellPower()
+		return spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicCrit)
+	}
+	return priest.GetOrRegisterSpell(config)
 }

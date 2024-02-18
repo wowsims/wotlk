@@ -15,13 +15,12 @@
     padding-top: $gap-width;
     padding-left: $gap-width;
     padding-right: $gap-width;
-    padding-bottom: map.get($spacers, 3);
+    padding-bottom: map-get($spacers, 3);
     display: flex;
     flex-direction: column;
-    flex-grow: 1;
 
     &> *:not(:last-child) {
-      margin-bottom: map.get($spacers, 4);
+      margin-bottom: map-get($spacers, 4);
     }
 
     .sim-sidebar-actions {
@@ -60,12 +59,28 @@
 @include media-breakpoint-down(xxl) {
   .sim-sidebar {
     .sim-sidebar-content {
-      padding-left: $gap-width-sm * 2;
-      padding-right: $gap-width-sm * 2;
-
       .sim-sidebar-actions {
         padding: 0;
         margin: 0;
+      }
+    }
+  }
+}
+
+@include media-breakpoint-up(md) {
+  .sim-sidebar {
+    // Allow the stats to align to the bottom of the viewport if the section is small enough to avoid scrolling
+    // 'Smaller' is set when banner is displayed
+    .sim-sidebar-content.smaller {
+      min-height: calc(100vh - calc($sim-header-height + 3.5rem));
+    }
+    .sim-sidebar-content {
+      min-height: calc(100vh - calc($sim-header-height + 0.2rem));
+
+      .sim-sidebar-footer {
+        flex: 1;
+        display: flex;
+        align-items: flex-end;
       }
     }
   }

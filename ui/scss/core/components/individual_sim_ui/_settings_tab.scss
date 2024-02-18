@@ -1,6 +1,5 @@
 @use "sass:map";
 
-@import "./custom_rotation_picker";
 @import "./consumes_picker";
 @import "./cooldowns_picker";
 
@@ -61,10 +60,10 @@
       grid-template-columns: repeat(3, minmax(0, 1fr));
 
       &> .icon-picker {
-        margin-bottom: map.get($spacers, 1) !important;
+        margin-bottom: map-get($spacers, 1) !important;
 
         &:not(:nth-child(3n)) {
-          margin-right: map.get($spacers, 2);
+          margin-right: map-get($spacers, 2);
         }
 
         .form-label {

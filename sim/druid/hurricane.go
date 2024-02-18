@@ -37,8 +37,7 @@ func (druid *Druid) registerHurricaneSpell() {
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD:         core.GCDDefault,
-				ChannelTime: time.Second * 10,
+				GCD: core.GCDDefault,
 			},
 		},
 		Dot: core.DotConfig{

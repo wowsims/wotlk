@@ -144,7 +144,7 @@ func init() {
 			},
 		})
 
-		character.ItemSwap.RegisterOnSwapItemForEffect(3748, aura)
+		character.ItemSwap.RegisterOnSwapItemForEnchantEffect(3748, aura)
 	})
 
 	core.NewEnchantEffect(3247, func(agent core.Agent) {
@@ -259,11 +259,11 @@ func init() {
 			},
 		})
 
-		character.ItemSwap.RegisterOnSwapItemForEffect(3790, aura)
+		character.ItemSwap.RegisterOnSwapItemForEnchantEffect(3790, aura)
 	})
 
 	core.AddWeaponEffect(3843, func(agent core.Agent, _ proto.ItemSlot) {
-		w := &agent.GetCharacter().AutoAttacks.Ranged
+		w := agent.GetCharacter().AutoAttacks.Ranged()
 		w.BaseDamageMin += 15
 		w.BaseDamageMax += 15
 	})

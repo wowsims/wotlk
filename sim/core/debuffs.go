@@ -191,24 +191,9 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 }
 
 func ScheduledMajorArmorAura(aura *Aura, options PeriodicActionOptions, raid *proto.Raid) {
-	// Individual rogue sim rotation option messes with these debuff options,
-	// so it has to be handled separately.
-	allRogues := RaidPlayersWithClass(raid, proto.Class_ClassRogue)
-	singleExposeDelay := len(allRogues) == 1 &&
-		allRogues[0].Spec.(*proto.Player_Rogue).Rogue.Rotation.ExposeArmorFrequency == proto.Rogue_Rotation_Once
-
-	if singleExposeDelay {
-		target := aura.Unit
-		exposeArmorAura := ExposeArmorAura(target, false)
-		exposeArmorAura.ApplyOnExpire(func(_ *Aura, sim *Simulation) {
-			aura.Duration = NeverExpires
-			StartPeriodicAction(sim, options)
-		})
-	} else {
-		aura.OnReset = func(aura *Aura, sim *Simulation) {
-			aura.Duration = NeverExpires
-			StartPeriodicAction(sim, options)
-		}
+	aura.OnReset = func(aura *Aura, sim *Simulation) {
+		aura.Duration = NeverExpires
+		StartPeriodicAction(sim, options)
 	}
 }
 
@@ -776,7 +761,7 @@ func apReductionEffect(aura *Aura, apReduction float64) *ExclusiveEffect {
 			ee.Aura.Unit.AddStatsDynamic(sim, statReduction)
 		},
 		OnExpire: func(ee *ExclusiveEffect, sim *Simulation) {
-			ee.Aura.Unit.AddStatsDynamic(sim, statReduction.Multiply(-1))
+			ee.Aura.Unit.AddStatsDynamic(sim, statReduction.Invert())
 		},
 	})
 }

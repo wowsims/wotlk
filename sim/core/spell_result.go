@@ -3,7 +3,6 @@ package core
 import (
 	"fmt"
 	"math"
-	"time"
 
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
@@ -231,8 +230,10 @@ func (spell *Spell) CalcAndDealOutcome(sim *Simulation, target *Unit, outcomeApp
 
 // Applies the fully computed spell result to the sim.
 func (spell *Spell) dealDamageInternal(sim *Simulation, isPeriodic bool, result *SpellResult) {
-	spell.SpellMetrics[result.Target.UnitIndex].TotalDamage += result.Damage
-	spell.SpellMetrics[result.Target.UnitIndex].TotalThreat += result.Threat
+	if sim.CurrentTime >= 0 {
+		spell.SpellMetrics[result.Target.UnitIndex].TotalDamage += result.Damage
+		spell.SpellMetrics[result.Target.UnitIndex].TotalThreat += result.Threat
+	}
 
 	// Mark total damage done in raid so far for health based fights.
 	// Don't include damage done by EnemyUnits to Players
@@ -367,9 +368,8 @@ func (dot *Dot) CalcAndDealPeriodicSnapshotHealing(sim *Simulation, target *Unit
 }
 
 func (spell *Spell) WaitTravelTime(sim *Simulation, callback func(*Simulation)) {
-	travelTime := time.Duration(float64(time.Second) * spell.Unit.DistanceFromTarget / spell.MissileSpeed)
 	StartDelayedAction(sim, DelayedActionOptions{
-		DoAt:     sim.CurrentTime + travelTime,
+		DoAt:     sim.CurrentTime + spell.TravelTime(),
 		OnAction: callback,
 	})
 }

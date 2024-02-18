@@ -1,8 +1,5 @@
 import {
 	Consumes,
-	CustomRotation,
-	CustomSpell,
-	EquipmentSpec,
 	Explosive,
 	Flask,
 	Food,
@@ -10,42 +7,72 @@ import {
 	PetFood,
 	Potions,
 	UnitReference,
-	Spec
 } from '../core/proto/common.js';
-import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
-import { Player } from '../core/player.js';
+import { SavedTalents } from '../core/proto/ui.js';
 
 import {
 	Deathknight_Options as DeathKnightOptions,
-	Deathknight_Rotation as DeathKnightRotation,
-	Deathknight_Rotation_ArmyOfTheDead,
-	Deathknight_Rotation_BloodRuneFiller,
-	Deathknight_Rotation_CustomSpellOption as CustomSpellOption,
-	Deathknight_Rotation_FrostRotationType,
-	Deathknight_Rotation_Presence,
 	DeathknightMajorGlyph,
 	DeathknightMinorGlyph,
-	Deathknight_Rotation_DrwDiseases,
-	Deathknight_Rotation_BloodSpell,
 } from '../core/proto/deathknight.js';
 
-import * as Tooltips from '../core/constants/tooltips.js';
-import { APLRotation } from '../core/proto/apl.js';
-
-import BloodPestiApl from './apls/blood_pesti.apl.json';
-import BloodPestiDDApl from './apls/blood_pesti_dd.apl.json';
-import BloodPestiAoeApl from './apls/blood_pesti_aoe.apl.json';
-
-import FrostBlPestiApl from './apls/frost_bl_pesti.apl.json';
-import FrostUhPestiApl from './apls/frost_uh_pesti.apl.json';
-
-import UhDwSsApl from './apls/unholy_dw_ss.apl.json';
-import Uh2hSsApl from './apls/uh_2h_ss.apl.json';
-import UhDndAoeApl from './apls/uh_dnd_aoe.apl.json';
+import * as PresetUtils from '../core/preset_utils.js';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
 // keep them in a separate file.
+
+import P1BloodGear from './gear_sets/p1_blood.gear.json';
+export const P1_BLOOD_PRESET = PresetUtils.makePresetGear('P1 Blood', P1BloodGear, { talentTree: 0 });
+import P2BloodGear from './gear_sets/p2_blood.gear.json';
+export const P2_BLOOD_PRESET = PresetUtils.makePresetGear('P2 Blood', P2BloodGear, { talentTree: 0 });
+import P3BloodGear from './gear_sets/p3_blood.gear.json';
+export const P3_BLOOD_PRESET = PresetUtils.makePresetGear('P3 Blood', P3BloodGear, { talentTree: 0 });
+import P4BloodGear from './gear_sets/p4_blood.gear.json';
+export const P4_BLOOD_PRESET = PresetUtils.makePresetGear('P4 Blood', P4BloodGear, { talentTree: 0 });
+import PreraidFrostGear from './gear_sets/preraid_frost.gear.json';
+export const PRERAID_FROST_PRESET = PresetUtils.makePresetGear('Pre-Raid Frost', PreraidFrostGear, { talentTree: 1 });
+import P1FrostGear from './gear_sets/p1_frost.gear.json';
+export const P1_FROST_PRESET = PresetUtils.makePresetGear('P1 Frost', P1FrostGear, { talentTree: 1 });
+import P2FrostGear from './gear_sets/p2_frost.gear.json';
+export const P2_FROST_PRESET = PresetUtils.makePresetGear('P2 Frost', P2FrostGear, { talentTree: 1 });
+import P3FrostGear from './gear_sets/p3_frost.gear.json';
+export const P3_FROST_PRESET = PresetUtils.makePresetGear('P3 Frost', P3FrostGear, { talentTree: 1 });
+import P4FrostGear from './gear_sets/p4_frost.gear.json';
+export const P4_FROST_PRESET = PresetUtils.makePresetGear('P4 Frost', P4FrostGear, { talentTree: 1 });
+import P1FrostSubUhGear from './gear_sets/p1_frost_subUh.gear.json';
+export const P1_FROSTSUBUNH_PRESET = PresetUtils.makePresetGear('P1 Frost Sub Unh', P1FrostSubUhGear, { talentTree: 1 });
+import PreraidUh2hGear from './gear_sets/preraid_uh_2h.gear.json';
+export const PRERAID_UNHOLY_2H_PRESET = PresetUtils.makePresetGear('Pre-Raid 2H Unholy', PreraidUh2hGear, { talentTree: 2 });
+import P1Uh2hGear from './gear_sets/p1_uh_2h.gear.json';
+export const P1_UNHOLY_2H_PRESET = PresetUtils.makePresetGear('P1 2H Unholy', P1Uh2hGear, { talentTree: 2 });
+import P4Uh2hGear from './gear_sets/p4_uh_2h.gear.json';
+export const P4_UNHOLY_2H_PRESET = PresetUtils.makePresetGear('P4 2H Unholy', P4Uh2hGear, { talentTree: 2 });
+import PreraidUhDwGear from './gear_sets/preraid_uh_dw.gear.json';
+export const PRERAID_UNHOLY_DW_PRESET = PresetUtils.makePresetGear('Pre-Raid DW Unholy', PreraidUhDwGear, { talentTree: 2 });
+import P1UhDwGear from './gear_sets/p1_uh_dw.gear.json';
+export const P1_UNHOLY_DW_PRESET = PresetUtils.makePresetGear('P1 DW Unholy', P1UhDwGear, { talentTree: 2 });
+import P2UhDwGear from './gear_sets/p2_uh_dw.gear.json';
+export const P2_UNHOLY_DW_PRESET = PresetUtils.makePresetGear('P2 DW Unholy', P2UhDwGear, { talentTree: 2 });
+import P3UhDwGear from './gear_sets/p3_uh_dw.gear.json';
+export const P3_UNHOLY_DW_PRESET = PresetUtils.makePresetGear('P3 DW Unholy', P3UhDwGear, { talentTree: 2 });
+import P4UhDwGear from './gear_sets/p4_uh_dw.gear.json';
+export const P4_UNHOLY_DW_PRESET = PresetUtils.makePresetGear('P4 DW Unholy', P4UhDwGear, { talentTree: 2 });
+
+import BloodDPSApl from './apls/blood_dps.apl.json';
+export const BLOOD_DPS_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Blood DPS', BloodDPSApl, { talentTree: 0 });
+import BloodPestiAoeApl from './apls/blood_pesti_aoe.apl.json';
+export const BLOOD_PESTI_AOE_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Blood Pesti AOE', BloodPestiAoeApl, { talentTree: 0 });
+import FrostBlPestiApl from './apls/frost_bl_pesti.apl.json';
+export const FROST_BL_PESTI_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Frost BL Pesti', FrostBlPestiApl, { talentTree: 1 });
+import FrostUhPestiApl from './apls/frost_uh_pesti.apl.json';
+export const FROST_UH_PESTI_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Frost UH Pesti', FrostUhPestiApl, { talentTree: 1 });
+import UhDwSsApl from './apls/unholy_dw_ss.apl.json';
+export const UNHOLY_DW_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Unholy DW SS', UhDwSsApl, { talentTree: 2 });
+import Uh2hSsApl from './apls/uh_2h_ss.apl.json';
+export const UNHOLY_2H_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Unholy 2H SS', Uh2hSsApl, { talentTree: 2 });
+import UhDndAoeApl from './apls/uh_dnd_aoe.apl.json';
+export const UNHOLY_DND_AOE_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Unholy DND AOE', UhDndAoeApl, { talentTree: 2 });
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wotlk.wowhead.com/talent-calc and copy the numbers in the url.
@@ -154,96 +181,25 @@ export const BloodTalents = {
 	}),
 };
 
-export const DefaultUnholyRotation = DeathKnightRotation.create({
-	useDeathAndDecay: true,
-	btGhoulFrenzy: true,
-	refreshHornOfWinter: false,
-	useGargoyle: true,
-	useEmpowerRuneWeapon: true,
-	holdErwArmy: false,
-	preNerfedGargoyle: false,
-	armyOfTheDead: Deathknight_Rotation_ArmyOfTheDead.AsMajorCd,
-	startingPresence: Deathknight_Rotation_Presence.Unholy,
-	blPresence: Deathknight_Rotation_Presence.Blood,
-	presence: Deathknight_Rotation_Presence.Blood,
-	gargoylePresence: Deathknight_Rotation_Presence.Unholy,
-	bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodBoil,
-	useAms: false,
-	drwDiseases: Deathknight_Rotation_DrwDiseases.Pestilence,
-	bloodSpender: Deathknight_Rotation_BloodSpell.HS,
-	useDancingRuneWeapon: true
-});
-
 export const DefaultUnholyOptions = DeathKnightOptions.create({
-	drwPestiApply: true,
 	startingRunicPower: 0,
 	petUptime: 1,
-	precastGhoulFrenzy: false,
-	precastHornOfWinter: true,
 	unholyFrenzyTarget: UnitReference.create(),
-	diseaseDowntime: 2,
-});
-
-export const DefaultFrostRotation = DeathKnightRotation.create({
-	useDeathAndDecay: false,
-	btGhoulFrenzy: false,
-	refreshHornOfWinter: false,
-	useEmpowerRuneWeapon: true,
-	preNerfedGargoyle: false,
-	startingPresence: Deathknight_Rotation_Presence.Blood,
-	presence: Deathknight_Rotation_Presence.Blood,
-	bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodBoil,
-	useAms: false,
-	avgAmsSuccessRate: 1.0,
-	avgAmsHit: 10000.0,
-	drwDiseases: Deathknight_Rotation_DrwDiseases.Pestilence,
-  	frostRotationType: Deathknight_Rotation_FrostRotationType.SingleTarget,
-	armyOfTheDead: Deathknight_Rotation_ArmyOfTheDead.PreCast,
-  	frostCustomRotation: CustomRotation.create({
-		spells: [
-			CustomSpell.create({ spell: CustomSpellOption.CustomDeathAndDecay }),
-			CustomSpell.create({ spell: CustomSpellOption.CustomIcyTouch }),
-			CustomSpell.create({ spell: CustomSpellOption.CustomPlagueStrike }),
-			CustomSpell.create({ spell: CustomSpellOption.CustomPestilence }),
-			CustomSpell.create({ spell: CustomSpellOption.CustomHowlingBlastRime }),
-			CustomSpell.create({ spell: CustomSpellOption.CustomHowlingBlast }),
-			CustomSpell.create({ spell: CustomSpellOption.CustomBloodBoil }),
-			CustomSpell.create({ spell: CustomSpellOption.CustomObliterate }),
-			CustomSpell.create({ spell: CustomSpellOption.CustomFrostStrike }),
-		],
-	}),
+	drwPestiApply: true,
 });
 
 export const DefaultFrostOptions = DeathKnightOptions.create({
-	drwPestiApply: true,
 	startingRunicPower: 0,
 	petUptime: 1,
-	precastHornOfWinter: true,
 	unholyFrenzyTarget: UnitReference.create(),
-	diseaseDowntime: 0,
-});
-
-export const DefaultBloodRotation = DeathKnightRotation.create({
-	refreshHornOfWinter: false,
-	useEmpowerRuneWeapon: true,
-	preNerfedGargoyle: false,
-	startingPresence: Deathknight_Rotation_Presence.Blood,
-	bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodStrike,
-	armyOfTheDead: Deathknight_Rotation_ArmyOfTheDead.PreCast,
-	holdErwArmy: false,
-	useAms: false,
-	drwDiseases: Deathknight_Rotation_DrwDiseases.Pestilence,
-	bloodSpender: Deathknight_Rotation_BloodSpell.HS,
-	useDancingRuneWeapon: true,
+	drwPestiApply: true,
 });
 
 export const DefaultBloodOptions = DeathKnightOptions.create({
-	drwPestiApply: true,
 	startingRunicPower: 0,
 	petUptime: 1,
-	precastHornOfWinter: true,
 	unholyFrenzyTarget: UnitReference.create(),
-	diseaseDowntime: 0,
+	drwPestiApply: true,
 });
 
 export const OtherDefaults = {
@@ -258,551 +214,3 @@ export const DefaultConsumes = Consumes.create({
 	thermalSapper: true,
 	fillerExplosive: Explosive.ExplosiveSaroniteBomb,
 });
-
-export const BLOOD_ROTATION_PRESET_LEGACY_DEFAULT = {
-	name: 'Blood Legacy',
-	//enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultBloodRotation),
-	}),
-}
-
-export const FROST_ROTATION_PRESET_LEGACY_DEFAULT = {
-	name: 'Frost Legacy',
-	//enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 1,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultFrostRotation),
-	}),
-}
-
-export const UNHOLY_DW_ROTATION_PRESET_LEGACY_DEFAULT = {
-	name: 'Unholy DW Legacy',
-	//enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultUnholyRotation),
-	}),
-}
-
-export const BLOOD_PESTI_ROTATION_PRESET_DEFAULT = {
-	name: 'Blood Pesti APL',
-	//enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultBloodRotation),
-		rotation: APLRotation.fromJsonString(JSON.stringify(BloodPestiApl)),
-	}),
-}
-
-export const BLOOD_PESTI_DD_ROTATION_PRESET_DEFAULT = {
-	name: 'Blood Pesti DD APL',
-	//enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultBloodRotation),
-		rotation: APLRotation.fromJsonString(JSON.stringify(BloodPestiDDApl)),
-	}),
-}
-
-export const BLOOD_PESTI_AOE_ROTATION_PRESET_DEFAULT = {
-	name: 'Blood Pesti AOE APL',
-	//enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultBloodRotation),
-		rotation: APLRotation.fromJsonString(JSON.stringify(BloodPestiAoeApl)),
-	}),
-}
-
-export const FROST_BL_PESTI_ROTATION_PRESET_DEFAULT = {
-	name: 'Frost BL Pesti APL',
-	//enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 1,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultFrostRotation),
-		rotation: APLRotation.fromJsonString(JSON.stringify(FrostBlPestiApl)),
-	}),
-}
-
-export const FROST_UH_PESTI_ROTATION_PRESET_DEFAULT = {
-	name: 'Frost UH Pesti APL',
-	//enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 1,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultFrostRotation),
-		rotation: APLRotation.fromJsonString(JSON.stringify(FrostUhPestiApl)),
-	}),
-}
-
-export const UNHOLY_DW_ROTATION_PRESET_DEFAULT = {
-	name: 'Unholy DW SS APL',
-	//enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultUnholyRotation),
-		rotation: APLRotation.fromJsonString(JSON.stringify(UhDwSsApl)),
-	}),
-}
-
-export const UNHOLY_2H_ROTATION_PRESET_DEFAULT = {
-	name: 'Unholy 2H SS APL',
-	//enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultUnholyRotation),
-		rotation: APLRotation.fromJsonString(JSON.stringify(Uh2hSsApl)),
-	}),
-}
-
-export const UNHOLY_DND_AOE_ROTATION_PRESET_DEFAULT = {
-	name: 'Unholy DND AOE APL',
-	//enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultUnholyRotation),
-		rotation: APLRotation.fromJsonString(JSON.stringify(UhDndAoeApl)),
-	}),
-}
-
-export const P1_BLOOD_BIS_PRESET = {
-	name: 'P1 Blood',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
-	gear: EquipmentSpec.fromJsonString(`{   "items": [
-		{"id":44006,"enchant":3817,"gems":[41398,42702]},
-		  {"id":44664,"gems":[39996]},
-		  {"id":40557,"enchant":3808,"gems":[39996]},
-		  {"id":40403,"enchant":3831},
-		  {"id":40550,"enchant":3832,"gems":[42142,42142]},
-		  {"id":40330,"enchant":3845,"gems":[42142,0]},
-		  {"id":40552,"enchant":3604,"gems":[39996,0]},
-		  {"id":40278,"gems":[39996,39996]},
-		  {"id":40556,"enchant":3823,"gems":[39996,40037]},
-		  {"id":40591,"enchant":3606},
-		  {"id":40075},
-		  {"id":39401},
-		  {"id":40256},
-		  {"id":42987},
-		  {"id":40384,"enchant":3368},
-		  {},
-		  {"id":40207}
-  ]}`),
-};
-
-export const P2_BLOOD_BIS_PRESET = {
-	name: 'P2 Blood',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
-	gear: EquipmentSpec.fromJsonString(`{   "items": [
-		{"id":46115,"enchant":3817,"gems":[41398,42702]},
-		  {"id":45459,"gems":[39996]},
-		  {"id":46117,"enchant":3808,"gems":[39996]},
-		  {"id":46032,"enchant":3831,"gems":[39996,39996]},
-		  {"id":46111,"enchant":3832,"gems":[42142,42142]},
-		  {"id":45663,"enchant":3845,"gems":[42142,0]},
-		  {"id":46113,"enchant":3604,"gems":[39996,0]},
-		  {"id":45241,"gems":[39996,45862,39996]},
-		  {"id":45134,"enchant":3823,"gems":[39996,39996,39996]},
-		  {"id":45599,"enchant":3606,"gems":[39996,39996]},
-		  {"id":45534,"gems":[39996]},
-		  {"id":46048,"gems":[39996]},
-		  {"id":42987},
-		  {"id":45931},
-		  {"id":45516,"enchant":3368,"gems":[39996,39996]},
-		  {},
-		  {"id":45254}
-  ]}`),
-};
-
-export const P3_BLOOD_BIS_PRESET = {
-	name: 'P3 Blood',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
-	gear: EquipmentSpec.fromJsonString(`{   "items": [
-		  {"id":48493,"enchant":3817,"gems":[41285,40142]},
-		  {"id":47458,"gems":[40142]},
-		  {"id":48495,"enchant":3808,"gems":[40111]},
-		  {"id":47546,"enchant":3831,"gems":[42142]},
-		  {"id":47449,"enchant":3832,"gems":[49110,42142,40142]},
-		  {"id":48008,"enchant":3845,"gems":[40111,0]},
-		  {"id":48492,"enchant":3604,"gems":[40142,0]},
-		  {"id":47429,"gems":[40142,40142,40111]},
-		  {"id":48494,"enchant":3823,"gems":[40142,40111]},
-		  {"id":45599,"enchant":3606,"gems":[40111,40111]},
-		  {"id":47993,"gems":[40111,45862]},
-		  {"id":47413,"gems":[40142]},
-		  {"id":45931},
-		  {"id":47464},
-		  {"id":47446,"enchant":3368,"gems":[42142,40141]},
-		  {},
-		  {"id":47673}
-  ]}`),
-};
-
-export const P4_BLOOD_BIS_PRESET = {
-	name: 'P4 Blood',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
-	gear: EquipmentSpec.fromJsonString(`{   "items": [
-        {"id":51312,"enchant":3817,"gems":[41398,40117]},
-        {"id":50728,"gems":[40143]},
-        {"id":51314,"enchant":3808,"gems":[40117]},
-        {"id":50677,"enchant":3831,"gems":[42156]},
-        {"id":51310,"enchant":3832,"gems":[40117,49110]},
-        {"id":50659,"enchant":3845,"gems":[40162,0]},
-        {"id":50675,"enchant":3604,"gems":[40143,40117,0]},
-        {"id":50620,"gems":[40125,40117,40117]},
-        {"id":51313,"enchant":3823,"gems":[40117,40117]},
-        {"id":50639,"enchant":3606,"gems":[40125,40117]},
-        {"id":50693,"gems":[40125]},
-        {"id":52572,"gems":[40125]},
-        {"id":50363},
-        {"id":47464},
-        {"id":49623,"enchant":3368,"gems":[40117,42153,42153]},
-        {},
-        {"id":47673}
-  ]}`),
-};
-
-export const P1_UNHOLY_2H_PRERAID_PRESET = {
-	name: 'Pre-Raid 2H Unholy',
-	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2,
-	gear: EquipmentSpec.fromJsonString(`{ "items": [
-		{"id":41386,"enchant":3817,"gems":[41400,49110]},
-		{"id":37397},
-		{"id":37627,"enchant":3808,"gems":[39996]},
-		{"id":37647,"enchant":3831},
-		{"id":39617,"enchant":3832,"gems":[42142,39996]},
-		{"id":41355,"enchant":3845,"gems":[0]},
-		{"id":39618,"enchant":3604,"gems":[39996,0]},
-		{"id":40688,"gems":[39996,42142]},
-		{"id":37193,"enchant":3823,"gems":[42142,39996]},
-		{"id":44306,"enchant":3606,"gems":[39996,39996]},
-		{"id":37642},
-		{"id":44935},
-		{"id":40684},
-		{"id":42987},
-		{"id":41257,"enchant":3368},
-		{},
-		{"id":40867}
-  ]}`),
-};
-
-export const P1_UNHOLY_2H_BIS_PRESET = {
-	name: 'P1 2H Unholy',
-	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2,
-	gear: EquipmentSpec.fromJsonString(`{ "items": [
-		{"id":44006,"enchant":3817,"gems":[41400,49110]},
-		{"id":44664,"gems":[39996]},
-		{"id":40557,"enchant":3808,"gems":[39996]},
-		{"id":40403,"enchant":3831},
-		{"id":40550,"enchant":3832,"gems":[42142,39996]},
-		{"id":40330,"enchant":3845,"gems":[39996,0]},
-		{"id":40552,"enchant":3604,"gems":[40038,0]},
-		{"id":40278,"gems":[42142,42142]},
-		{"id":40556,"enchant":3823,"gems":[39996,39996]},
-		{"id":40591,"enchant":3606},
-		{"id":39401},
-		{"id":40075},
-		{"id":40256},
-		{"id":42987},
-		{"id":40384,"enchant":3368},
-		{},
-		{"id":40207}
-	  ]
-    }`),
-};
-
-export const P4_UNHOLY_2H_BIS_PRESET = {
-	name: 'P4 2H Unholy',
-	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2,
-	gear: EquipmentSpec.fromJsonString(`{ "items": [
-        {"id":51312,"enchant":3817,"gems":[41398,40111]},
-        {"id":50647,"gems":[40111]},
-        {"id":51314,"enchant":3808,"gems":[40111]},
-        {"id":50677,"enchant":3831,"gems":[40146]},
-        {"id":51310,"enchant":3832,"gems":[40111,40111]},
-        {"id":50659,"enchant":3845,"gems":[40146,0]},
-        {"id":51311,"enchant":3604,"gems":[40146,0]},
-        {"id":50620,"gems":[40146,40111,40111]},
-        {"id":50624,"enchant":3823,"gems":[40146,40111,49110]},
-        {"id":50639,"enchant":3606,"gems":[40146,40111]},
-        {"id":50693,"gems":[40146]},
-        {"id":52572,"gems":[40146]},
-        {"id":47464},
-        {"id":50363},
-        {"id":49623,"enchant":3368,"gems":[42142,42142,42142]},
-        {},
-        {"id":47673}
-      ]
-	}`),
-};
-
-export const P1_UNHOLY_DW_PRERAID_PRESET = {
-	name: 'Pre-Raid DW Unholy',
-	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{"id":41386,"enchant":3817,"gems":[41400,49110]},
-		{"id":37397},
-		{"id":37627,"enchant":3808,"gems":[39996]},
-		{"id":37647,"enchant":3831},
-		{"id":39617,"enchant":3832,"gems":[42142,39996]},
-		{"id":41355,"enchant":3845,"gems":[0]},
-		{"id":39618,"enchant":3604,"gems":[39996,0]},
-		{"id":40688,"gems":[39996,42142]},
-		{"id":37193,"enchant":3823,"gems":[42142,39996]},
-		{"id":44306,"enchant":3606,"gems":[39996,39996]},
-		{"id":37642},
-		{"id":44935},
-		{"id":40684},
-		{"id":42987},
-		{"id":41383,"enchant":3368},
-		{"id":40703,"enchant":3368},
-		{"id":40867}
-  ]}`),
-};
-
-export const P1_UNHOLY_DW_BIS_PRESET = {
-	name: 'P1 DW Unholy',
-	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{"id":44006,"enchant":3817,"gems":[41398,42702]},
-		{"id":39421},
-		{"id":40557,"enchant":3808,"gems":[39996]},
-		{"id":40403,"enchant":3831},
-		{"id":40550,"enchant":3832,"gems":[42142,39996]},
-		{"id":40330,"enchant":3845,"gems":[39996,0]},
-		{"id":40347,"enchant":3604,"gems":[39996,0]},
-		{"id":40278,"gems":[42142,42142]},
-		{"id":40294,"enchant":3823},
-		{"id":39706,"enchant":3606,"gems":[39996]},
-		{"id":39401},
-		{"id":40075},
-		{"id":37390},
-		{"id":42987},
-		{"id":40402,"enchant":3368},
-		{"id":40491,"enchant":3368},
-		{"id":42620}
-  ]}`),
-};
-
-export const P2_UNHOLY_DW_BIS_PRESET = {
-	name: 'P2 DW Unholy',
-	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{"id":45472,"enchant":3817,"gems":[41398,40041]},
-		  {"id":46040,"gems":[39996]},
-		  {"id":46117,"enchant":3808,"gems":[39996]},
-		  {"id":45588,"enchant":3831,"gems":[39996]},
-		  {"id":46111,"enchant":3832,"gems":[42142,42142]},
-		  {"id":45663,"enchant":3845,"gems":[39996,0]},
-		  {"id":45481,"enchant":3604,"gems":[0]},
-		  {"id":45241,"gems":[42142,45862,39996]},
-		  {"id":45134,"enchant":3823,"gems":[40041,39996,40022]},
-		  {"id":45599,"enchant":3606,"gems":[39996,39996]},
-		  {"id":45534,"gems":[39996]},
-		  {"id":45250},
-		  {"id":45609},
-		  {"id":42987},
-		  {"id":46097,"enchant":3368,"gems":[39996]},
-		  {"id":46036,"enchant":3368,"gems":[39996]},
-		  {"id":45254}
-  ]}`),
-};
-
-export const P3_UNHOLY_DW_BIS_PRESET = {
-	name: 'P3 DW Unholy',
-	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{"id":48493,"enchant":3817,"gems":[41398,40146]},
-		  {"id":47458,"gems":[40146]},
-		  {"id":48495,"enchant":3808,"gems":[40111]},
-		  {"id":47548,"enchant":3831,"gems":[40111]},
-		  {"id":48491,"enchant":3832,"gems":[42142,42142]},
-		  {"id":45663,"enchant":3845,"gems":[40111,0]},
-		  {"id":48492,"enchant":3604,"gems":[40146,0]},
-		  {"id":47429,"gems":[40111,45862,40111]},
-		  {"id":47465,"enchant":3823,"gems":[49110,40111,40146]},
-		  {"id":45599,"enchant":3606,"gems":[40111,40111]},
-		  {"id":47413,"gems":[40146]},
-		  {"id":45534,"gems":[42142]},
-		  {"id":47464},
-		  {"id":45609},
-		  {"id":47528,"enchant":3368,"gems":[40111]},
-		  {"id":47528,"enchant":3368,"gems":[40111]},
-		  {"id":47673}
-  ]}`),
-};
-
-export const P4_UNHOLY_DW_BIS_PRESET = {
-	name: 'P4 DW Unholy',
-	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-        {"id":51312,"enchant":3817,"gems":[41398,40111]},
-        {"id":50647,"gems":[40111]},
-        {"id":51314,"enchant":3808,"gems":[40111]},
-        {"id":50677,"enchant":3831,"gems":[40146]},
-        {"id":51310,"enchant":3832,"gems":[42142,49110]},
-        {"id":50659,"enchant":3845,"gems":[40146,0]},
-        {"id":51311,"enchant":3604,"gems":[40146,0]},
-        {"id":50620,"gems":[40146,40111,42142]},
-        {"id":50624,"enchant":3823,"gems":[40111,42142,40111]},
-        {"id":50639,"enchant":3606,"gems":[40146,40111]},
-        {"id":52572,"gems":[40146]},
-        {"id":51855,"gems":[40111]},
-        {"id":47131},
-        {"id":50363},
-        {"id":50737,"enchant":3368,"gems":[40111]},
-        {"id":50737,"enchant":3368,"gems":[40111]},
-        {"id":47673}
-	]}`),
-};
-
-export const P1_FROST_PRE_BIS_PRESET = {
-	name: 'Pre-Raid Frost',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 1,
-	gear: EquipmentSpec.fromJsonString(`{   "items": [
-		{"id":41386,"enchant":3817,"gems":[41398,49110]},
-		{"id":42645,"gems":[42142]},
-		{"id":34388,"enchant":3808,"gems":[39996,39996]},
-		{"id":37647,"enchant":3831},
-		{"id":39617,"enchant":3832,"gems":[42142,39996]},
-		{"id":41355,"enchant":3845,"gems":[0]},
-		{"id":39618,"enchant":3604,"gems":[39996,0]},
-		{"id":37171,"gems":[39996,39996]},
-		{"id":37193,"enchant":3823,"gems":[42142,39996]},
-		{"id":44306,"enchant":3606,"gems":[39996,39996]},
-		{"id":42642,"gems":[39996]},
-		{"id":44935},
-		{"id":40684},
-		{"id":42987},
-		{"id":41383,"enchant":3370},
-		{"id":43611,"enchant":3368},
-		{"id":40715}
-  ]}`),
-};
-
-export const P1_FROST_BIS_PRESET = {
-	name: 'P1 Frost',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 1,
-	gear: EquipmentSpec.fromJsonString(`{   "items": [
-		{"id":44006,"enchant":3817,"gems":[41398,42702]},
-		{"id":44664,"gems":[39996]},
-		{"id":40557,"enchant":3808,"gems":[39996]},
-		{"id":40403,"enchant":3831},
-		{"id":40550,"enchant":3832,"gems":[42142,39996]},
-		{"id":40330,"enchant":3845,"gems":[39996,0]},
-		{"id":40552,"enchant":3604,"gems":[39996,0]},
-		{"id":40278,"gems":[39996,42142]},
-		{"id":40556,"enchant":3823,"gems":[42142,39996]},
-		{"id":40591,"enchant":3606},
-		{"id":39401},
-		{"id":40075},
-		{"id":40256},
-		{"id":42987},
-		{"id":40189,"enchant":3370},
-		{"id":40189,"enchant":3368},
-		{"id":40207}
-  ]}`),
-};
-
-export const P2_FROST_BIS_PRESET = {
-	name: 'P2 Frost',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 1,
-	gear: EquipmentSpec.fromJsonString(`{   "items": [
-		{"id":46115,"enchant":3817,"gems":[41398,42702]},
-		  {"id":45459,"gems":[39996]},
-		  {"id":46117,"enchant":3808,"gems":[39996]},
-		  {"id":46032,"enchant":3831,"gems":[39996,39996]},
-		  {"id":46111,"enchant":3832,"gems":[42142,42142]},
-		  {"id":45663,"enchant":3845,"gems":[39996,0]},
-		  {"id":46113,"enchant":3604,"gems":[39996,0]},
-		  {"id":45241,"gems":[42142,45862,39996]},
-		  {"id":45134,"enchant":3823,"gems":[39996,39996,39996]},
-		  {"id":45599,"enchant":3606,"gems":[39996,39996]},
-		  {"id":45608,"gems":[39996]},
-		  {"id":45534,"gems":[39996]},
-		  {"id":45931},
-		  {"id":42987},
-		  {"id":46097,"enchant":3370,"gems":[39996]},
-		  {"id":46097,"enchant":3368,"gems":[39996]},
-		  {"id":40207}
-  ]}`),
-};
-
-export const P3_FROST_BIS_PRESET = {
-	name: 'P3 Frost',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 1,
-	gear: EquipmentSpec.fromJsonString(`{   "items": [
-		{"id":48493,"enchant":3817,"gems":[41398,40142]},
-		  {"id":45459,"gems":[40111]},
-		  {"id":48495,"enchant":3808,"gems":[40111]},
-		  {"id":47548,"enchant":3831,"gems":[40111]},
-		  {"id":48491,"enchant":3832,"gems":[42142,42142]},
-		  {"id":45663,"enchant":3845,"gems":[40111,0]},
-		  {"id":47492,"enchant":3604,"gems":[49110,40111,0]},
-		  {"id":45241,"gems":[40111,42142,40111]},
-		  {"id":48494,"enchant":3823,"gems":[40142,40111]},
-		  {"id":47473,"enchant":3606,"gems":[40142,40111]},
-		  {"id":46966,"gems":[40111]},
-		  {"id":45534,"gems":[40111]},
-		  {"id":47464},
-		  {"id":45931},
-		  {"id":47528,"enchant":3370,"gems":[40111]},
-		  {"id":47528,"enchant":3368,"gems":[40111]},
-		  {"id":40207}
-  ]}`),
-};
-
-export const P4_FROST_BIS_PRESET = {
-	name: 'P4 Frost',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 1,
-	gear: EquipmentSpec.fromJsonString(`{   "items": [
-        {"id":51312,"enchant":3817,"gems":[41398,42153]},
-        {"id":50728,"gems":[40117]},
-        {"id":51314,"enchant":3808,"gems":[42153]},
-        {"id":47548,"enchant":3831,"gems":[40117]},
-        {"id":51310,"enchant":3832,"gems":[42153,40117]},
-        {"id":50659,"enchant":3845,"gems":[40117,0]},
-        {"id":51311,"enchant":3604,"gems":[40117,0]},
-        {"id":50620,"enchant":3601,"gems":[40143,40117,40117]},
-        {"id":51817,"enchant":3823,"gems":[49110,40117,40143]},
-        {"id":50639,"enchant":3606,"gems":[40143,40117]},
-        {"id":52572,"gems":[40117]},
-        {"id":50693,"gems":[40117]},
-        {"id":50363},
-        {"id":47464},
-        {"id":50737,"enchant":3370,"gems":[40117]},
-        {"id":50737,"enchant":3368,"gems":[40117]},
-        {"id":40207}
-  ]}`),
-};
-
-export const P1_FROSTSUBUNH_BIS_PRESET = {
-	name: 'P1 Frost Sub Unh',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 1,
-	gear: EquipmentSpec.fromJsonString(`{   "items": [
-		{"id":44006,"enchant":3817,"gems":[41398,42702]},
-		{"id":44664,"gems":[40003]},
-		{"id":40557,"enchant":3808,"gems":[40003]},
-		{"id":40403,"enchant":3831},
-		{"id":40550,"enchant":3832,"gems":[42142,40003]},
-		{"id":40330,"enchant":3845,"gems":[39996,0]},
-		{"id":40552,"enchant":3604,"gems":[40058,0]},
-		{"id":40278,"gems":[39996,42142]},
-		{"id":40556,"enchant":3823,"gems":[42142,39996]},
-		{"id":40591,"enchant":3606},
-		{"id":39401},
-		{"id":40075},
-		{"id":40256},
-		{"id":42987},
-		{"id":40189,"enchant":3370},
-		{"id":40189,"enchant":3368},
-		{"id":40207}
-  ]}`),
-};

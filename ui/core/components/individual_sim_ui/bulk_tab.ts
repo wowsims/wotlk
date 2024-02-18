@@ -7,13 +7,13 @@ import { TypedEvent } from "../../typed_event";
 
 import { EventID } from '../../typed_event.js';
 
-import { BulkComboResult, BulkSettings, ItemSpecWithSlot, ProgressMetrics } from "../../proto/api";
-import { EquipmentSpec, Faction, GemColor, ItemSlot, ItemSpec, SimDatabase, SimEnchant, SimGem, SimItem, Spec } from "../../proto/common";
+import { BulkComboResult, BulkSettings, ItemSpecWithSlot, ProgressMetrics, TalentLoadout } from "../../proto/api";
+import { EquipmentSpec, Faction, GemColor, Glyphs, ItemSlot, ItemSpec, SimDatabase, SimEnchant, SimGem, SimItem, Spec } from "../../proto/common";
 
 import { ItemData, ItemList, ItemRenderer, SelectorModal, SelectorModalTabs } from "../gear_picker";
 import { SimTab } from "../sim_tab";
 
-import { UIEnchant, UIGem, UIItem } from "../../proto/ui";
+import { SavedTalents, UIEnchant, UIGem, UIItem } from "../../proto/ui";
 import { EquippedItem } from "../../proto_utils/equipped_item";
 import { Component } from "../component";
 import { ResultsViewer } from "../results_viewer";
@@ -50,6 +50,7 @@ export class BulkGearJsonImporter<SpecType extends Spec> extends Importer {
 			}
 			this.close();
 		} catch (e: any) {
+			console.warn(e);
 			alert(e.toString());
 		}
 	}
@@ -81,6 +82,17 @@ class BulkSimResultRenderer {
 		parent.bodyElement.appendChild(itemsContainer);
 		parent.bodyElement.appendChild(dpsDivParent);
 
+		const talentText = document.createElement('p');
+		talentText.classList.add('talent-loadout-text')
+		if (result.talentLoadout && typeof result.talentLoadout === 'object') {
+			if (typeof result.talentLoadout.name === 'string') {
+				talentText.textContent = 'Talent loadout used: ' + result.talentLoadout.name;
+			}
+		} else {
+			talentText.textContent = 'Current talents'
+		}
+
+		dpsDiv.appendChild(talentText);
 		if (result.itemsAdded && result.itemsAdded.length > 0) {
 			const equipBtn = document.createElement('button');
 			equipBtn.textContent = 'Equip';
@@ -105,7 +117,7 @@ class BulkSimResultRenderer {
 				p.textContent = this.itemSlotName(is);
 				renderer.nameElem.appendChild(p);
 			}
-		} else {
+		} else if (!result.talentLoadout || typeof result.talentLoadout !== 'object') {
 			const p = document.createElement('p');
 			p.textContent = 'No changes - this is your currently equipped gear!';
 			parent.bodyElement.appendChild(p);
@@ -228,8 +240,10 @@ export class BulkTab extends SimTab {
 	private doCombos: boolean;
 	private fastMode: boolean;
 	private autoGem: boolean;
+	private simTalents: boolean;
 	private autoEnchant: boolean;
 	private defaultGems: SimGem[];
+	private savedTalents: TalentLoadout[];
 	private gemIconElements: HTMLImageElement[];
 
 	constructor(parentElem: HTMLElement, simUI: IndividualSimUI<Spec>) {
@@ -256,6 +270,8 @@ export class BulkTab extends SimTab {
 		this.fastMode = true;
 		this.autoGem = true;
 		this.autoEnchant = true;
+		this.savedTalents = [];
+		this.simTalents = false;
 		this.defaultGems = [UIGem.create(), UIGem.create(), UIGem.create(), UIGem.create()];
 		this.gemIconElements = [];
 		this.buildTabContent();
@@ -277,7 +293,9 @@ export class BulkTab extends SimTab {
 			this.doCombos = settings.combinations;
 			this.fastMode = settings.fastMode;
 			this.autoEnchant = settings.autoEnchant;
+			this.savedTalents = settings.talentsToSim;
 			this.autoGem = settings.autoGem;
+			this.simTalents = settings.simTalents;
 			this.defaultGems = new Array<SimGem>(
 				SimGem.create({ id: settings.defaultRedGem }),
 				SimGem.create({ id: settings.defaultYellowGem }),
@@ -311,6 +329,8 @@ export class BulkTab extends SimTab {
 			fastMode: this.fastMode,
 			autoEnchant: this.autoEnchant,
 			autoGem: this.autoGem,
+			simTalents: this.simTalents,
+			talentsToSim: this.savedTalents,
 			defaultRedGem: this.defaultGems[0].id,
 			defaultYellowGem: this.defaultGems[1].id,
 			defaultBlueGem: this.defaultGems[2].id,
@@ -641,6 +661,81 @@ export class BulkTab extends SimTab {
 		});
 		settingsBlock.bodyElement.appendChild(clearButton);
 
+		// Talents to sim
+		const talentsToSimDiv = document.createElement("div")
+		if (this.simTalents) {
+			talentsToSimDiv.style.display = "flex";
+		} else {
+			talentsToSimDiv.style.display = "none";
+		}
+		talentsToSimDiv.classList.add("talents-picker-container")
+		const talentsLabel = document.createElement("label")
+		talentsLabel.innerText = "Pick talents to sim (will increase time to sim)";
+		talentsToSimDiv.appendChild(talentsLabel);
+		const talentsContainerDiv = document.createElement("div");
+		talentsContainerDiv.classList.add("talents-container");
+
+		const dataStr = window.localStorage.getItem(this.simUI.getSavedTalentsStorageKey());
+
+		let jsonData;
+		try {
+			if (dataStr !== null) {
+				jsonData = JSON.parse(dataStr);
+			}
+		} catch (e) {
+			console.warn('Invalid json for local storage value: ' + dataStr);
+		}
+		const handleToggle = (frag: HTMLElement, load: TalentLoadout) => {
+			let chipDiv = frag.querySelector('.saved-data-set-chip');
+			let exists = this.savedTalents.some(talent => talent.name === load.name); // Replace 'id' with your unique identifier
+
+			console.log('Exists:', exists);
+			console.log('Load Object:', load);
+			console.log('Saved Talents Before Update:', this.savedTalents);
+
+			if (exists) {
+				// If the object exists, find its index and remove it
+				let indexToRemove = this.savedTalents.findIndex(talent => talent.name === load.name);
+				this.savedTalents.splice(indexToRemove, 1);
+				chipDiv?.classList.remove('active');
+			} else {
+				// If the object does not exist, add it
+				this.savedTalents.push(load);
+				chipDiv?.classList.add('active');
+			}
+
+			console.log('Updated savedTalents:', this.savedTalents);
+		}
+		for (let name in jsonData) {
+			try {
+				console.log(name, jsonData[name]);
+				let savedTalentLoadout = SavedTalents.fromJson(jsonData[name]);
+				var loadout = { talentsString: savedTalentLoadout.talentsString, glyphs: savedTalentLoadout.glyphs, name: name };
+
+				let index = this.savedTalents.findIndex(talent => JSON.stringify(talent) === JSON.stringify(loadout));
+				const talentFragment = document.createElement('fragment');
+				talentFragment.innerHTML = `
+					<div class="saved-data-set-chip badge rounded-pill ${index !== -1 ? 'active' : ''}">
+						<a href="javascript:void(0)" class="saved-data-set-name" role="button">${name}</a>
+					</div>`;
+
+				console.log("Adding event for loadout", loadout);
+				// Wrap the event listener addition in an IIFE
+				(function (talentFragment, loadout) {
+					talentFragment.addEventListener("click", () => handleToggle(talentFragment, loadout));
+				})(talentFragment, loadout);
+
+				talentsContainerDiv.appendChild(talentFragment);
+			} catch (e) {
+				console.log(e);
+				console.warn('Failed parsing saved data: ' + jsonData[name]);
+			}
+		}
+
+		talentsToSimDiv.append(talentsContainerDiv);
+		//////////////////////
+		////////////////////////////////////
+
 		// Default Gem Options
 		const defaultGemDiv = document.createElement("div");
 		if (this.autoGem) {
@@ -740,7 +835,23 @@ export class BulkTab extends SimTab {
 			}
 		});
 
+		new BooleanPicker<BulkTab>(settingsBlock.bodyElement, this, {
+			label: "Sim Talents",
+			labelTooltip: "When checked bulk simulator will sim chosen talent setups. Warning, it might cause the bulk sim to run for a lot longer",
+			changedEvent: (obj: BulkTab) => this.itemsChangedEmitter,
+			getValue: (obj) => this.simTalents,
+			setValue: (id: EventID, obj: BulkTab, value: boolean) => {
+				obj.simTalents = value
+				if (value) {
+					talentsToSimDiv.style.display = "flex";
+				} else {
+					talentsToSimDiv.style.display = "none";
+				}
+			}
+		});
+
 		settingsBlock.bodyElement.appendChild(defaultGemDiv);
+		settingsBlock.bodyElement.appendChild(talentsToSimDiv);
 	}
 
 	private setSimProgress(progress: ProgressMetrics, iterPerSecond: number, currentRound: number, rounds: number, combinations: number) {

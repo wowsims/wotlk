@@ -36,8 +36,6 @@ type Environment struct {
 	Encounter Encounter
 	AllUnits  []*Unit
 
-	characters []*Character // "cached" in init(), for advance()
-
 	BaseDuration      time.Duration // base duration
 	DurationVariation time.Duration // variation per duration
 
@@ -48,14 +46,14 @@ type Environment struct {
 	prepullActions []PrepullAction
 }
 
-func NewEnvironment(raidProto *proto.Raid, encounterProto *proto.Encounter) (*Environment, *proto.RaidStats, *proto.EncounterStats) {
+func NewEnvironment(raidProto *proto.Raid, encounterProto *proto.Encounter, runFakePrepull bool) (*Environment, *proto.RaidStats, *proto.EncounterStats) {
 	env := &Environment{
 		State: Created,
 	}
 
 	env.construct(raidProto, encounterProto)
 	raidStats := env.initialize(raidProto, encounterProto)
-	env.finalize(raidProto, encounterProto, raidStats)
+	env.finalize(raidProto, encounterProto, raidStats, runFakePrepull)
 
 	encounterStats := &proto.EncounterStats{}
 	for _, target := range env.Encounter.Targets {
@@ -142,7 +140,7 @@ func (env *Environment) initialize(raidProto *proto.Raid, encounterProto *proto.
 }
 
 // The finalization phase.
-func (env *Environment) finalize(raidProto *proto.Raid, _ *proto.Encounter, raidStats *proto.RaidStats) {
+func (env *Environment) finalize(raidProto *proto.Raid, _ *proto.Encounter, raidStats *proto.RaidStats, runFakePrepull bool) {
 	for _, finalizeEffect := range env.preFinalizeEffects {
 		finalizeEffect()
 	}
@@ -150,6 +148,9 @@ func (env *Environment) finalize(raidProto *proto.Raid, _ *proto.Encounter, raid
 
 	for _, target := range env.Encounter.Targets {
 		target.finalize()
+		if target.AI != nil {
+			target.Rotation = target.newCustomRotation()
+		}
 	}
 
 	for _, party := range env.Raid.Parties {
@@ -158,6 +159,7 @@ func (env *Environment) finalize(raidProto *proto.Raid, _ *proto.Encounter, raid
 			character.Finalize()
 			for _, pet := range character.Pets {
 				pet.Finalize()
+				pet.Rotation = pet.newCustomRotation()
 			}
 		}
 	}
@@ -186,14 +188,25 @@ func (env *Environment) finalize(raidProto *proto.Raid, _ *proto.Encounter, raid
 
 	env.setupAttackTables()
 
+	env.State = Finalized
+
+	if runFakePrepull {
+		// Runs prepull only, for a single iteration. This lets us detect misconfigured
+		// prepull spells (e.g. GCD not available) in APL.
+		sim := newSimWithEnv(env, &proto.SimOptions{
+			Iterations: 1,
+		})
+		sim.reset()
+		sim.PrePull()
+		sim.Cleanup()
+	}
+
 	for partyIdx, party := range env.Raid.Parties {
 		for _, player := range party.Players {
 			character := player.GetCharacter()
 			character.FillPlayerStats(raidStats.Parties[partyIdx].Players[character.PartyIndex])
 		}
 	}
-
-	env.State = Finalized
 }
 
 func (env *Environment) setupAttackTables() {
@@ -247,6 +260,20 @@ func (env *Environment) NextTarget(target *Unit) *Target {
 }
 func (env *Environment) NextTargetUnit(target *Unit) *Unit {
 	return &env.NextTarget(target).Unit
+}
+func (env *Environment) GetAgentFromUnit(unit *Unit) Agent {
+	raidAgent := env.Raid.GetPlayerFromUnit(unit)
+	if raidAgent != nil {
+		return raidAgent
+	}
+
+	for _, target := range env.Encounter.Targets {
+		if unit == &target.Unit {
+			return target
+		}
+	}
+
+	return nil
 }
 
 func (env *Environment) GetUnit(ref *proto.UnitReference, contextUnit *Unit) *Unit {

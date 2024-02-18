@@ -125,6 +125,17 @@ func (dk *Deathknight) registerBloodPlague() {
 	// Tier9 4Piece
 	canCrit := dk.HasSetBonus(ItemSetThassariansBattlegear, 4)
 
+	// SM can proc off blood plague application
+	bloodPlagueApplicationSpell := dk.RegisterSpell(core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 55078}.WithTag(1),
+		SpellSchool: core.SpellSchoolShadow,
+		ProcMask:    core.ProcMaskProc,
+		Flags:       core.SpellFlagNoLogs | core.SpellFlagNoMetrics,
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			dk.BloodPlagueSpell.Dot(target).Apply(sim)
+		},
+	})
+
 	dk.BloodPlagueSpell = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 55078},
 		SpellSchool: core.SpellSchoolShadow,
@@ -170,8 +181,7 @@ func (dk *Deathknight) registerBloodPlague() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			dot := spell.Dot(target)
-			dot.Apply(sim)
+			bloodPlagueApplicationSpell.Cast(sim, target)
 		},
 	})
 	dk.BloodPlagueExtended = make([]int, dk.Env.GetNumTargets())
@@ -214,11 +224,6 @@ func (dk *Deathknight) registerDrwFrostFever() {
 			spell.Dot(target).Apply(sim)
 		},
 	})
-
-	if !dk.Inputs.NewDrw {
-		dk.RuneWeapon.FrostFeverSpell.DamageMultiplier *= 0.5
-		dk.RuneWeapon.FrostFeverSpell.Flags |= core.SpellFlagIgnoreAttackerModifiers
-	}
 }
 
 func (dk *Deathknight) registerDrwBloodPlague() {
@@ -266,11 +271,6 @@ func (dk *Deathknight) registerDrwBloodPlague() {
 			spell.Dot(target).Apply(sim)
 		},
 	})
-
-	if !dk.Inputs.NewDrw {
-		dk.RuneWeapon.BloodPlagueSpell.DamageMultiplier *= 0.5
-		dk.RuneWeapon.BloodPlagueSpell.Flags |= core.SpellFlagIgnoreAttackerModifiers
-	}
 }
 
 func (dk *Deathknight) doWanderingPlague(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {

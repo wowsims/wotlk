@@ -1,38 +1,55 @@
-import { Spec, ItemSlot, ItemSwap } from '../proto/common.js';
+import { Spec, ItemSlot } from '../proto/common.js';
 import { Player } from '../player.js';
 import { Component } from './component.js';
 import { IconItemSwapPicker } from './gear_picker.js'
-import { Input, InputConfig } from './input.js'
+import { Input } from './input.js'
 import { SimUI } from '../sim_ui.js';
-import { TypedEvent } from '../typed_event.js';
-import tippy from 'tippy.js';
+import { EventID, TypedEvent } from '../typed_event.js';
+import { BooleanPicker } from './boolean_picker.js';
 
-export interface ItemSwapPickerConfig<SpecType extends Spec, T> extends InputConfig<Player<SpecType>, T> {
+export interface ItemSwapPickerConfig {
 	itemSlots: Array<ItemSlot>;
 }
 
-export class ItemSwapPicker<SpecType extends Spec, T> extends Component {
+export class ItemSwapPicker<SpecType extends Spec> extends Component {
+	private readonly itemSlots: Array<ItemSlot>;
+	private readonly enableItemSwapPicker: BooleanPicker<Player<SpecType>>;
 
-	constructor(parentElem: HTMLElement, simUI: SimUI, player: Player<SpecType>, config: ItemSwapPickerConfig<SpecType, T>) {
+	constructor(parentElem: HTMLElement, simUI: SimUI, player: Player<SpecType>, config: ItemSwapPickerConfig) {
 		super(parentElem, 'item-swap-picker-root');
+		this.itemSlots = config.itemSlots;
 
-		this.rootElem.classList.add('input-root', 'input-inline')
+		this.enableItemSwapPicker = new BooleanPicker(this.rootElem, player, {
+			label: 'Enable Item Swapping',
+			labelTooltip: 'Allows configuring an Item Swap Set which is used with the <b>Item Swap</b> APL action.',
+			extraCssClasses: ['input-inline'],
+			getValue: (player: Player<SpecType>) => player.getEnableItemSwap(),
+			setValue(eventID: EventID, player: Player<SpecType>, newValue: boolean) {
+				player.setEnableItemSwap(eventID, newValue);
+			},
+			changedEvent: (player: Player<SpecType>) => player.itemSwapChangeEmitter,
+		});
 
-		const label = document.createElement("label")
-		label.classList.add('form-label')
-		label.textContent = "Item Swap"
-		this.rootElem.appendChild(label);
+		const swapPickerContainer = document.createElement('div');
+		this.rootElem.appendChild(swapPickerContainer);
+		const toggleEnabled = () => {
+			if (!player.getEnableItemSwap()) {
+				swapPickerContainer.classList.add('hide');
+			} else {
+				swapPickerContainer.classList.remove('hide');
+			}
+		};
+		player.itemSwapChangeEmitter.on(toggleEnabled);
+		toggleEnabled();
 
-		if (config.labelTooltip) {
-			tippy(label, {
-				'content': config.labelTooltip,
-				ignoreAttributes: true,
-			});
-		}
+		const label = document.createElement("label");
+		label.classList.add('form-label');
+		label.textContent = "Item Swap";
+		swapPickerContainer.appendChild(label);
 
 		let itemSwapContainer = Input.newGroupContainer();
-		itemSwapContainer.classList.add('icon-group')
-		this.rootElem.appendChild(itemSwapContainer);
+		itemSwapContainer.classList.add('icon-group');
+		swapPickerContainer.appendChild(itemSwapContainer);
 
 		let swapButtonFragment = document.createElement('fragment');
 		swapButtonFragment.innerHTML = `
@@ -45,57 +62,33 @@ export class ItemSwapPicker<SpecType extends Spec, T> extends Component {
 			>
 				<i class="fas fa-arrows-rotate me-1"></i>
 			</a>
-		`
+		`;
 
 		const swapButton = swapButtonFragment.children[0] as HTMLElement;
-		itemSwapContainer.appendChild(swapButton)
+		itemSwapContainer.appendChild(swapButton);
 
-		swapButton.addEventListener('click', event => { this.swapWithGear(player, config) });
+		swapButton.addEventListener('click', _event => { this.swapWithGear(TypedEvent.nextEventID(), player) });
 
-		config.changedEvent(player).on(eventID => {
-			const show = !config.showWhen || config.showWhen(player);
-			if (show) {
-				this.rootElem.classList.remove('hide');
-			} else {
-				this.rootElem.classList.add('hide');
-			}
-		});
-
-		config.itemSlots.forEach(itemSlot => {
-			new IconItemSwapPicker(itemSwapContainer, simUI, player, itemSlot, config);
+		this.itemSlots.forEach(itemSlot => {
+			new IconItemSwapPicker(itemSwapContainer, simUI, player, itemSlot)
 		});
 	}
 
-	swapWithGear(player: Player<SpecType>, config: ItemSwapPickerConfig<SpecType, T>) {
-		let gear = player.getGear()
+	swapWithGear(eventID: EventID, player: Player<SpecType>) {
+		let newGear = player.getGear();
+		let newIsg = player.getItemSwapGear();
 
-		const gearMap = new Map();
-		const itemSwapMap = new Map();
+		this.itemSlots.forEach(slot => {
+			const gearItem = player.getGear().getEquippedItem(slot);
+			const swapItem = player.getItemSwapGear().getEquippedItem(slot);
 
-		config.itemSlots.forEach(slot => {
-			const gearItem = player.getGear().getEquippedItem(slot)
-			const swapItem = player.getItemSwapGear().getEquippedItem(slot)
+			newGear = newGear.withEquippedItem(slot, swapItem, player.canDualWield2H())
+			newIsg = newIsg.withEquippedItem(slot, gearItem, player.canDualWield2H())
+		});
 
-			gearMap.set(slot, gearItem)
-			itemSwapMap.set(slot, swapItem)
-		})
-
-		itemSwapMap.forEach((item, slot) => {
-			gear = gear.withEquippedItem(slot, item, player.canDualWield2H())
-		})
-
-		gearMap.forEach((item, slot) => {
-			player.getItemSwapGear().equipItem(slot, item, player.canDualWield2H())
-		})
-
-		let eventID = TypedEvent.nextEventID()
-		player.setGear(eventID, gear)
-
-		const itemSwap = player.getItemSwapGear().toProto() as unknown as T
-		config.setValue(eventID, player, itemSwap)
+		TypedEvent.freezeAllAndDo(() => {
+			player.setGear(eventID, newGear);
+			player.setItemSwapGear(eventID, newIsg);
+		});
 	}
-
 }
-
-
-

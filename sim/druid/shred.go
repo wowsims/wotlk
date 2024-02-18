@@ -72,7 +72,7 @@ func (druid *Druid) registerShredSpell() {
 			}
 		},
 		ExpectedInitialDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, _ bool) *core.SpellResult {
-			baseDamage := flatDamageBonus + spell.Unit.AutoAttacks.MH.CalculateAverageWeaponDamage(spell.MeleeAttackPower()) + spell.BonusWeaponDamage()
+			baseDamage := flatDamageBonus + spell.Unit.AutoAttacks.MH().CalculateAverageWeaponDamage(spell.MeleeAttackPower()) + spell.BonusWeaponDamage()
 
 			modifier := 1.0
 			if druid.BleedCategories.Get(target).AnyActive() {

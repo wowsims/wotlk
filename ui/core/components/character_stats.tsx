@@ -1,4 +1,4 @@
-import { Stat, Class, PseudoStat } from '..//proto/common.js';
+import { Stat, Class, PseudoStat, Spec } from '..//proto/common.js';
 import { TristateEffect } from '..//proto/common.js'
 import { getClassStatName, statOrder } from '..//proto_utils/names.js';
 import { Stats } from '..//proto_utils/stats.js';
@@ -19,6 +19,7 @@ export type StatMods = { talents: Stats };
 export class CharacterStats extends Component {
 	readonly stats: Array<Stat>;
 	readonly valueElems: Array<HTMLTableCellElement>;
+	readonly meleeCritCapValueElem: HTMLTableCellElement | undefined;
 
 	private readonly player: Player<any>;
 	private readonly modifyDisplayStats?: (player: Player<any>) => StatMods;
@@ -45,7 +46,7 @@ export class CharacterStats extends Component {
 			const row = (
 			<tr
 				className='character-stats-table-row'
-			>	
+			>
 				<td className="character-stats-table-label">{statName}</td>
 				<td className="character-stats-table-value">
 					{this.bonusStatsLink(stat)}
@@ -58,8 +59,23 @@ export class CharacterStats extends Component {
 			this.valueElems.push(valueElem);
 		});
 
+		if(this.shouldShowMeleeCritCap(player)) {
+			const row = (
+			<tr
+				className='character-stats-table-row'
+			>
+				<td className="character-stats-table-label">Melee Crit Cap</td>
+				<td className="character-stats-table-value"></td>
+			</tr>);
+
+			table.appendChild(row);
+			this.meleeCritCapValueElem = row.getElementsByClassName('character-stats-table-value')[0] as HTMLTableCellElement;
+		} else {
+			this.meleeCritCapValueElem = undefined;
+		}
+
 		this.updateStats(player);
-		TypedEvent.onAny([player.currentStatsEmitter, player.sim.changeEmitter]).on(() => {
+		TypedEvent.onAny([player.currentStatsEmitter, player.sim.changeEmitter, player.talentsChangeEmitter]).on(() => {
 			this.updateStats(player);
 		});
 	}
@@ -90,7 +106,7 @@ export class CharacterStats extends Component {
 		this.stats.forEach((stat, idx) => {
 			let valueElem = (
 				<a
-					href="javascript:void(0)" 
+					href="javascript:void(0)"
 					className="stat-value-link"
 					attributes={{role:"button"}}>
 					{`${this.statDisplayString(finalStats, finalStats, stat)} `}
@@ -110,7 +126,7 @@ export class CharacterStats extends Component {
 				valueElem.classList.add('text-danger');
 			}
 
-			let tooltipContent = 
+			let tooltipContent =
 			<div>
 				<div className="character-stats-tooltip-row">
 					<span>Base:</span>
@@ -154,6 +170,76 @@ export class CharacterStats extends Component {
 				html: true,
 			});
 		});
+
+		if(this.meleeCritCapValueElem) {
+			const meleeCritCapInfo = player.getMeleeCritCapInfo();
+
+			const valueElem = (
+				<a
+					href="javascript:void(0)"
+					className="stat-value-link"
+					attributes={{role:"button"}}>
+					{`${this.meleeCritCapDisplayString(player, finalStats)} `}
+				</a>
+			)
+
+			const capDelta = meleeCritCapInfo.playerCritCapDelta;
+			if (capDelta == 0) {
+				valueElem.classList.add('text-white');
+			} else if (capDelta > 0) {
+				valueElem.classList.add('text-danger');
+			} else if (capDelta < 0) {
+				valueElem.classList.add('text-success');
+			}
+
+			this.meleeCritCapValueElem.querySelector('.stat-value-link')?.remove();
+			this.meleeCritCapValueElem.prepend(valueElem);
+
+			const tooltipContent = (
+			<div>
+				<div className="character-stats-tooltip-row">
+					<span>Glancing:</span>
+					<span>{`${meleeCritCapInfo.glancing.toFixed(2)}%`}</span>
+				</div>
+				<div className="character-stats-tooltip-row">
+					<span>Suppression:</span>
+					<span>{`${meleeCritCapInfo.suppression.toFixed(2)}%`}</span>
+				</div>
+				<div className="character-stats-tooltip-row">
+					<span>To Hit Cap:</span>
+					<span>{`${meleeCritCapInfo.remainingMeleeHitCap.toFixed(2)}%`}</span>
+				</div>
+				<div className="character-stats-tooltip-row">
+					<span>To Exp Cap:</span>
+					<span>{`${meleeCritCapInfo.remainingExpertiseCap.toFixed(2)}%`}</span>
+				</div>
+				<div className="character-stats-tooltip-row">
+					<span>Debuffs:</span>
+					<span>{`${meleeCritCapInfo.debuffCrit.toFixed(2)}%`}</span>
+				</div>
+				{meleeCritCapInfo.specSpecificOffset != 0 &&
+				<div className="character-stats-tooltip-row">
+					<span>Spec Offsets:</span>
+					<span>{`${meleeCritCapInfo.specSpecificOffset.toFixed(2)}%`}</span>
+				</div>
+				}
+				<div className="character-stats-tooltip-row">
+					<span>Final Crit Cap:</span>
+					<span>{`${meleeCritCapInfo.baseCritCap.toFixed(2)}%`}</span>
+				</div>
+				<hr/>
+				<div className="character-stats-tooltip-row">
+					<span>Can Raise By:</span>
+					<span>{`${(meleeCritCapInfo.remainingExpertiseCap + meleeCritCapInfo.remainingMeleeHitCap).toFixed(2)}%`}</span>
+				</div>
+			</div>
+			);
+
+			Tooltip.getOrCreateInstance(valueElem, {
+				title: tooltipContent,
+				html: true,
+			});
+		}
 	}
 
 	private statDisplayString(stats: Stats, deltaStats: Stats, stat: Stat): string {
@@ -261,5 +347,26 @@ export class CharacterStats extends Component {
 		});
 
 		return link as HTMLElement;
+	}
+
+	private shouldShowMeleeCritCap(player: Player<any>): boolean {
+		return [
+			Spec.SpecDeathknight,
+			Spec.SpecEnhancementShaman,
+			Spec.SpecRetributionPaladin,
+			Spec.SpecRogue,
+			Spec.SpecWarrior
+		].includes(player.spec);
+	}
+
+	private meleeCritCapDisplayString(player: Player<any>, finalStats: Stats): string {
+		const playerCritCapDelta = player.getMeleeCritCap();
+
+		if(playerCritCapDelta === 0.0) {
+			return 'Exact';
+		}
+
+		const prefix = playerCritCapDelta > 0 ? 'Over by ' : 'Under by ';
+		return `${prefix} ${Math.abs(playerCritCapDelta).toFixed(2)}%`;
 	}
 }

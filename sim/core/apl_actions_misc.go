@@ -2,6 +2,8 @@ package core
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
@@ -116,4 +118,81 @@ func (action *APLActionTriggerICD) Execute(sim *Simulation) {
 }
 func (action *APLActionTriggerICD) String() string {
 	return fmt.Sprintf("Trigger ICD(%s)", action.aura.ActionID)
+}
+
+type APLActionItemSwap struct {
+	defaultAPLActionImpl
+	character *Character
+	swapSet   proto.APLActionItemSwap_SwapSet
+}
+
+func (rot *APLRotation) newActionItemSwap(config *proto.APLActionItemSwap) APLActionImpl {
+	if config.SwapSet == proto.APLActionItemSwap_Unknown {
+		rot.ValidationWarning("Unknown item swap set")
+		return nil
+	}
+
+	character := rot.unit.Env.Raid.GetPlayerFromUnit(rot.unit).GetCharacter()
+	if !character.ItemSwap.IsEnabled() {
+		if config.SwapSet != proto.APLActionItemSwap_Main {
+			rot.ValidationWarning("No swap set configured in Settings.")
+		}
+		return nil
+	}
+
+	return &APLActionItemSwap{
+		character: character,
+		swapSet:   config.SwapSet,
+	}
+}
+func (action *APLActionItemSwap) IsReady(sim *Simulation) bool {
+	return (action.swapSet == proto.APLActionItemSwap_Main) == action.character.ItemSwap.IsSwapped()
+}
+func (action *APLActionItemSwap) Execute(sim *Simulation) {
+	if sim.Log != nil {
+		action.character.Log(sim, "Item Swap to set %s", action.swapSet)
+	}
+
+	if action.swapSet == proto.APLActionItemSwap_Main {
+		action.character.ItemSwap.reset(sim)
+	} else {
+		action.character.ItemSwap.SwapItems(sim, action.character.ItemSwap.slots)
+	}
+}
+func (action *APLActionItemSwap) String() string {
+	return fmt.Sprintf("Item Swap(%s)", action.swapSet)
+}
+
+type APLActionCustomRotation struct {
+	defaultAPLActionImpl
+	unit  *Unit
+	agent Agent
+
+	lastExecutedAt time.Duration
+}
+
+func (rot *APLRotation) newActionCustomRotation(config *proto.APLActionCustomRotation) APLActionImpl {
+	agent := rot.unit.Env.GetAgentFromUnit(rot.unit)
+	if agent == nil {
+		panic("Agent not found for custom rotation")
+	}
+
+	return &APLActionCustomRotation{
+		unit:  rot.unit,
+		agent: agent,
+	}
+}
+func (action *APLActionCustomRotation) Reset(sim *Simulation) {
+	action.lastExecutedAt = -1
+}
+func (action *APLActionCustomRotation) IsReady(sim *Simulation) bool {
+	// Prevent infinite loops by only allowing this action to be performed once at each timestamp.
+	return action.lastExecutedAt != sim.CurrentTime
+}
+func (action *APLActionCustomRotation) Execute(sim *Simulation) {
+	action.lastExecutedAt = sim.CurrentTime
+	action.agent.ExecuteCustomRotation(sim)
+}
+func (action *APLActionCustomRotation) String() string {
+	return "Custom Rotation()"
 }

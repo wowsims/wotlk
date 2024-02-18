@@ -23,6 +23,8 @@ func (rogue *Rogue) registerHemorrhageSpell() {
 
 	var hemoAuras core.AuraArray
 
+	// Hemo debuff disabled except in raid sim
+	// in a raid environment each melee will get very little debuffs, which is hard to model
 	if numPlayers >= 2 {
 		bonusDamage := 75.0
 		if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfHemorrhage) {

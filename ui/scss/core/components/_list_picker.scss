@@ -5,7 +5,7 @@
 	align-items: center;
 
 	&:not(:last-child) {
-		margin-bottom: 2 * map.get($spacers, 3);
+		margin-bottom: 2 * map-get($spacers, 3);
 	}
 
 	.list-picker-title {
@@ -21,7 +21,7 @@
 		width: 100%;
 
 		.list-picker-item-container {
-			margin-bottom: map.get($spacers, 3);
+			margin-bottom: map-get($spacers, 3);
 
 			&.inline {
 				border: 0;
@@ -36,7 +36,7 @@
 			}
 
 			&:not(.inline) {
-				padding: map.get($spacers, 3) map.get($spacers, 3) 0 map.get($spacers, 3);
+				padding: map-get($spacers, 3) map-get($spacers, 3) 0 map-get($spacers, 3);
 				border: 1px solid $link-color;
 
 				.list-picker-item-header {
@@ -59,7 +59,7 @@
 				}
 		
 				.list-picker-item-action {
-					margin-left: map.get($spacers, 2);
+					margin-left: map-get($spacers, 2);
 				}
 			}
 		}
@@ -69,20 +69,6 @@
 		margin-left: auto;
 		margin-right: auto;
 		width: 33.33%;
-	}
-}
-
-.list-picker-root.hide-ui {
-	.list-picker-item-container {
-		padding: 0 !important;
-		margin: 0 !important;
-		border: none !important;
-	}
-	.list-picker-item-header {
-		display: none !important;
-	}
-	.list-picker-new-button {
-		display: none !important;
 	}
 }
 

@@ -51,8 +51,7 @@ func (dk *Deathknight) registerArmyOfTheDeadCD() {
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				ChannelTime: time.Second * 4,
-				GCD:         core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer:    dk.NewTimer(),

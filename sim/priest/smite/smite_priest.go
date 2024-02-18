@@ -1,8 +1,6 @@
 package smite
 
 import (
-	"time"
-
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/priest"
@@ -35,10 +33,7 @@ func NewSmitePriest(character *core.Character, options *proto.Player) *SmitePrie
 
 	basePriest := priest.New(character, selfBuffs, options.TalentsString)
 	spriest := &SmitePriest{
-		Priest:   basePriest,
-		rotation: smiteOptions.Rotation,
-
-		allowedHFDelay: time.Millisecond * time.Duration(smiteOptions.Rotation.AllowedHolyFireDelayMs),
+		Priest: basePriest,
 	}
 
 	spriest.SelfBuffs.PowerInfusionTarget = &proto.UnitReference{}
@@ -46,17 +41,11 @@ func NewSmitePriest(character *core.Character, options *proto.Player) *SmitePrie
 		spriest.SelfBuffs.PowerInfusionTarget = smiteOptions.Options.PowerInfusionTarget
 	}
 
-	spriest.EnableResumeAfterManaWait(spriest.tryUseGCD)
-
 	return spriest
 }
 
 type SmitePriest struct {
 	*priest.Priest
-
-	rotation *proto.SmitePriest_Rotation
-
-	allowedHFDelay time.Duration
 }
 
 func (spriest *SmitePriest) GetPriest() *priest.Priest {
@@ -66,8 +55,8 @@ func (spriest *SmitePriest) GetPriest() *priest.Priest {
 func (spriest *SmitePriest) Initialize() {
 	spriest.Priest.Initialize()
 
-	spriest.RegisterHolyFireSpell(spriest.rotation.MemeDream)
-	spriest.RegisterSmiteSpell(spriest.rotation.MemeDream)
+	spriest.RegisterHolyFireSpell()
+	spriest.RegisterSmiteSpell()
 	spriest.RegisterPenanceSpell()
 	spriest.RegisterHymnOfHopeCD()
 }

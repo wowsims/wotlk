@@ -134,8 +134,7 @@ func (druid *Druid) registerCatFormSpell() {
 			druid.form = Cat
 			druid.SetCurrentPowerBar(core.EnergyBar)
 
-			druid.AutoAttacks.MH = clawWeapon
-			druid.AutoAttacks.UpdateMeleeDurations()
+			druid.AutoAttacks.SetMH(clawWeapon)
 
 			druid.PseudoStats.ThreatMultiplier *= 0.71
 			druid.PseudoStats.SpiritRegenMultiplier *= AnimalSpiritRegenSuppression
@@ -150,7 +149,7 @@ func (druid *Druid) registerCatFormSpell() {
 			}
 
 			if !druid.Env.MeasuringStats {
-				druid.AutoAttacks.ReplaceMHSwing = nil
+				druid.AutoAttacks.SetReplaceMHSwing(nil)
 				druid.AutoAttacks.EnableAutoSwing(sim)
 				druid.manageCooldownsEnabled()
 				druid.UpdateManaRegenRates()
@@ -168,22 +167,21 @@ func (druid *Druid) registerCatFormSpell() {
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			druid.form = Humanoid
 
-			druid.AutoAttacks.MH = druid.WeaponFromMainHand(druid.MeleeCritMultiplier(Humanoid))
-			druid.AutoAttacks.UpdateMeleeDurations()
+			druid.AutoAttacks.SetMH(druid.WeaponFromMainHand(druid.MeleeCritMultiplier(Humanoid)))
 
 			druid.PseudoStats.ThreatMultiplier /= 0.71
 			druid.PseudoStats.SpiritRegenMultiplier /= AnimalSpiritRegenSuppression
 			druid.PseudoStats.BaseDodge -= 0.02 * float64(druid.Talents.FeralSwiftness)
 
-			druid.AddStatsDynamic(sim, predBonus.Multiply(-1))
-			druid.AddStatsDynamic(sim, statBonus.Multiply(-1))
+			druid.AddStatsDynamic(sim, predBonus.Invert())
+			druid.AddStatsDynamic(sim, statBonus.Invert())
 			druid.DisableDynamicStatDep(sim, agiApDep)
 			if hotwDep != nil {
 				druid.DisableDynamicStatDep(sim, hotwDep)
 			}
 
 			if !druid.Env.MeasuringStats {
-				druid.AutoAttacks.ReplaceMHSwing = nil
+				druid.AutoAttacks.SetReplaceMHSwing(nil)
 				druid.AutoAttacks.EnableAutoSwing(sim)
 				druid.manageCooldownsEnabled()
 				druid.UpdateManaRegenRates()
@@ -269,8 +267,7 @@ func (druid *Druid) registerBearFormSpell() {
 			druid.form = Bear
 			druid.SetCurrentPowerBar(core.RageBar)
 
-			druid.AutoAttacks.MH = clawWeapon
-			druid.AutoAttacks.UpdateMeleeDurations()
+			druid.AutoAttacks.SetMH(clawWeapon)
 
 			druid.PseudoStats.ThreatMultiplier *= 2.1021
 			druid.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= 1.0 + 0.02*float64(druid.Talents.MasterShapeshifter)
@@ -295,7 +292,7 @@ func (druid *Druid) registerBearFormSpell() {
 			druid.GainHealth(sim, healthFrac*druid.MaxHealth()-druid.CurrentHealth(), healthMetrics)
 
 			if !druid.Env.MeasuringStats {
-				druid.AutoAttacks.ReplaceMHSwing = druid.ReplaceBearMHFunc
+				druid.AutoAttacks.SetReplaceMHSwing(druid.ReplaceBearMHFunc)
 				druid.AutoAttacks.EnableAutoSwing(sim)
 
 				druid.manageCooldownsEnabled()
@@ -304,8 +301,7 @@ func (druid *Druid) registerBearFormSpell() {
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			druid.form = Humanoid
-			druid.AutoAttacks.MH = druid.WeaponFromMainHand(druid.MeleeCritMultiplier(Humanoid))
-			druid.AutoAttacks.UpdateMeleeDurations()
+			druid.AutoAttacks.SetMH(druid.WeaponFromMainHand(druid.MeleeCritMultiplier(Humanoid)))
 
 			druid.PseudoStats.ThreatMultiplier /= 2.1021
 			druid.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] /= 1.0 + 0.02*float64(druid.Talents.MasterShapeshifter)
@@ -313,8 +309,8 @@ func (druid *Druid) registerBearFormSpell() {
 			druid.PseudoStats.SpiritRegenMultiplier /= AnimalSpiritRegenSuppression
 			druid.PseudoStats.BaseDodge -= 0.02 * float64(druid.Talents.FeralSwiftness+druid.Talents.NaturalReaction)
 
-			druid.AddStatsDynamic(sim, predBonus.Multiply(-1))
-			druid.AddStatsDynamic(sim, statBonus.Multiply(-1))
+			druid.AddStatsDynamic(sim, predBonus.Invert())
+			druid.AddStatsDynamic(sim, statBonus.Invert())
 			druid.RemoveDynamicEquipScaling(sim, stats.Armor, druid.BearArmorMultiplier())
 			if potpDep != nil {
 				druid.DisableDynamicStatDep(sim, potpDep)
@@ -328,7 +324,7 @@ func (druid *Druid) registerBearFormSpell() {
 			druid.RemoveHealth(sim, druid.CurrentHealth()-healthFrac*druid.MaxHealth())
 
 			if !druid.Env.MeasuringStats {
-				druid.AutoAttacks.ReplaceMHSwing = nil
+				druid.AutoAttacks.SetReplaceMHSwing(nil)
 				druid.AutoAttacks.EnableAutoSwing(sim)
 
 				druid.manageCooldownsEnabled()

@@ -41,13 +41,4 @@ func (priest *Priest) registerShadowfiendSpell() {
 			priest.ShadowfiendAura.Activate(sim)
 		},
 	})
-
-	priest.AddMajorCooldown(core.MajorCooldown{
-		Spell:    priest.Shadowfiend,
-		Priority: 1,
-		Type:     core.CooldownTypeMana,
-		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return character.CurrentManaPercent() <= 0.5
-		},
-	})
 }

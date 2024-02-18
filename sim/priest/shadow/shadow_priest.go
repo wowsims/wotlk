@@ -1,8 +1,6 @@
 package shadow
 
 import (
-	"time"
-
 	"github.com/wowsims/wotlk/sim/common/wotlk"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -30,16 +28,15 @@ func NewShadowPriest(character *core.Character, options *proto.Player) *ShadowPr
 	shadowOptions := options.GetShadowPriest()
 
 	selfBuffs := priest.SelfBuffs{
-		UseShadowfiend: shadowOptions.Options.UseShadowfiend,
+		UseShadowfiend: true,
 		UseInnerFire:   shadowOptions.Options.Armor == proto.ShadowPriest_Options_InnerFire,
 	}
 
 	basePriest := priest.New(character, selfBuffs, options.TalentsString)
 	basePriest.Latency = float64(basePriest.ChannelClipDelay.Milliseconds())
 	spriest := &ShadowPriest{
-		Priest:   basePriest,
-		rotation: shadowOptions.Rotation,
-		options:  shadowOptions.Options,
+		Priest:  basePriest,
+		options: shadowOptions.Options,
 	}
 
 	spriest.SelfBuffs.PowerInfusionTarget = &proto.UnitReference{}
@@ -47,25 +44,14 @@ func NewShadowPriest(character *core.Character, options *proto.Player) *ShadowPr
 		spriest.SelfBuffs.PowerInfusionTarget = shadowOptions.Options.PowerInfusionTarget
 	}
 
-	spriest.EnableResumeAfterManaWait(spriest.tryUseGCD)
-	spriest.CanRolloverSWP = spriest.Talents.MindFlay && spriest.Talents.PainAndSuffering > 0
 	wotlk.ConstructValkyrPets(&spriest.Character)
 
 	return spriest
 }
 
 type ShadowPriest struct {
-	PrevTicks float64
-
 	*priest.Priest
-	rotation *proto.ShadowPriest_Rotation
-	options  *proto.ShadowPriest_Options
-
-	VTCastTime time.Duration
-	AllCDs     []time.Duration
-	BLUsedAt   time.Duration
-
-	CanRolloverSWP bool
+	options *proto.ShadowPriest_Options
 }
 
 func (spriest *ShadowPriest) GetPriest() *priest.Priest {
@@ -74,33 +60,8 @@ func (spriest *ShadowPriest) GetPriest() *priest.Priest {
 
 func (spriest *ShadowPriest) Initialize() {
 	spriest.Priest.Initialize()
-
-	if !spriest.IsUsingAPL && spriest.rotation.PrecastType > 0 {
-		precastSpell := spriest.VampiricTouch
-		if spriest.rotation.PrecastType == 2 {
-			precastSpell = spriest.MindBlast
-		}
-
-		// Do this post-finalize so cast speed is updated with new stats
-		spriest.Env.RegisterPostFinalizeEffect(func() {
-			precastSpellAt := -spriest.ApplyCastSpeedForSpell(precastSpell.DefaultCast.CastTime, precastSpell)
-
-			spriest.RegisterPrepullAction(precastSpellAt, func(sim *core.Simulation) {
-				precastSpell.Cast(sim, spriest.CurrentTarget)
-			})
-		})
-	}
 }
 
 func (spriest *ShadowPriest) Reset(sim *core.Simulation) {
 	spriest.Priest.Reset(sim)
-
-	// Save info related to blood lust timing
-	spriest.BLUsedAt = 0
-	if bloodlustMCD := spriest.GetMajorCooldownIgnoreTag(core.BloodlustActionID); bloodlustMCD != nil {
-		timings := bloodlustMCD.GetTimings()
-		if len(timings) > 0 {
-			spriest.BLUsedAt = timings[0]
-		}
-	}
 }

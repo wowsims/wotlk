@@ -1,0 +1,12 @@
+{
+   "type": "TypeAPL",
+      "prepullActions": [
+        {"action":{"activateAura":{"auraId":{"spellId":16870}}},"doAtValue":{"const":{"val":"-1s"}}},
+        {"action":{"castSpell":{"spellId":{"spellId":50334}}},"doAtValue":{"const":{"val":"-1s"}}}
+      ],
+      "priorityList": [
+        {"action":{"autocastOtherCooldowns":{}}},
+        {"action":{"condition":{"const":{"val":"false"}},"castSpell":{"spellId":{"spellId":50334}}}},
+        {"action":{"catOptimalRotationAction":{"manualParams":false,"maxFfDelay":0.1,"minRoarOffset":25,"ripLeeway":4,"useRake":true,"useBite":true,"biteTime":4}}}
+      ]
+}

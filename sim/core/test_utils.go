@@ -53,7 +53,7 @@ var FullRaidBuffs = &proto.RaidBuffs{
 	ArcaneEmpowerment:     true,
 	BattleShout:           proto.TristateEffect_TristateEffectImproved,
 	Bloodlust:             true,
-	DemonicPact:           500,
+	DemonicPactSp:         500,
 	DevotionAura:          proto.TristateEffect_TristateEffectImproved,
 	DivineSpirit:          true,
 	ElementalOath:         true,
@@ -244,4 +244,14 @@ func GetAplRotation(dir string, file string) RotationCombo {
 	}
 
 	return RotationCombo{Label: file, Rotation: APLRotationFromJsonString(string(data))}
+}
+
+func GetGearSet(dir string, file string) GearSetCombo {
+	filePath := dir + "/" + file + ".gear.json"
+	data, err := os.ReadFile(filePath)
+	if err != nil {
+		log.Fatalf("failed to load gear json file: %s, %s", filePath, err)
+	}
+
+	return GearSetCombo{Label: file, GearSet: EquipmentSpecFromJsonString(string(data))}
 }

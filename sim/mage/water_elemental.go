@@ -87,7 +87,7 @@ func (we *WaterElemental) Initialize() {
 func (we *WaterElemental) Reset(_ *core.Simulation) {
 }
 
-func (we *WaterElemental) OnGCDReady(sim *core.Simulation) {
+func (we *WaterElemental) ExecuteCustomRotation(sim *core.Simulation) {
 	spell := we.Waterbolt
 
 	if sim.RandomFloat("Water Elemental Disobey") < we.disobeyChance {
@@ -97,9 +97,7 @@ func (we *WaterElemental) OnGCDReady(sim *core.Simulation) {
 		return
 	}
 
-	if success := spell.Cast(sim, we.CurrentTarget); !success {
-		we.WaitForMana(sim, spell.CurCast.Cost)
-	}
+	spell.Cast(sim, we.CurrentTarget)
 }
 
 // These numbers are just rough guesses based on looking at some logs.

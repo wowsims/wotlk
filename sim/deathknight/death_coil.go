@@ -60,9 +60,4 @@ func (dk *Deathknight) registerDrwDeathCoilSpell() {
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 		},
 	})
-
-	if !dk.Inputs.NewDrw {
-		dk.RuneWeapon.DeathCoil.DamageMultiplier *= 0.5
-		dk.RuneWeapon.DeathCoil.Flags |= core.SpellFlagIgnoreAttackerModifiers
-	}
 }

@@ -23,15 +23,18 @@ func (hunter *Hunter) registerMultiShotSpell(timer *core.Timer) {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD:      core.GCDDefault,
-				CastTime: 1, // Dummy value so core doesn't optimize the cast away
+				CastTime: time.Millisecond * 500,
 			},
-			ModifyCast: func(_ *core.Simulation, _ *core.Spell, cast *core.Cast) {
-				cast.CastTime = hunter.MultiShotCastTime()
+			ModifyCast: func(_ *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				cast.CastTime = spell.CastTime()
 			},
 			IgnoreHaste: true, // Hunter GCD is locked at 1.5s
 			CD: core.Cooldown{
 				Timer:    timer,
 				Duration: time.Second*10 - core.TernaryDuration(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfMultiShot), time.Second*1, 0),
+			},
+			CastTime: func(spell *core.Spell) time.Duration {
+				return time.Duration(float64(spell.DefaultCast.CastTime) / hunter.RangedSwingSpeed())
 			},
 		},
 
@@ -45,7 +48,7 @@ func (hunter *Hunter) registerMultiShotSpell(timer *core.Timer) {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			sharedDmg := hunter.AutoAttacks.Ranged.BaseDamage(sim) +
+			sharedDmg := hunter.AutoAttacks.Ranged().BaseDamage(sim) +
 				hunter.AmmoDamageBonus +
 				spell.BonusWeaponDamage() +
 				408
@@ -59,8 +62,4 @@ func (hunter *Hunter) registerMultiShotSpell(timer *core.Timer) {
 			}
 		},
 	})
-}
-
-func (hunter *Hunter) MultiShotCastTime() time.Duration {
-	return time.Duration(float64(time.Millisecond*500) / hunter.RangedSwingSpeed())
 }

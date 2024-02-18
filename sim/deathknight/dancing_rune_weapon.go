@@ -116,13 +116,7 @@ func (runeWeapon *RuneWeaponPet) Initialize() {
 }
 
 func (dk *Deathknight) DrwWeaponDamage(sim *core.Simulation, spell *core.Spell) float64 {
-	if dk.Inputs.NewDrw {
-		return spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +
-			spell.BonusWeaponDamage()
-	} else {
-		return spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
-			spell.BonusWeaponDamage()
-	}
+	return spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) + spell.BonusWeaponDamage()
 }
 
 func (dk *Deathknight) NewRuneWeapon() *RuneWeaponPet {
@@ -144,7 +138,7 @@ func (dk *Deathknight) NewRuneWeapon() *RuneWeaponPet {
 		}, func(ownerStats stats.Stats) stats.Stats {
 			return stats.Stats{
 				stats.AttackPower: ownerStats[stats.AttackPower],
-				stats.MeleeHaste:  ownerStats[stats.MeleeHaste] * PetHasteScale,
+				stats.MeleeHaste:  ownerStats[stats.MeleeHaste],
 
 				stats.MeleeHit: ownerStats[stats.MeleeHit],
 				stats.SpellHit: ownerStats[stats.MeleeHit] * PetSpellHitScale,
@@ -162,21 +156,21 @@ func (dk *Deathknight) NewRuneWeapon() *RuneWeaponPet {
 	runeWeapon.OnPetDisable = runeWeapon.disable
 
 	mhWeapon := dk.WeaponFromMainHand(dk.DefaultMeleeCritMultiplier())
+
+	baseDamage := mhWeapon.AverageDamage() / mhWeapon.SwingSpeed * 3.5
+	mhWeapon.BaseDamageMin = baseDamage - 150
+	mhWeapon.BaseDamageMax = baseDamage + 150
+
+	mhWeapon.SwingSpeed = 3.5
+	mhWeapon.NormalizedSwingSpeed = 3.3
+
 	runeWeapon.EnableAutoAttacks(runeWeapon, core.AutoAttackOptions{
 		MainHand:       mhWeapon,
 		AutoSwingMelee: true,
 	})
 
-	runeWeapon.AutoAttacks.MH.SwingSpeed = 3.5
-	runeWeapon.AutoAttacks.MH.NormalizedSwingSpeed = 3.3
 	runeWeapon.PseudoStats.DamageTakenMultiplier = 0
-
-	if dk.Inputs.NewDrw {
-		baseDamage := (mhWeapon.BaseDamageMin + mhWeapon.BaseDamageMax) / 2
-		baseDamage = (baseDamage / mhWeapon.SwingSpeed) * 3.5
-		runeWeapon.AutoAttacks.MH.BaseDamageMin = baseDamage - 150
-		runeWeapon.AutoAttacks.MH.BaseDamageMax = baseDamage + 150
-	}
+	runeWeapon.PseudoStats.MeleeHasteRatingPerHastePercent = dk.PseudoStats.MeleeHasteRatingPerHastePercent
 
 	dk.AddPet(runeWeapon)
 
@@ -190,9 +184,7 @@ func (runeWeapon *RuneWeaponPet) GetPet() *core.Pet {
 func (runeWeapon *RuneWeaponPet) Reset(_ *core.Simulation) {
 }
 
-func (runeWeapon *RuneWeaponPet) OnGCDReady(_ *core.Simulation) {
-	// No GCD system on Rune Weapon
-	runeWeapon.DoNothing()
+func (runeWeapon *RuneWeaponPet) ExecuteCustomRotation(_ *core.Simulation) {
 }
 
 func (runeWeapon *RuneWeaponPet) enable(sim *core.Simulation) {
@@ -200,13 +192,8 @@ func (runeWeapon *RuneWeaponPet) enable(sim *core.Simulation) {
 	runeWeapon.PseudoStats.MeleeSpeedMultiplier = 1
 	runeWeapon.MultiplyMeleeSpeed(sim, runeWeapon.dkOwner.PseudoStats.MeleeSpeedMultiplier)
 
-	if runeWeapon.dkOwner.Inputs.NewDrw {
-		runeWeapon.dkOwner.drwDmgSnapshot = runeWeapon.dkOwner.PseudoStats.DamageDealtMultiplier * 0.5
-		runeWeapon.dkOwner.RuneWeapon.PseudoStats.DamageDealtMultiplier *= runeWeapon.dkOwner.drwDmgSnapshot
-	} else {
-		runeWeapon.dkOwner.drwDmgSnapshot = runeWeapon.dkOwner.PseudoStats.DamageDealtMultiplier - 0.5
-		runeWeapon.dkOwner.RuneWeapon.PseudoStats.DamageDealtMultiplier *= runeWeapon.dkOwner.drwDmgSnapshot
-	}
+	runeWeapon.dkOwner.drwDmgSnapshot = runeWeapon.dkOwner.PseudoStats.DamageDealtMultiplier * 0.5
+	runeWeapon.dkOwner.RuneWeapon.PseudoStats.DamageDealtMultiplier *= runeWeapon.dkOwner.drwDmgSnapshot
 
 	runeWeapon.dkOwner.drwPhysSnapshot = runeWeapon.dkOwner.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical]
 	runeWeapon.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= runeWeapon.dkOwner.drwPhysSnapshot

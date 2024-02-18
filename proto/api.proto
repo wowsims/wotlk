@@ -27,6 +27,9 @@ message Player {
 	Consumes consumes = 4;
 	UnitStats bonus_stats = 36;
 
+	bool enable_item_swap = 46;
+	ItemSwap item_swap = 45;
+
 	IndividualBuffs buffs = 15;
 
 	oneof spec {
@@ -62,6 +65,9 @@ message Player {
 
 	APLRotation rotation = 40;
 
+	// TODO: Move most of the remaining fields into a 'MiscellaneousPlayerOptions' message.
+	// This will remove a lot of the boilerplate code in the UI for each new field.
+
 	int32 reaction_time_ms = 41;
 	int32 channel_clip_delay_ms = 42;
 	bool in_front_of_target = 23;
@@ -71,6 +77,10 @@ message Player {
 
 	// Items/enchants/gems/etc to include in the database.
 	SimDatabase database = 35;
+
+	double nibelung_average_casts = 43;
+	// hack to set a proper default value
+	bool nibelung_average_casts_set = 44;
 }
 
 message Party {
@@ -311,6 +321,8 @@ message SpellStats {
 	bool has_dot = 4; // Whether this spell applies a DoT effect.
 	bool has_shield = 6; // Whether this spell applies a shield effect.
 	bool prepull_only = 5; // Whether this spell may only be cast during prepull.
+	bool encounter_only = 8; // Whether this spell may only be cast during the encounter (not prepull).
+	bool has_cast_time = 9; // Whether this spell has a cast time or not.
 }
 message APLActionStats {
 	repeated string warnings = 1;
@@ -419,6 +431,12 @@ message BulkSimRequest {
     BulkSettings bulk_settings = 2;
 }
 
+message TalentLoadout {
+	string talents_string = 1;
+	Glyphs glyphs = 2;
+	string name = 3;
+}
+
 message BulkSettings {
 	repeated ItemSpec items = 1;
 	bool combinations = 2;
@@ -439,6 +457,9 @@ message BulkSettings {
 	// Number of iterations per combo.
 	// If set to 0 the sim core decides the optimal iterations.
 	int32 iterations_per_combo = 11;
+	// Should sim talents as well
+	bool sim_talents = 12;
+	repeated TalentLoadout talents_to_sim = 13;
 }
 
 message BulkSimResult {
@@ -450,6 +471,7 @@ message BulkSimResult {
 message BulkComboResult {
     repeated ItemSpecWithSlot items_added = 1;
     UnitMetrics unit_metrics = 2;
+	TalentLoadout talent_loadout = 3;
 }
 
 message ItemSpecWithSlot {

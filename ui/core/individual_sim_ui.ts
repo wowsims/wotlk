@@ -1,5 +1,5 @@
-import { aplLaunchStatuses, LaunchStatus, simLaunchStatuses } from './launched_sims';
-import { Player, AutoRotationGenerator, SimpleRotationGenerator } from './player';
+import { simLaunchStatuses } from './launched_sims';
+import { Player, PlayerConfig, registerSpecConfig as registerPlayerConfig } from './player';
 import { SimUI, SimWarning } from './sim_ui';
 import { EventID, TypedEvent } from './typed_event';
 
@@ -22,6 +22,7 @@ import {
 	Debuffs,
 	Encounter as EncounterProto,
 	EquipmentSpec,
+	Faction,
 	Glyphs,
 	HandType,
 	IndividualBuffs,
@@ -35,10 +36,9 @@ import {
 	Stat,
 } from './proto/common';
 
-import { IndividualSimSettings, SavedRotation, SavedTalents } from './proto/ui';
+import { IndividualSimSettings, SavedTalents } from './proto/ui';
 import { StatWeightsResult } from './proto/api';
 
-import { Gear } from './proto_utils/gear';
 import { getMetaGemConditionDescription } from './proto_utils/gems';
 import { professionNames } from './proto_utils/names';
 import { Stats } from './proto_utils/stats';
@@ -47,10 +47,11 @@ import {
 	isHealingSpec,
 	isTankSpec,
 	SpecOptions,
-	SpecRotation,
 	specToEligibleRaces,
 	specToLocalStorageKey,
 } from './proto_utils/utils';
+
+import {PresetGear, PresetRotation} from './preset_utils';
 
 import * as Exporters from './components/exporters';
 import * as Importers from './components/importers';
@@ -58,8 +59,7 @@ import * as IconInputs from './components/icon_inputs';
 import * as InputHelpers from './components/input_helpers';
 import * as Mechanics from './constants/mechanics';
 import * as Tooltips from './constants/tooltips';
-
-declare var pako: any;
+import { SimSettingCategories } from './sim';
 
 const SAVED_GEAR_STORAGE_KEY = '__savedGear__';
 const SAVED_ROTATION_STORAGE_KEY = '__savedRotation__';
@@ -69,9 +69,7 @@ const SAVED_TALENTS_STORAGE_KEY = '__savedTalents__';
 export type InputConfig<ModObject> = (
 	InputHelpers.TypedBooleanPickerConfig<ModObject> |
 	InputHelpers.TypedNumberPickerConfig<ModObject> |
-	InputHelpers.TypedEnumPickerConfig<ModObject> |
-	InputHelpers.TypedCustomRotationPickerConfig<any, any> |
-	InputHelpers.TypedItemSwapPickerConfig<any, any>
+	InputHelpers.TypedEnumPickerConfig<ModObject>
 );
 
 export interface InputSection {
@@ -84,9 +82,25 @@ export interface OtherDefaults {
 	profession2?: Profession,
 	distanceFromTarget?: number,
 	channelClipDelay?: number,
+	nibelungAverageCasts?: number,
 }
 
-export interface IndividualSimUIConfig<SpecType extends Spec> {
+export interface RaidSimPreset<SpecType extends Spec> {
+	spec: Spec,
+	talents: SavedTalents,
+	specOptions: SpecOptions<SpecType>,
+	consumes: Consumes,
+
+	defaultName: string,
+	defaultFactionRaces: Record<Faction, Race>,
+	defaultGear: Record<Faction, Record<number, EquipmentSpec>>,
+	otherDefaults?: OtherDefaults,
+
+	tooltip: string,
+	iconUrl: string,
+}
+
+export interface IndividualSimUIConfig<SpecType extends Spec> extends PlayerConfig<SpecType> {
 	// Additional css class to add to the root element.
 	cssClass: string,
 	// Used to generate schemed components. E.g. 'shaman', 'druid', 'raid'
@@ -105,7 +119,6 @@ export interface IndividualSimUIConfig<SpecType extends Spec> {
 		gear: EquipmentSpec,
 		epWeights: Stats,
 		consumes: Consumes,
-		rotation: SpecRotation<SpecType>,
 		talents: SavedTalents,
 		specOptions: SpecOptions<SpecType>,
 
@@ -121,11 +134,14 @@ export interface IndividualSimUIConfig<SpecType extends Spec> {
 	playerInputs?: InputSection,
 	playerIconInputs: Array<IconInputs.IconInputConfig<Player<SpecType>, any>>,
 	petConsumeInputs?: Array<IconInputs.IconInputConfig<Player<SpecType>, any>>,
-	rotationInputs: InputSection;
+	rotationInputs?: InputSection;
 	rotationIconInputs?: Array<IconInputs.IconInputConfig<Player<any>, any>>;
 	includeBuffDebuffInputs: Array<any>,
 	excludeBuffDebuffInputs: Array<any>,
 	otherInputs: InputSection;
+	// Currently, many classes don't support item swapping, and only in certain slots.
+	// So enable it only where it is supported.
+	itemSwapSlots?: Array<ItemSlot>,
 
 	// For when extra sections are needed (e.g. Shaman totems)
 	customSections?: Array<(parentElem: HTMLElement, simUI: IndividualSimUI<SpecType>) => ContentBlock>,
@@ -135,31 +151,18 @@ export interface IndividualSimUIConfig<SpecType extends Spec> {
 	presets: {
 		gear: Array<PresetGear>,
 		talents: Array<SavedDataConfig<Player<any>, SavedTalents>>,
-		rotations?: Array<PresetRotation>,
+		rotations: Array<PresetRotation>,
 	},
 
-	autoRotation?: AutoRotationGenerator<SpecType>,
-	simpleRotation?: SimpleRotationGenerator<SpecType>,
+	raidSimPresets: Array<RaidSimPreset<SpecType>>,
 }
 
-export interface GearAndStats {
-	gear: Gear,
-	bonusStats?: Stats,
+export function registerSpecConfig<SpecType extends Spec>(spec: SpecType, config: IndividualSimUIConfig<SpecType>): IndividualSimUIConfig<SpecType> {
+	registerPlayerConfig(spec, config);
+	return config;
 }
 
-export interface PresetGear {
-	name: string;
-	gear: EquipmentSpec;
-	tooltip?: string;
-	enableWhen?: (obj: Player<any>) => boolean;
-}
-
-export interface PresetRotation {
-	name: string;
-	rotation: SavedRotation;
-	tooltip?: string;
-	enableWhen?: (obj: Player<any>) => boolean;
-}
+export let itemSwapEnabledSpecs: Array<Spec> = [];
 
 export interface Settings {
 	raidBuffs: RaidBuffs,
@@ -192,7 +195,6 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			spec: player.spec,
 			knownIssues: config.knownIssues,
 			launchStatus: simLaunchStatuses[player.spec],
-			noticeText: aplLaunchStatuses[player.spec] == LaunchStatus.Alpha ? 'Rotation settings have been moved to the \'Rotation\' tab, where experimental APL options are also available. Try them out!' : undefined,
 		});
 		this.rootElem.classList.add('individual-sim-ui');
 		this.player = player;
@@ -201,14 +203,8 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		this.prevEpIterations = 0;
 		this.prevEpSimResult = null;
 
-		if (aplLaunchStatuses[player.spec] >= LaunchStatus.Beta) {
-			if (!config.autoRotation) {
-				throw new Error('autoRotation is required for APL beta');
-			}
-			player.setAutoRotationGenerator(config.autoRotation);
-		}
-		if (aplLaunchStatuses[player.spec] == LaunchStatus.Launched && config.simpleRotation) {
-			player.setSimpleRotationGenerator(config.simpleRotation);
+		if ((config.itemSwapSlots || []).length > 0 && !itemSwapEnabledSpecs.includes(player.spec)) {
+			itemSwapEnabledSpecs.push(player.spec);
 		}
 
 		this.addWarning({
@@ -293,9 +289,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		this.bt = this.addBulkTab();
 		this.addSettingsTab();
 		this.addTalentsTab();
-		if (aplLaunchStatuses[this.player.spec] != LaunchStatus.Unlaunched) {
-			this.addRotationTab();
-		}
+		this.addRotationTab();
 
 		if (!this.isWithinRaidSim) {
 			this.addDetailedResultsTab();
@@ -307,47 +301,34 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 	private loadSettings() {
 		const initEventID = TypedEvent.nextEventID();
 		TypedEvent.freezeAllAndDo(() => {
-			let loadedSettings = false;
-
-			let hash = window.location.hash;
-			if (hash.length > 1) {
-				// Remove leading '#'
-				hash = hash.substring(1);
-				try {
-					const binary = atob(hash);
-					const bytes = new Uint8Array(binary.length);
-					for (let i = 0; i < bytes.length; i++) {
-						bytes[i] = binary.charCodeAt(i);
-					}
-
-					const settingsBytes = pako.inflate(bytes);
-					const settings = IndividualSimSettings.fromBinary(settingsBytes);
-					this.fromProto(initEventID, settings);
-					loadedSettings = true;
-				} catch (e) {
-					console.warn('Failed to parse settings from window hash: ' + e);
-				}
-			}
-			window.location.hash = '';
+			this.applyDefaults(initEventID);
 
 			const savedSettings = window.localStorage.getItem(this.getSettingsStorageKey());
-			if (!loadedSettings && savedSettings != null) {
+			if (savedSettings != null) {
 				try {
 					const settings = IndividualSimSettings.fromJsonString(savedSettings);
 					this.fromProto(initEventID, settings);
-					loadedSettings = true;
 				} catch (e) {
 					console.warn('Failed to parse saved settings: ' + e);
 				}
 			}
 
-			if (!loadedSettings) {
-				this.applyDefaults(initEventID);
+			// Loading from link needs to happen after loading saved settings, so that partial link imports
+			// (e.g. rotation only) include the previous settings for other categories.
+			try {
+				const urlParseResults = Importers.IndividualLinkImporter.tryParseUrlLocation(window.location);
+				if (urlParseResults) {
+					this.fromProto(initEventID, urlParseResults.settings, urlParseResults.categories);
+				}
+			} catch (e) {
+				console.warn('Failed to parse link settings: ' + e);
 			}
+			window.location.hash = '';
+
 			this.player.setName(initEventID, 'Player');
 
 			// This needs to go last so it doesn't re-store things as they are initialized.
-			this.changeEmitter.on(eventID => {
+			this.changeEmitter.on(_eventID => {
 				const jsonStr = IndividualSimSettings.toJsonString(this.toProto());
 				window.localStorage.setItem(this.getSettingsStorageKey(), jsonStr);
 			});
@@ -358,7 +339,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		this.raidSimResultsManager = addRaidSimAction(this);
 		addStatWeightsAction(this, this.individualConfig.epStats, this.individualConfig.epPseudoStats, this.individualConfig.epReferenceStat);
 
-		const characterStats = new CharacterStats(
+		const _characterStats = new CharacterStats(
 			this.rootElem.getElementsByClassName('sim-sidebar-footer')[0] as HTMLElement,
 			this.player,
 			this.individualConfig.displayStats,
@@ -397,7 +378,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			</div>
 		`);
 
-		const detailedResults = new EmbeddedDetailedResults(this.rootElem.getElementsByClassName('detailed-results')[0] as HTMLElement, this, this.raidSimResultsManager!);
+		const _detailedResults = new EmbeddedDetailedResults(this.rootElem.getElementsByClassName('detailed-results')[0] as HTMLElement, this, this.raidSimResultsManager!);
 	}
 
 	private addTopbarComponents() {
@@ -428,11 +409,6 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			this.player.setRace(eventID, specToEligibleRaces[this.player.spec][0]);
 			this.player.setGear(eventID, this.sim.db.lookupEquipmentSpec(this.individualConfig.defaults.gear));
 			this.player.setConsumes(eventID, this.individualConfig.defaults.consumes);
-			if (aplLaunchStatuses[this.player.spec] < LaunchStatus.Beta) {
-				this.player.setRotation(eventID, this.individualConfig.defaults.rotation);
-			} else if (aplLaunchStatuses[this.player.spec] == LaunchStatus.Beta) {
-				this.player.setRotation(eventID, this.player.specTypeFunctions.rotationCreate());
-			}
 			this.player.setTalentsString(eventID, this.individualConfig.defaults.talents.talentsString);
 			this.player.setGlyphs(eventID, this.individualConfig.defaults.talents.glyphs || Glyphs.create());
 			this.player.setSpecOptions(eventID, this.individualConfig.defaults.specOptions);
@@ -446,6 +422,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			this.player.setProfession2(eventID, this.individualConfig.defaults.other?.profession2 || Profession.Jewelcrafting);
 			this.player.setDistanceFromTarget(eventID, this.individualConfig.defaults.other?.distanceFromTarget || 0);
 			this.player.setChannelClipDelay(eventID, this.individualConfig.defaults.other?.channelClipDelay || 0);
+			this.player.setNibelungAverageCasts(eventID, this.individualConfig.defaults.other?.nibelungAverageCasts || 11);
 
 			if (this.isWithinRaidSim) {
 				this.sim.raid.setTargetDummies(eventID, 0);
@@ -487,113 +464,114 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		return specToLocalStorageKey[this.player.spec] + keyPart;
 	}
 
-	toProto(): IndividualSimSettings {
-		return IndividualSimSettings.create({
-			settings: this.sim.toProto(),
-			player: this.player.toProto(true),
-			raidBuffs: this.sim.raid.getBuffs(),
-			debuffs: this.sim.raid.getDebuffs(),
-			tanks: this.sim.raid.getTanks(),
-			partyBuffs: this.player.getParty()?.getBuffs() || PartyBuffs.create(),
-			encounter: this.sim.encounter.toProto(),
-			epWeightsStats: this.player.getEpWeights().toProto(),
-			epRatios: this.player.getEpRatios(),
-			dpsRefStat: this.dpsRefStat,
-			healRefStat: this.healRefStat,
-			tankRefStat: this.tankRefStat,
-			targetDummies: this.sim.raid.getTargetDummies(),
+	toProto(exportCategories?: Array<SimSettingCategories>): IndividualSimSettings {
+		const exportCategory = (cat: SimSettingCategories) =>
+				!exportCategories
+				|| exportCategories.length == 0
+				|| exportCategories.includes(cat);
+		
+		const proto = IndividualSimSettings.create({
+			player: this.player.toProto(true, false, exportCategories),
 		});
+
+		if (exportCategory(SimSettingCategories.Miscellaneous)) {
+			IndividualSimSettings.mergePartial(proto, {
+				tanks: this.sim.raid.getTanks(),
+			});
+		}
+		if (exportCategory(SimSettingCategories.Encounter)) {
+			IndividualSimSettings.mergePartial(proto, {
+				encounter: this.sim.encounter.toProto(),
+			});
+		}
+		if (exportCategory(SimSettingCategories.External)) {
+			IndividualSimSettings.mergePartial(proto, {
+				partyBuffs: this.player.getParty()?.getBuffs() || PartyBuffs.create(),
+				raidBuffs: this.sim.raid.getBuffs(),
+				debuffs: this.sim.raid.getDebuffs(),
+				targetDummies: this.sim.raid.getTargetDummies(),
+			});
+		}
+		if (exportCategory(SimSettingCategories.UISettings)) {
+			IndividualSimSettings.mergePartial(proto, {
+				settings: this.sim.toProto(),
+				epWeightsStats: this.player.getEpWeights().toProto(),
+				epRatios: this.player.getEpRatios(),
+				dpsRefStat: this.dpsRefStat,
+				healRefStat: this.healRefStat,
+				tankRefStat: this.tankRefStat,
+			});
+		}
+
+		return proto;
 	}
 
 	toLink(): string {
-		const proto = this.toProto();
-		// When sharing links, people generally don't intend to share settings/ep weights.
-		proto.settings = undefined;
-		proto.epWeights = [];
-
-		const protoBytes = IndividualSimSettings.toBinary(proto);
-		const deflated = pako.deflate(protoBytes, { to: 'string' });
-		const encoded = btoa(String.fromCharCode(...deflated));
-
-		const linkUrl = new URL(window.location.href);
-		linkUrl.hash = encoded;
-		return linkUrl.toString();
+		return Exporters.IndividualLinkExporter.createLink(this);
 	}
 
-	fromProto(eventID: EventID, settings: IndividualSimSettings) {
+	fromProto(eventID: EventID, settings: IndividualSimSettings, includeCategories?: Array<SimSettingCategories>) {
+		const loadCategory = (cat: SimSettingCategories) =>
+				!includeCategories
+				|| includeCategories.length == 0
+				|| includeCategories.includes(cat);
+
+		const tankSpec = isTankSpec(this.player.spec);
+		const healingSpec = isHealingSpec(this.player.spec);
+
 		TypedEvent.freezeAllAndDo(() => {
 			if (!settings.player) {
 				return;
 			}
-			this.player.fromProto(eventID, settings.player);
-			if (settings.epWeights?.length > 0) {
-				this.player.setEpWeights(eventID, new Stats(settings.epWeights));
-			} else if (settings.epWeightsStats) {
-				this.player.setEpWeights(eventID, Stats.fromProto(settings.epWeightsStats));
-			} else {
-				this.player.setEpWeights(eventID, this.individualConfig.defaults.epWeights);
-			}
 
-			const tankSpec = isTankSpec(this.player.spec);
-			const healingSpec = isHealingSpec(this.player.spec);
-			const defaultRatios = this.player.getDefaultEpRatios(tankSpec, healingSpec);
-			if (settings.epRatios) {
-				const missingRatios = new Array<number>(defaultRatios.length - settings.epRatios.length).fill(0);
-				this.player.setEpRatios(eventID, settings.epRatios.concat(missingRatios));
-			} else {
-				this.player.setEpRatios(eventID, defaultRatios);
-			}
+			this.player.fromProto(eventID, settings.player, includeCategories);
 
-			if (settings.dpsRefStat) {
-				this.dpsRefStat = settings.dpsRefStat;
+			if (loadCategory(SimSettingCategories.Miscellaneous)) {
+				this.sim.raid.setTanks(eventID, settings.tanks || []);
 			}
-			if (settings.healRefStat) {
-				this.healRefStat = settings.healRefStat;
+			if (loadCategory(SimSettingCategories.External)) {
+				this.sim.raid.setBuffs(eventID, settings.raidBuffs || RaidBuffs.create());
+				this.sim.raid.setDebuffs(eventID, settings.debuffs || Debuffs.create());
+				const party = this.player.getParty();
+				if (party) {
+					party.setBuffs(eventID, settings.partyBuffs || PartyBuffs.create());
+				}
+				this.sim.raid.setTargetDummies(eventID, settings.targetDummies);
 			}
-			if (settings.tankRefStat) {
-				this.tankRefStat = settings.tankRefStat;
+			if (loadCategory(SimSettingCategories.Encounter)) {
+				this.sim.encounter.fromProto(eventID, settings.encounter || EncounterProto.create());
 			}
+			if (loadCategory(SimSettingCategories.UISettings)) {
+				if (settings.epWeightsStats) {
+					this.player.setEpWeights(eventID, Stats.fromProto(settings.epWeightsStats));
+				} else {
+					this.player.setEpWeights(eventID, this.individualConfig.defaults.epWeights);
+				}
 
-			this.sim.raid.setBuffs(eventID, settings.raidBuffs || RaidBuffs.create());
-			this.sim.raid.setDebuffs(eventID, settings.debuffs || Debuffs.create());
-			this.sim.raid.setTanks(eventID, settings.tanks || []);
-			this.sim.raid.setTargetDummies(eventID, settings.targetDummies);
-			const party = this.player.getParty();
-			if (party) {
-				party.setBuffs(eventID, settings.partyBuffs || PartyBuffs.create());
-			}
+				const defaultRatios = this.player.getDefaultEpRatios(tankSpec, healingSpec);
+				if (settings.epRatios) {
+					const missingRatios = new Array<number>(defaultRatios.length - settings.epRatios.length).fill(0);
+					this.player.setEpRatios(eventID, settings.epRatios.concat(missingRatios));
+				} else {
+					this.player.setEpRatios(eventID, defaultRatios);
+				}
 
-			this.sim.encounter.fromProto(eventID, settings.encounter || EncounterProto.create());
+				if (settings.dpsRefStat) {
+					this.dpsRefStat = settings.dpsRefStat;
+				}
+				if (settings.healRefStat) {
+					this.healRefStat = settings.healRefStat;
+				}
+				if (settings.tankRefStat) {
+					this.tankRefStat = settings.tankRefStat;
+				}
 
-			if (settings.settings) {
-				this.sim.fromProto(eventID, settings.settings);
-			} else {
-				const tankSpec = isTankSpec(this.player.spec);
-				const healingSpec = isHealingSpec(this.player.spec);
-				this.sim.applyDefaults(eventID, tankSpec, healingSpec);
-			}
-
-			// Needed because of new proto field addition. Can remove on 2022/11/14 (2 months).
-			if (!isHealingSpec(this.player.spec)) {
-				this.sim.setShowDamageMetrics(eventID, true);
+				if (settings.settings) {
+					this.sim.fromProto(eventID, settings.settings);
+				} else {
+					this.sim.applyDefaults(eventID, tankSpec, healingSpec);
+				}
 			}
 		});
 	}
-
-	splitRelevantOptions<T>(options: Array<StatOption<T> | null>): Array<T> {
-		return options
-			.filter(option => option != null)
-			.filter(option =>
-				this.individualConfig.includeBuffDebuffInputs.includes(option!.item) ||
-				option!.stats.length == 0 ||
-				option!.stats.some(stat => this.individualConfig.epStats.includes(stat)))
-			.filter(option =>
-				!this.individualConfig.excludeBuffDebuffInputs.includes(option!.item))
-			.map(option => option!.item);
-	}
-}
-
-export interface StatOption<T> {
-	stats: Array<Stat>,
-	item: T,
 }

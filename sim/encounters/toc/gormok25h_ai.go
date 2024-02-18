@@ -136,7 +136,7 @@ func (ai *Gormok25HAI) registerImpaleSpell(target *core.Target) {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			// 150% weapon damage
-			baseDamage := 1.50 * spell.Unit.AutoAttacks.MH.EnemyWeaponDamage(sim, spell.MeleeAttackPower(), 0.3333)
+			baseDamage := 1.50 * spell.Unit.AutoAttacks.MH().EnemyWeaponDamage(sim, spell.MeleeAttackPower(), 0.3333)
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeAlwaysHit)
 
 			dot := spell.Dot(target)
@@ -225,16 +225,14 @@ func (ai *Gormok25HAI) registerRisingAngerSpell(target *core.Target) {
 		CritMultiplier:   1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-
 			ai.RisingAngerAura.Activate(sim)
 			ai.RisingAngerAura.AddStack(sim)
-
 		},
 	})
 
 }
 
-func (ai *Gormok25HAI) DoAction(sim *core.Simulation) {
+func (ai *Gormok25HAI) ExecuteCustomRotation(sim *core.Simulation) {
 	if ai.RisingAnger.IsReady(sim) && sim.CurrentTime >= ai.RisingAnger.CD.Duration && ai.Target.GCD.IsReady(sim) {
 		ai.RisingAnger.Cast(sim, &ai.Target.Unit)
 		return

@@ -158,7 +158,7 @@ var ItemSetAhnKaharBloodHuntersBattlegear = core.NewItemSet(core.ItemSet{
 					aura.Activate(sim)
 				},
 				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-					if spell == hunter.AutoAttacks.RangedAuto && sim.RandomFloat("AhnKahar 2pc") < procChance {
+					if spell == hunter.AutoAttacks.RangedAuto() && sim.RandomFloat("AhnKahar 2pc") < procChance {
 						procAura.Activate(sim)
 					}
 				},
@@ -183,7 +183,7 @@ var ItemSetAhnKaharBloodHuntersBattlegear = core.NewItemSet(core.ItemSet{
 					aura.Unit.AddStatsDynamic(sim, curBonus)
 				},
 				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-					aura.Unit.AddStatsDynamic(sim, curBonus.Multiply(-1))
+					aura.Unit.AddStatsDynamic(sim, curBonus.Invert())
 				},
 			})
 
@@ -227,7 +227,7 @@ func init() {
 					Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagNoOnCastComplete,
 
 					DamageMultiplier: 0.5,
-					CritMultiplier:   hunter.AutoAttacks.RangedConfig.CritMultiplier,
+					CritMultiplier:   hunter.AutoAttacks.RangedConfig().CritMultiplier,
 					ThreatMultiplier: 1,
 
 					ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {

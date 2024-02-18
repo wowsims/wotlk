@@ -26,7 +26,7 @@ func (rogue *Rogue) ApplyTalents() {
 	rogue.AddStat(stats.SpellHit, core.SpellHitRatingPerHitChance*1*float64(rogue.Talents.Precision))
 	rogue.AddStat(stats.Expertise, core.ExpertisePerQuarterPercentReduction*5*float64(rogue.Talents.WeaponExpertise))
 	rogue.AddStat(stats.ArmorPenetration, core.ArmorPenPerPercentArmor*3*float64(rogue.Talents.SerratedBlades))
-	rogue.AutoAttacks.OHConfig.DamageMultiplier *= rogue.dwsMultiplier()
+	rogue.AutoAttacks.OHConfig().DamageMultiplier *= rogue.dwsMultiplier()
 
 	if rogue.Talents.Deadliness > 0 {
 		rogue.MultiplyStat(stats.AttackPower, 1.0+0.02*float64(rogue.Talents.Deadliness))
@@ -510,12 +510,6 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 		Type:     core.CooldownTypeDPS,
 		Priority: core.CooldownPriorityDefault,
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
-
-			if rogue.Rotation.MultiTargetSliceFrequency == proto.Rogue_Rotation_Never {
-				// Well let's just cast BF now, no need to optimize around slices that will never be cast
-				return true
-			}
-
 			if sim.GetRemainingDuration() > cooldownDur+dur {
 				// We'll have enough time to cast another BF, so use it immediately to make sure we get the 2nd one.
 				return true
@@ -543,16 +537,10 @@ func (rogue *Rogue) registerAdrenalineRushCD() {
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.ResetEnergyTick(sim)
 			rogue.ApplyEnergyTickMultiplier(1.0)
-			if r, ok := rogue.rotation.(*rotation_multi); ok {
-				r.planRotation(sim, rogue)
-			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.ResetEnergyTick(sim)
 			rogue.ApplyEnergyTickMultiplier(-1.0)
-			if r, ok := rogue.rotation.(*rotation_multi); ok {
-				r.planRotation(sim, rogue)
-			}
 		},
 	})
 

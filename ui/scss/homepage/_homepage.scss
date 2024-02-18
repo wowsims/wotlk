@@ -16,11 +16,13 @@
   flex-direction: column;
 
 
-  .homepage-header-container,
-  .homepage-content-container,
-  .homepage-footer-container {
-    padding-top: map.get($spacers, 4);
-    padding-bottom: map.get($spacers, 4);
+  .homepage-header-container {
+    padding-top: calc(var(--container-padding) / 2);
+  }
+
+  .homepage-content-container {
+    padding-top: var(--container-padding);
+    padding-bottom: var(--container-padding);
   }
 
   .homepage-header {
@@ -31,8 +33,8 @@
         display: flex;
 
         .wowsims-logo {
-          width: 75px;
-          margin-right: map.get($spacers, 3);
+          width: 6rem;
+          margin-right: map-get($spacers, 3);
         }
   
         .wowsims-title {
@@ -40,21 +42,21 @@
           @extend .fw-bold;
           color: $brand;
           margin: 0;
+          line-height: 1;
         }
       }
 
       .homepage-header-collapse {
-        padding-top: map.get($spacers, 3);
-        padding-bottom: map.get($spacers, 3);
+        padding-top: map-get($spacers, 3);
+        padding-bottom: map-get($spacers, 3);
         align-items: flex-end;
         justify-content: flex-end;
       }
     }
 
-    .wrath-title {
+    .expansion-title {
       color: $wrath-blue;
       margin: 0;
-      font-weight: bold;
     }
   }
 
@@ -62,7 +64,7 @@
     flex-direction: column;
 
     .info-container {
-      margin-bottom: map.get($spacers, 5);
+      margin-bottom: var(--container-padding);
       display: flex;
       flex-direction: column;
 
@@ -82,10 +84,11 @@
         flex-wrap: wrap;
 
         &:not(:last-child) {
-          margin-bottom: map.get($spacers, 5);
+          margin-bottom: map-get($spacers, 5);
         }
 
         &> .sim-link, &> .sim-link-dropdown {
+          max-width: 25%;
           flex: 1 25%;
           margin-right: 25%;
         }
@@ -120,8 +123,8 @@
       }
 
       .sim-links-container {
-        margin-left: map.get($spacers, 3) * -1;
-        margin-right: map.get($spacers, 3) * -1;
+        margin-left: map-get($spacers, 3) * -1;
+        margin-right: map-get($spacers, 3) * -1;
 
         .sim-links {
           margin-bottom: 0 !important;
@@ -149,8 +152,8 @@
     .homepage-header-container,
     .homepage-content-container,
     .homepage-footer-container {
-      padding-top: map.get($spacers, 3);
-      padding-bottom: map.get($spacers, 3);
+      padding-top: map-get($spacers, 3);
+      padding-bottom: map-get($spacers, 3);
     }
 
     .homepage-header {
@@ -171,7 +174,7 @@
 
     .homepage-content-container {
       .info-container {
-        margin-bottom: map.get($spacers, 3);
+        margin-bottom: map-get($spacers, 3);
       }
 
       .sim-links-container {

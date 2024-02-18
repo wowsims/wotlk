@@ -7,6 +7,15 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+var OtherItemIdsToFetch = []string{
+	// Hallow's End Ilvl bumped rings
+	"211817",
+	"211844",
+	"211847",
+	"211850",
+	"211851",
+}
+
 var ItemOverrides = []*proto.UIItem{
 	{ /** Destruction Holo-gogs */ Id: 32494, ClassAllowlist: []proto.Class{proto.Class_ClassMage, proto.Class_ClassPriest, proto.Class_ClassWarlock}},
 	{ /** Gadgetstorm Goggles */ Id: 32476, ClassAllowlist: []proto.Class{proto.Class_ClassShaman}},
@@ -155,6 +164,9 @@ var ItemOverrides = []*proto.UIItem{
 
 	// Cata pre-patch event items
 	{Id: 53492, Phase: 5},
+
+	// Heirloom Dwarven Handcannon, Wowhead partially glitchs out and shows us some other lvl calc for this
+	{Id: 44093, Stats: stats.Stats{stats.MeleeCrit: 30, stats.SpellCrit: 30, stats.Resilience: 13, stats.AttackPower: 34}.ToFloatArray()},
 }
 
 // Keep these sorted by item ID.

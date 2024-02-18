@@ -82,6 +82,9 @@ func (shaman *Shaman) registerLavaLashSpell() {
 				}
 			}
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return shaman.HasOHWeapon()
+		},
 	})
 }
 

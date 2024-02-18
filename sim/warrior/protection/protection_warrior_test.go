@@ -18,7 +18,7 @@ func TestProtectionWarrior(t *testing.T) {
 		Race:       proto.Race_RaceOrc,
 		OtherRaces: []proto.Race{proto.Race_RaceHuman},
 
-		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
+		GearSet:     core.GetGearSet("../../../ui/protection_warrior/gear_sets", "p1_balanced"),
 		Talents:     DefaultTalents,
 		Glyphs:      DefaultGlyphs,
 		Consumes:    FullConsumes,
@@ -58,7 +58,7 @@ func BenchmarkSimulate(b *testing.B) {
 			&proto.Player{
 				Race:          proto.Race_RaceOrc,
 				Class:         proto.Class_ClassWarrior,
-				Equipment:     P1Gear,
+				Equipment:     core.GetGearSet("../../../ui/protection_warrior/gear_sets", "p1_balanced").GearSet,
 				Consumes:      FullConsumes,
 				Spec:          PlayerOptionsBasic,
 				Buffs:         core.FullIndividualBuffs,
@@ -91,8 +91,7 @@ var DefaultGlyphs = &proto.Glyphs{
 
 var PlayerOptionsBasic = &proto.Player_ProtectionWarrior{
 	ProtectionWarrior: &proto.ProtectionWarrior{
-		Options:  warriorOptions,
-		Rotation: &proto.ProtectionWarrior_Rotation{},
+		Options: warriorOptions,
 	},
 }
 
@@ -105,23 +104,3 @@ var FullConsumes = &proto.Consumes{
 	BattleElixir:   proto.BattleElixir_ElixirOfMastery,
 	GuardianElixir: proto.GuardianElixir_GiftOfArthas,
 }
-
-var P1Gear = core.EquipmentSpecFromJsonString(`{"items": [
-	{"id":40546,"enchant":3818,"gems":[41380,40034]},
-	{"id":40387},
-	{"id":39704,"enchant":3852,"gems":[40034]},
-	{"id":40722,"enchant":3605},
-	{"id":44000,"enchant":3832,"gems":[40034,40015]},
-	{"id":39764,"enchant":3850,"gems":[0]},
-	{"id":40545,"enchant":3860,"gems":[40034,0]},
-	{"id":39759,"enchant":3601,"gems":[40008,36767]},
-	{"id":40589,"enchant":3822},
-	{"id":39717,"enchant":3232,"gems":[40089]},
-	{"id":40370},
-	{"id":40718},
-	{"id":40257},
-	{"id":44063,"gems":[36767,40089]},
-	{"id":40402,"enchant":3788},
-	{"id":40400,"enchant":3849},
-	{"id":41168,"gems":[36767]}
-]}`)

@@ -18,15 +18,12 @@ func TestBlood(t *testing.T) {
 		Race:       proto.Race_RaceOrc,
 		OtherRaces: []proto.Race{proto.Race_RaceHuman},
 
-		GearSet:     core.GearSetCombo{Label: "Blood P3 ", GearSet: BloodP3Gear},
+		GearSet:     core.GetGearSet("../../../ui/deathknight/gear_sets", "p3_blood"),
 		Talents:     BloodTalents,
 		Glyphs:      BloodDefaultGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBlood},
-		OtherRotations: []core.RotationCombo{
-			core.GetAplRotation("../../../ui/deathknight/apls", "blood_pesti"),
-			core.GetAplRotation("../../../ui/deathknight/apls", "blood_pesti_dd"),
-		},
+		Rotation:    core.GetAplRotation("../../../ui/deathknight/apls", "blood_dps"),
 
 		ItemFilter: ItemFilter,
 	}))
@@ -38,14 +35,14 @@ func TestUnholy(t *testing.T) {
 		Race:       proto.Race_RaceOrc,
 		OtherRaces: []proto.Race{proto.Race_RaceHuman},
 
-		GearSet:     core.GearSetCombo{Label: "Unholy P3 ", GearSet: UnholyDwP3Gear},
+		GearSet:     core.GetGearSet("../../../ui/deathknight/gear_sets", "p3_uh_dw"),
 		Talents:     UnholyTalents,
 		Glyphs:      UnholyDefaultGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsUnholy},
+		Rotation:    core.GetAplRotation("../../../ui/deathknight/apls", "uh_2h_ss"),
 
 		OtherRotations: []core.RotationCombo{
-			core.GetAplRotation("../../../ui/deathknight/apls", "uh_2h_ss"),
 			core.GetAplRotation("../../../ui/deathknight/apls", "uh_dnd_aoe"),
 			core.GetAplRotation("../../../ui/deathknight/apls", "unholy_dw_ss"),
 		},
@@ -60,7 +57,7 @@ func TestFrost(t *testing.T) {
 		Race:       proto.Race_RaceOrc,
 		OtherRaces: []proto.Race{proto.Race_RaceHuman},
 
-		GearSet:     core.GearSetCombo{Label: "Frost P3", GearSet: FrostP3Gear},
+		GearSet:     core.GetGearSet("../../../ui/deathknight/gear_sets", "p3_frost"),
 		Talents:     FrostTalents,
 		Glyphs:      FrostDefaultGlyphs,
 		Consumes:    FullConsumes,
@@ -68,9 +65,9 @@ func TestFrost(t *testing.T) {
 		OtherSpecOptions: []core.SpecOptionsCombo{
 			{Label: "Desync", SpecOptions: PlayerOptionsDesyncFrost},
 		},
+		Rotation: core.GetAplRotation("../../../ui/deathknight/apls", "frost_bl_pesti"),
 
 		OtherRotations: []core.RotationCombo{
-			core.GetAplRotation("../../../ui/deathknight/apls", "frost_bl_pesti"),
 			core.GetAplRotation("../../../ui/deathknight/apls", "frost_uh_pesti"),
 		},
 
@@ -84,14 +81,12 @@ func TestFrostUH(t *testing.T) {
 		Race:       proto.Race_RaceOrc,
 		OtherRaces: []proto.Race{proto.Race_RaceHuman},
 
-		GearSet:     core.GearSetCombo{Label: "Frost P1", GearSet: FrostP3Gear},
+		GearSet:     core.GetGearSet("../../../ui/deathknight/gear_sets", "p3_frost"),
 		Talents:     FrostUHTalents,
 		Glyphs:      FrostUHDefaultGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsFrost},
-		OtherRotations: []core.RotationCombo{
-			core.GetAplRotation("../../../ui/deathknight/apls", "frost_uh_pesti"),
-		},
+		Rotation:    core.GetAplRotation("../../../ui/deathknight/apls", "frost_uh_pesti"),
 
 		ItemFilter: ItemFilter,
 	}))
@@ -131,73 +126,33 @@ var UnholyDefaultGlyphs = &proto.Glyphs{
 
 var PlayerOptionsBlood = &proto.Player_Deathknight{
 	Deathknight: &proto.Deathknight{
-		Options:  deathKnightOptions,
-		Rotation: bloodRotation,
+		Options: deathKnightOptions,
 	},
 }
 
 var PlayerOptionsUnholy = &proto.Player_Deathknight{
 	Deathknight: &proto.Deathknight{
-		Options:  deathKnightOptions,
-		Rotation: unholyRotation,
+		Options: deathKnightOptions,
 	},
 }
 
 var PlayerOptionsFrost = &proto.Player_Deathknight{
 	Deathknight: &proto.Deathknight{
-		Options:  deathKnightOptions,
-		Rotation: frostRotation,
+		Options: deathKnightOptions,
 	},
 }
 
 var PlayerOptionsDesyncFrost = &proto.Player_Deathknight{
 	Deathknight: &proto.Deathknight{
-		Options:  deathKnightOptions,
-		Rotation: frostDesyncRotation,
+		Options: deathKnightOptions,
 	},
 }
 
-var bloodRotation = &proto.Deathknight_Rotation{
-	ArmyOfTheDead:        proto.Deathknight_Rotation_PreCast,
-	DrwDiseases:          proto.Deathknight_Rotation_Pestilence,
-	UseEmpowerRuneWeapon: true,
-	PreNerfedGargoyle:    false,
-	UseDancingRuneWeapon: true,
-	BloodSpender:         proto.Deathknight_Rotation_HS,
-}
-
-var unholyRotation = &proto.Deathknight_Rotation{
-	UseDeathAndDecay:     true,
-	StartingPresence:     proto.Deathknight_Rotation_Unholy,
-	BlPresence:           proto.Deathknight_Rotation_Blood,
-	Presence:             proto.Deathknight_Rotation_Blood,
-	GargoylePresence:     proto.Deathknight_Rotation_Unholy,
-	UseEmpowerRuneWeapon: true,
-	UseGargoyle:          true,
-	BtGhoulFrenzy:        false,
-	HoldErwArmy:          false,
-	PreNerfedGargoyle:    false,
-	BloodRuneFiller:      proto.Deathknight_Rotation_BloodBoil,
-	ArmyOfTheDead:        proto.Deathknight_Rotation_AsMajorCd,
-	BloodTap:             proto.Deathknight_Rotation_GhoulFrenzy,
-}
-
-var frostRotation = &proto.Deathknight_Rotation{
-	UseEmpowerRuneWeapon: true,
-}
-
-var frostDesyncRotation = &proto.Deathknight_Rotation{
-	UseEmpowerRuneWeapon: true,
-	DesyncRotation:       true,
-}
-
 var deathKnightOptions = &proto.Deathknight_Options{
-	UnholyFrenzyTarget:  &proto.UnitReference{Type: proto.UnitReference_Player, Index: 0},
-	DrwPestiApply:       true,
-	StartingRunicPower:  0,
-	PetUptime:           1,
-	PrecastGhoulFrenzy:  false,
-	PrecastHornOfWinter: true,
+	UnholyFrenzyTarget: &proto.UnitReference{Type: proto.UnitReference_Player, Index: 0},
+	DrwPestiApply:      true,
+	StartingRunicPower: 0,
+	PetUptime:          1,
 }
 
 var FullConsumes = &proto.Consumes{
@@ -216,63 +171,3 @@ var ItemFilter = core.ItemFilter{
 		proto.WeaponType_WeaponTypeMace,
 	},
 }
-
-var BloodP3Gear = core.EquipmentSpecFromJsonString(`{"items": [
-		  {"id":48493,"enchant":3817,"gems":[41285,40142]},
-		  {"id":47458,"gems":[40142]},
-		  {"id":48495,"enchant":3808,"gems":[40111]},
-		  {"id":47546,"enchant":3831,"gems":[42142]},
-		  {"id":47449,"enchant":3832,"gems":[49110,42142,40142]},
-		  {"id":48008,"enchant":3845,"gems":[40111,0]},
-		  {"id":48492,"enchant":3604,"gems":[40142,0]},
-		  {"id":47429,"gems":[40142,40142,40111]},
-		  {"id":48494,"enchant":3823,"gems":[40142,40111]},
-		  {"id":45599,"enchant":3606,"gems":[40111,40111]},
-		  {"id":47993,"gems":[40111,45862]},
-		  {"id":47413,"gems":[40142]},
-		  {"id":45931},
-		  {"id":47464},
-		  {"id":47446,"enchant":3368,"gems":[42142,40141]},
-		  {},
-		  {"id":47673}
-]}`)
-
-var UnholyDwP3Gear = core.EquipmentSpecFromJsonString(`{"items": [
-		{"id":48493,"enchant":3817,"gems":[41398,40146]},
-		  {"id":47458,"gems":[40146]},
-		  {"id":48495,"enchant":3808,"gems":[40111]},
-		  {"id":47548,"enchant":3831,"gems":[40111]},
-		  {"id":48491,"enchant":3832,"gems":[42142,42142]},
-		  {"id":45663,"enchant":3845,"gems":[40111,0]},
-		  {"id":48492,"enchant":3604,"gems":[40146,0]},
-		  {"id":47429,"gems":[40111,45862,40111]},
-		  {"id":47465,"enchant":3823,"gems":[49110,40111,40146]},
-		  {"id":45599,"enchant":3606,"gems":[40111,40111]},
-		  {"id":47413,"gems":[40146]},
-		  {"id":45534,"gems":[42142]},
-		  {"id":47464},
-		  {"id":45609},
-		  {"id":47528,"enchant":3368,"gems":[40111]},
-		  {"id":47528,"enchant":3368,"gems":[40111]},
-		  {"id":47673}
-]}`)
-
-var FrostP3Gear = core.EquipmentSpecFromJsonString(`{ "items": [
-		{"id":48493,"enchant":3817,"gems":[41398,40142]},
-		  {"id":45459,"gems":[40111]},
-		  {"id":48495,"enchant":3808,"gems":[40111]},
-		  {"id":47548,"enchant":3831,"gems":[40111]},
-		  {"id":48491,"enchant":3832,"gems":[42142,42142]},
-		  {"id":45663,"enchant":3845,"gems":[40111,0]},
-		  {"id":47492,"enchant":3604,"gems":[49110,40111,0]},
-		  {"id":45241,"gems":[40111,42142,40111]},
-		  {"id":48494,"enchant":3823,"gems":[40142,40111]},
-		  {"id":47473,"enchant":3606,"gems":[40142,40111]},
-		  {"id":46966,"gems":[40111]},
-		  {"id":45534,"gems":[40111]},
-		  {"id":47464},
-		  {"id":45931},
-		  {"id":47528,"enchant":3370,"gems":[40111]},
-		  {"id":47528,"enchant":3368,"gems":[40111]},
-		  {"id":40207}
-]}`)

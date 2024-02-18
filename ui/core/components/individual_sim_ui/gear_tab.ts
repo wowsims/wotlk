@@ -9,6 +9,7 @@ import { Stats } from "../../proto_utils/stats";
 import { GearPicker } from "../gear_picker";
 import { SavedDataManager } from "../saved_data_manager";
 import { SimTab } from "../sim_tab";
+import { GemSummary } from "./gem_summary";
 
 export class GearTab extends SimTab {
 	protected simUI: IndividualSimUI<Spec>;
@@ -34,7 +35,7 @@ export class GearTab extends SimTab {
 
 	protected buildTabContent() {
 		this.buildGearPickers();
-
+		this.buildGemSummary();
 		this.buildSavedGearsetPicker();
 	}
 
@@ -42,8 +43,12 @@ export class GearTab extends SimTab {
 		new GearPicker(this.leftPanel, this.simUI, this.simUI.player);
 	}
 
+	private buildGemSummary() {
+		new GemSummary(this.leftPanel, this.simUI, this.simUI.player);
+	}
+
 	private buildSavedGearsetPicker() {
-		const savedGearManager = new SavedDataManager<Player<any>, SavedGearSet>(this.rightPanel, this.simUI, this.simUI.player, {
+		const savedGearManager = new SavedDataManager<Player<any>, SavedGearSet>(this.rightPanel, this.simUI.player, {
 			header: { title: "Gear Sets" },
 			label: 'Gear Set',
 			storageKey: this.simUI.getSavedGearStorageKey(),
@@ -56,11 +61,7 @@ export class GearTab extends SimTab {
 			setData: (eventID: EventID, player: Player<any>, newSavedGear: SavedGearSet) => {
 				TypedEvent.freezeAllAndDo(() => {
 					player.setGear(eventID, this.simUI.sim.db.lookupEquipmentSpec(newSavedGear.gear || EquipmentSpec.create()));
-					if (newSavedGear.bonusStats && newSavedGear.bonusStats.some(s => s != 0)) {
-						player.setBonusStats(eventID, new Stats(newSavedGear.bonusStats));
-					} else {
-						player.setBonusStats(eventID, Stats.fromProto(newSavedGear.bonusStatsStats || UnitStats.create()));
-					}
+					player.setBonusStats(eventID, Stats.fromProto(newSavedGear.bonusStatsStats || UnitStats.create()));
 				});
 			},
 			changeEmitters: [this.simUI.player.changeEmitter],

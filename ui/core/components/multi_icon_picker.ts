@@ -1,20 +1,20 @@
+import { Player } from '../player.js';
 import { ActionId } from '../proto_utils/action_id.js';
-import { EventID, TypedEvent } from '../typed_event.js';
 import { SimUI } from '../sim_ui.js';
+import { TypedEvent } from '../typed_event.js';
 import { isRightClick } from '../utils.js';
 
 import { Component } from './component.js';
 import { IconPicker, IconPickerConfig } from './icon_picker.js';
-import { Input, InputConfig } from './input.js';
 
 export interface MultiIconPickerItemConfig<ModObject> extends IconPickerConfig<ModObject, any> {
 }
 
 export interface MultiIconPickerConfig<ModObject> {
 	inputs: Array<MultiIconPickerItemConfig<ModObject>>,
-	numColumns: number,
 	label?: string,
 	categoryId?: ActionId,
+	showWhen?: (obj: Player<any>) => boolean,
 }
 
 // Icon-based UI for a dropdown with multiple icon pickers.
@@ -24,7 +24,6 @@ export class MultiIconPicker<ModObject> extends Component {
 
 	private currentValue: ActionId | null;
 
-	private readonly dropdownRootElem: HTMLElement;
 	private readonly buttonElem: HTMLAnchorElement;
 	private readonly dropdownMenu: HTMLElement;
 
@@ -50,7 +49,6 @@ export class MultiIconPicker<ModObject> extends Component {
 			</div>
 			<label class="multi-icon-picker-label form-label"></label>
     `;
-		this.dropdownRootElem = this.rootElem.querySelector('.dropdown') as HTMLElement;
 
 		const labelElem = this.rootElem.querySelector('.multi-icon-picker-label') as HTMLElement;
 		if (config.label) {
@@ -81,7 +79,7 @@ export class MultiIconPicker<ModObject> extends Component {
 
 		this.buildBlankOption();
 
-		this.pickers = config.inputs.map((pickerConfig, i) => {
+		this.pickers = config.inputs.map((pickerConfig, _i) => {
 			const optionContainer = document.createElement('li');
 			optionContainer.classList.add('icon-picker-option', 'dropdown-option');
 			this.dropdownMenu.appendChild(optionContainer);
@@ -90,6 +88,14 @@ export class MultiIconPicker<ModObject> extends Component {
 		});
 		simUI.sim.waitForInit().then(() => this.updateButtonImage());
 		simUI.changeEmitter.on(() => this.updateButtonImage());
+		simUI.changeEmitter.on(() => {
+			const show = !this.config.showWhen || this.config.showWhen(simUI.sim.raid.getPlayer(0)!);
+			if (show) {
+				this.rootElem.classList.remove('hide');
+			} else {
+				this.rootElem.classList.add('hide');
+			}
+		})
 	}
 
 	private buildBlankOption() {

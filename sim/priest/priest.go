@@ -116,14 +116,18 @@ func (priest *Priest) AddPartyBuffs(_ *proto.PartyBuffs) {
 }
 
 func (priest *Priest) Initialize() {
-	// Shadow Insight gained from Glyph of Shadow
-	// Finalized spirit off gear and not dynamic spirit (e.g. Spirit Tap does not increase this)
-	priest.ShadowyInsightAura = priest.NewTemporaryStatsAura(
-		"Shadowy Insight",
-		core.ActionID{SpellID: 61792},
-		stats.Stats{stats.SpellPower: priest.GetStat(stats.Spirit) * 0.30},
-		time.Second*10,
-	)
+	statDep := priest.NewDynamicStatDependency(stats.Spirit, stats.SpellPower, 0.3)
+	priest.ShadowyInsightAura = priest.GetOrRegisterAura(core.Aura{
+		Label:    "Shadowy Insight",
+		Duration: time.Second * 10,
+		ActionID: core.ActionID{SpellID: 61792},
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			priest.EnableDynamicStatDep(sim, statDep)
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			priest.DisableDynamicStatDep(sim, statDep)
+		},
+	})
 
 	priest.registerSetBonuses()
 	priest.registerDevouringPlagueSpell()
@@ -136,10 +140,8 @@ func (priest *Priest) Initialize() {
 
 	priest.registerPowerInfusionCD()
 
-	if priest.IsUsingAPL {
-		priest.MindFlayAPL = priest.newMindFlaySpell(0)
-		priest.MindSearAPL = priest.newMindSearSpell(0)
-	}
+	priest.MindFlayAPL = priest.newMindFlaySpell(0)
+	priest.MindSearAPL = priest.newMindSearSpell(0)
 
 	priest.MindFlay = []*core.Spell{
 		nil, // So we can use # of ticks as the index

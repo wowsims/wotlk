@@ -52,10 +52,10 @@ export class SettingsTab extends SimTab {
 	protected buildTabContent() {
 		this.buildEncounterSettings();
 		this.buildConsumesSettings();
-		this.buildOtherSettings();
 
 		this.buildTankSettings();
 		this.buildAssignmentSettings();
+		this.buildOtherSettings();
 
 		this.buildBlessingsPicker();
 		this.buildSavedDataPickers();
@@ -90,10 +90,11 @@ export class SettingsTab extends SimTab {
 	}
 
 	private buildOtherSettings() {
-		// const raid = this.simUI.sim.raid;
-		// const contentBlock = new ContentBlock(this.column1, 'other-settings', {
-		//   header: {title: 'Other'}
-		// });
+		const contentBlock = new ContentBlock(this.column2, 'other-settings', {
+		  header: {title: 'Other'}
+		});
+
+		this.makeBooleanRaidIconBuffInput(contentBlock.bodyElement, ActionId.fromSpellId(73828), 'strengthOfWrynn');
 
 		// new BooleanPicker(contentBlock.bodyElement, this.simUI.sim.raid, {
 		// 	label: 'Stagger Stormstrikes',
@@ -132,7 +133,7 @@ export class SettingsTab extends SimTab {
 	}
 
 	private buildSavedDataPickers() {
-		const savedEncounterManager = new SavedDataManager<Encounter, SavedEncounter>(this.rightPanel, this.simUI, this.simUI.sim.encounter, {
+		const savedEncounterManager = new SavedDataManager<Encounter, SavedEncounter>(this.rightPanel, this.simUI.sim.encounter, {
 			label: 'Encounter',
 			header: { title: 'Saved Encounters' },
 			storageKey: this.simUI.getSavedEncounterStorageKey(),
@@ -149,11 +150,11 @@ export class SettingsTab extends SimTab {
 		});
 	}
 
-	private makeBooleanRaidIconBuffInput(parent: HTMLElement, id: ActionId, field: keyof RaidBuffs): IconPicker<Raid, boolean> {
+	private makeBooleanRaidIconBuffInput(parent: HTMLElement, actionId: ActionId, field: keyof RaidBuffs): IconPicker<Raid, boolean> {
 		const raid = this.simUI.sim.raid;
 
 		return new IconPicker<Raid, boolean>(parent, raid, {
-			id: id,
+			actionId: actionId,
 			states: 2,
 			changedEvent: (raid: Raid) => raid.buffsChangeEmitter,
 			getValue: (raid: Raid) => raid.getBuffs()[field] as unknown as boolean,

@@ -56,18 +56,6 @@ func (warlock *Warlock) registerInfernoSpell() {
 			summonInfernalAura.Activate(sim)
 		},
 	})
-
-	warlock.AddMajorCooldown(core.MajorCooldown{
-		Spell: warlock.Inferno,
-		Type:  core.CooldownTypeDPS,
-		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
-			if !warlock.Rotation.UseInfernal {
-				return false
-			}
-
-			return sim.GetRemainingDuration() <= 61*time.Second
-		},
-	})
 }
 
 type InfernalPet struct {
@@ -129,7 +117,7 @@ func (warlock *Warlock) NewInfernal() *InfernalPet {
 		},
 		AutoSwingMelee: true,
 	})
-	infernal.AutoAttacks.MHConfig.DamageMultiplier *= 3.2
+	infernal.AutoAttacks.MHConfig().DamageMultiplier *= 3.2
 
 	core.ApplyPetConsumeEffects(&infernal.Character, warlock.Consumes)
 
@@ -190,7 +178,6 @@ func (infernal *InfernalPet) Initialize() {
 func (infernal *InfernalPet) Reset(_ *core.Simulation) {
 }
 
-func (infernal *InfernalPet) OnGCDReady(sim *core.Simulation) {
+func (infernal *InfernalPet) ExecuteCustomRotation(sim *core.Simulation) {
 	infernal.immolationAura.Cast(sim, nil)
-	infernal.DoNothing()
 }

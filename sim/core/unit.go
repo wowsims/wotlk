@@ -60,6 +60,9 @@ type Unit struct {
 	// for calculating spell travel time for certain spells.
 	DistanceFromTarget float64
 
+	// How many casts on average a Valkyr will get off during its lifetime.
+	NibelungAverageCasts float64
+
 	// Environment in which this Unit exists. This will be nil until after the
 	// construction phase.
 	Env *Environment
@@ -120,8 +123,7 @@ type Unit struct {
 	// Must be enabled to use, with "EnableAutoAttacks()".
 	AutoAttacks AutoAttacks
 
-	IsUsingAPL bool // Used for checks before the finalize() stage, when apl rotations are created.
-	Rotation   *APLRotation
+	Rotation *APLRotation
 
 	// Statistics describing the results of the sim.
 	Metrics UnitMetrics
@@ -131,8 +133,7 @@ type Unit struct {
 	AttackTables                []*AttackTable
 	DynamicDamageTakenModifiers []DynamicDamageTakenModifier
 
-	GCD       *Timer
-	doNothing bool // flags that this character chose to do nothing.
+	GCD *Timer
 
 	// Used for applying the effect of a hardcast spell when casting finishes.
 	//  For channeled spells, only Expires is set.
@@ -142,11 +143,6 @@ type Unit struct {
 	// GCD-related PendingActions.
 	gcdAction      *PendingAction
 	hardcastAction *PendingAction
-
-	// Fields related to waiting for certain events to happen.
-	waitingForEnergy float64
-	waitingForMana   float64
-	waitStartTime    time.Duration
 
 	// Cached mana return values per tick.
 	manaTickWhileCasting    float64
@@ -167,14 +163,6 @@ type Unit struct {
 //  3. Dead units (not yet implemented)
 func (unit *Unit) IsEnabled() bool {
 	return unit.enabled
-}
-
-// DoNothing will explicitly declare that the character is intentionally doing nothing.
-//
-//	If the GCD is not used during OnGCDReady and this flag is set, OnGCDReady will not be called again
-//	until it is used in some other way (like from an auto attack or resource regeneration).
-func (unit *Unit) DoNothing() {
-	unit.doNothing = true
 }
 
 func (unit *Unit) IsActive() bool {
@@ -232,10 +220,10 @@ func (unit *Unit) AddDynamicDamageTakenModifier(ddtm DynamicDamageTakenModifier)
 }
 
 func (unit *Unit) AddStatsDynamic(sim *Simulation, bonus stats.Stats) {
-	if unit.Env == nil || !unit.Env.IsFinalized() {
-		if !unit.Env.MeasuringStats {
-			panic("Not finalized, use AddStats instead!")
-		}
+	if unit.Env == nil {
+		panic("Environment not constructed.")
+	} else if !unit.Env.IsFinalized() && !unit.Env.MeasuringStats {
+		panic("Not finalized, use AddStats instead!")
 	}
 
 	unit.statsWithoutDeps.AddInplace(&bonus)
@@ -335,9 +323,6 @@ func (unit *Unit) ApplyCastSpeed(dur time.Duration) time.Duration {
 	return time.Duration(float64(dur) * unit.CastSpeed)
 }
 func (unit *Unit) ApplyCastSpeedForSpell(dur time.Duration, spell *Spell) time.Duration {
-	if spell.GetCastTime != nil {
-		return spell.GetCastTime(spell)
-	}
 	return time.Duration(float64(dur) * unit.CastSpeed * spell.CastTimeMultiplier)
 }
 
@@ -443,10 +428,6 @@ func (unit *Unit) finalize() {
 	}
 }
 
-func (unit *Unit) init(sim *Simulation) {
-	unit.auraTracker.init(sim)
-}
-
 func (unit *Unit) reset(sim *Simulation, _ Agent) {
 	unit.enabled = true
 	unit.resetCDs(sim)
@@ -480,6 +461,10 @@ func (unit *Unit) reset(sim *Simulation, _ Agent) {
 
 	unit.DynamicStatsPets = unit.DynamicStatsPets[:0]
 	unit.DynamicMeleeSpeedPets = unit.DynamicMeleeSpeedPets[:0]
+
+	if unit.Type != PetUnit {
+		sim.addTracker(&unit.auraTracker)
+	}
 }
 
 func (unit *Unit) startPull(sim *Simulation) {
@@ -490,23 +475,10 @@ func (unit *Unit) startPull(sim *Simulation) {
 	}
 }
 
-// Advance moves time forward counting down auras, CDs, mana regen, etc
-func (unit *Unit) advance(sim *Simulation) {
-	unit.auraTracker.advance(sim)
-
-	if hc := &unit.Hardcast; hc.Expires != startingCDTime && hc.Expires <= sim.CurrentTime {
-		hc.Expires = startingCDTime
-		if hc.OnComplete != nil {
-			hc.OnComplete(sim, hc.Target)
-		}
-	}
-}
-
 func (unit *Unit) doneIteration(sim *Simulation) {
 	unit.Hardcast = Hardcast{}
-	unit.doneIterationGCD(sim)
 
-	unit.manaBar.doneIteration()
+	unit.manaBar.doneIteration(sim)
 	unit.rageBar.doneIteration()
 
 	unit.auraTracker.doneIteration(sim)
@@ -544,6 +516,8 @@ func (unit *Unit) GetMetadata() *proto.UnitMetadata {
 			HasDot:          spell.dots != nil || spell.aoeDot != nil,
 			HasShield:       spell.shields != nil || spell.selfShield != nil,
 			PrepullOnly:     spell.Flags.Matches(SpellFlagPrepullOnly),
+			EncounterOnly:   spell.Flags.Matches(SpellFlagEncounterOnly),
+			HasCastTime:     spell.DefaultCast.CastTime > 0,
 		}
 	})
 
@@ -560,4 +534,8 @@ func (unit *Unit) GetMetadata() *proto.UnitMetadata {
 	})
 
 	return metadata
+}
+
+func (unit *Unit) ExecuteCustomRotation(sim *Simulation) {
+	panic("Unimplemented ExecuteCustomRotation")
 }

@@ -386,9 +386,6 @@ func (druid *Druid) applyOmenOfClarity() {
 
 	hasOocGlyph := druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfOmenOfClarity)
 
-	// Based on ingame testing by druid discord, subject to change or incorrectness
-	chanceToProcGotW := 1.0 - math.Pow(1.0-0.0875, float64(druid.RaidBuffTargets))
-
 	druid.RegisterAura(core.Aura{
 		Label:    "Omen of Clarity",
 		Duration: core.NeverExpires,
@@ -399,9 +396,10 @@ func (druid *Druid) applyOmenOfClarity() {
 			if !result.Landed() {
 				return
 			}
+
 			// https://github.com/JamminL/wotlk-classic-bugs/issues/66#issuecomment-1182017571
 			if druid.HurricaneTickSpell.IsEqual(spell) {
-				curCastTickSpeed := spell.CurCast.ChannelTime.Seconds() / 10
+				curCastTickSpeed := spell.CurDot().TickPeriod().Seconds() / 10
 				hurricaneCoeff := 1.0 - (7.0 / 9.0)
 				spellCoeff := hurricaneCoeff * curCastTickSpeed
 				chanceToProc := ((1.5 / 60) * 3.5) * spellCoeff
@@ -414,7 +412,8 @@ func (druid *Druid) applyOmenOfClarity() {
 				// Heavily based on comment here
 				// https://github.com/JamminL/wotlk-classic-bugs/issues/66#issuecomment-1182017571
 				// Instants are treated as 1.5
-				castTime := spell.DefaultCast.CastTime.Seconds()
+				// Uses current cast time rather than default cast time (PPM is constant with haste)
+				castTime := spell.CurCast.CastTime.Seconds()
 				if castTime == 0 {
 					castTime = 1.5
 				}
@@ -424,6 +423,11 @@ func (druid *Druid) applyOmenOfClarity() {
 					chanceToProc *= 0.25
 				} else if druid.Moonfire.IsEqual(spell) { // Add Moonfire
 					chanceToProc *= 0.076
+				} else if druid.GiftOfTheWild.IsEqual(spell) { // Add Gift of the Wild
+					// the above comment says it's 0.0875 * (1-0.924) which apparently is out-dated,
+					// there is no longer an instant suppression factor
+					// we assume 30 targets (25man + pets)
+					chanceToProc = 1 - math.Pow(1-chanceToProc, 30)
 				} else {
 					chanceToProc *= 0.666
 				}
@@ -435,11 +439,6 @@ func (druid *Druid) applyOmenOfClarity() {
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
 			if druid.FaerieFire.IsEqual(spell) && druid.InForm(Cat|Bear) && hasOocGlyph {
 				druid.ProcOoc(sim)
-			}
-			if druid.GiftOfTheWild.IsEqual(spell) {
-				if sim.RandomFloat("Clearcasting") < chanceToProcGotW {
-					druid.ProcOoc(sim)
-				}
 			}
 		},
 	})
@@ -556,21 +555,6 @@ func (druid *Druid) applyOwlkinFrenzy() {
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			druid.PseudoStats.DamageDealtMultiplier /= 1.1
-		},
-	})
-	druid.RegisterAura(core.Aura{
-		Label:    "Owlkin Frenzy",
-		Duration: core.NeverExpires,
-		OnReset: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Activate(sim)
-		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			for i := 0; i < len(druid.OwlkinFrenzyTimings); i++ {
-				if druid.OwlkinFrenzyTimings[i] < sim.CurrentTime.Seconds() && druid.OwlkinFrenzyTimings[i] != 0 {
-					druid.OwlkinFrenzyAura.Activate(sim)
-					druid.OwlkinFrenzyTimings[i] = 0
-				}
-			}
 		},
 	})
 }

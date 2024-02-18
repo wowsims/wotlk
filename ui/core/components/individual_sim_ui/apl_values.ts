@@ -37,6 +37,9 @@ import {
 	APLValueCurrentRuneDeath,
 	APLValueCurrentRuneActive,
 	APLValueCurrentNonDeathRuneCount,
+	APLValueRuneSlotCooldown,
+	APLValueRuneGrace,
+	APLValueRuneSlotGrace,
 	APLValueGCDIsReady,
 	APLValueGCDTimeToReady,
 	APLValueAutoTimeToNext,
@@ -45,11 +48,12 @@ import {
 	APLValueSpellTimeToReady,
 	APLValueSpellCastTime,
 	APLValueSpellTravelTime,
-	APLValueSpellChannelTime,
 	APLValueSpellCPM,
 	APLValueSpellIsChanneling,
 	APLValueSpellChanneledTicks,
+	APLValueSpellCurrentCost,
 	APLValueChannelClipDelay,
+	APLValueFrontOfTarget,
 	APLValueAuraIsActive,
 	APLValueAuraIsActiveWithReactionTime,
 	APLValueAuraRemainingTime,
@@ -67,9 +71,11 @@ import {
 	APLValueNumberTargets,
 	APLValueTotemRemainingTime,
 	APLValueCatExcessEnergy,
-	APLValueRuneSlotCooldown,
-	APLValueRuneGrace,
-	APLValueRuneSlotGrace,
+	APLValueWarlockShouldRecastDrainSoul,
+	APLValueWarlockShouldRefreshCorruption,
+	APLValueCatNewSavageRoarDuration,
+	APLValueBossSpellTimeToReady,
+	APLValueBossSpellIsCasting,
 } from '../../proto/apl.js';
 
 import { EventID } from '../../typed_event.js';
@@ -541,6 +547,35 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		newValue: APLValueNumberTargets.create,
 		fields: [],
 	}),
+	'frontOfTarget': inputBuilder({
+		label: 'Front of Target',
+		submenu: ['Encounter'],
+		shortDescription: '<b>True</b> if facing from of target',
+		newValue: APLValueFrontOfTarget.create,
+		fields: [],
+	}),
+
+	// Boss
+	'bossSpellIsCasting': inputBuilder({
+		label: 'Spell is Casting',
+		submenu: ['Boss'],
+		shortDescription: '',
+		newValue: APLValueBossSpellIsCasting.create,
+		fields: [
+			AplHelpers.unitFieldConfig('targetUnit', 'targets'),
+			AplHelpers.actionIdFieldConfig('spellId', 'non_instant_spells', 'targetUnit', 'currentTarget'),
+		]
+	}),
+	'bossSpellTimeToReady': inputBuilder({
+		label: 'Spell Time to Ready',
+		submenu: ['Boss'],
+		shortDescription: '',
+		newValue: APLValueBossSpellTimeToReady.create,
+		fields: [
+			AplHelpers.unitFieldConfig('targetUnit', 'targets'),
+			AplHelpers.actionIdFieldConfig('spellId', 'spells', 'targetUnit', 'currentTarget'),
+		]
+	}),
 
 	// Resources
 	'currentHealth': inputBuilder({
@@ -723,6 +758,15 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 	}),
 
 	// Spells
+	'spellCurrentCost': inputBuilder({
+		label: 'Current Cost',
+		submenu: ['Spell'],
+		shortDescription: 'Returns current resource cost of spell',
+		newValue: APLValueSpellCurrentCost.create,
+		fields: [
+			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells', ''),
+		],
+	}),
 	'spellCanCast': inputBuilder({
 		label: 'Can Cast',
 		submenu: ['Spell'],
@@ -778,15 +822,6 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		newValue: APLValueSpellCPM.create,
 		fields: [
 			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells', ''),
-		],
-	}),
-	'spellChannelTime': inputBuilder({
-		label: 'Channel Time',
-		submenu: ['Spell'],
-		shortDescription: 'Amount of time to fully channel the spell including any haste and spell cast time adjustments.',
-		newValue: APLValueSpellChannelTime.create,
-		fields: [
-			AplHelpers.actionIdFieldConfig('spellId', 'channel_spells', ''),
 		],
 	}),
 	'spellIsChanneling': inputBuilder({
@@ -972,6 +1007,34 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		newValue: APLValueCatExcessEnergy.create,
 		includeIf: (player: Player<any>, isPrepull: boolean) => player.spec == Spec.SpecFeralDruid,
 		fields: [
+		],
+	}),
+	'catNewSavageRoarDuration': inputBuilder({
+		label: 'New Savage Roar Duration',
+		submenu: ['Feral Druid'],
+		shortDescription: 'Returns duration of savage roar based on current combo points',
+		newValue: APLValueCatNewSavageRoarDuration.create,
+		includeIf: (player: Player<any>, isPrepull: boolean) => player.spec == Spec.SpecFeralDruid,
+		fields: [
+		],
+	}),
+	'warlockShouldRecastDrainSoul': inputBuilder({
+		label: 'Should Recast Drain Soul',
+		submenu: ['Warlock'],
+		shortDescription: 'Returns <b>True</b> if the current Drain Soul channel should be immediately recast, to get a better snapshot.',
+		newValue: APLValueWarlockShouldRecastDrainSoul.create,
+		includeIf: (player: Player<any>, isPrepull: boolean) => player.getClass() == Class.ClassWarlock,
+		fields: [
+		],
+	}),
+	'warlockShouldRefreshCorruption': inputBuilder({
+		label: 'Should Refresh Corruption',
+		submenu: ['Warlock'],
+		shortDescription: 'Returns <b>True</b> if the current Corruption has expired, or should be refreshed to get a better snapshot.',
+		newValue: APLValueWarlockShouldRefreshCorruption.create,
+		includeIf: (player: Player<any>, isPrepull: boolean) => player.getClass() == Class.ClassWarlock,
+		fields: [
+			AplHelpers.unitFieldConfig('targetUnit', 'targets'),
 		],
 	}),
 };

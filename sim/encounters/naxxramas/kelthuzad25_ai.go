@@ -57,6 +57,5 @@ func (ai *KelThuzad25AI) Initialize(target *core.Target, config *proto.Target) {
 func (ai *KelThuzad25AI) Reset(*core.Simulation) {
 }
 
-func (ai *KelThuzad25AI) DoAction(sim *core.Simulation) {
-	ai.Target.DoNothing()
+func (ai *KelThuzad25AI) ExecuteCustomRotation(sim *core.Simulation) {
 }

@@ -431,8 +431,6 @@ message RaidBuffs {
 	// +Spell Power
 	bool totem_of_wrath = 18;
 	bool flametongue_totem = 19;
-	int32 demonic_pact_old = 20; // old demo SP 
-	int32 demonic_pact = 43; // SP buff -- deprecated.
 	int32 demonic_pact_sp = 44; // SP buff NEW CORRECT
 
 	// +5% Spell Crit and/or +3% Haste
@@ -464,6 +462,7 @@ message RaidBuffs {
 	TristateEffect devotion_aura = 31;
 	TristateEffect stoneskin_totem = 42;
 	bool retribution_aura = 32;
+	bool strength_of_wrynn = 49;
 
 	// Drums
 	bool drums_of_forgotten_kings = 34;
@@ -657,7 +656,6 @@ message Target {
 	bool dual_wield = 9;
 	bool dual_wield_penalty = 10;
 	bool parry_haste = 12;
-	bool tight_enemy_damage = 17; // deprecated as of 07/12/23
 	bool suppress_dodge = 16; // Sunwell Radiance
 	SpellSchool spell_school = 13; // Allows elemental attacks.
 
@@ -784,10 +782,6 @@ message UnitReference {
 
 	// Reference to the owner, only used iff this is a pet.
 	UnitReference owner = 4;
-
-	// Raid index of the player to target. A value of -1 indicates no target.
-	// TODO: Delete this after 2 months (on or after 9/19/2023)
-	int32 target_index = 1 [deprecated = true];
 }
 
 // ID for actions that aren't spells or items.
@@ -851,8 +845,6 @@ message Cooldowns {
 
 	// % HP threshold, below which defensive cooldowns can be used.
 	double hp_percent_for_defensives = 2;
-	int32 desync_proc_trinket1_seconds = 3;
-	int32 desync_proc_trinket2_seconds = 4;
 }
 
 message HealingModel {

@@ -1,9 +1,7 @@
 import { GemColor } from '../proto/common.js';
-import { ItemSlot } from '../proto/common.js';
 import { ItemSpec } from '../proto/common.js';
 import { ItemType } from '../proto/common.js';
 import { Profession } from '../proto/common.js';
-import { Stat } from '../proto/common.js';
 import {
 	UIEnchant as Enchant,
 	UIGem as Gem,
@@ -48,6 +46,10 @@ export class EquippedItem {
 	get item(): Item {
 		// Make a defensive copy
 		return Item.clone(this._item);
+	}
+
+	get id(): number {
+		return this._item.id;
 	}
 
 	get enchant(): Enchant | null {
@@ -213,7 +215,7 @@ export class EquippedItem {
 		return this._item.gemSockets.length + (this.hasExtraSocket(isBlacksmithing) ? 1 : 0);
 	}
 
-	numSocketsOfColor(color: GemColor): number {
+	numSocketsOfColor(color: GemColor | null): number {
 		let numSockets: number = 0;
 
 		for (var socketColor of this._item.gemSockets) {
@@ -240,8 +242,11 @@ export class EquippedItem {
 		return this.hasExtraSocket(isBlacksmithing) ? this._item.gemSockets.concat([GemColor.GemColorPrismatic]) : this._item.gemSockets;
 	}
 
-	curGems(isBlacksmithing: boolean): Array<Gem> {
-		return (this._gems.filter(g => g != null) as Array<Gem>).slice(0, this.numSockets(isBlacksmithing));
+	curGems(isBlacksmithing: boolean): Array<Gem|null> {
+		return this._gems.slice(0, this.numSockets(isBlacksmithing));
+	}
+	curEquippedGems(isBlacksmithing: boolean): Array<Gem> {
+		return this.curGems(isBlacksmithing).filter(g => g != null) as Array<Gem>;
 	}
 
 	getProfessionRequirements(): Array<Profession> {

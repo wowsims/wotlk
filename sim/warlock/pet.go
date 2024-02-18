@@ -120,7 +120,6 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 	}
 
 	wp.EnableManaBarWithModifier(cfg.PowerModifier)
-	wp.EnableResumeAfterManaWait(wp.OnGCDReady)
 
 	wp.AddStatDependency(stats.Strength, stats.AttackPower, 2)
 	wp.AddStat(stats.AttackPower, -20)
@@ -298,16 +297,13 @@ func (wp *WarlockPet) Initialize() {
 func (wp *WarlockPet) Reset(_ *core.Simulation) {
 }
 
-func (wp *WarlockPet) OnGCDReady(sim *core.Simulation) {
+func (wp *WarlockPet) ExecuteCustomRotation(sim *core.Simulation) {
 	if !wp.primaryAbility.IsReady(sim) {
 		wp.WaitUntil(sim, wp.primaryAbility.CD.ReadyAt())
 		return
 	}
 
-	if success := wp.primaryAbility.Cast(sim, wp.CurrentTarget); !success {
-		wp.WaitForMana(sim, wp.primaryAbility.CurCast.Cost)
-	}
-
+	wp.primaryAbility.Cast(sim, wp.CurrentTarget)
 }
 
 func (warlock *Warlock) makeStatInheritance() core.PetStatInheritance {

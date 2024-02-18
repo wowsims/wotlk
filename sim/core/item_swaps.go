@@ -19,9 +19,8 @@ type ItemSwap struct {
 	ohCritMultiplier     float64
 	rangedCritMultiplier float64
 
-	// Used for resetting
-	initialEquippedItems   [3]Item
-	initialUnequippedItems [3]Item
+	// Which slots to actually swap.
+	slots []proto.ItemSlot
 
 	// Holds items that are currently not equipped
 	unEquippedItems [3]Item
@@ -33,17 +32,54 @@ TODO All the extra parameters here and the code in multiple places for handling 
 
 	we'll need to figure out something cleaner as this will be quite error-prone
 */
-func (character *Character) EnableItemSwap(itemSwap *proto.ItemSwap, mhCritMultiplier float64, ohCritMultiplier float64, rangedCritMultiplier float64) {
-	items := getItems(itemSwap)
+func (character *Character) enableItemSwap(itemSwap *proto.ItemSwap, mhCritMultiplier float64, ohCritMultiplier float64, rangedCritMultiplier float64) {
+	var slots []proto.ItemSlot
+	hasMhSwap := itemSwap.MhItem != nil && itemSwap.MhItem.Id != 0
+	hasOhSwap := itemSwap.OhItem != nil && itemSwap.OhItem.Id != 0
+	hasRangedSwap := itemSwap.RangedItem != nil && itemSwap.RangedItem.Id != 0
+
+	mainItems := [3]Item{
+		character.Equipment[proto.ItemSlot_ItemSlotMainHand],
+		character.Equipment[proto.ItemSlot_ItemSlotOffHand],
+		character.Equipment[proto.ItemSlot_ItemSlotRanged],
+	}
+	swapItems := [3]Item{
+		toItem(itemSwap.MhItem),
+		toItem(itemSwap.OhItem),
+		toItem(itemSwap.RangedItem),
+	}
+
+	// Handle MH and OH together, because present MH + empty OH --> swap MH and unequip OH
+	if hasMhSwap || hasOhSwap {
+		if swapItems[0].ID != mainItems[0].ID {
+			slots = append(slots, proto.ItemSlot_ItemSlotMainHand)
+		}
+		if swapItems[1].ID != mainItems[1].ID {
+			slots = append(slots, proto.ItemSlot_ItemSlotOffHand)
+		}
+	}
+	if hasRangedSwap {
+		if swapItems[2].ID != mainItems[2].ID {
+			slots = append(slots, proto.ItemSlot_ItemSlotRanged)
+		}
+	}
+
+	if len(slots) == 0 {
+		return
+	}
 
 	character.ItemSwap = ItemSwap{
-		character:            character,
 		mhCritMultiplier:     mhCritMultiplier,
 		ohCritMultiplier:     ohCritMultiplier,
 		rangedCritMultiplier: rangedCritMultiplier,
-		unEquippedItems:      items,
+		slots:                slots,
+		unEquippedItems:      swapItems,
 		swapped:              false,
 	}
+}
+
+func (swap *ItemSwap) initialize(character *Character) {
+	swap.character = character
 }
 
 func (character *Character) RegisterOnItemSwap(callback OnSwapItem) {
@@ -70,8 +106,22 @@ func (swap *ItemSwap) RegisterOnSwapItemForEffectWithPPMManager(effectID int32, 
 
 }
 
+// Helper for handling Effects that use the itemID to toggle the aura on and off
+func (swap *ItemSwap) RegisterOnSwapItemForItemEffect(itemID int32, aura *Aura) {
+	character := swap.character
+	character.RegisterOnItemSwap(func(sim *Simulation) {
+		procMask := character.GetProcMaskForItem(itemID)
+
+		if procMask == ProcMaskUnknown {
+			aura.Deactivate(sim)
+		} else {
+			aura.Activate(sim)
+		}
+	})
+}
+
 // Helper for handling Effects that use the effectID to toggle the aura on and off
-func (swap *ItemSwap) RegisterOnSwapItemForEffect(effectID int32, aura *Aura) {
+func (swap *ItemSwap) RegisterOnSwapItemForEnchantEffect(effectID int32, aura *Aura) {
 	character := swap.character
 	character.RegisterOnItemSwap(func(sim *Simulation) {
 		procMask := character.GetProcMaskForEnchant(effectID)
@@ -85,7 +135,7 @@ func (swap *ItemSwap) RegisterOnSwapItemForEffect(effectID int32, aura *Aura) {
 }
 
 func (swap *ItemSwap) IsEnabled() bool {
-	return swap.character != nil
+	return swap.character != nil && len(swap.slots) > 0
 }
 
 func (swap *ItemSwap) IsSwapped() bool {
@@ -110,7 +160,7 @@ func (swap *ItemSwap) CalcStatChanges(slots []proto.ItemSlot) stats.Stats {
 	return newStats
 }
 
-func (swap *ItemSwap) SwapItems(sim *Simulation, slots []proto.ItemSlot, useGCD bool) {
+func (swap *ItemSwap) SwapItems(sim *Simulation, slots []proto.ItemSlot) {
 	if !swap.IsEnabled() {
 		return
 	}
@@ -121,6 +171,7 @@ func (swap *ItemSwap) SwapItems(sim *Simulation, slots []proto.ItemSlot, useGCD 
 	newStats := stats.Stats{}
 	has2H := swap.GetItem(proto.ItemSlot_ItemSlotMainHand).HandType == proto.HandType_HandTypeTwoHand
 	for _, slot := range slots {
+
 		//will swap both on the MainHand Slot for 2H.
 		if slot == proto.ItemSlot_ItemSlotOffHand && has2H {
 			continue
@@ -143,13 +194,15 @@ func (swap *ItemSwap) SwapItems(sim *Simulation, slots []proto.ItemSlot, useGCD 
 	}
 
 	if character.AutoAttacks.AutoSwingMelee && meleeWeaponSwapped && sim.CurrentTime > 0 {
-		character.AutoAttacks.CancelAutoSwing(sim)
-		character.AutoAttacks.restartMelee(sim, false)
+		character.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime, false)
 	}
 
-	if useGCD {
-		character.SetGCDTimer(sim, 1500*time.Millisecond+sim.CurrentTime)
+	// If GCD is ready then use the GCD, otherwise we assume it's being used along side a spell.
+	if character.GCD.IsReady(sim) {
+		newGCD := sim.CurrentTime + 1500*time.Millisecond
+		character.SetGCDTimer(sim, newGCD)
 	}
+
 	swap.swapped = !swap.swapped
 }
 
@@ -191,73 +244,33 @@ func (swap *ItemSwap) getItemStats(item Item) stats.Stats {
 
 func (swap *ItemSwap) swapWeapon(slot proto.ItemSlot) {
 	character := swap.character
-	if !character.AutoAttacks.AutoSwingMelee && !character.AutoAttacks.AutoSwingRanged {
-		return
-	}
 
 	switch slot {
 	case proto.ItemSlot_ItemSlotMainHand:
-		character.AutoAttacks.MH = character.WeaponFromMainHand(swap.mhCritMultiplier)
+		if character.AutoAttacks.AutoSwingMelee {
+			character.AutoAttacks.SetMH(character.WeaponFromMainHand(swap.mhCritMultiplier))
+		}
 	case proto.ItemSlot_ItemSlotOffHand:
-		character.AutoAttacks.OH = character.WeaponFromOffHand(swap.ohCritMultiplier)
-		//Special case for when the OHAuto Spell was set up with a non weapon and does not have a crit multiplier.
-		character.AutoAttacks.OHAuto.CritMultiplier = swap.ohCritMultiplier
-		character.PseudoStats.CanBlock = character.OffHand().WeaponType == proto.WeaponType_WeaponTypeShield
+		if character.AutoAttacks.AutoSwingMelee {
+			weapon := character.WeaponFromOffHand(swap.ohCritMultiplier)
+			character.AutoAttacks.SetOH(weapon)
+
+			character.AutoAttacks.IsDualWielding = weapon.SwingSpeed != 0
+			character.PseudoStats.CanBlock = character.OffHand().WeaponType == proto.WeaponType_WeaponTypeShield
+		}
 	case proto.ItemSlot_ItemSlotRanged:
-		character.AutoAttacks.Ranged = character.WeaponFromRanged(swap.rangedCritMultiplier)
+		if character.AutoAttacks.AutoSwingRanged {
+			character.AutoAttacks.SetRanged(character.WeaponFromRanged(swap.rangedCritMultiplier))
+		}
 	}
-
-	character.AutoAttacks.IsDualWielding = character.MainHand().SwingSpeed != 0 && character.OffHand().SwingSpeed != 0
-}
-
-func (swap *ItemSwap) finalize() {
-	if !swap.IsEnabled() {
-		return
-	}
-
-	swap.initialEquippedItems = getInitialEquippedItems(swap.character)
-	swap.initialUnequippedItems = swap.unEquippedItems
 }
 
 func (swap *ItemSwap) reset(sim *Simulation) {
-	if !swap.IsEnabled() {
+	if !swap.IsEnabled() || !swap.IsSwapped() {
 		return
 	}
 
-	slots := [3]proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand, proto.ItemSlot_ItemSlotOffHand, proto.ItemSlot_ItemSlotRanged}
-	for i, slot := range slots {
-		swap.character.Equipment[slot] = swap.initialEquippedItems[i]
-		swap.swapWeapon(slot)
-	}
-
-	swap.unEquippedItems = swap.initialUnequippedItems
-	swap.swapped = false
-
-	for _, onSwap := range swap.onSwapCallbacks {
-		onSwap(sim)
-	}
-}
-
-func getInitialEquippedItems(character *Character) [3]Item {
-	var items [3]Item
-
-	for i := range items {
-		items[i] = character.Equipment[i+int(offset)]
-	}
-
-	return items
-}
-
-func getItems(itemSwap *proto.ItemSwap) [3]Item {
-	var items [3]Item
-
-	if itemSwap != nil {
-		items[0] = toItem(itemSwap.MhItem)
-		items[1] = toItem(itemSwap.OhItem)
-		items[2] = toItem(itemSwap.RangedItem)
-	}
-
-	return items
+	swap.SwapItems(sim, swap.slots)
 }
 
 func toItem(itemSpec *proto.ItemSpec) Item {

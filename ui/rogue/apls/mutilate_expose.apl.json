@@ -1,7 +1,7 @@
 {
     "type": "TypeAPL",
     "prepullActions": [
-        {"action":{"castSpell":{"spellId":{"itemId":40211}}},"doAtValue":{"const":{"val":"-1s"}}},
+        {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}},
         {"action":{"activateAura":{"auraId":{"spellId":58426}}},"doAtValue":{"const":{"val":"-1s"}}}
     ],
     "priorityList": [

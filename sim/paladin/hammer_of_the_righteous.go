@@ -40,8 +40,8 @@ func (paladin *Paladin) registerHammerOfTheRighteousSpell() {
 		ThreatMultiplier:         1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			avgWeaponDamage := spell.Unit.AutoAttacks.MH.CalculateAverageWeaponDamage(spell.MeleeAttackPower())
-			speed := spell.Unit.AutoAttacks.MH.SwingSpeed
+			avgWeaponDamage := spell.Unit.AutoAttacks.MH().CalculateAverageWeaponDamage(spell.MeleeAttackPower())
+			speed := spell.Unit.AutoAttacks.MH().SwingSpeed
 			baseDamage := (avgWeaponDamage / speed) * 4
 
 			curTarget := target

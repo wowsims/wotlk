@@ -20,7 +20,6 @@ import { professionNames, raceNames } from '../core/proto_utils/names';
 import {
 	DruidSpecs,
 	DeathknightSpecs,
-	MageSpecs,
 	PriestSpecs,
 	RogueSpecs,
 	SpecOptions,
@@ -31,11 +30,12 @@ import {
 	playerToSpec,
 } from '../core/proto_utils/utils';
 import { MAX_NUM_PARTIES } from '../core/raid';
+import { RaidSimPreset } from '../core/individual_sim_ui';
 import { Player } from '../core/player';
 import { Encounter } from '../core/encounter';
-import { bucket, distinct, sortByProperty } from '../core/utils';
+import { bucket, distinct } from '../core/utils';
 
-import { playerPresets, PresetSpecSettings } from './presets';
+import { playerPresets } from './presets';
 import { RaidSimUI } from './raid_sim_ui';
 
 export class RaidJsonImporter extends Importer {
@@ -65,7 +65,7 @@ export class RaidJsonExporter extends Exporter {
 	private readonly simUI: RaidSimUI;
 
 	constructor(parent: HTMLElement, simUI: RaidSimUI) {
-		super(parent, simUI, 'JSON Export', true);
+		super(parent, simUI, {title: 'JSON Export', allowDownload: true});
 		this.simUI = simUI;
 		this.init();
 	}
@@ -237,7 +237,7 @@ export class RaidWCLImporter extends Importer {
 		}
 
 		const urlData = await this.parseURL(importLink);
-		const rateLimit = await this.getRateLimit();
+		const _rateLimit = await this.getRateLimit();
 
 		// Schema for WCL API here: https://www.warcraftlogs.com/v2-api-docs/warcraft/
 		// WCL charges us 1 'point' for each subquery we issue within the request. So
@@ -405,7 +405,7 @@ export class RaidWCLImporter extends Importer {
 		otherPartyHealingSpells.forEach(spell => {
 			const spellEvents: Array<wclHealEvent> = healEventsBySpellId[spell.id] || [];
 			const spellEventsByTimestamp = bucket(spellEvents, event => String(event.timestamp) + String(event.sourceID));
-			for (const [timestamp, eventsAtTime] of Object.entries(spellEventsByTimestamp)) {
+			for (const [_timestamp, eventsAtTime] of Object.entries(spellEventsByTimestamp)) {
 				const spellTargets = eventsAtTime.map(event => wclPlayers.find(player => player.id == event.targetID));
 				for (let i = 0; i < spellTargets.length; i++) {
 					for (let j = 0; j < spellTargets.length; j++) {
@@ -492,8 +492,8 @@ export class RaidWCLImporter extends Importer {
 
 	private getRaidProto(wclPlayers: WCLSimPlayer[]): RaidProto {
 		const raid = RaidProto.create({
-			parties: [...new Array(MAX_NUM_PARTIES).keys()].map(p => PartyProto.create({
-				players: [...new Array(5).keys()].map(p => PlayerProto.create()),
+			parties: [...new Array(MAX_NUM_PARTIES).keys()].map(_party => PartyProto.create({
+				players: [...new Array(5).keys()].map(_player => PlayerProto.create()),
 			})),
 		});
 
@@ -525,7 +525,7 @@ class WCLSimPlayer {
 	private readonly spec: Spec | null;
 
 	readonly player: Player<any>;
-	readonly preset: PresetSpecSettings<any>;
+	readonly preset: RaidSimPreset<any>;
 
 	inferredProfessions: Array<Profession> = [];
 
@@ -564,7 +564,6 @@ class WCLSimPlayer {
 		this.player.setTalentsString(eventID, this.preset.talents.talentsString);
 		this.player.setGlyphs(eventID, this.preset.talents.glyphs!);
 		this.player.setConsumes(eventID, this.preset.consumes);
-		this.player.setRotation(eventID, this.preset.rotation);
 		this.player.setSpecOptions(eventID, this.preset.specOptions);
 		this.player.setProfessions(eventID, [Profession.Engineering, Profession.Jewelcrafting]);
 
@@ -579,7 +578,7 @@ class WCLSimPlayer {
 		})));
 	}
 
-	private static getMatchingPreset(spec: Spec, talents: wclTalents[]): PresetSpecSettings<Spec> {
+	private static getMatchingPreset(spec: Spec, talents: wclTalents[]): RaidSimPreset<Spec> {
 		const matchingPresets = playerPresets.filter((preset) => preset.spec == spec);
 		let presetIdx = 0;
 
@@ -659,11 +658,6 @@ const fullTypeToSpec: Record<string, Spec> = {
 	'WarriorGladiator': Spec.SpecWarrior,
 	'WarriorProtection': Spec.SpecProtectionWarrior,
 };
-
-interface QuerySpell {
-	id: number,
-	name: string,
-}
 
 // Spells which imply a specific Race.
 const racialSpells: Array<{ id: number, name: string, race: Race }> = [
@@ -818,7 +812,7 @@ interface wclPlayer {
 	gear: wclGear[];
 }
 
-interface wclAura {
+interface _wclAura {
 	name: string;
 	id: number;
 	guid: number;

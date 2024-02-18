@@ -561,7 +561,8 @@ func init() {
 		ICD:        time.Second * 100,
 	})
 	newProcStatBonusEffect(ProcStatBonusEffect{
-		Name:       "Ashen Band of Unmatched Destruction",
+		// Ashen Band of Unmatched Destruction
+		Name:       "Frostforged Sage",
 		ID:         50397,
 		AuraID:     72416,
 		Bonus:      stats.Stats{stats.SpellPower: 285},
@@ -573,7 +574,8 @@ func init() {
 		ICD:        time.Second * 60,
 	})
 	newProcStatBonusEffect(ProcStatBonusEffect{
-		Name:       "Ashen Band of Endless Destruction",
+		// Ashen Band of Endless Destruction
+		Name:       "Frostforged Sage",
 		ID:         50398,
 		AuraID:     72416,
 		Bonus:      stats.Stats{stats.SpellPower: 285},
@@ -585,7 +587,8 @@ func init() {
 		ICD:        time.Second * 60,
 	})
 	newProcStatBonusEffect(ProcStatBonusEffect{
-		Name:     "Ashen Band of Unmatched Vengeance",
+		// Ashen Band of Unmatched Vengeance
+		Name:     "Frostforged Champion",
 		ID:       50401,
 		AuraID:   72412,
 		Bonus:    stats.Stats{stats.AttackPower: 480, stats.RangedAttackPower: 480},
@@ -597,7 +600,8 @@ func init() {
 		ICD:      time.Second * 60,
 	})
 	newProcStatBonusEffect(ProcStatBonusEffect{
-		Name:     "Ashen Band of Endless Vengeance",
+		// Ashen Band of Endless Vengeance
+		Name:     "Frostforged Champion",
 		ID:       50402,
 		AuraID:   72412,
 		Bonus:    stats.Stats{stats.AttackPower: 480, stats.RangedAttackPower: 480},
@@ -609,7 +613,8 @@ func init() {
 		ICD:      time.Second * 60,
 	})
 	newProcStatBonusEffect(ProcStatBonusEffect{
-		Name:       "Ashen Band of Unmatched Courage",
+		// Ashen Band of Unmatched Courage
+		Name:       "Frostforged Defender",
 		ID:         50403,
 		AuraID:     72414,
 		Bonus:      stats.Stats{stats.Armor: 2400},
@@ -621,7 +626,8 @@ func init() {
 		ICD:        time.Second * 60,
 	})
 	newProcStatBonusEffect(ProcStatBonusEffect{
-		Name:       "Ashen Band of Endless Courage",
+		// Ashen Band of Endless Courage
+		Name:       "Frostforged Defender",
 		ID:         50404,
 		AuraID:     72414,
 		Bonus:      stats.Stats{stats.Armor: 2400},
@@ -633,7 +639,8 @@ func init() {
 		ICD:        time.Second * 60,
 	})
 	newProcStatBonusEffect(ProcStatBonusEffect{
-		Name:     "Ashen Band of Unmatched Might",
+		// Ashen Band of Unmatched Might
+		Name:     "Frostforged Champion",
 		ID:       52571,
 		AuraID:   72412,
 		Bonus:    stats.Stats{stats.AttackPower: 480, stats.RangedAttackPower: 480},
@@ -645,7 +652,8 @@ func init() {
 		ICD:      time.Second * 60,
 	})
 	newProcStatBonusEffect(ProcStatBonusEffect{
-		Name:     "Ashen Band of Endless Might",
+		// Ashen Band of Endless Might
+		Name:     "Frostforged Champion",
 		ID:       52572,
 		AuraID:   72412,
 		Bonus:    stats.Stats{stats.AttackPower: 480, stats.RangedAttackPower: 480},
@@ -686,7 +694,7 @@ func init() {
 		AuraID:     75466,
 		Bonus:      stats.Stats{stats.SpellPower: 763},
 		Duration:   time.Second * 15,
-		Callback:   core.CallbackOnSpellHitDealt,
+		Callback:   core.CallbackOnSpellHitDealt | core.CallbackOnPeriodicDamageDealt,
 		ProcMask:   core.ProcMaskSpellOrProc,
 		ProcChance: 0.10,
 		ICD:        time.Second * 50,
@@ -697,7 +705,7 @@ func init() {
 		AuraID:     75473,
 		Bonus:      stats.Stats{stats.SpellPower: 861},
 		Duration:   time.Second * 15,
-		Callback:   core.CallbackOnSpellHitDealt,
+		Callback:   core.CallbackOnSpellHitDealt | core.CallbackOnPeriodicDamageDealt,
 		ProcMask:   core.ProcMaskSpellOrProc,
 		ProcChance: 0.10,
 		ICD:        time.Second * 50,

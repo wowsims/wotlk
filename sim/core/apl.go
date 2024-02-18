@@ -14,7 +14,7 @@ type APLRotation struct {
 	priorityList   []*APLAction
 
 	// Action currently controlling this rotation (only used for certain actions, such as StrictSequence).
-	controllingAction APLActionImpl
+	controllingActions []APLActionImpl
 
 	// Value that should evaluate to 'true' if the current channel is to be interrupted.
 	// Will be nil when there is no active channel.
@@ -41,94 +41,126 @@ func (rot *APLRotation) ValidationWarning(message string, vals ...interface{}) {
 	rot.curWarnings = append(rot.curWarnings, warning)
 }
 
+// Invokes the fn function, and attributes all warnings generated during its invocation
+// to the provided warningsList.
+func (rot *APLRotation) doAndRecordWarnings(warningsList *[]string, isPrepull bool, fn func()) {
+	rot.parsingPrepull = isPrepull
+	fn()
+	if warningsList != nil {
+		*warningsList = append(*warningsList, rot.curWarnings...)
+	}
+	rot.curWarnings = nil
+	rot.parsingPrepull = false
+}
+
+func (unit *Unit) newCustomRotation() *APLRotation {
+	return unit.newAPLRotation(&proto.APLRotation{
+		Type: proto.APLRotation_TypeAPL,
+		PriorityList: []*proto.APLListItem{
+			{
+				Action: &proto.APLAction{
+					Action: &proto.APLAction_CustomRotation{},
+				},
+			},
+		},
+	})
+}
+
 func (unit *Unit) newAPLRotation(config *proto.APLRotation) *APLRotation {
-	if config == nil || config.Type != proto.APLRotation_TypeAPL {
+	if config == nil {
 		return nil
 	}
 
 	rotation := &APLRotation{
-		unit: unit,
+		unit:                 unit,
+		prepullWarnings:      make([][]string, len(config.PrepullActions)),
+		priorityListWarnings: make([][]string, len(config.PriorityList)),
 	}
 
 	// Parse prepull actions
-	rotation.parsingPrepull = true
-	for _, prepullItem := range config.PrepullActions {
-		if !prepullItem.Hide {
-			doAtVal := rotation.newAPLValue(prepullItem.DoAtValue)
-			if doAtVal != nil {
-				doAt := doAtVal.GetDuration(nil)
-				if doAt > 0 {
-					rotation.ValidationWarning("Invalid time for 'Do At', ignoring this Prepull Action")
-				} else {
-					action := rotation.newAPLAction(prepullItem.Action)
-					if action != nil {
-						rotation.prepullActions = append(rotation.prepullActions, action)
-						unit.RegisterPrepullAction(doAt, func(sim *Simulation) {
-							action.Execute(sim)
-						})
+	for i, prepullItem := range config.PrepullActions {
+		prepullIdx := i // Save to local variable for correct lambda capture behavior
+		rotation.doAndRecordWarnings(&rotation.prepullWarnings[prepullIdx], true, func() {
+			if !prepullItem.Hide {
+				doAtVal := rotation.newAPLValue(prepullItem.DoAtValue)
+				if doAtVal != nil {
+					doAt := doAtVal.GetDuration(nil)
+					if doAt > 0 {
+						rotation.ValidationWarning("Invalid time for 'Do At', ignoring this Prepull Action")
+					} else {
+						action := rotation.newAPLAction(prepullItem.Action)
+						if action != nil {
+							rotation.prepullActions = append(rotation.prepullActions, action)
+							unit.RegisterPrepullAction(doAt, func(sim *Simulation) {
+								// Warnings for prepull cast failure are detected by running a fake prepull,
+								// so this action.Execute needs to record warnings.
+								rotation.doAndRecordWarnings(&rotation.prepullWarnings[prepullIdx], true, func() {
+									action.Execute(sim)
+								})
+							})
+						}
 					}
 				}
 			}
-		}
-
-		rotation.prepullWarnings = append(rotation.prepullWarnings, rotation.curWarnings)
-		rotation.curWarnings = nil
+		})
 	}
-	rotation.parsingPrepull = false
 
 	// Parse priority list
 	var configIdxs []int
 	for i, aplItem := range config.PriorityList {
-		if !aplItem.Hide {
-			action := rotation.newAPLAction(aplItem.Action)
-			if action != nil {
-				rotation.priorityList = append(rotation.priorityList, action)
-				configIdxs = append(configIdxs, i)
+		rotation.doAndRecordWarnings(&rotation.priorityListWarnings[i], false, func() {
+			if !aplItem.Hide {
+				action := rotation.newAPLAction(aplItem.Action)
+				if action != nil {
+					rotation.priorityList = append(rotation.priorityList, action)
+					configIdxs = append(configIdxs, i)
+				}
 			}
-		}
-
-		rotation.priorityListWarnings = append(rotation.priorityListWarnings, rotation.curWarnings)
-		rotation.curWarnings = nil
+		})
 	}
 
 	// Finalize
-	for _, action := range rotation.prepullActions {
-		action.Finalize(rotation)
-		rotation.curWarnings = nil
+	for i, action := range rotation.prepullActions {
+		rotation.doAndRecordWarnings(&rotation.prepullWarnings[i], true, func() {
+			action.Finalize(rotation)
+		})
 	}
 	for i, action := range rotation.priorityList {
-		action.Finalize(rotation)
-
-		rotation.priorityListWarnings[configIdxs[i]] = append(rotation.priorityListWarnings[configIdxs[i]], rotation.curWarnings...)
-		rotation.curWarnings = nil
+		rotation.doAndRecordWarnings(&rotation.priorityListWarnings[i], false, func() {
+			action.Finalize(rotation)
+		})
 	}
 
 	// Remove MCDs that are referenced by APL actions, so that the Autocast Other Cooldowns
 	// action does not include them.
-	character := unit.Env.Raid.GetPlayerFromUnit(unit).GetCharacter()
-	for _, action := range rotation.allAPLActions() {
-		if castSpellAction, ok := action.impl.(*APLActionCastSpell); ok {
-			character.removeInitialMajorCooldown(castSpellAction.spell.ActionID)
+	agent := unit.Env.GetAgentFromUnit(unit)
+	if agent != nil {
+		character := agent.GetCharacter()
+		for _, action := range rotation.allAPLActions() {
+			if castSpellAction, ok := action.impl.(*APLActionCastSpell); ok {
+				character.removeInitialMajorCooldown(castSpellAction.spell.ActionID)
+			}
 		}
 	}
 
 	// If user has a Prepull potion set but does not use it in their APL settings, we enable it here.
-	rotation.parsingPrepull = true
-	prepotSpell := rotation.GetAPLSpell(ActionID{OtherID: proto.OtherAction_OtherActionPotion}.ToProto())
-	rotation.parsingPrepull = false
-	if prepotSpell != nil {
-		found := false
-		for _, prepullAction := range rotation.allPrepullActions() {
-			if castSpellAction, ok := prepullAction.impl.(*APLActionCastSpell); ok && castSpellAction.spell == prepotSpell {
-				found = true
+	rotation.doAndRecordWarnings(nil, true, func() {
+		prepotSpell := rotation.GetAPLSpell(ActionID{OtherID: proto.OtherAction_OtherActionPotion}.ToProto())
+		if prepotSpell != nil {
+			found := false
+			for _, prepullAction := range rotation.allPrepullActions() {
+				if castSpellAction, ok := prepullAction.impl.(*APLActionCastSpell); ok &&
+					(castSpellAction.spell == prepotSpell || castSpellAction.spell.Flags.Matches(SpellFlagPotion)) {
+					found = true
+				}
+			}
+			if !found {
+				unit.RegisterPrepullAction(-1*time.Second, func(sim *Simulation) {
+					prepotSpell.Cast(sim, nil)
+				})
 			}
 		}
-		if !found {
-			unit.RegisterPrepullAction(-1*time.Second, func(sim *Simulation) {
-				prepotSpell.Cast(sim, nil)
-			})
-		}
-	}
+	})
 
 	return rotation
 }
@@ -150,7 +182,7 @@ func (rot *APLRotation) allPrepullActions() []*APLAction {
 }
 
 func (rot *APLRotation) reset(sim *Simulation) {
-	rot.controllingAction = nil
+	rot.controllingActions = nil
 	rot.inLoop = false
 	rot.interruptChannelIf = nil
 	rot.allowChannelRecastOnInterrupt = false
@@ -177,6 +209,7 @@ func (apl *APLRotation) DoNextAction(sim *Simulation) {
 
 	i := 0
 	apl.inLoop = true
+
 	for nextAction := apl.getNextAction(sim); nextAction != nil; i, nextAction = i+1, apl.getNextAction(sim) {
 		if i > 1000 {
 			panic(fmt.Sprintf("[USER_ERROR] Infinite loop detected, current action:\n%s", nextAction))
@@ -190,16 +223,15 @@ func (apl *APLRotation) DoNextAction(sim *Simulation) {
 		apl.unit.Log(sim, "No available actions!")
 	}
 
-	if apl.unit.GCD.IsReady(sim) {
+	gcdReady := apl.unit.GCD.IsReady(sim)
+	if gcdReady {
 		apl.unit.WaitUntil(sim, sim.CurrentTime+time.Millisecond*50)
-	} else {
-		apl.unit.DoNothing()
 	}
 }
 
 func (apl *APLRotation) getNextAction(sim *Simulation) *APLAction {
-	if apl.controllingAction != nil {
-		return apl.controllingAction.GetNextAction(sim)
+	if len(apl.controllingActions) != 0 {
+		return apl.controllingActions[len(apl.controllingActions)-1].GetNextAction(sim)
 	}
 
 	for _, action := range apl.priorityList {
@@ -211,8 +243,20 @@ func (apl *APLRotation) getNextAction(sim *Simulation) *APLAction {
 	return nil
 }
 
+func (apl *APLRotation) pushControllingAction(ca APLActionImpl) {
+	apl.controllingActions = append(apl.controllingActions, ca)
+}
+
+func (apl *APLRotation) popControllingAction(ca APLActionImpl) {
+	if len(apl.controllingActions) == 0 || apl.controllingActions[len(apl.controllingActions)-1] != ca {
+		panic("Wrong APL controllingAction in pop()")
+	}
+	apl.controllingActions = apl.controllingActions[:len(apl.controllingActions)-1]
+}
+
 func (apl *APLRotation) shouldInterruptChannel(sim *Simulation) bool {
 	channeledDot := apl.unit.ChanneledDot
+
 	if channeledDot.MaxTicksRemaining() == 0 {
 		// Channel has ended, but apl.unit.ChanneledDot hasn't been cleared yet meaning the aura is still active.
 		return false
