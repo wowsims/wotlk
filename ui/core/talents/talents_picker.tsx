@@ -1,4 +1,4 @@
-// eslint-disable-next-line unused-imports/no-unused-imports
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { element, fragment, ref } from 'tsx-vanilla';
 import { Tooltip } from 'bootstrap';
 
@@ -299,7 +299,7 @@ class TalentReqArrow extends Component {
 		this.zIdx = 0;
 		this.parentLoc = parentLoc;
 		this.childLoc = childLoc;
-	
+
 		this.rootElem.style.gridRow = String(parentLoc.rowIdx + 1);
 		this.rootElem.style.gridColumn = String(parentLoc.colIdx + 1);
 

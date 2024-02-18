@@ -1,4 +1,4 @@
-// eslint-disable-next-line unused-imports/no-unused-imports
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { element, ref } from 'tsx-vanilla';
 
 import { IndividualSimUI } from '../individual_sim_ui';

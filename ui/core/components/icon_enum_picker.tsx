@@ -1,5 +1,5 @@
 import { Tooltip } from 'bootstrap';
-// eslint-disable-next-line unused-imports/no-unused-imports
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { element, fragment } from 'tsx-vanilla';
 
 import { ActionId } from '../proto_utils/action_id.js';

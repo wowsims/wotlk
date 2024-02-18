@@ -39,7 +39,7 @@ import {
 } from '../proto/ui.js';
 import { IndividualSimUI } from '../individual_sim_ui.js';
 import { Tooltip } from 'bootstrap';
-// eslint-disable-next-line unused-imports/no-unused-imports
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { element, fragment, ref } from 'tsx-vanilla';
 
 import { Clusterize } from './virtual_scroll/clusterize.js';
@@ -55,7 +55,7 @@ const createHeroicLabel = () => {
 
 const createGemContainer = (socketColor: GemColor ,gem : Gem|null) => {
 	const gemIconElem = ref<HTMLImageElement>();
-	
+
 	let gemContainer = (
 		<div className="gem-socket-container">
 			<img ref={gemIconElem} className={`gem-icon ${gem == null ? 'hide' : ''}`} />
@@ -1190,7 +1190,7 @@ export class ItemList<T> {
 		};
 
 		let isFavorite = this.isItemFavorited(itemData);
-		
+
 		if (isFavorite) {
 			favoriteElem.value!.children[0].classList.add('fas');
 			listItemElem.dataset.fav = 'true';
