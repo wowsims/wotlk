@@ -430,7 +430,7 @@ export class SelectorModal extends BaseModal {
 			<div className="d-flex align-items-center form-text mt-3">
 				<i className="fas fa-circle-exclamation fa-xl me-2"></i>
 				<span>
-					If gear is missing check the selected phase and your gear filters.
+					If gear is missing, check the selected phase and your gear filters.
 					<br />
 					If the problem persists, save any un-saved data, click the
 					<i className="fas fa-cog mx-1"></i>
