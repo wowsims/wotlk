@@ -5,7 +5,6 @@ ui/*/index.html
 .dirstamp
 
 # IDE folders
-.vscode
 .idea
 .history
 
@@ -13,6 +12,8 @@ ui/*/index.html
 dist
 binary_dist
 sim/web/__debug_bin
+/wowsimwotlkcli*
+/wowsimwotlk*
 
 # temporary files
 *.results.tmp
