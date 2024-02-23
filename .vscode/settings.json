@@ -8,23 +8,26 @@
 	},
 	"[typescript]": {
 		"editor.codeActionsOnSave": {
-		"source.fixAll.eslint": true
+		"source.fixAll.eslint": "always"
 		}
 	},
 	"[javascript]": {
 		"editor.codeActionsOnSave": {
-		"source.fixAll.eslint": true
+            "source.fixAll.eslint": "always"
 		}
 	},
 	"[scss]": {
 		"editor.codeActionsOnSave": {
-		"source.fixAll.eslint": true
+            "source.fixAll.eslint": "always"
 		}
 	},
 	"[html]": {
 		"editor.codeActionsOnSave": {
-		"source.fixAll.eslint": false
-		}
+            "source.fixAll.eslint": "always"
+        }
+	},
+    "[json]": {
+		"editor.formatOnSave": true,
 	},
 	"json.format.enable": true,
     "json.schemas": [
@@ -32,7 +35,13 @@
             "fileMatch": [
                 "*.apl.json"
             ],
-            "url": "./jsonschema/APLRotation.json"
+            "url": "./schemas/apl_rotation.schema.json"
+        },
+        {
+            "fileMatch": [
+                "*.gear.json"
+            ],
+            "url": "./schemas/gear.schema.json"
         }
     ],
     "Lua.diagnostics.globals": [
@@ -111,5 +120,10 @@
         "strbyte",
         "tinsert",
         "UIParent"
-    ]
+    ],
+    "[javascript][scss][typescript]": {
+        "editor.codeActionsOnSave": {
+            "source.fixAll.eslint": "explicit"
+        }
+    }
 }
