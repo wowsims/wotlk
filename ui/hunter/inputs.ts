@@ -30,7 +30,7 @@ export const WeaponAmmo = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecHun
 	],
 });
 
-export const PetTypeInput = makePetTypeInputConfig(true);
+export const PetTypeInput = makePetTypeInputConfig();
 
 export const PetUptime = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecHunter>({
 	fieldName: 'petUptime',

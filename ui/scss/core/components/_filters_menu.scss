@@ -1,6 +1,6 @@
 .filters-menu {
 	.menu-section:not(:last-child) {
-		margin-bottom: map.get($spacers, 3);
+		margin-bottom: map-get($spacers, 3);
 	}
 
 	[class*="filters-menu-section-"] {

@@ -19,7 +19,8 @@ import { Stats } from '../core/proto_utils/stats.js';
 import { getSpecIcon, specNames } from '../core/proto_utils/utils.js';
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
 import { TotemsSection } from '../core/components/totem_inputs.js';
-import * as IconInputs from '../core/components/icon_inputs.js';
+
+import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
 
 import * as ShamanInputs from './inputs.js';
@@ -123,13 +124,13 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecEnhancementShaman, {
 	],
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
-		IconInputs.ReplenishmentBuff,
-		IconInputs.MP5Buff,
-		IconInputs.SpellHasteBuff,
-		IconInputs.SpiritBuff,
+		BuffDebuffInputs.ReplenishmentBuff,
+		BuffDebuffInputs.MP5Buff,
+		BuffDebuffInputs.SpellHasteBuff,
+		BuffDebuffInputs.SpiritBuff,
 	],
 	excludeBuffDebuffInputs: [
-		IconInputs.BleedDebuff,
+		BuffDebuffInputs.BleedDebuff,
 	],
 	// Inputs to include in the 'Other' section on the settings tab.
 	otherInputs: {

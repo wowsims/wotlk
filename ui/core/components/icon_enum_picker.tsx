@@ -1,10 +1,16 @@
 import { Tooltip } from 'bootstrap';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { element, fragment } from 'tsx-vanilla';
+
 import { ActionId } from '../proto_utils/action_id.js';
 import { TypedEvent } from '../typed_event.js';
 
 import { Input, InputConfig } from './input.js';
 
-import { element, fragment } from 'tsx-vanilla';
+export enum IconEnumPickerDirection {
+	Vertical = 'vertical',
+	Horizontal = 'Horizontal',
+}
 
 export interface IconEnumValueConfig<ModObject, T> {
 	value: T,
@@ -21,13 +27,15 @@ export interface IconEnumValueConfig<ModObject, T> {
 }
 
 export interface IconEnumPickerConfig<ModObject, T> extends InputConfig<ModObject, T> {
-	numColumns: number,
+	numColumns?: number,
 	values: Array<IconEnumValueConfig<ModObject, T>>;
 	// Value that will be considered inactive.
 	zeroValue: T,
 	// Function for comparing two values.
 	// Tooltip that will be shown whne hovering over the icon-picker-button
 	tooltip?: string,
+	// The direction the menu will open in relative to the root element
+	direction?: IconEnumPickerDirection,
 	equals: (a: T, b: T) => boolean,
 	backupIconUrl?: (value: T) => ActionId,
 	showWhen?: (obj: ModObject) => boolean,
@@ -50,7 +58,7 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 		this.currentValue = this.config.zeroValue;
 
 		if (config.showWhen) {
-			config.changedEvent(this.modObject).on(eventID => {
+			config.changedEvent(this.modObject).on(_eventID => {
 				const show = config.showWhen && config.showWhen(this.modObject);
 				if (!show)
 					this.rootElem.classList.add('hide');
@@ -89,9 +97,13 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 		this.buttonText = this.buttonElem.querySelector('.icon-picker-label') as HTMLElement;
 		const dropdownMenu = this.rootElem.querySelector('.dropdown-menu') as HTMLElement;
 
-		dropdownMenu.style.gridTemplateColumns = `repeat(${this.config.numColumns}, 1fr)`;
+		if (this.config.numColumns)
+			dropdownMenu.style.gridTemplateColumns = `repeat(${this.config.numColumns}, 1fr)`;
 
-		config.values.forEach((valueConfig, i) => {
+		if (this.config.direction == IconEnumPickerDirection.Horizontal)
+			dropdownMenu.style.gridAutoFlow = 'column';
+
+		config.values.forEach((valueConfig, _i) => {
 			const optionContainer = document.createElement('li');
 			optionContainer.classList.add('icon-dropdown-option', 'dropdown-option')
 			dropdownMenu.appendChild(optionContainer);
@@ -116,8 +128,11 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 				});
 			}
 
+			const show = !valueConfig.showWhen || valueConfig.showWhen(this.modObject);
+			if (!show) optionContainer.classList.add('hide')
+
 			if (valueConfig.showWhen) {
-				config.changedEvent(this.modObject).on(eventID => {
+				config.changedEvent(this.modObject).on(_eventID => {
 					const show = valueConfig.showWhen && valueConfig.showWhen(this.modObject);
 					if (show)
 						optionContainer.classList.remove('hide');

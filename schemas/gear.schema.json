@@ -1,0 +1,26 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "/schemas/gear",
+	"title": "Gear",
+	"description": "A saved gear preset",
+	"type": "object",
+	"properties": {
+		"items": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"id": "number",
+					"enchant": "number",
+					"gems": {
+						"type": "array",
+						"items": {
+							"type": "number"
+						}
+					}
+				}
+			}
+		}
+	},
+	"required": ["items"]
+}

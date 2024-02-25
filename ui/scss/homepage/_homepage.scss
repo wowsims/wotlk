@@ -34,7 +34,7 @@
 
         .wowsims-logo {
           width: 6rem;
-          margin-right: map.get($spacers, 3);
+          margin-right: map-get($spacers, 3);
         }
   
         .wowsims-title {
@@ -47,8 +47,8 @@
       }
 
       .homepage-header-collapse {
-        padding-top: map.get($spacers, 3);
-        padding-bottom: map.get($spacers, 3);
+        padding-top: map-get($spacers, 3);
+        padding-bottom: map-get($spacers, 3);
         align-items: flex-end;
         justify-content: flex-end;
       }
@@ -84,7 +84,7 @@
         flex-wrap: wrap;
 
         &:not(:last-child) {
-          margin-bottom: map.get($spacers, 5);
+          margin-bottom: map-get($spacers, 5);
         }
 
         &> .sim-link, &> .sim-link-dropdown {
@@ -123,8 +123,8 @@
       }
 
       .sim-links-container {
-        margin-left: map.get($spacers, 3) * -1;
-        margin-right: map.get($spacers, 3) * -1;
+        margin-left: map-get($spacers, 3) * -1;
+        margin-right: map-get($spacers, 3) * -1;
 
         .sim-links {
           margin-bottom: 0 !important;
@@ -152,8 +152,8 @@
     .homepage-header-container,
     .homepage-content-container,
     .homepage-footer-container {
-      padding-top: map.get($spacers, 3);
-      padding-bottom: map.get($spacers, 3);
+      padding-top: map-get($spacers, 3);
+      padding-bottom: map-get($spacers, 3);
     }
 
     .homepage-header {
@@ -174,7 +174,7 @@
 
     .homepage-content-container {
       .info-container {
-        margin-bottom: map.get($spacers, 3);
+        margin-bottom: map-get($spacers, 3);
       }
 
       .sim-links-container {

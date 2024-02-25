@@ -249,7 +249,8 @@ export class SimHeader extends Component {
 			parent: container,
 			text: "Support our devs",
 			icon: "fab fa-patreon fa-lg",
-			classes: "patreon-link link-alt"
+			tooltip: "Support us on Patreon",
+			classes: "patreon-link link-alt",
 		})
 	}
 

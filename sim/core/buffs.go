@@ -92,9 +92,9 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 	}
 
 	if raidBuffs.StrengthOfWrynn {
-		character.MultiplyStat(stats.Health, 1.2)
-		character.PseudoStats.DamageDealtMultiplier *= 1.2
-		character.PseudoStats.HealingTakenMultiplier *= 1.2
+		character.MultiplyStat(stats.Health, 1.30)
+		character.PseudoStats.DamageDealtMultiplier *= 1.30
+		character.PseudoStats.HealingTakenMultiplier *= 1.30
 	}
 
 	if raidBuffs.ArcaneEmpowerment || raidBuffs.FerociousInspiration || raidBuffs.SanctifiedRetribution {

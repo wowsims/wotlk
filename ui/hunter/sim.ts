@@ -36,7 +36,8 @@ import {
 	Hunter_Rotation_RotationType,
 } from '../core/proto/hunter.js';
 
-import * as IconInputs from '../core/components/icon_inputs.js';
+import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs.js';
+import * as ConsumablesInputs from '../core/components/inputs/consumables.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
 import * as Mechanics from '../core/constants/mechanics.js';
 import * as AplUtils from '../core/proto_utils/apl_utils.js';
@@ -216,12 +217,12 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHunter, {
 	// Inputs to include in the 'Rotation' section on the settings tab.
 	rotationInputs: HunterInputs.HunterRotationConfig,
 	petConsumeInputs: [
-		IconInputs.SpicedMammothTreats,
+		ConsumablesInputs.SpicedMammothTreats,
 	],
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
-		IconInputs.StaminaBuff,
-		IconInputs.SpellDamageDebuff,
+		BuffDebuffInputs.StaminaBuff,
+		BuffDebuffInputs.SpellDamageDebuff,
 	],
 	excludeBuffDebuffInputs: [
 	],

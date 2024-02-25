@@ -9,7 +9,7 @@
     .consumes-container {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      grid-gap: map.get($spacers, 1);
+      grid-gap: map-get($spacers, 1);
     }
   }
 }

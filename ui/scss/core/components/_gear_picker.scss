@@ -105,12 +105,12 @@
 }
 
 .item-picker-labels-container {
-  padding: map.get($spacers, 2);
+  padding: map-get($spacers, 2);
   flex: 1;
 
   .item-picker-name {
     color: white;
-    font-size: map.get($font-sizes, 6);
+    font-size: map-get($font-sizes, 6);
     letter-spacing: normal;
   }
   
@@ -148,12 +148,12 @@
 }
 
 .item-picker-labels-container {
-  padding: map.get($spacers, 2);
+  padding: map-get($spacers, 2);
   flex: 1;
 
   .item-picker-name {
     color: white;
-    font-size: map.get($font-sizes, 6);
+    font-size: map-get($font-sizes, 6);
     letter-spacing: normal;
   }
   
@@ -169,12 +169,12 @@
     padding: 0;
   
     .selector-modal-filters {
-      margin-bottom: map.get($spacers, 3);
+      margin-bottom: map-get($spacers, 3);
       display: flex;
       align-items: center;
 
       &> *:not(:last-child) {
-        margin-right: map.get($spacers, 2);
+        margin-right: map-get($spacers, 2);
       }
 
       input, select {
@@ -219,6 +219,7 @@
 	overflow-y: auto;
 	overflow-x: hidden;
   padding: 0;
+  margin-bottom: 0;
   
   &.hide-ep {
     .selector-modal-list-item-ep {

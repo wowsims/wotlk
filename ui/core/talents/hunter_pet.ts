@@ -2,7 +2,6 @@ import { Spec } from '../proto/common.js';
 import { HunterPetTalents, Hunter_Options_PetType as PetType } from '../proto/hunter.js';
 import { Player } from '../player.js';
 import { Component } from '../components/component.js';
-import { EnumPicker, EnumPickerConfig } from '../components/enum_picker.js';
 import { SavedDataManager } from '../components/saved_data_manager.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 import { ActionId } from '../proto_utils/action_id.js';
@@ -17,11 +16,10 @@ import HunterPetCunningJson from './trees/hunter_cunning.json'
 import HunterPetFerocityJson from './trees/hunter_ferocity.json'
 import HunterPetTenacityJson from './trees/hunter_tenacity.json'
 
-export function makePetTypeInputConfig(includeLabel: boolean): InputHelpers.TypedIconEnumPickerConfig<Player<Spec.SpecHunter>, PetType> {
+export function makePetTypeInputConfig(): InputHelpers.TypedIconEnumPickerConfig<Player<Spec.SpecHunter>, PetType> {
 	return InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecHunter, PetType>({
 		fieldName: 'petType',
 		numColumns: 5,
-		//label: includeLabel ? 'Pet' : '',
 		values: [
 			{ value: PetType.PetNone, tooltip: 'No Pet' },
 			{ actionId: ActionId.fromPetName('Bat'), tooltip: 'Bat', value: PetType.Bat },
@@ -142,7 +140,7 @@ export class HunterPetTalentsPicker extends Component {
 				klass: player.getClass(),
 				trees: talentsConfig,
 				changedEvent: (player: Player<Spec.SpecHunter>) => player.specOptionsChangeEmitter,
-				getValue: (player: Player<Spec.SpecHunter>) => protoToTalentString(this.getPetTalentsFromPlayer(), talentsConfig),
+				getValue: (_player: Player<Spec.SpecHunter>) => protoToTalentString(this.getPetTalentsFromPlayer(), talentsConfig),
 				setValue: (eventID: EventID, player: Player<Spec.SpecHunter>, newValue: string) => {
 					const options = player.getSpecOptions();
 					options.petTalents = talentStringToProto(HunterPetTalents.create(), newValue, talentsConfig);
@@ -159,7 +157,7 @@ export class HunterPetTalentsPicker extends Component {
 				presetsOnly: true,
 				label: 'Pet Talents',
 				storageKey: '__NEVER_USED__',
-				getData: (player: Player<Spec.SpecHunter>) => protoToTalentString(this.getPetTalentsFromPlayer(), talentsConfig),
+				getData: (_player: Player<Spec.SpecHunter>) => protoToTalentString(this.getPetTalentsFromPlayer(), talentsConfig),
 				setData: (eventID: EventID, player: Player<Spec.SpecHunter>, newValue: string) => {
 					const options = player.getSpecOptions();
 					options.petTalents = talentStringToProto(HunterPetTalents.create(), newValue, talentsConfig);
@@ -171,7 +169,7 @@ export class HunterPetTalentsPicker extends Component {
 				changeEmitters: [this.player.specOptionsChangeEmitter],
 				equals: (a: string, b: string) => a == b,
 				toJson: (a: string) => a,
-				fromJson: (obj: any) => '',
+				fromJson: (_obj: any) => '',
 			});
 			savedTalentsManager.addSavedData({
 				name: 'Default',

@@ -24,7 +24,7 @@
   align-items: center;
 
   label {
-    margin-right: map.get($spacers, 1);
+    margin-right: map-get($spacers, 1);
   }
 
   input, select {
@@ -40,7 +40,7 @@
     flex: 1;
 
     &:not(:last-child) {
-      margin-right: map.get($spacers, 3);
+      margin-right: map-get($spacers, 3);
     }
   }
 }

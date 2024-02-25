@@ -13,7 +13,7 @@ import { getSpecIcon, specNames } from '../core/proto_utils/utils.js';
 import { Player } from '../core/player.js';
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
 
-import * as IconInputs from '../core/components/icon_inputs.js';
+import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
 
 import * as DruidInputs from './inputs.js';
@@ -83,13 +83,13 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecBalanceDruid, {
 	],
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
-		IconInputs.MeleeHasteBuff,
-		IconInputs.MeleeCritBuff,
-		IconInputs.AttackPowerPercentBuff,
-		IconInputs.AttackPowerBuff,
-		IconInputs.MajorArmorDebuff,
-		IconInputs.MinorArmorDebuff,
-		IconInputs.PhysicalDamageDebuff,
+		BuffDebuffInputs.MeleeHasteBuff,
+		BuffDebuffInputs.MeleeCritBuff,
+		BuffDebuffInputs.AttackPowerPercentBuff,
+		BuffDebuffInputs.AttackPowerBuff,
+		BuffDebuffInputs.MajorArmorDebuff,
+		BuffDebuffInputs.MinorArmorDebuff,
+		BuffDebuffInputs.PhysicalDamageDebuff,
 	],
 	excludeBuffDebuffInputs: [
 	],

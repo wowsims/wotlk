@@ -74,7 +74,7 @@
 
 	.rotation-settings {
 		flex: 1;
-		margin-right: 2 * map.get($spacers, 3);
+		margin-right: 2 * map-get($spacers, 3);
 	}
 
 	.cooldown-settings {

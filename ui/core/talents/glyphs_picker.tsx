@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { element } from 'tsx-vanilla';
+
 import { Glyphs } from '../proto/common.js';
 import { ItemQuality } from '../proto/common.js';
 import { ActionId } from '../proto_utils/action_id.js';
@@ -47,6 +50,10 @@ export class GlyphsPicker extends Component {
 	constructor(parent: HTMLElement, player: Player<any>, glyphsConfig: GlyphsConfig) {
 		super(parent, 'glyphs-picker-root');
 		this.glyphsConfig = glyphsConfig;
+
+		this.rootElem.appendChild(
+			<h6 className="mt-2 fw-bold d-xl-block d-none">Glyphs</h6>
+		)
 
 		const majorGlyphs = Object.keys(glyphsConfig.majorGlyphs).map(idStr => Number(idStr));
 		const minorGlyphs = Object.keys(glyphsConfig.minorGlyphs).map(idStr => Number(idStr));
@@ -116,7 +123,7 @@ class GlyphPicker extends Input<Player<any>, number> {
 		this.iconElem = this.rootElem.getElementsByClassName('glyph-picker-icon')[0] as HTMLAnchorElement;
 		this.iconElem.addEventListener('click', event => {
 			event.preventDefault();
-			const selectorModal = new GlyphSelectorModal(this.rootElem.closest('.individual-sim-ui')!, this, this.glyphOptions);
+			new GlyphSelectorModal(this.rootElem.closest('.individual-sim-ui')!, this, this.glyphOptions);
 		});
 
 		this.init();
@@ -199,7 +206,6 @@ class GlyphSelectorModal extends BaseModal {
 
 		const applyFilters = () => {
 			let validItemElems = listItemElems;
-			const selectedGlyph = glyphPicker.selectedGlyph;
 
 			validItemElems = validItemElems.filter(elem => {
 				const listItemIdx = parseInt(elem.dataset.idx!);

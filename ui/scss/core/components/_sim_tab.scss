@@ -20,7 +20,7 @@
       flex: 1;
 
       &:not(:last-child) {
-        margin-right: 2 * map.get($spacers, 3);
+        margin-right: 2 * map-get($spacers, 3);
       }
     }
 
@@ -28,7 +28,7 @@
       flex: 1;
 
       &:not(:last-child) {
-        margin-right: 2 * map.get($spacers, 3);
+        margin-right: 2 * map-get($spacers, 3);
       }
     }
   }
