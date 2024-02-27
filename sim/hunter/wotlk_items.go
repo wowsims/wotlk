@@ -5,6 +5,7 @@ import (
 
 	"github.com/wowsims/wotlk/sim/common/wotlk"
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -216,6 +217,10 @@ func init() {
 		}
 
 		core.NewItemEffect(itemID, func(agent core.Agent) {
+			if agent.GetCharacter().Class != proto.Class_ClassHunter {
+				return
+			}
+
 			hunter := agent.(HunterAgent).GetHunter()
 
 			var rangedSpell *core.Spell
