@@ -28,7 +28,7 @@ export function sortByProperty(objArray: any[], prop: string) {
 	const direct = arguments.length > 2 ? arguments[2] : 1; //Default to ascending
 	const propPath = (prop.constructor === Array) ? prop : prop.split('.');
 	clone.sort(function(a, b) {
-		for (let p in propPath) {
+		for (const p in propPath) {
 			if (a[propPath[p]] && b[propPath[p]]) {
 				a = a[propPath[p]];
 				b = b[propPath[p]];
@@ -269,4 +269,9 @@ function jsonStringifyCustomHelper(value: any, indentStr: string, path: Array<st
 // Pretty-prints the value in JSON form, but does not prettify (flattens) sub-values where handler returns true.
 export function jsonStringifyWithFlattenedPaths(value: any, indent: number, handler: (value: any, path: Array<string>) => boolean): string {
 	return jsonStringifyCustom(value, indent, (value, path) => handler(value, path) ? JSON.stringify(value) : undefined);
+}
+
+export function htmlDecode(input: string) {
+	const doc = new DOMParser().parseFromString(input, "text/html");
+	return doc.documentElement.textContent;
 }

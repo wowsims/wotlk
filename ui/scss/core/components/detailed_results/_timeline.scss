@@ -1,11 +1,5 @@
 $dps-color: #ed5653;
 $threat-color: #b56d07;
-$health-color: #22ba00;
-$mana-color: #2E93fA;
-$energy-color: #ffd700;
-$rage-color: #ff0000;
-$focus-color: #cd853f;
-$combo-points-color: #ffa07a;
 
 .threat .series-color, .threat.series-color {
 	color: $threat-color;
@@ -73,10 +67,7 @@ $combo-points-color: #ffa07a;
 }
 
 .timeline-tooltip {
-	background-color: #333;
-	border: none;
-	color: white;
-	padding: 3px;
+	text-align: start;
 }
 
 .timeline-tooltip-header {
@@ -94,43 +85,6 @@ $combo-points-color: #ffa07a;
 	height: 20px;
 }
 
-.timeline-tooltip ul { // Remove default bullets
-	list-style: none;
-	padding-left: 1em;
-}
-.timeline-tooltip ul li::before { // Add our own bullets (so we can have separate color).
-	content: "\2022";
-	font-weight: bold;
-	font-size: 16px;
-	display: inline-block;
-	width: 1em;
-	margin-left: -1em;
-}
-.timeline-tooltip.dps ul li::before {
-	color: $dps-color;
-}
-.timeline-tooltip.threat ul li::before {
-	color: $threat-color;
-}
-.timeline-tooltip.health ul li::before {
-	color: $health-color;
-}
-.timeline-tooltip.mana ul li::before {
-	color: $mana-color;
-}
-.timeline-tooltip.energy ul li::before {
-	color: $energy-color;
-}
-.timeline-tooltip.rage ul li::before {
-	color: $rage-color;
-}
-.timeline-tooltip.focus ul li::before {
-	color: $focus-color;
-}
-.timeline-tooltip.combo-points ul li::before {
-	color: $combo-points-color;
-}
-
 .series-color {
 	font-weight: bold;
 }
@@ -138,9 +92,6 @@ $combo-points-color: #ffa07a;
 .timeline-tooltip-auras {
 	border-top: 1px solid white;
 	margin-top: 5px;
-}
-.timeline-tooltip-auras ul li::before {
-	color: white;
 }
 
 .rotation-container {

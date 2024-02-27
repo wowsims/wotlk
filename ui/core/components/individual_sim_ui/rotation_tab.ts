@@ -1,30 +1,27 @@
+import * as Tooltips from '../../constants/tooltips.js';
 import { IndividualSimUI, InputSection } from "../../individual_sim_ui";
-import {
-	Spec,
-} from "../../proto/common";
+import { Player } from "../../player";
 import {
 	APLRotation,
 	APLRotation_Type as APLRotationType,
 } from "../../proto/apl";
 import {
+	Spec,
+} from "../../proto/common";
+import {
 	SavedRotation,
 } from "../../proto/ui";
 import { EventID, TypedEvent } from "../../typed_event";
-import { Player } from "../../player";
-
-import { ContentBlock } from "../content_block";
-import { SimTab } from "../sim_tab";
-import { NumberPicker } from "../number_picker";
 import { BooleanPicker } from "../boolean_picker";
+import { ContentBlock } from "../content_block";
 import { EnumPicker } from "../enum_picker";
-import { Input } from "../input";
-import { CooldownsPicker } from "./cooldowns_picker";
-import { SavedDataManager } from "../saved_data_manager";
-
 import * as IconInputs from '../icon_inputs.js';
-import * as Tooltips from '../../constants/tooltips.js';
-
+import { Input } from "../input";
+import { NumberPicker } from "../number_picker";
+import { SavedDataManager } from "../saved_data_manager";
+import { SimTab } from "../sim_tab";
 import { APLRotationPicker } from "./apl_rotation_picker";
+import { CooldownsPicker } from "./cooldowns_picker";
 
 export class RotationTab extends SimTab {
 	protected simUI: IndividualSimUI<Spec>;
@@ -161,7 +158,7 @@ export class RotationTab extends SimTab {
 			if (inputConfig.type == 'number') {
 				new NumberPicker(sectionElem, this.simUI.player, inputConfig);
 			} else if (inputConfig.type == 'boolean') {
-				new BooleanPicker(sectionElem, this.simUI.player, { ...inputConfig, ...{ cssScheme: this.simUI.cssScheme } });
+				new BooleanPicker(sectionElem, this.simUI.player, { ...inputConfig });
 			} else if (inputConfig.type == 'enum') {
 				new EnumPicker(sectionElem, this.simUI.player, inputConfig);
 			}

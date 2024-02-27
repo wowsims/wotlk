@@ -1,27 +1,27 @@
+import { Tooltip } from 'bootstrap';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { element, fragment } from 'tsx-vanilla';
+
 import { ResourceType } from '../../proto/api.js';
 import { OtherAction } from '../../proto/common.js';
-import { UnitMetrics } from '../../proto_utils/sim_result.js';
 import { ActionId, resourceTypeToIcon } from '../../proto_utils/action_id.js';
-import { resourceNames } from '../../proto_utils/names.js';
-import { orderedResourceTypes } from '../../proto_utils/utils.js';
-import { TypedEvent } from '../../typed_event.js';
-import { bucket, distinct, maxIndex, stringComparator } from '../../utils.js';
-
 import {
 	AuraUptimeLog,
 	CastLog,
-	ResourceChangedLogGroup,
 	DpsLog,
+	ResourceChangedLogGroup,
 	SimLog,
 	ThreatLogGroup,
 } from '../../proto_utils/logs_parser.js';
-
+import { resourceNames } from '../../proto_utils/names.js';
+import { UnitMetrics } from '../../proto_utils/sim_result.js';
+import { orderedResourceTypes } from '../../proto_utils/utils.js';
+import { TypedEvent } from '../../typed_event.js';
+import { bucket, distinct, htmlDecode, maxIndex, stringComparator } from '../../utils.js';
 import { actionColors } from './color_settings.js';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
-import tippy from 'tippy.js';
-import { element, fragment } from 'tsx-vanilla';
 
-declare var ApexCharts: any;
+declare let ApexCharts: any;
 
 type TooltipHandler = (dataPointIndex: number) => string;
 
@@ -131,23 +131,23 @@ export class Timeline extends ResultComponent {
 		let isMouseDown = false
 		let startX = 0;
 		let scrollLeft = 0;
-		this.rotationTimeline.ondragstart = (event) => {
+		this.rotationTimeline.ondragstart = event => {
 			event.preventDefault();
 		}
-		this.rotationTimeline.onmousedown = (event) => {
+		this.rotationTimeline.onmousedown = event => {
 			isMouseDown = true;
 			startX = event.pageX - this.rotationTimeline.offsetLeft;
   		scrollLeft = this.rotationTimeline.scrollLeft;
 		}
-		this.rotationTimeline.onmouseleave = (event) => {
+		this.rotationTimeline.onmouseleave = () => {
 			isMouseDown = false;
 			this.rotationTimeline.classList.remove('active');
 		};
-		this.rotationTimeline.onmouseup = (event) => {
+		this.rotationTimeline.onmouseup = () => {
 			isMouseDown = false;
 			this.rotationTimeline.classList.remove('active');
 		};
-		this.rotationTimeline.onmousemove = (e) => {
+		this.rotationTimeline.onmousemove = e => {
 			if(!isMouseDown) return;
 			e.preventDefault();
 			const x = e.pageX - this.rotationTimeline.offsetLeft;
@@ -170,7 +170,7 @@ export class Timeline extends ResultComponent {
 		}
 
 		const duration = this.resultData!.result.result.firstIterationDuration || 1;
-		let options: any = {
+		const options: any = {
 			series: [],
 			colors: [],
 			xaxis: {
@@ -517,7 +517,7 @@ export class Timeline extends ResultComponent {
 		playerCastsByAbility.forEach(castLogs => this.addCastRow(castLogs, buffsAndDebuffsById, duration));
 
 		if (player.pets.length > 0) {
-			let playerPets = new Map<string, UnitMetrics>();
+			const playerPets = new Map<string, UnitMetrics>();
 			player.pets.forEach(petsLog => {
 				const petCastsByAbility = this.getSortedCastsByAbility(petsLog);
 				if (petCastsByAbility.length > 0) {
@@ -603,7 +603,7 @@ export class Timeline extends ResultComponent {
 	private makeLabelElem(actionId: ActionId, isHiddenLabel: boolean): JSX.Element {
 		const labelText = idsToGroupForRotation.includes(actionId.spellId) ? actionId.baseName : actionId.name;
 
-		let labelElem = (
+		const labelElem = (
 			<div className={`rotation-label rotation-row ${isHiddenLabel ? 'rotation-label-hidden' : ''}`}>
 				<span className={`fas fa-eye${isHiddenLabel ? '' : '-slash'}`}></span>
 				<a className="rotation-label-icon"></a>
@@ -622,9 +622,11 @@ export class Timeline extends ResultComponent {
 			}
 			this.hiddenIdsChangeEmitter.emit(TypedEvent.nextEventID());
 		});
-		tippy(hideElem, {
-			content: isHiddenLabel ? 'Show Row' : 'Hide Row',
-			ignoreAttributes: true,
+		Tooltip.getOrCreateInstance(hideElem, {
+			customClass: "timeline-tooltip",
+			html: true,
+			placement: 'bottom',
+			title: isHiddenLabel ? 'Show Row' : 'Hide Row',
 		});
 		const updateHidden = () => {
 			if (isHiddenLabel == Boolean(this.hiddenIds.find(hiddenId => hiddenId.equals(actionId)))) {
@@ -642,7 +644,7 @@ export class Timeline extends ResultComponent {
 
 	private makeRowElem(actionId: ActionId, duration: number): JSX.Element {
 		const rowElem = (
-			<div className='rotation-timeline-row rotation-row' 
+			<div className='rotation-timeline-row rotation-row'
 				 style={{
 					width: this.timeToPx(duration),
 				 }}>
@@ -709,7 +711,7 @@ export class Timeline extends ResultComponent {
 		this.rotationLabels.appendChild(labelElem);
 
 		const rowElem = (
-			<div className='rotation-timeline-row rotation-row' 
+			<div className='rotation-timeline-row rotation-row'
 				 style={{
 					width: this.timeToPx(duration),
 				 }}>
@@ -741,10 +743,10 @@ export class Timeline extends ResultComponent {
 			}
 			rowElem.appendChild(resourceElem);
 
-			tippy(resourceElem, {
-				content: this.resourceTooltipElem(resourceLogGroup, startValue, false),
+			Tooltip.getOrCreateInstance(resourceElem, {
+				html: true,
 				placement: 'bottom',
-				ignoreAttributes: true,
+				title: this.resourceTooltipElem(resourceLogGroup, startValue, false),
 			});
 		});
 		this.rotationTimeline.appendChild(rowElem);
@@ -793,25 +795,31 @@ export class Timeline extends ResultComponent {
 			const totalDamage = castLog.totalDamage();
 
 			const tt = (
-				<>
-					<span>{castLog.actionId!.name} from {castLog.timestamp.toFixed(2)}s to {(castLog.timestamp + castLog.castTime).toFixed(2)}s ({castLog.castTime.toFixed(2)}s, {castLog.effectiveTime.toFixed(2)}s GCD Time){travelTimeStr}</span>
-					<ul className="rotation-timeline-cast-damage-list">
-						{castLog.damageDealtLogs.map(ddl => (
-							<li>
-								<span>{ddl.timestamp.toFixed(2)}s - {ddl.resultString()}</span>
-								{ddl.source?.isTarget && <span className="threat-metrics"> ({ddl.threat.toFixed(1)} Threat)</span>}
-							</li>
-							))
-						}
-					</ul>
+				<div className="timeline-tooltip">
+					<span>
+						{castLog.actionId!.name} from {castLog.timestamp.toFixed(2)}s to {(castLog.timestamp + castLog.castTime).toFixed(2)}s
+						({castLog.castTime > 0 && `${castLog.castTime.toFixed(2)}s, `} {castLog.effectiveTime.toFixed(2)}s GCD Time)
+						{travelTimeStr.length > 0 && travelTimeStr}
+					</span>
+					{castLog.damageDealtLogs.length > 0 && (
+						<ul className="rotation-timeline-cast-damage-list">
+							{castLog.damageDealtLogs.map(ddl => (
+								<li>
+									<span>{ddl.timestamp.toFixed(2)}s - {htmlDecode(ddl.resultString())}</span>
+									{ddl.source?.isTarget && <span className="threat-metrics"> ({ddl.threat.toFixed(1)} Threat)</span>}
+								</li>
+								))
+							}
+						</ul>
+					)}
 					{totalDamage > 0 && <span>Total: {totalDamage.toFixed(2)} ({(totalDamage / (castLog.effectiveTime || 1)).toFixed(2)} DPET)</span>}
-				</>
+				</div>
 			);
 
-			tippy(castElem, {
-				content: tt,
+			Tooltip.getOrCreateInstance(castElem, {
+				html: true,
 				placement: 'bottom',
-				ignoreAttributes: true,
+				title: tt.outerHTML,
 			});
 
 			castLog.damageDealtLogs.filter(ddl => ddl.tick).forEach(ddl => {
@@ -821,16 +829,16 @@ export class Timeline extends ResultComponent {
 				rowElem.appendChild(tickElem);
 
 				const tt = (
-					<>
-						<span>{ddl.timestamp.toFixed(2)}s - {ddl.actionId!.name} {ddl.resultString()}</span>
+					<div className="timeline-tooltip">
+						<span>{ddl.timestamp.toFixed(2)}s - {ddl.actionId!.name} {htmlDecode(ddl.resultString())}</span>
 						{ddl.source?.isTarget && <span className="threat-metrics"> ({ddl.threat.toFixed(1)} Threat)</span>}
-					</>
+					</div>
 				);
 
-				tippy(tickElem, {
-					content: tt,
+				Tooltip.getOrCreateInstance(tickElem, {
+					html: true,
 					placement: 'bottom',
-					ignoreAttributes: true,
+					title: tt.outerHTML,
 				});
 			});
 		});
@@ -846,7 +854,7 @@ export class Timeline extends ResultComponent {
 	private addAuraRow(auraUptimeLogs: Array<AuraUptimeLog>, duration: number) {
 		const actionId = auraUptimeLogs[0].actionId!;
 
-		let rowElem = this.makeRowElem(actionId, duration);
+		const rowElem = this.makeRowElem(actionId, duration);
 		this.rotationLabels.appendChild(this.makeLabelElem(actionId, false));
 		this.rotationHiddenIdsContainer.appendChild(this.makeLabelElem(actionId, true));
 		this.rotationTimeline.appendChild(rowElem);
@@ -862,11 +870,16 @@ export class Timeline extends ResultComponent {
 			auraElem.style.minWidth = this.timeToPx(aul.fadedAt === aul.gainedAt ? 0.001 : aul.fadedAt - aul.gainedAt);
 			rowElem.appendChild(auraElem);
 
-			const tt = (<span> {aul.actionId!.name}: {aul.gainedAt.toFixed(2)}s - {(aul.fadedAt).toFixed(2)}s</span>);
+			const tt = (
+				<div className="timeline-tooltip">
+					<span>{aul.actionId!.name}: {aul.gainedAt.toFixed(2)}s - {(aul.fadedAt).toFixed(2)}s</span>
+				</div>
+			);
 
-			tippy(auraElem, {
-				content: tt,
-				ignoreAttributes: true,
+			Tooltip.getOrCreateInstance(auraElem, {
+				html: true,
+				placement: 'bottom',
+				title: tt.outerHTML,
 			});
 
 			aul.stacksChange.forEach((scl, i) => {
@@ -940,24 +953,26 @@ export class Timeline extends ResultComponent {
 
 	private dpsTooltip(log: DpsLog, includeAuras: boolean, player: UnitMetrics, colorOverride: string): string {
 		const showPlayerLabel = colorOverride != '';
-		return `<div class="timeline-tooltip dps">
-			<div class="timeline-tooltip-header">
-				${showPlayerLabel ? `
-				<img class="timeline-tooltip-icon" src="${player.iconUrl}">
-				<span class="" style="color: ${colorOverride}">${player.label}</span><span> - </span>
-				` : ''}
-				<span class="bold">${log.timestamp.toFixed(2)}s</span>
-			</div>
-			<div class="timeline-tooltip-body">
-				<ul class="timeline-dps-events">
-					${log.damageLogs.map(damageLog => this.tooltipLogItem(damageLog, damageLog.resultString())).join('')}
-				</ul>
-				<div class="timeline-tooltip-body-row">
-					<span class="series-color">DPS: ${log.dps.toFixed(2)}</span>
+		return `
+			<div class="timeline-tooltip dps">
+				<div class="timeline-tooltip-header">
+					${showPlayerLabel ? `
+					<img class="timeline-tooltip-icon" src="${player.iconUrl}">
+					<span class="" style="color: ${colorOverride}">${player.label}</span><span> - </span>
+					` : ''}
+					<span class="bold">${log.timestamp.toFixed(2)}s</span>
 				</div>
+				<div class="timeline-tooltip-body">
+					<ul class="timeline-dps-events">
+						${log.damageLogs.map(damageLog => this.tooltipLogItem(damageLog, damageLog.resultString())).join('')}
+					</ul>
+					<div class="timeline-tooltip-body-row">
+						<span class="series-color">DPS: ${log.dps.toFixed(2)}</span>
+					</div>
+				</div>
+				${this.tooltipAurasSection(log)}
 			</div>
-			${this.tooltipAurasSection(log)}
-		</div>`;
+		`;
 	}
 
 	private threatTooltip(log: ThreatLogGroup, includeAuras: boolean, player: UnitMetrics, colorOverride: string): string {
@@ -1009,15 +1024,15 @@ export class Timeline extends ResultComponent {
 				{includeAuras && this.tooltipAurasSectionElem(log)}
 			</div>
 		);
-	}	
-	
+	}
+
 	private resourceTooltip(log: ResourceChangedLogGroup, maxValue: number, includeAuras: boolean): string {
 		return this.resourceTooltipElem(log, maxValue, includeAuras).outerHTML;
 	}
 
 	private tooltipLogItem(log: SimLog, value: string): string {
 		return this.tooltipLogItemElem(log, value).outerHTML;
-	}	
+	}
 
 	private tooltipLogItemElem(log: SimLog, value: string): JSX.Element {
 		return (

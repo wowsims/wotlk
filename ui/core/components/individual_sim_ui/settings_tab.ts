@@ -1,3 +1,4 @@
+import * as Tooltips from '../../constants/tooltips.js';
 import { Encounter } from '../../encounter';
 import { IndividualSimUI, InputSection } from "../../individual_sim_ui";
 import {
@@ -16,24 +17,20 @@ import { professionNames, raceNames } from "../../proto_utils/names";
 import { specToEligibleRaces } from "../../proto_utils/utils";
 import { EventID, TypedEvent } from "../../typed_event";
 import { getEnumValues } from "../../utils";
-
 import { BooleanPicker } from "../boolean_picker";
 import { ContentBlock } from "../content_block";
 import { EncounterPicker } from '../encounter_picker.js';
 import { EnumPicker } from "../enum_picker";
+import * as IconInputs from '../icon_inputs.js';
 import { Input } from "../input";
+import * as BuffDebuffInputs from '../inputs/buffs_debuffs';
 import { relevantStatOptions } from "../inputs/stat_options";
 import { ItemSwapPicker } from "../item_swap_picker";
 import { MultiIconPicker } from "../multi_icon_picker";
 import { NumberPicker } from "../number_picker";
 import { SavedDataManager } from "../saved_data_manager";
 import { SimTab } from "../sim_tab";
-
 import { ConsumesPicker } from "./consumes_picker";
-
-import * as IconInputs from '../icon_inputs.js';
-import * as BuffDebuffInputs from '../inputs/buffs_debuffs';
-import * as Tooltips from '../../constants/tooltips.js';
 
 export class SettingsTab extends SimTab {
 	protected simUI: IndividualSimUI<Spec>;
@@ -134,7 +131,7 @@ export class SettingsTab extends SimTab {
 			this.configureInputSection(contentBlock.bodyElement, this.simUI.individualConfig.playerInputs);
 		}
 
-		let professionGroup = Input.newGroupContainer();
+		const professionGroup = Input.newGroupContainer();
 		contentBlock.bodyElement.appendChild(professionGroup);
 
 		const professions = getEnumValues(Profession) as Array<Profession>;
@@ -167,7 +164,7 @@ export class SettingsTab extends SimTab {
 
 	private buildCustomSettingsSections() {
 		(this.simUI.individualConfig.customSections || []).forEach(customSection => {
-			let section = customSection(this.column2, this.simUI);
+			const section = customSection(this.column2, this.simUI);
 			section.rootElem.classList.add('custom-section');
 		});
 	}
@@ -238,7 +235,7 @@ export class SettingsTab extends SimTab {
 			debuffOptions.map(options => options.picker && new options.picker(contentBlock.bodyElement, this.simUI.player, options.config as any, this.simUI))
 		);
 
-		const miscDebuffOptions = relevantStatOptions(BuffDebuffInputs.DEBUFFS_MISC_CONFIG, this.simUI) 
+		const miscDebuffOptions = relevantStatOptions(BuffDebuffInputs.DEBUFFS_MISC_CONFIG, this.simUI)
 		if (miscDebuffOptions.length) {
 			new MultiIconPicker(contentBlock.bodyElement, this.simUI.player, {
 				inputs: miscDebuffOptions.map(options => options.config),
@@ -336,7 +333,7 @@ export class SettingsTab extends SimTab {
 			if (inputConfig.type == 'number') {
 				new NumberPicker(sectionElem, this.simUI.player, inputConfig);
 			} else if (inputConfig.type == 'boolean') {
-				new BooleanPicker(sectionElem, this.simUI.player, { ...inputConfig, ...{ cssScheme: this.simUI.cssScheme } });
+				new BooleanPicker(sectionElem, this.simUI.player, { ...inputConfig });
 			} else if (inputConfig.type == 'enum') {
 				new EnumPicker(sectionElem, this.simUI.player, inputConfig);
 			}
