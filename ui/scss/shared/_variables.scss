@@ -65,14 +65,30 @@ $item-quality-artifact:  #e5cc80;
 $item-quality-heirloom:  #0cf;
 
 $item-qualities: (
-  junk:      $item-quality-junk,
-  common:    $item-quality-common,
-  uncommon:  $item-quality-uncommon,
-  rare:      $item-quality-rare,
-  epic:      $item-quality-epic,
-  legendary: $item-quality-legendary,
-  artifact:  $item-quality-artifact,
-  heirloom:  $item-quality-heirloom
+	junk:		$item-quality-junk,
+	common:		$item-quality-common,
+	uncommon:	$item-quality-uncommon,
+	rare:		$item-quality-rare,
+	epic:		$item-quality-epic,
+	legendary:	$item-quality-legendary,
+	artifact:	$item-quality-artifact,
+	heirloom:	$item-quality-heirloom
+);
+
+$health-color: 		#22ba00;
+$mana-color: 		#2E93fA;
+$energy-color: 		#ffd700;
+$rage-color: 		#ff0000;
+$focus-color: 		#cd853f;
+$combo-points-color:#ffa07a;
+
+$resource-colors: (
+	combo-points: 	$combo-points-color,
+	energy: 		$energy-color,
+	focus: 			$focus-color,
+	health: 		$health-color,
+	mana: 			$mana-color,
+	rage: 			$rage-color,
 );
 
 $link-danger-color:  #ef9eaa;

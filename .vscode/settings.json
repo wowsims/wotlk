@@ -2,16 +2,22 @@
 	"eslint.validate": ["javascript", "typescript"],
 	"eslint.nodePath": "./node_modules",
 	"eslint.workingDirectories": ["."],
-	"files.associations": {
-		"*.js": "javascript",
-		"*.ts": "typescript"
+	"[javascript]": {
+		"editor.codeActionsOnSave": {
+            "source.fixAll.eslint": "always"
+		}
+	},
+	"[javascriptreact]": {
+		"editor.codeActionsOnSave": {
+            "source.fixAll.eslint": "always"
+		}
 	},
 	"[typescript]": {
 		"editor.codeActionsOnSave": {
 		"source.fixAll.eslint": "always"
 		}
 	},
-	"[javascript]": {
+	"[typescriptreact]": {
 		"editor.codeActionsOnSave": {
             "source.fixAll.eslint": "always"
 		}
@@ -26,10 +32,6 @@
             "source.fixAll.eslint": "always"
         }
 	},
-    "[json]": {
-		"editor.formatOnSave": true,
-	},
-	"json.format.enable": true,
     "json.schemas": [
         {
             "fileMatch": [

@@ -1,12 +1,11 @@
-import { EventID, TypedEvent } from '../typed_event.js';
-
+import { TypedEvent } from '../typed_event.js';
 import { Input, InputConfig } from './input.js';
 
 /**
  * Data for creating a boolean picker (checkbox).
  */
 export interface BooleanPickerConfig<ModObject> extends InputConfig<ModObject, boolean> {
-	cssScheme?: string;
+	reverse?: boolean;
 }
 
 // UI element for picking an arbitrary number field.
@@ -21,11 +20,16 @@ export class BooleanPicker<ModObject> extends Input<ModObject, boolean> {
 		this.inputElem = document.createElement('input');
 		this.inputElem.type = 'checkbox';
 		this.inputElem.classList.add('boolean-picker-input', 'form-check-input');
-		this.rootElem.appendChild(this.inputElem);
+
+		if (config.reverse) {
+			this.rootElem.prepend(this.inputElem);
+		} else {
+			this.rootElem.appendChild(this.inputElem);
+		}
 
 		this.init();
 
-		this.inputElem.addEventListener('change', event => {
+		this.inputElem.addEventListener('change', () => {
 			this.inputChanged(TypedEvent.nextEventID());
 		});
 	}
