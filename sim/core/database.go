@@ -2,6 +2,8 @@ package core
 
 import (
 	"fmt"
+	"math"
+
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 	"google.golang.org/protobuf/encoding/protojson"
@@ -33,6 +35,44 @@ func addToDatabase(newDB *proto.SimDatabase) {
 	}
 }
 
+var reforgeableStats = []stats.Stat{
+	stats.Spirit,
+	stats.Dodge,
+	stats.Parry,
+	stats.MeleeHit,
+	stats.SpellHit,
+	stats.SpellCrit,
+	stats.MeleeCrit,
+	stats.MeleeHaste,
+	stats.SpellHaste,
+	stats.Expertise,
+	//stats.Mastery
+}
+
+type Reforging struct {
+	FromStat proto.Stat
+	ToStat   proto.Stat
+}
+
+func ReforgingFromProto(r *proto.Reforging) *Reforging {
+	if r == nil {
+		return nil
+	}
+	return &Reforging{
+		FromStat: r.GetFromStat(),
+		ToStat:   r.GetToStat(),
+	}
+}
+func ReforgingToProto(s *Reforging) *proto.Reforging {
+	if s == nil {
+		return nil // Return nil if there's no reforging data
+	}
+	return &proto.Reforging{
+		FromStat: s.FromStat,
+		ToStat:   s.ToStat,
+	}
+}
+
 type Item struct {
 	ID        int32
 	Type      proto.ItemType
@@ -54,8 +94,9 @@ type Item struct {
 	SocketBonus stats.Stats
 
 	// Modified for each instance of the item.
-	Gems    []Gem
-	Enchant Enchant
+	Gems      []Gem
+	Enchant   Enchant
+	Reforging *Reforging
 
 	//Internal use
 	TempEnchant int32
@@ -82,9 +123,10 @@ func ItemFromProto(pData *proto.SimItem) Item {
 
 func (item *Item) ToItemSpecProto() *proto.ItemSpec {
 	return &proto.ItemSpec{
-		Id:      item.ID,
-		Enchant: item.Enchant.EffectID,
-		Gems:    MapSlice(item.Gems, func(gem Gem) int32 { return gem.ID }),
+		Id:        item.ID,
+		Enchant:   item.Enchant.EffectID,
+		Gems:      MapSlice(item.Gems, func(gem Gem) int32 { return gem.ID }),
+		Reforging: ReforgingToProto(item.Reforging),
 	}
 }
 
@@ -117,9 +159,10 @@ func GemFromProto(pData *proto.SimGem) Gem {
 }
 
 type ItemSpec struct {
-	ID      int32
-	Enchant int32
-	Gems    []int32
+	ID        int32
+	Enchant   int32
+	Gems      []int32
+	Reforging *Reforging
 }
 
 type Equipment [proto.ItemSlot_ItemSlotRanged + 1]Item
@@ -211,9 +254,10 @@ func ProtoToEquipmentSpec(es *proto.EquipmentSpec) EquipmentSpec {
 	var coreEquip EquipmentSpec
 	for i, item := range es.Items {
 		coreEquip[i] = ItemSpec{
-			ID:      item.Id,
-			Enchant: item.Enchant,
-			Gems:    item.Gems,
+			ID:        item.Id,
+			Enchant:   item.Enchant,
+			Gems:      item.Gems,
+			Reforging: ReforgingFromProto(item.Reforging),
 		}
 	}
 	return coreEquip
@@ -236,6 +280,14 @@ func NewItem(itemSpec ItemSpec) Item {
 		// }
 	}
 
+	if itemSpec.Reforging != nil {
+		if validateReforging(&item, *itemSpec.Reforging) {
+			item.Reforging = itemSpec.Reforging
+		} else {
+			panic(fmt.Sprintf("When validating reforging for item %d, the stat reforging for %s to %s could not be validated", itemSpec.ID, itemSpec.Reforging.FromStat.String(), itemSpec.Reforging.ToStat.String()))
+		}
+	}
+
 	if len(itemSpec.Gems) > 0 {
 		// Need to do this to account for possible extra gem sockets.
 		numGems := len(item.GemSockets)
@@ -255,6 +307,29 @@ func NewItem(itemSpec ItemSpec) Item {
 		}
 	}
 	return item
+}
+
+func validateReforging(item *Item, reforging Reforging) bool {
+	// Check if both from and to stats are reforgeable
+	fromStatReforgeable := false
+	toStatReforgeable := false
+	for _, stat := range reforgeableStats {
+		if stats.Stat(reforging.FromStat) == stat {
+			fromStatReforgeable = true
+		}
+		if stats.Stat(reforging.ToStat) == stat {
+			toStatReforgeable = true
+		}
+	}
+
+	if !fromStatReforgeable || !toStatReforgeable {
+		return false
+	}
+
+	fromStatPresent := item.Stats[int(reforging.FromStat)] > 0
+	toStatNotPresent := item.Stats[int(reforging.ToStat)] == 0
+
+	return fromStatPresent && toStatNotPresent
 }
 
 func NewEquipmentSet(equipSpec EquipmentSpec) Equipment {
@@ -290,14 +365,15 @@ func EquipmentSpecFromJsonString(jsonString string) *proto.EquipmentSpec {
 
 func (equipment *Equipment) Stats() stats.Stats {
 	equipStats := stats.Stats{}
+
 	for _, item := range equipment {
+
 		equipStats = equipStats.Add(item.Stats)
 		equipStats = equipStats.Add(item.Enchant.Stats)
 
 		for _, gem := range item.Gems {
 			equipStats = equipStats.Add(gem.Stats)
 		}
-
 		// Check socket bonus
 		if len(item.GemSockets) > 0 && len(item.Gems) >= len(item.GemSockets) {
 			allMatch := true
@@ -311,6 +387,17 @@ func (equipment *Equipment) Stats() stats.Stats {
 			if allMatch {
 				equipStats = equipStats.Add(item.SocketBonus)
 			}
+		}
+		if item.Reforging != nil {
+			reforgingChanges := stats.Stats{}
+
+			fromStatValue := equipStats[item.Reforging.FromStat]
+			reduction := math.Floor(fromStatValue * 0.4) // Calculate 40% reduction floored
+
+			reforgingChanges[item.Reforging.FromStat] = -reduction
+			reforgingChanges[item.Reforging.ToStat] = +reduction
+
+			equipStats = equipStats.Add(reforgingChanges) // Apply reforging changes
 		}
 	}
 	return equipStats

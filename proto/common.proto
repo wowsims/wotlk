@@ -700,10 +700,17 @@ message PresetEncounter {
 	repeated PresetTarget targets = 2;
 }
 
+// Message for describing a reforged item
+message Reforging {
+  Stat from_stat = 1; // Reforge from this stat
+  Stat to_stat = 2;   // Reforge to this stat
+}
+
 message ItemSpec {
 	int32 id = 2;
 	int32 enchant = 3;
 	repeated int32 gems = 4;
+	Reforging reforging = 5; //reforging information
 }
 
 message EquipmentSpec {
@@ -736,6 +743,7 @@ message SimItem {
 	double weapon_speed = 13;
 
 	string set_name = 14;
+	
 }
 
 // Extra enum for describing which items are eligible for an enchant, when
