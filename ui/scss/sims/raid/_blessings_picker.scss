@@ -13,8 +13,7 @@
 			margin-right: $block-spacer * 2;
 
 			.blessings-spec-icon {
-				width: $icon-size-md;
-				height: $icon-size-md;
+				@extend .icon-md;
 			}
 		}
 

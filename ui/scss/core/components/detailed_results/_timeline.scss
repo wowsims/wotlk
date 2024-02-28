@@ -68,6 +68,8 @@ $threat-color: #b56d07;
 
 .timeline-tooltip {
 	text-align: start;
+	background: $tooltip-bg;
+	padding: $tooltip-padding-y $tooltip-padding-x;
 }
 
 .timeline-tooltip-header {
