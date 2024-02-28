@@ -122,7 +122,7 @@ export class ItemRenderer extends Component {
 	readonly socketsContainerElem: HTMLElement;
 
 	constructor(parent: HTMLElement, player: Player<any>) {
-		super(parent, 'item-renderer-root');
+		super(parent, 'item-picker-root');
 		this.player = player;
 
 		let iconElem = ref<HTMLAnchorElement>();
@@ -825,9 +825,10 @@ export class ItemList<T> {
 					<button className="selector-modal-remove-button btn btn-danger">Unequip Item</button>
 				</div>
 				<div className="selector-modal-list-labels">
-					<label>Item</label>
-					<label className="ep-delta-label">
-						EP
+					<label className="item-label"><small>Item</small></label>
+					<label className="source-label"><small>Source</small></label>
+					<label className="ep-label">
+						<small>EP</small>
 						<i className="fa-solid fa-plus-minus fa-2xs"></i>
 						<button
 							ref={epButton}
@@ -835,6 +836,7 @@ export class ItemList<T> {
 							<i className="far fa-question-circle fa-lg"></i>
 						</button>
 					</label>
+					<label className="favorite-label"></label>
 				</div>
 				<ul className="selector-modal-list"></ul>
 			</div>
@@ -980,7 +982,9 @@ export class ItemList<T> {
 				epDeltaElem.textContent = '';
 				if (itemData.item) {
 					const listItemEP = this.computeEP(itemData.item);
-					formatDeltaTextElem(epDeltaElem, newEP, listItemEP, 0);
+					if (newEP != listItemEP) {
+						formatDeltaTextElem(epDeltaElem, newEP, listItemEP, 0);
+					}
 				}
 			}
 		});
@@ -1067,7 +1071,7 @@ export class ItemList<T> {
 	}
 
 	public hideOrShowEPValues() {
-		const labels = this.tabContent.getElementsByClassName("ep-delta-label")
+		const labels = this.tabContent.getElementsByClassName("ep-label")
 		const container = this.tabContent.getElementsByClassName("selector-modal-list")
 		const show = this.player.sim.getShowEPValues();
 		const display = show ? "" : "none"
@@ -1088,14 +1092,15 @@ export class ItemList<T> {
 		const itemData = item.data;
 		const itemEP = this.computeEP(itemData.item);
 
-		const equipedItem = this.equippedToItemFn(this.gearData.getEquippedItem());
-		const equipdItemId = equipedItem ? (this.label == 'Enchants' ? (equipedItem as unknown as Enchant).effectId : (equipedItem as unknown as Item | Gem).id) : 0;
+		const equippedItem = this.equippedToItemFn(this.gearData.getEquippedItem());
+		const equippedItemID = equippedItem ? (this.label == 'Enchants' ? (equippedItem as unknown as Enchant).effectId : (equippedItem as unknown as Item).id) : 0;
+		const equippedItemEP = equippedItem ? this.computeEP(equippedItem) : 0
 
 		const nameElem = ref<HTMLLabelElement>();
 		const anchorElem = ref<HTMLAnchorElement>();
 		const iconElem = ref<HTMLImageElement>();
 		const listItemElem = (
-			<li className={`selector-modal-list-item ${equipdItemId == itemData.id ? 'active' : ''}`} dataset={{idx: item.idx.toString()}}>
+			<li className={`selector-modal-list-item ${equippedItemID == itemData.id ? 'active' : ''}`} dataset={{idx: item.idx.toString()}}>
 				<div className='selector-modal-list-label-cell'>
 					<a className='selector-modal-list-item-link' ref={anchorElem} dataset={{whtticon:'false'}}>
 						<img className='selector-modal-list-item-icon' ref={iconElem}></img>
@@ -1116,8 +1121,22 @@ export class ItemList<T> {
 			)
 		}
 
-		let favoriteElem = ref<HTMLButtonElement>();
 
+		if (this.slot != ItemSlot.ItemSlotTrinket1 && this.slot != ItemSlot.ItemSlotTrinket2) {
+			listItemElem.appendChild(
+				<div className='selector-modal-list-item-ep'>
+					<span className='selector-modal-list-item-ep-value'>
+						{itemEP < 9.95 ? itemEP.toFixed(1).toString() : Math.round(itemEP).toString()}
+					</span>
+					<span
+						className='selector-modal-list-item-ep-delta'
+						ref={e => itemData.item && equippedItemEP != itemEP && formatDeltaTextElem(e, equippedItemEP, itemEP, 0)}
+					></span>
+				</div>
+			);
+		}
+
+		const favoriteElem = ref<HTMLButtonElement>();
 		listItemElem.appendChild(
 			<div>
 				<button className="selector-modal-list-item-favorite btn btn-link p-0"
@@ -1127,24 +1146,6 @@ export class ItemList<T> {
 				</button>
 			</div>
 		)
-
-
-		if (this.slot != ItemSlot.ItemSlotTrinket1 && this.slot != ItemSlot.ItemSlotTrinket2) {
-			listItemElem.appendChild(
-				<div className='selector-modal-list-item-ep'>
-					<span className='selector-modal-list-item-ep-value'>
-						{itemEP < 9.95 ? itemEP.toFixed(1).toString() : Math.round(itemEP).toString()}
-					</span>
-				</div>
-			);
-		}
-
-		listItemElem.appendChild(
-			<div className='selector-modal-list-item-ep'>
-				<span className='selector-modal-list-item-ep-delta'
-					ref={(e) => itemData.item && formatDeltaTextElem(e, equipedItem ? this.computeEP(equipedItem) : 0, itemEP, 0)}></span>
-			</div>
-		);
 
 		anchorElem.value!.addEventListener('click', (event: Event) => {
 			event.preventDefault();

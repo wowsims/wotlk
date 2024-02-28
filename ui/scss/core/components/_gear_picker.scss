@@ -2,188 +2,185 @@
 
 @import "./filters_menu";
 
+$source-cell-width: 16rem;
+$ep-cell-width: 4rem;
+$favorite-cell-width: 2rem;
+
 .gear-picker-root {
-  margin-bottom: var(--container-padding);
-  display: flex;
-  flex-wrap: wrap;
+	display: flex;
+	flex-wrap: wrap;
+	width: 100%;
 
-  .gear-picker-left,
-  .gear-picker-right {
-    width: 50%;
-  }
+	.gear-picker-left,
+	.gear-picker-right {
+		width: 50%;
+	}
 
-  .item-picker-root {
-    display: flex;
+	.item-picker-root {
+		display: flex;
 
-    &:not(:last-child) {
-      margin-bottom: $block-spacer;
-    }
+		&:not(:last-child) {
+			margin-bottom: $block-spacer;
+		}
 
-    .item-renderer-root {
-      width: 100%;
-      display: flex;
-    }
+		.item-picker-icon {
+			@include wowhead-background-icon;
+			width: 4rem;
+			height: 4rem;
+			border: $border-default;
+		}
+	}
 
-    .item-picker-icon {
-      @include wowhead-background-icon;
-      width: 4rem;
-      height: 4rem;
-      border: $border-default;
-    }
-  }
+	.gear-picker-left {
+		.item-picker-root {
+			flex-direction: row;
+			text-align: left;
 
-  .gear-picker-left {
-    .item-picker-root {
-      // Add space to separate weapon categories
-      &:nth-child(6) {
-        margin-bottom: var(--container-padding);
-      }
+			// Add space to separate weapon categories
+			&:nth-child(6) {
+				margin-bottom: map.get($spacers, 5);
+			}
+		}
+	}
 
-      .item-renderer-root {
-        flex-direction: row;
-        text-align: left;
-      }
-    }
-  }
-
-  .gear-picker-right {
-    .item-renderer-root {
-      flex-direction: row-reverse;
-      text-align: right;
-    }
-  }
+	.gear-picker-right {
+		.item-picker-root {
+			flex-direction: row-reverse;
+			text-align: right;
+		}
+	}
 }
 
 .item-picker-sockets-container {
-  @include vertical-bottom;
-  @include horizontal-center;
-  width: 100%;
-  display: flex;
-  justify-content: center;
+	@include vertical-bottom;
+	@include horizontal-center;
+	width: 100%;
+	display: flex;
+	justify-content: center;
 }
 
 .selector-modal {
-  .modal-header {
-    padding-bottom: 0;
+	.modal-header {
+		padding-bottom: 0;
 
-    .selector-modal-tabs {
-      border-bottom: 0;
+		.selector-modal-tabs {
+			border-bottom: 0;
 
-      .selector-modal-tab-gem {
-        height: 100%;
-        padding: 0;
-        padding: calc(var(--bs-nav-link-padding-y) / 2) calc(var(--bs-nav-link-padding-x) / 2);
-        margin-left: calc(var(--bs-nav-link-padding-x) / 2);
-        margin-right: calc(var(--bs-nav-link-padding-x) / -2);
-        display: flex;
-        align-items: center;
-        opacity: .7;
-        transition: opacity .15s ease-in-out;
+			.selector-modal-tab-gem {
+				height: 100%;
+				padding: 0;
+				padding: calc(var(--bs-nav-link-padding-y) / 2) calc(var(--bs-nav-link-padding-x) / 2);
+				margin-left: calc(var(--bs-nav-link-padding-x) / 2);
+				margin-right: calc(var(--bs-nav-link-padding-x) / -2);
+				display: flex;
+				align-items: center;
+				opacity: .7;
+				transition: opacity .15s ease-in-out;
 
-        &:hover, &.active {
-          opacity: 1;
-        }
+				&:hover, &.active {
+					opacity: 1;
+				}
 
-        .gem-socket-container {
-          --gem-width: 2rem;
-        }
-      }
-    }
-  }
+				.gem-socket-container {
+					--gem-width: 2rem;
+				}
+			}
+		}
+	}
 }
 
 @include media-breakpoint-down(md) {
-  .gear-picker-root {
-    flex-direction: column;
+	.gear-picker-root {
+		flex-direction: column;
 
-    .gear-picker-left,
-    .gear-picker-right {
-      width: 100%;
-      margin-right: 0;
-    }
-  }
+		.gear-picker-left,
+		.gear-picker-right {
+			width: 100%;
+			margin-right: 0;
+		}
+	}
 }
 
 .item-picker-labels-container {
-  padding: map-get($spacers, 2);
-  flex: 1;
+	padding: map-get($spacers, 2);
+	flex: 1;
 
-  .item-picker-name {
-    color: white;
-    font-size: map-get($font-sizes, 6);
-    letter-spacing: normal;
-  }
-  
-  .item-picker-enchant {
-    color: $item-quality-uncommon;
-    font-size: $content-font-size;
-    letter-spacing: normal;
-  }
+	.item-picker-name {
+		color: white;
+		font-size: map-get($font-sizes, 6);
+		letter-spacing: normal;
+	}
+
+	.item-picker-enchant {
+		color: $item-quality-uncommon;
+		font-size: $content-font-size;
+		letter-spacing: normal;
+	}
 }
 
 @include media-breakpoint-down(xl) {
-  .gear-picker-root {
-    .gear-picker-left {
-      .item-picker-root {
-        // Increase the spacing to help separate the weapons/bonus item slots
-        &:nth-child(6) {
-          margin-bottom: calc(var(--container-padding) * 2);
-        }
-      }
-    }
-  }
+	.gear-picker-root {
+		.gear-picker-left {
+			.item-picker-root {
+				// Increase the spacing to help separate the weapons/bonus item slots
+				&:nth-child(6) {
+				margin-bottom: calc(var(--container-padding) * 2);
+				}
+			}
+		}
+	}
 }
 
 @include media-breakpoint-down(md) {
-  .gear-picker-root {
-    .gear-picker-left {
-      .item-picker-root {
-        // Increase the spacing to help separate the weapons/bonus item slots
-        &:last-child {
-          margin-bottom: calc(var(--container-padding) * 2);
-        }
-      }
-    }
-  }
+	.gear-picker-root {
+		.gear-picker-left {
+			.item-picker-root {
+				// Increase the spacing to help separate the weapons/bonus item slots
+				&:last-child {
+				margin-bottom: calc(var(--container-padding) * 2);
+				}
+			}
+		}
+	}
 }
 
 .item-picker-labels-container {
-  padding: map-get($spacers, 2);
-  flex: 1;
+	padding: map-get($spacers, 2);
+	flex: 1;
 
-  .item-picker-name {
-    color: white;
-    font-size: map-get($font-sizes, 6);
-    letter-spacing: normal;
-  }
-  
-  .item-picker-enchant {
-    color: $item-quality-uncommon;
-    font-size: $content-font-size;
-    letter-spacing: normal;
-  }
+	.item-picker-name {
+		color: white;
+		font-size: map-get($font-sizes, 6);
+		letter-spacing: normal;
+	}
+
+	.item-picker-enchant {
+		color: $item-quality-uncommon;
+		font-size: $content-font-size;
+		letter-spacing: normal;
+	}
 }
 
 .selector-modal-tab-content {
-  .selector-modal-tab-pane {
-    padding: 0;
-  
-    .selector-modal-filters {
-      margin-bottom: map-get($spacers, 3);
-      display: flex;
-      align-items: center;
+	.selector-modal-tab-pane {
+		padding: 0;
 
-      &> *:not(:last-child) {
-        margin-right: map-get($spacers, 2);
-      }
+		.selector-modal-filters {
+			margin-bottom: map.get($spacers, 4);
+			display: flex;
+			align-items: center;
 
-      input, select {
-        padding-top: $btn-padding-y;
-        padding-bottom: $btn-padding-y;
-        font-size: $btn-font-size;
-      }
-    }
-  }
+			&> *:not(:last-child) {
+				margin-right: map-get($spacers, 2);
+			}
+
+			input, select {
+				padding-top: $btn-padding-y;
+				padding-bottom: $btn-padding-y;
+				font-size: $btn-font-size;
+			}
+		}
+	}
 }
 
 .selector-modal-search {
@@ -194,7 +191,7 @@
   min-width: 7rem;
 
   .phase-selector {
-    margin-bottom: 0;
+	margin-bottom: 0;
   }
 }
 
@@ -203,29 +200,52 @@
 }
 
 .selector-modal-list-labels {
-  margin-bottom: map-get($spacers, 2);
-  font-size: 1.125rem;
+		display: flex;
+		padding-right: map-get($spacers, 2);
+		margin-right: map-get($spacers, 3);
+		margin-bottom: map-get($spacers, 2);
+		font-size: 1.125rem;
 
-  .ep-delta-label {
-    display: flex;
-    align-items: center;
-    float: right;
-  }
+		label {
+		font-weight: normal;
+		}
+
+		.item-label {
+		flex: 1;
+		}
+
+		.source-label {
+		width: $source-cell-width;
+		margin-left: map-get($spacers, 3);
+		}
+
+		.ep-label {
+		width: $ep-cell-width;
+		margin-left: map-get($spacers, 3);
+		display: flex;
+		align-items: center;
+		float: right;
+		}
+
+		.favorite-label {
+		width: $favorite-cell-width;
+		margin-left: map-get($spacers, 3);
+		}
 }
 
 .selector-modal-list {
-  width: 100%;
-	max-height: 70vh;
+	width: 100%;
+	max-height: 65vh;
 	overflow-y: auto;
 	overflow-x: hidden;
-  padding: 0;
-  margin-bottom: 0;
-  
-  &.hide-ep {
-    .selector-modal-list-item-ep {
-      display:none;
-    }
-  }
+	padding: 0;
+	margin-bottom: 0;
+
+	&.hide-ep {
+		.selector-modal-list-item-ep {
+			display:none;
+		}
+	}
 }
 
 // TODO: Move all of these to a shared file, as they're used in other places too
@@ -236,58 +256,58 @@
 	background-color: #111218;
 
   &:nth-child(2n) {
-    background: $table-row-even-bg;
+	background: $table-row-even-bg;
   }
 
   &:nth-child(2n+1) {
-    background: $table-row-odd-bg;
+	background: $table-row-odd-bg;
   }
 
   &:hover {
-    background: #333;
+	background: #333;
   }
 
   &.active {
-    .selector-modal-list-item-icon {
-      outline: 2px solid $success;
-    }
+	.selector-modal-list-item-icon {
+	  outline: 2px solid $success;
+	}
   }
 
   .selector-modal-list-item-link {
-    display: flex;
-    align-items: center;
+	display: flex;
+	align-items: center;
   }
-  
+
   .selector-modal-list-label-cell {
-    flex: 1;
-    display: flex;
-    align-items: center;
+	flex: 1;
+	display: flex;
+	align-items: center;
   }
 
   .selector-modal-list-item-icon {
-    @include wowhead-background-icon;
-    width: 3rem;
-    height: 3rem;
-    border: $border-default;
+	@include wowhead-background-icon;
+	width: 3rem;
+	height: 3rem;
+	border: $border-default;
   }
-  
+
   .selector-modal-list-item-name {
-    font-size: 1.125rem;
-    margin-left: map-get($spacers, 3);
-    letter-spacing: normal;
-    font-weight: normal;
-    cursor: pointer;
+	font-size: 1.125rem;
+	margin-left: map-get($spacers, 3);
+	letter-spacing: normal;
+	font-weight: normal;
+	cursor: pointer;
   }
 }
 
 .selector-modal-list-item-source-container {
 	margin-left: map-get($spacers, 3);
-	width: 12rem;
+	width: $source-cell-width;
 }
 
 .selector-modal-list-item-favorite {
 	margin-left: map-get($spacers, 3);
-	color: yellow;
+	color: $brand;
 }
 
 .selector-modal-list-item-favorite:hover {
@@ -297,26 +317,31 @@
 }
 
 .selector-modal-list-item-ep {
+	width: $ep-cell-width;
+	margin-left: map-get($spacers, 3);
 	display: flex;
-	font-size: 1rem;
-	font-weight: 800;
-}
+	align-items: center;
 
-.selector-modal-list-item-ep > span {
-	min-width: 3rem;
-  display: inline-block;
-	color: white;
-	text-align: right;
-}
+	&> span {
+		display: inline-block;
+		color: white;
+		text-align: right;
+	}
+
+	.selector-modal-list-item-ep-delta {
+		margin-left: map-get($spacers, 1);
+		font-size: .8rem;
+	}
+  }
 
 .heroic-label {
   margin-left: map-get($spacers, 1);
-  color: $item-quality-uncommon;  
+  color: $item-quality-uncommon;
 }
 
 @include media-breakpoint-down(lg) {
   .item-picker-icon {
-    width: 3rem;
-    height: 3rem;
+	width: 3rem;
+	height: 3rem;
   }
 }
