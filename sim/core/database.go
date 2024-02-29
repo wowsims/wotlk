@@ -271,6 +271,14 @@ func NewItem(itemSpec ItemSpec) Item {
 		panic(fmt.Sprintf("No item with id: %d", itemSpec.ID))
 	}
 
+	if itemSpec.Reforging != nil {
+		if validateReforging(&item, *itemSpec.Reforging) {
+			item.Reforging = itemSpec.Reforging
+		} else {
+			panic(fmt.Sprintf("When validating reforging for item %d, the stat reforging for %s to %s could not be validated", itemSpec.ID, itemSpec.Reforging.FromStat.String(), itemSpec.Reforging.ToStat.String()))
+		}
+	}
+
 	if itemSpec.Enchant != 0 {
 		if enchant, ok := EnchantsByEffectID[itemSpec.Enchant]; ok {
 			item.Enchant = enchant
@@ -278,14 +286,6 @@ func NewItem(itemSpec ItemSpec) Item {
 		// else {
 		// 	panic(fmt.Sprintf("No enchant with id: %d", itemSpec.Enchant))
 		// }
-	}
-
-	if itemSpec.Reforging != nil {
-		if validateReforging(&item, *itemSpec.Reforging) {
-			item.Reforging = itemSpec.Reforging
-		} else {
-			panic(fmt.Sprintf("When validating reforging for item %d, the stat reforging for %s to %s could not be validated", itemSpec.ID, itemSpec.Reforging.FromStat.String(), itemSpec.Reforging.ToStat.String()))
-		}
 	}
 
 	if len(itemSpec.Gems) > 0 {
