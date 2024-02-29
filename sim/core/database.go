@@ -271,14 +271,6 @@ func NewItem(itemSpec ItemSpec) Item {
 		panic(fmt.Sprintf("No item with id: %d", itemSpec.ID))
 	}
 
-	if itemSpec.Reforging != nil {
-		if validateReforging(&item, *itemSpec.Reforging) {
-			item.Reforging = itemSpec.Reforging
-		} else {
-			panic(fmt.Sprintf("When validating reforging for item %d, the stat reforging for %s to %s could not be validated", itemSpec.ID, itemSpec.Reforging.FromStat.String(), itemSpec.Reforging.ToStat.String()))
-		}
-	}
-
 	if itemSpec.Enchant != 0 {
 		if enchant, ok := EnchantsByEffectID[itemSpec.Enchant]; ok {
 			item.Enchant = enchant
@@ -286,6 +278,14 @@ func NewItem(itemSpec ItemSpec) Item {
 		// else {
 		// 	panic(fmt.Sprintf("No enchant with id: %d", itemSpec.Enchant))
 		// }
+	}
+
+	if itemSpec.Reforging != nil {
+		if validateReforging(&item, *itemSpec.Reforging) {
+			item.Reforging = itemSpec.Reforging
+		} else {
+			panic(fmt.Sprintf("When validating reforging for item %d, the stat reforging for %s to %s could not be validated", itemSpec.ID, itemSpec.Reforging.FromStat.String(), itemSpec.Reforging.ToStat.String()))
+		}
 	}
 
 	if len(itemSpec.Gems) > 0 {
@@ -371,6 +371,18 @@ func (equipment *Equipment) Stats() stats.Stats {
 		equipStats = equipStats.Add(item.Stats)
 		equipStats = equipStats.Add(item.Enchant.Stats)
 
+		if item.Reforging != nil {
+			reforgingChanges := stats.Stats{}
+
+			fromStatValue := equipStats[item.Reforging.FromStat]
+			reduction := math.Floor(fromStatValue * 0.4) // Calculate 40% reduction floored
+
+			reforgingChanges[item.Reforging.FromStat] = -reduction
+			reforgingChanges[item.Reforging.ToStat] = +reduction
+
+			equipStats = equipStats.Add(reforgingChanges) // Apply reforging changes
+		}
+
 		for _, gem := range item.Gems {
 			equipStats = equipStats.Add(gem.Stats)
 		}
@@ -388,17 +400,7 @@ func (equipment *Equipment) Stats() stats.Stats {
 				equipStats = equipStats.Add(item.SocketBonus)
 			}
 		}
-		if item.Reforging != nil {
-			reforgingChanges := stats.Stats{}
 
-			fromStatValue := equipStats[item.Reforging.FromStat]
-			reduction := math.Floor(fromStatValue * 0.4) // Calculate 40% reduction floored
-
-			reforgingChanges[item.Reforging.FromStat] = -reduction
-			reforgingChanges[item.Reforging.ToStat] = +reduction
-
-			equipStats = equipStats.Add(reforgingChanges) // Apply reforging changes
-		}
 	}
 	return equipStats
 }
