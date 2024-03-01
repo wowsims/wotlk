@@ -1,7 +1,6 @@
 package core
 
 import (
-	"encoding/json"
 	"fmt"
 	"math"
 
@@ -291,18 +290,7 @@ func NewItem(itemSpec ItemSpec) Item {
 		if validateReforging(&item, reforge) {
 			item.Reforging = &reforge
 		} else {
-			reforgeJSON, err := json.Marshal(reforge)
-			reforgeJSOsN, err2 := json.Marshal(ReforgeStatsByID)
-			if err != nil {
-				// Handle JSON marshaling error, perhaps with a simpler panic message
-				panic(fmt.Sprintf("Error marshaling reforge to JSON for item %d: %v", itemSpec.ID, err))
-			}
-			if err2 != nil {
-				// Handle JSON marshaling error, perhaps with a simpler panic message
-				panic(fmt.Sprintf("Error marshaling reforge to JSON for item %d: %v", itemSpec.ID, err))
-			}
-			panic(fmt.Sprintf("When validating reforging for item %d, the reforging could not be validated. %d Reforging details: %s, %s", itemSpec.ID, itemSpec.Reforging, string(reforgeJSON), string(reforgeJSOsN)))
-
+			panic(fmt.Sprintf("When validating reforging for item %d, the reforging could not be validated. %d", itemSpec.ID, itemSpec.Reforging))
 		}
 	}
 

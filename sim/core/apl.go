@@ -171,9 +171,18 @@ func (rot *APLRotation) getStats() *proto.APLStats {
 	}
 }
 
-// Returns all action objects as an unstructured list. Used for easily finding specific actions.
 func (rot *APLRotation) allAPLActions() []*APLAction {
-	return Flatten(MapSlice(rot.priorityList, func(action *APLAction) []*APLAction { return action.GetAllActions() }))
+	if rot == nil || rot.priorityList == nil {
+		return []*APLAction{}
+	}
+
+	return Flatten(MapSlice(rot.priorityList, func(action *APLAction) []*APLAction {
+		// Check if action is nil before calling GetAllActions
+		if action == nil {
+			return []*APLAction{}
+		}
+		return action.GetAllActions()
+	}))
 }
 
 // Returns all action objects from the prepull as an unstructured list. Used for easily finding specific actions.
