@@ -125,10 +125,10 @@ func (item *Item) ToItemSpecProto() *proto.ItemSpec {
 	}
 
 	// Check if Reforging is not nil before accessing ID
+	// The idea here is to convert a reforging ID to sim stats
 	if item.Reforging != nil {
 		itemSpec.Reforging = item.Reforging.ID
 	} else {
-		// Explicitly set to 0 if Reforging is nil, for clarity (optional as zero value is default)
 		itemSpec.Reforging = 0
 	}
 
