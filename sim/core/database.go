@@ -1,6 +1,7 @@
 package core
 
 import (
+	"encoding/json"
 	"fmt"
 	"math"
 
@@ -290,7 +291,18 @@ func NewItem(itemSpec ItemSpec) Item {
 		if validateReforging(&item, reforge) {
 			item.Reforging = &reforge
 		} else {
-			panic(fmt.Sprintf("When validating reforging for item %d, the stat reforging id %d could not be validated", itemSpec.ID, itemSpec.Reforging))
+			reforgeJSON, err := json.Marshal(reforge)
+			reforgeJSOsN, err2 := json.Marshal(ReforgeStatsByID)
+			if err != nil {
+				// Handle JSON marshaling error, perhaps with a simpler panic message
+				panic(fmt.Sprintf("Error marshaling reforge to JSON for item %d: %v", itemSpec.ID, err))
+			}
+			if err2 != nil {
+				// Handle JSON marshaling error, perhaps with a simpler panic message
+				panic(fmt.Sprintf("Error marshaling reforge to JSON for item %d: %v", itemSpec.ID, err))
+			}
+			panic(fmt.Sprintf("When validating reforging for item %d, the reforging could not be validated. %d Reforging details: %s, %s", itemSpec.ID, itemSpec.Reforging, string(reforgeJSON), string(reforgeJSOsN)))
+
 		}
 	}
 
@@ -320,6 +332,7 @@ func validateReforging(item *Item, reforging ReforgeStat) bool {
 	fromStatValid := false
 	for _, fromStat := range reforging.FromStat {
 		if item.Stats[fromStat] > 0 {
+			println("hello")
 			fromStatValid = true
 			break
 		}
@@ -331,6 +344,7 @@ func validateReforging(item *Item, reforging ReforgeStat) bool {
 	toStatValid := false
 	for _, toStat := range reforging.ToStat {
 		if item.Stats[toStat] == 0 {
+			println("hello2")
 			toStatValid = true
 			break
 		}
@@ -381,13 +395,13 @@ func (equipment *Equipment) Stats() stats.Stats {
 			reforgingChanges := stats.Stats{}
 			for _, fromStat := range item.Reforging.FromStat {
 				if equipStats[fromStat] > 0 {
-					reduction := math.Floor(equipStats[fromStat] * 0.4)
+					reduction := math.Floor(equipStats[fromStat] * item.Reforging.Multiplier)
 					reforgingChanges[fromStat] = -reduction
 				}
 			}
 			for _, toStat := range item.Reforging.FromStat {
 				if equipStats[toStat] > 0 {
-					increase := math.Floor(equipStats[toStat] * 0.4)
+					increase := math.Floor(equipStats[toStat] * item.Reforging.Multiplier)
 					reforgingChanges[toStat] = +increase
 				}
 			}
