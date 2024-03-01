@@ -60,6 +60,10 @@ func main() {
 	} else if *genAsset == "wago-db2-items" {
 		tools.WriteFile(fmt.Sprintf("%s/wago_db2_items.csv", inputsDir), tools.ReadWebRequired("https://wago.tools/db2/ItemSparse/csv?build=3.4.2.49311"))
 		return
+	} else if *genAsset != "reforge-stats" {
+		//Todo: fill this when we have information from wowhead @ Neteyes - Gehennas
+		// For now, the version we have was taken from https://web.archive.org/web/20120201045249js_/http://www.wowhead.com/data=item-scaling
+		return
 	} else if *genAsset != "db" {
 		panic("Invalid gen value")
 	}
@@ -70,9 +74,13 @@ func main() {
 	atlaslootDB := database.ReadDatabaseFromJson(tools.ReadFile(fmt.Sprintf("%s/atlasloot_db.json", inputsDir)))
 	factionRestrictions := database.ParseItemFactionRestrictionsFromWagoDB(tools.ReadFile(fmt.Sprintf("%s/wago_db2_items.csv", inputsDir)))
 
+	// Todo: https://web.archive.org/web/20120201045249js_/http://www.wowhead.com/data=item-scaling
+	reforgeStats := database.ParseWowheadReforgeStats(tools.ReadFile(fmt.Sprintf("%s/wowhead_reforge_stats.json", inputsDir)))
+
 	db := database.NewWowDatabase()
 	db.Encounters = core.PresetEncounters
 	db.GlyphIDs = getGlyphIDsFromJson(fmt.Sprintf("%s/glyph_id_map.json", inputsDir))
+	db.ReforgeStats = reforgeStats.ToProto()
 
 	for _, response := range itemTooltips {
 		if response.IsEquippable() {

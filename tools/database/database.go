@@ -36,8 +36,9 @@ type WowDatabase struct {
 	Zones map[int32]*proto.UIZone
 	Npcs  map[int32]*proto.UINPC
 
-	ItemIcons  map[int32]*proto.IconData
-	SpellIcons map[int32]*proto.IconData
+	ItemIcons    map[int32]*proto.IconData
+	SpellIcons   map[int32]*proto.IconData
+	ReforgeStats map[int32]*proto.ReforgeStat
 
 	Encounters []*proto.PresetEncounter
 	GlyphIDs   []*proto.GlyphID
@@ -51,20 +52,22 @@ func NewWowDatabase() *WowDatabase {
 		Zones:    make(map[int32]*proto.UIZone),
 		Npcs:     make(map[int32]*proto.UINPC),
 
-		ItemIcons:  make(map[int32]*proto.IconData),
-		SpellIcons: make(map[int32]*proto.IconData),
+		ItemIcons:    make(map[int32]*proto.IconData),
+		SpellIcons:   make(map[int32]*proto.IconData),
+		ReforgeStats: make(map[int32]*proto.ReforgeStat),
 	}
 }
 
 func (db *WowDatabase) Clone() *WowDatabase {
 	return &WowDatabase{
-		Items:      maps.Clone(db.Items),
-		Enchants:   maps.Clone(db.Enchants),
-		Gems:       maps.Clone(db.Gems),
-		Zones:      maps.Clone(db.Zones),
-		Npcs:       maps.Clone(db.Npcs),
-		ItemIcons:  maps.Clone(db.ItemIcons),
-		SpellIcons: maps.Clone(db.SpellIcons),
+		Items:        maps.Clone(db.Items),
+		Enchants:     maps.Clone(db.Enchants),
+		Gems:         maps.Clone(db.Gems),
+		Zones:        maps.Clone(db.Zones),
+		Npcs:         maps.Clone(db.Npcs),
+		ItemIcons:    maps.Clone(db.ItemIcons),
+		SpellIcons:   maps.Clone(db.SpellIcons),
+		ReforgeStats: maps.Clone(db.ReforgeStats),
 	}
 }
 
@@ -203,15 +206,16 @@ func (db *WowDatabase) ToUIProto() *proto.UIDatabase {
 	})
 
 	return &proto.UIDatabase{
-		Items:      mapToSlice(db.Items),
-		Enchants:   enchants,
-		Gems:       mapToSlice(db.Gems),
-		Encounters: db.Encounters,
-		Zones:      mapToSlice(db.Zones),
-		Npcs:       mapToSlice(db.Npcs),
-		ItemIcons:  mapToSlice(db.ItemIcons),
-		SpellIcons: mapToSlice(db.SpellIcons),
-		GlyphIds:   db.GlyphIDs,
+		Items:        mapToSlice(db.Items),
+		Enchants:     enchants,
+		Gems:         mapToSlice(db.Gems),
+		Encounters:   db.Encounters,
+		Zones:        mapToSlice(db.Zones),
+		Npcs:         mapToSlice(db.Npcs),
+		ItemIcons:    mapToSlice(db.ItemIcons),
+		SpellIcons:   mapToSlice(db.SpellIcons),
+		GlyphIds:     db.GlyphIDs,
+		ReforgeStats: mapToSlice(db.ReforgeStats),
 	}
 }
 
@@ -235,13 +239,14 @@ func ReadDatabaseFromJson(jsonStr string) *WowDatabase {
 	}
 
 	return &WowDatabase{
-		Items:      sliceToMap(dbProto.Items),
-		Enchants:   enchants,
-		Gems:       sliceToMap(dbProto.Gems),
-		Zones:      sliceToMap(dbProto.Zones),
-		Npcs:       sliceToMap(dbProto.Npcs),
-		ItemIcons:  sliceToMap(dbProto.ItemIcons),
-		SpellIcons: sliceToMap(dbProto.SpellIcons),
+		Items:        sliceToMap(dbProto.Items),
+		Enchants:     enchants,
+		Gems:         sliceToMap(dbProto.Gems),
+		Zones:        sliceToMap(dbProto.Zones),
+		Npcs:         sliceToMap(dbProto.Npcs),
+		ItemIcons:    sliceToMap(dbProto.ItemIcons),
+		SpellIcons:   sliceToMap(dbProto.SpellIcons),
+		ReforgeStats: sliceToMap(dbProto.ReforgeStats),
 	}
 }
 
@@ -279,6 +284,8 @@ func (db *WowDatabase) WriteJson(jsonFilePath string) {
 	tools.WriteProtoArrayToBuffer(uidb.Zones, buffer, "zones")
 	buffer.WriteString(",\n")
 	tools.WriteProtoArrayToBuffer(uidb.Npcs, buffer, "npcs")
+	buffer.WriteString(",\n")
+	tools.WriteProtoArrayToBuffer(uidb.ReforgeStats, buffer, "reforgeStats")
 	buffer.WriteString(",\n")
 	tools.WriteProtoArrayToBuffer(uidb.ItemIcons, buffer, "itemIcons")
 	buffer.WriteString(",\n")

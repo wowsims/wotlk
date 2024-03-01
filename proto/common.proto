@@ -140,6 +140,13 @@ message UnitStats {
 	repeated double pseudo_stats = 2;
 }
 
+message ReforgeStat {
+    int32 id = 1;
+	repeated Stat fromStat = 2;
+	repeated Stat toStat = 3;
+	double multiplier = 4;
+}
+
 enum ItemType {
 	ItemTypeUnknown = 0;
 	ItemTypeHead = 1;
@@ -700,17 +707,11 @@ message PresetEncounter {
 	repeated PresetTarget targets = 2;
 }
 
-// Message for describing a reforged item
-message Reforging {
-  Stat from_stat = 1; // Reforge from this stat
-  Stat to_stat = 2;   // Reforge to this stat
-}
-
 message ItemSpec {
 	int32 id = 2;
 	int32 enchant = 3;
 	repeated int32 gems = 4;
-	Reforging reforging = 5; //reforging information
+	int32 reforging = 5; //reforging id
 }
 
 message EquipmentSpec {
@@ -721,6 +722,7 @@ message SimDatabase {
 	repeated SimItem items = 1;
 	repeated SimEnchant enchants = 2;
 	repeated SimGem gems = 3;
+	repeated ReforgeStat reforge_stats = 6;
 }
 
 // Contains only the Item info needed by the sim.

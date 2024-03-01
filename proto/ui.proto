@@ -23,6 +23,7 @@ message UIDatabase {
 	repeated IconData spell_icons = 5;
 
 	repeated GlyphID glyph_ids = 7;
+	repeated ReforgeStat reforge_stats = 12;
 }
 
 message UIZone {
