@@ -164,8 +164,8 @@ func (pet *Pet) Enable(sim *Simulation, petAgent PetAgent) {
 	}
 
 	if sim.Log != nil {
-		pet.Log(sim, "Pet stats: %s", pet.GetStats())
-		pet.Log(sim, "Pet inherited stats: %s", pet.ApplyStatDependencies(pet.inheritedStats))
+		pet.Log(sim, "Pet stats: %s", pet.GetStats().FlatString())
+		pet.Log(sim, "Pet inherited stats: %s", pet.ApplyStatDependencies(pet.inheritedStats).FlatString())
 		pet.Log(sim, "Pet summoned")
 	}
 
@@ -256,7 +256,7 @@ func (pet *Pet) Disable(sim *Simulation) {
 
 	if sim.Log != nil {
 		pet.Log(sim, "Pet dismissed")
-		pet.Log(sim, pet.GetStats().String())
+		pet.Log(sim, pet.GetStats().FlatString())
 	}
 }
 

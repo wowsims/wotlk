@@ -8,21 +8,18 @@
 
   .icon-picker-button,
   .icon-dropdown-option {
-    min-width: $icon-size-md;
-    width: $icon-size-md;
-    height: $icon-size-md;
-    border: $border-default;
+	@extend .icon-md;
+
+	border: $border-default;
     transition: border-color .15s ease-in-out;
-    background-size: cover;
+    position: relative;
+    display: block;
+    background-color: grey;
     filter: grayscale(1);
 
     &.active {
       border-color: $success;
       filter: none;
-    }
-
-    .gem-socket-container {
-      --gem-width: 0.8rem;
     }
   }
 
@@ -106,7 +103,7 @@
     &> * {
       margin-bottom: $block-spacer;
       flex: 0;
-  
+
       &:not(:last-child) {
         margin-right: $block-spacer;
       }

@@ -1,8 +1,59 @@
 .log-runner-root {
-	display: flex;
-	flex-direction: column;
-}
+	.log-runner-table {
+		th {
+			padding: map-get($spacers, 2);
+			vertical-align: bottom;
 
-.log-runner-logs > span {
-	display: block;
+			&:not(:first-child) {
+				padding-left: 0;
+			}
+		}
+
+		.log-runner-logs {
+			tr {
+				&:not(:last-child) {
+					td {
+						border-bottom: 1px solid $border-color;
+					}
+				}
+
+				td {
+					padding-top: map-get($spacers, 2);
+					padding-bottom: map-get($spacers, 2);
+				}
+
+				.log-timestamp {
+					padding-right: map-get($spacers, 2);
+					text-align: right;
+					vertical-align: top;
+					font-variant-numeric: tabular-nums;
+				}
+
+				.log-event {
+					// Fill any extra width
+					width: 100%;
+
+					.icon {
+						vertical-align: middle;
+					}
+
+					.log-action {
+						color: $brand;
+					}
+				}
+			}
+		}
+	}
+
+	.show-debug-container {
+		display: flex;
+
+		.show-debug-picker {
+			width: unset;
+
+			label {
+				margin-left: map-get($spacers, 1);
+			}
+		}
+	}
 }

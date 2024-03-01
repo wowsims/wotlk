@@ -364,11 +364,6 @@ var (
 // Reset will set sim back and erase all current state.
 // This is automatically called before every 'Run'.
 func (sim *Simulation) reset() {
-	if sim.Log != nil {
-		sim.Log("SIM RESET")
-		sim.Log("----------------------")
-	}
-
 	if sim.Encounter.DurationIsEstimate && sim.CurrentTime != 0 {
 		sim.BaseDuration = sim.CurrentTime
 		sim.Encounter.DurationIsEstimate = false
