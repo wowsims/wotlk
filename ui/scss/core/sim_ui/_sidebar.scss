@@ -12,7 +12,7 @@
 	z-index: $sidebar-z-index;
 
 	.sim-sidebar-content {
-		min-height: calc(100vh - $sim-header-height);
+		min-height: calc(100vh - $sim-header-height - 1px);
 		padding: $gap-width;
 		display: flex;
 		flex-direction: column;
