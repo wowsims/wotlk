@@ -1,98 +1,90 @@
-@use "sass:map";
+@use 'sass:map';
 
-@import "../components/sim_title_dropdown";
+@import '../components/sim_title_dropdown';
 
 .sim-sidebar {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  background: $body-bg;
-  // This must be larger than the z-index on .sim-content otherwise the dropdown is overlapped
-  z-index: $sidebar-z-index;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	background: $body-bg;
+	// This must be larger than the z-index on .sim-content otherwise the dropdown is overlapped
+	z-index: $sidebar-z-index;
 
-  .sim-sidebar-content {
-    padding-top: $gap-width;
-    padding-left: $gap-width;
-    padding-right: $gap-width;
-    padding-bottom: map-get($spacers, 3);
-    display: flex;
-    flex-direction: column;
+	.sim-sidebar-content {
+		min-height: calc(100vh - $sim-header-height);
+		padding: $gap-width;
+		display: flex;
+		flex-direction: column;
 
-    &> *:not(:last-child) {
-      margin-bottom: map-get($spacers, 4);
-    }
+		& > *:not(:last-child) {
+			margin-bottom: map.get($spacers, 4);
+		}
 
-    .sim-sidebar-actions {
-      padding-left: var(--container-padding);
-      padding-right: var(--container-padding);
-      margin-left: $gap-width * -1;
-      margin-right: $gap-width * -1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+		.sim-sidebar-actions {
+			padding-left: var(--container-padding);
+			padding-right: var(--container-padding);
+			margin-left: $gap-width * -1;
+			margin-right: $gap-width * -1;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
 
-      &> *:not(:last-child) {
-        margin-bottom: $block-spacer;
-      }
+			& > *:not(:last-child) {
+				margin-bottom: $block-spacer;
+			}
 
-      .iterations-picker {
-        width: 100%;
-        flex-flow: column;
+			.iterations-picker {
+				width: 100%;
+				flex-flow: column;
 
-        .number-picker-input {
-          width: 100%;
-          margin: 0;
-        }
-      }
-    }
+				.number-picker-input {
+					width: 100%;
+					margin: 0;
+				}
+			}
+		}
 
-    .sim-sidebar-results {
-      min-height: 25vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-  }
+		.sim-sidebar-results {
+			min-height: 25vh;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+
+		.sim-sidebar-stats {
+			margin-top: auto;
+		}
+
+		.sim-sidebar-socials {
+			display: flex;
+			justify-content: center;
+
+			& > *:not(:last-child) {
+				margin-right: map-get($spacers, 3);
+			}
+		}
+	}
 }
 
 @include media-breakpoint-down(xxl) {
-  .sim-sidebar {
-    .sim-sidebar-content {
-      .sim-sidebar-actions {
-        padding: 0;
-        margin: 0;
-      }
-    }
-  }
-}
+	.sim-sidebar {
+		.sim-sidebar-content {
+			padding-left: $gap-width-sm * 2;
+			padding-right: $gap-width-sm * 2;
 
-@include media-breakpoint-up(md) {
-  .sim-sidebar {
-    // Allow the stats to align to the bottom of the viewport if the section is small enough to avoid scrolling
-    // 'Smaller' is set when banner is displayed
-    .sim-sidebar-content.smaller {
-      min-height: calc(100vh - calc($sim-header-height + 3.5rem));
-    }
-    .sim-sidebar-content {
-      min-height: calc(100vh - calc($sim-header-height + 0.2rem));
-
-      .sim-sidebar-footer {
-        flex: 1;
-        display: flex;
-        align-items: flex-end;
-      }
-    }
-  }
+			.sim-sidebar-actions {
+				padding: 0;
+				margin: 0;
+			}
+		}
+	}
 }
 
 @include media-breakpoint-down(lg) {
-  .sim-sidebar {
-    .sim-sidebar-content {
-      padding-top: $gap-width-sm * 2;
-      padding-bottom: $gap-width-sm;
-      padding-left: $gap-width-sm;
-			padding-right: $gap-width-sm;
-    }
-  }
+	.sim-sidebar {
+		.sim-sidebar-content {
+			padding: $gap-width-sm * 2 $gap-width-sm;
+		}
+	}
 }
