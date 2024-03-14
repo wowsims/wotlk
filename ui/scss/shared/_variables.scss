@@ -1,4 +1,4 @@
-@use "sass:map";
+@use 'sass:map';
 
 // Define and overwrite Bootstrap Variables
 // See bootstrap/scss/_variables.scss for a complete list of definitions, or
@@ -13,41 +13,41 @@ $brand: #e0a335;
 $success: #1eff00;
 
 $death-knight: rgb(194, 46, 70);
-$druid:        rgb(255, 125, 10);
-$hunter:       rgb(171, 212, 115);
-$mage:         rgb(105, 204, 240);
-$paladin:      rgb(245, 140, 186);
-$priest:       rgb(255, 255, 255);
-$rogue:        rgb(255, 245, 105);
-$shaman:       rgb(36, 89, 255);
-$warlock:      rgb(148, 130, 201);
-$warrior:      rgb(199, 156, 110);
+$druid: rgb(255, 125, 10);
+$hunter: rgb(171, 212, 115);
+$mage: rgb(105, 204, 240);
+$paladin: rgb(245, 140, 186);
+$priest: rgb(255, 255, 255);
+$rogue: rgb(255, 245, 105);
+$shaman: rgb(36, 89, 255);
+$warlock: rgb(148, 130, 201);
+$warrior: rgb(199, 156, 110);
 
 $class-colors: (
-  "death-knight": $death-knight,
-  "druid":        $druid,
-  "hunter":       $hunter,
-  "mage":         $mage,
-  "paladin":      $paladin,
-  "priest":       $priest,
-  "raid":         $brand,
-  "rogue":        $rogue,
-  "shaman":       $shaman,
-  "warlock":      $warlock,
-  "warrior":      $warrior,
+	'death-knight': $death-knight,
+	'druid': $druid,
+	'hunter': $hunter,
+	'mage': $mage,
+	'paladin': $paladin,
+	'priest': $priest,
+	'raid': $brand,
+	'rogue': $rogue,
+	'shaman': $shaman,
+	'warlock': $warlock,
+	'warrior': $warrior,
 );
 
 $custom-colors: (
-  "brand": $brand,
-  "primary": $primary,
-  "success": $success,
+	'brand': $brand,
+	'primary': $primary,
+	'success': $success,
 );
 
 $custom-breakpoints: (
-  xxxl: 1600px,
-  1080p: 1900px,
-  1440p: 2500px,
-  4k: 3800px,
+	xxxl: 1600px,
+	1080p: 1900px,
+	1440p: 2500px,
+	4k: 3800px,
 );
 
 // Borders
@@ -55,56 +55,56 @@ $border-color: dimgrey;
 $border-default: 1px solid $border-color;
 
 // Colors
-$item-quality-junk:      #9d9d9d;
-$item-quality-common:    #ffffff;
-$item-quality-uncommon:  #1eff00;
-$item-quality-rare:      #0070dd;
-$item-quality-epic:      #a335ee;
+$item-quality-junk: #9d9d9d;
+$item-quality-common: #ffffff;
+$item-quality-uncommon: #1eff00;
+$item-quality-rare: #0070dd;
+$item-quality-epic: #a335ee;
 $item-quality-legendary: #ff8000;
-$item-quality-artifact:  #e5cc80;
-$item-quality-heirloom:  #0cf;
+$item-quality-artifact: #e5cc80;
+$item-quality-heirloom: #0cf;
 
 $item-qualities: (
-	junk:		$item-quality-junk,
-	common:		$item-quality-common,
-	uncommon:	$item-quality-uncommon,
-	rare:		$item-quality-rare,
-	epic:		$item-quality-epic,
-	legendary:	$item-quality-legendary,
-	artifact:	$item-quality-artifact,
-	heirloom:	$item-quality-heirloom
+	junk: $item-quality-junk,
+	common: $item-quality-common,
+	uncommon: $item-quality-uncommon,
+	rare: $item-quality-rare,
+	epic: $item-quality-epic,
+	legendary: $item-quality-legendary,
+	artifact: $item-quality-artifact,
+	heirloom: $item-quality-heirloom,
 );
 
-$health-color: 		#22ba00;
-$mana-color: 		#2E93fA;
-$energy-color: 		#ffd700;
-$rage-color: 		#ff0000;
-$focus-color: 		#cd853f;
-$combo-points-color:#ffa07a;
+$health-color: #22ba00;
+$mana-color: #2e93fa;
+$energy-color: #ffd700;
+$rage-color: #ff0000;
+$focus-color: #cd853f;
+$combo-points-color: #ffa07a;
 
 $resource-colors: (
-	combo-points: 	$combo-points-color,
-	energy: 		$energy-color,
-	focus: 			$focus-color,
-	health: 		$health-color,
-	mana: 			$mana-color,
-	rage: 			$rage-color,
+	combo-points: $combo-points-color,
+	energy: $energy-color,
+	focus: $focus-color,
+	health: $health-color,
+	mana: $mana-color,
+	rage: $rage-color,
 );
 
-$link-danger-color:  #ef9eaa;
+$link-danger-color: #ef9eaa;
 $link-warning-color: #faf07f;
 
 $table-row-even-bg: #202128;
 $table-row-odd-bg: #2d2f35;
 
-$wrath-blue: #7FCBD8;
+$wrath-blue: #7fcbd8;
 
 // Spacers
-$block-spacer: .75rem;
-$table-cell-padding: .5rem;
-$content-font-size: .75rem;
+$block-spacer: 0.75rem;
+$table-cell-padding: 0.5rem;
+$content-font-size: 0.75rem;
 $gap-width: 1.5rem;
-$gap-width-sm: .5rem;
+$gap-width-sm: 0.5rem;
 
 // Sizing
 $icon-size-sm: 1rem;
@@ -126,7 +126,7 @@ $grid-breakpoints: map-merge($grid-breakpoints, $custom-breakpoints);
 $body-bg: #15171e;
 $body-color: white;
 $font-size-root: 16px;
-$grid-gutter-width: .75rem;
+$grid-gutter-width: 0.75rem;
 
 // This option doesn't seem to be working for some reason. Carets hidden manually instead
 // $enable-caret: false;
@@ -136,12 +136,12 @@ $enable-rounded: false;
 $link-color: #a5b1d6;
 $link-decoration: none;
 $link-hover-color: white;
-$link-transition: color .15s ease-in-out;
+$link-transition: color 0.15s ease-in-out;
 
 // Component variable overrides
 $btn-hover-bg-shade-amount: 30%;
-$btn-font-size: .875rem;
-$btn-padding-y: .5rem;
+$btn-font-size: 0.875rem;
+$btn-padding-y: 0.5rem;
 
 $dropdown-bg: $body-bg;
 $dropdown-border-width: 0;
@@ -156,12 +156,12 @@ $form-check-input-bg: $link-color;
 $form-check-input-border: 1px solid lighten($body-bg, 20);
 $form-check-input-width: 2rem;
 $form-check-input-focus-border: lighten($body-bg, 20);
-$form-check-input-focus-box-shadow: 0 0 .25rem $primary;
+$form-check-input-focus-box-shadow: 0 0 0.25rem $primary;
 $form-check-input-checked-bg-color: $primary;
 $form-check-input-checked-bg-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path fill='none' stroke='#{color-contrast($primary)}' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/></svg>");
 $form-check-input-checked-border-color: lighten($body-bg, 20);
 
-$form-label-margin-bottom: .25rem;
+$form-label-margin-bottom: 0.25rem;
 $form-label-font-size: $content-font-size;
 $form-label-font-weight: normal;
 
@@ -170,7 +170,7 @@ $form-select-border-color: lighten($body-bg, 20);
 $form-select-color: white;
 $form-select-disabled-bg: lighten($body-bg, 20);
 $form-select-focus-border-color: lighten($body-bg, 20);
-$form-select-focus-box-shadow: 0 0 .25rem lighten($body-bg, 20);
+$form-select-focus-box-shadow: 0 0 0.25rem lighten($body-bg, 20);
 $form-select-font-size: $content-font-size;
 $form-select-indicator: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='white' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/></svg>");
 
@@ -180,7 +180,7 @@ $input-color: white;
 $input-disabled-bg: lighten($body-bg, 20);
 $input-focus-bg: lighten($body-bg, 12);
 $input-focus-border-color: lighten($body-bg, 20);
-$input-focus-box-shadow: 0 0 .25rem lighten($body-bg, 20);
+$input-focus-box-shadow: 0 0 0.25rem lighten($body-bg, 20);
 $input-focus-color: white;
 $input-font-size: $content-font-size;
 
@@ -196,7 +196,7 @@ $navbar-dark-hover-color: $primary;
 $navbar-dark-active-color: $primary;
 $navbar-padding-y: 0;
 
-$nav-link-font-size: .875rem;
+$nav-link-font-size: 0.875rem;
 $nav-link-padding-y: map-get($spacers, 3);
 $nav-link-transition: $link-transition;
 
@@ -210,6 +210,7 @@ $popover-body-padding-x: map-get($spacers, 2);
 $popover-body-padding-y: map-get($spacers, 2);
 
 $tooltip-bg: $popover-bg;
+$tooltip-color: white;
 $tooltip-max-width: 15vw;
 $tooltip-max-width-lg: 25vw;
 $tooltip-max-width-sm: 75vw;
