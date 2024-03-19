@@ -161,6 +161,7 @@ class AdvancedEncounterModal extends BaseModal {
 			new BooleanPicker<Encounter>(header, encounter, {
 				label: 'Use Health',
 				labelTooltip: 'Uses a damage limit in place of a duration limit. Damage limit is equal to sum of all targets health.',
+				inline: true,
 				changedEvent: (encounter: Encounter) => encounter.changeEmitter,
 				getValue: (encounter: Encounter) => encounter.getUseHealth(),
 				setValue: (eventID: EventID, encounter: Encounter, newValue: boolean) => {
