@@ -1,8 +1,8 @@
-@use "sass:map";
+@use 'sass:map';
 
-@import "./enum_picker";
-@import "./list_picker";
-@import "./number_picker";
+@import './enum_picker';
+@import './list_picker';
+@import './number_picker';
 
 .encounter-picker-root {
 	display: flex;
@@ -15,7 +15,7 @@
 	}
 
 	.advanced-button {
-		min-width: calc(50% - .5rem);
+		min-width: calc(50% - 0.5rem);
 	}
 }
 
@@ -46,6 +46,7 @@
 
 	.target-picker-root {
 		display: flex;
+		flex-direction: row;
 
 		.target-picker-section {
 			width: 33.33%;
@@ -103,7 +104,7 @@
 		.target-picker-root {
 			.target-picker-section {
 				width: 100%;
-	
+
 				margin-right: 0;
 			}
 		}

@@ -15,16 +15,17 @@ export class BooleanPicker<ModObject> extends Input<ModObject, boolean> {
 	constructor(parent: HTMLElement, modObject: ModObject, config: BooleanPickerConfig<ModObject>) {
 		super(parent, 'boolean-picker-root', modObject, config);
 
-		this.rootElem.classList.add('form-check', 'form-check-reverse');
+		this.rootElem.classList.add('form-check');
 
 		this.inputElem = document.createElement('input');
 		this.inputElem.type = 'checkbox';
 		this.inputElem.classList.add('boolean-picker-input', 'form-check-input');
 
 		if (config.reverse) {
-			this.rootElem.prepend(this.inputElem);
-		} else {
+			this.rootElem.classList.add('form-check-reverse');
 			this.rootElem.appendChild(this.inputElem);
+		} else {
+			this.rootElem.prepend(this.inputElem);
 		}
 
 		this.init();
