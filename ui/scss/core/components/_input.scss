@@ -1,59 +1,60 @@
-@use "sass:map";
+@use 'sass:map';
 
 .input-root {
-  width: 100%;
-  margin-bottom: $block-spacer;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+	width: 100%;
+	margin-bottom: $block-spacer;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
 
-  &.disabled {
-    filter: opacity(0.5);
-  }
+	&.disabled {
+		filter: opacity(0.5);
+	}
 
-  &:not(.input-inline) {
-    label {
-      white-space: nowrap;
-    }
-  }
+	&:not(.input-inline) {
+		label {
+			white-space: nowrap;
+		}
+	}
 }
 
 .input-inline {
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
 
-  label {
-    margin-right: map-get($spacers, 1);
-  }
+	label {
+		margin-right: map-get($spacers, 2);
+	}
 
-  input, select {
-    width: 5rem;
-  }
+	input,
+	select {
+		width: 5rem;
+	}
 }
 
 .picker-group {
-  width: 100%;
-  display: flex;
+	width: 100%;
+	display: flex;
 
-  &> * {
-    flex: 1;
+	& > * {
+		flex: 1;
 
-    &:not(:last-child) {
-      margin-right: map-get($spacers, 3);
-    }
-  }
+		&:not(:last-child) {
+			margin-right: map-get($spacers, 3);
+		}
+	}
 }
 
 @include media-breakpoint-down(xl) {
-  .picker-group {
-    width: 100%;
-    flex-wrap: wrap;
+	.picker-group {
+		width: 100%;
+		flex-wrap: wrap;
 
-    &> * {
-      &:nth-child(2n) {
-        margin-right: 0 !important;
-      }
-    }
-  }
+		& > * {
+			&:nth-child(2n) {
+				margin-right: 0 !important;
+			}
+		}
+	}
 }
