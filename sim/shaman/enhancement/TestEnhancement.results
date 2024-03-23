@@ -74,17 +74,17 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-BaubleofTrueBlood-50354"
  value: {
-  dps: 7309.74495
-  tps: 4393.26965
-  hps: 95.50562
+  dps: 7295.10674
+  tps: 4377.8721
+  hps: 94.37555
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-BaubleofTrueBlood-50726"
  value: {
-  dps: 7309.74495
-  tps: 4393.26965
-  hps: 95.50562
+  dps: 7303.10633
+  tps: 4384.65106
+  hps: 94.53094
  }
 }
 dps_results: {
@@ -427,8 +427,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-Gladiator'sWartide"
  value: {
-  dps: 6106.41819
-  tps: 3560.73425
+  dps: 6156.41998
+  tps: 3571.26321
  }
 }
 dps_results: {
@@ -694,8 +694,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-ShinyShardoftheGods"
  value: {
-  dps: 7309.27935
-  tps: 4392.95136
+  dps: 7295.43211
+  tps: 4377.37305
  }
 }
 dps_results: {
@@ -953,8 +953,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-WingedTalisman-37844"
  value: {
-  dps: 7408.01306
-  tps: 4432.87098
+  dps: 7398.62917
+  tps: 4426.95751
  }
 }
 dps_results: {

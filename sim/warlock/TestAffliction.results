@@ -81,15 +81,15 @@ dps_results: {
 dps_results: {
  key: "TestAffliction-AllItems-BaubleofTrueBlood-50354"
  value: {
-  dps: 14034.25543
-  tps: 12860.77783
+  dps: 14081.40729
+  tps: 12896.6836
  }
 }
 dps_results: {
  key: "TestAffliction-AllItems-BaubleofTrueBlood-50726"
  value: {
-  dps: 14034.25543
-  tps: 12860.77783
+  dps: 14075.13959
+  tps: 12887.52874
  }
 }
 dps_results: {
@@ -564,8 +564,8 @@ dps_results: {
 dps_results: {
  key: "TestAffliction-AllItems-ShinyShardoftheGods"
  value: {
-  dps: 14034.25543
-  tps: 12860.77783
+  dps: 14071.73552
+  tps: 12888.48428
  }
 }
 dps_results: {
@@ -718,8 +718,8 @@ dps_results: {
 dps_results: {
  key: "TestAffliction-AllItems-WingedTalisman-37844"
  value: {
-  dps: 14034.25543
-  tps: 12860.77783
+  dps: 14060.77661
+  tps: 12881.01058
  }
 }
 dps_results: {

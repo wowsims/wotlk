@@ -81,17 +81,17 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-BaubleofTrueBlood-50354"
  value: {
-  dps: 2783.94305
-  tps: 2340.58703
-  hps: 90.33849
+  dps: 2933.01632
+  tps: 2466.00851
+  hps: 89.26925
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-BaubleofTrueBlood-50726"
  value: {
-  dps: 2783.94305
-  tps: 2340.58703
-  hps: 90.33849
+  dps: 2951.58477
+  tps: 2480.13725
+  hps: 90.11257
  }
 }
 dps_results: {
@@ -623,8 +623,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-ShinyShardoftheGods"
  value: {
-  dps: 2782.87337
-  tps: 2338.81139
+  dps: 2962.24067
+  tps: 2488.91519
  }
 }
 dps_results: {
@@ -791,8 +791,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-WingedTalisman-37844"
  value: {
-  dps: 2835.04964
-  tps: 2382.19892
+  dps: 2914.31092
+  tps: 2446.2492
  }
 }
 dps_results: {

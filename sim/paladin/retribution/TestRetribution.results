@@ -103,7 +103,7 @@ dps_results: {
  key: "TestRetribution-AllItems-BaubleofTrueBlood-50354"
  value: {
   dps: 6420.11322
-  tps: 6505.59764
+  tps: 6502.33884
   dtps: 9.48456
   hps: 94.7032
  }
@@ -112,7 +112,7 @@ dps_results: {
  key: "TestRetribution-AllItems-BaubleofTrueBlood-50726"
  value: {
   dps: 6420.11322
-  tps: 6505.59764
+  tps: 6501.67049
   dtps: 9.48456
   hps: 94.7032
  }
@@ -803,7 +803,7 @@ dps_results: {
  key: "TestRetribution-AllItems-ShinyShardoftheGods"
  value: {
   dps: 6420.37555
-  tps: 6505.85997
+  tps: 6501.33236
   dtps: 9.92959
  }
 }
@@ -1035,7 +1035,7 @@ dps_results: {
  key: "TestRetribution-AllItems-WingedTalisman-37844"
  value: {
   dps: 6439.86531
-  tps: 6525.34973
+  tps: 6524.08189
   dtps: 9.92959
  }
 }
