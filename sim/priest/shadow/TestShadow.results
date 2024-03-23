@@ -82,15 +82,15 @@ dps_results: {
  key: "TestShadow-AllItems-BaubleofTrueBlood-50354"
  value: {
   dps: 6944.54538
-  tps: 6751.61382
+  tps: 6747.782
   hps: 88.41863
  }
 }
 dps_results: {
  key: "TestShadow-AllItems-BaubleofTrueBlood-50726"
  value: {
-  dps: 6944.54538
-  tps: 6751.61382
+  dps: 6946.58824
+  tps: 6749.31143
   hps: 88.41863
  }
 }
@@ -623,8 +623,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-ShinyShardoftheGods"
  value: {
-  dps: 6943.03168
-  tps: 6750.38276
+  dps: 6946.19912
+  tps: 6748.84052
  }
 }
 dps_results: {
@@ -792,7 +792,7 @@ dps_results: {
  key: "TestShadow-AllItems-WingedTalisman-37844"
  value: {
   dps: 7076.51323
-  tps: 6874.16861
+  tps: 6872.31287
  }
 }
 dps_results: {

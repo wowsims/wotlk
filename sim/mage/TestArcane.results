@@ -74,17 +74,17 @@ dps_results: {
 dps_results: {
  key: "TestArcane-AllItems-BaubleofTrueBlood-50354"
  value: {
-  dps: 10462.93274
-  tps: 6411.06675
-  hps: 102.38829
+  dps: 10525.83303
+  tps: 6443.6152
+  hps: 102.06041
  }
 }
 dps_results: {
  key: "TestArcane-AllItems-BaubleofTrueBlood-50726"
  value: {
-  dps: 10462.93274
-  tps: 6411.06675
-  hps: 102.38829
+  dps: 10528.39559
+  tps: 6443.35784
+  hps: 102.18626
  }
 }
 dps_results: {
@@ -588,8 +588,8 @@ dps_results: {
 dps_results: {
  key: "TestArcane-AllItems-ShinyShardoftheGods"
  value: {
-  dps: 10464.8865
-  tps: 6412.28106
+  dps: 10526.43098
+  tps: 6439.34353
  }
 }
 dps_results: {
@@ -756,8 +756,8 @@ dps_results: {
 dps_results: {
  key: "TestArcane-AllItems-WingedTalisman-37844"
  value: {
-  dps: 10602.47405
-  tps: 6494.83359
+  dps: 10636.76611
+  tps: 6509.40077
  }
 }
 dps_results: {

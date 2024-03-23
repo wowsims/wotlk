@@ -74,17 +74,17 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-BaubleofTrueBlood-50354"
  value: {
-  dps: 7652.00052
-  tps: 6227.57151
-  hps: 92.573
+  dps: 7652.18634
+  tps: 6224.86082
+  hps: 92.49356
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-BaubleofTrueBlood-50726"
  value: {
-  dps: 7652.00052
-  tps: 6227.57151
-  hps: 92.573
+  dps: 7652.18634
+  tps: 6224.62123
+  hps: 92.49356
  }
 }
 dps_results: {
@@ -588,8 +588,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-ShinyShardoftheGods"
  value: {
-  dps: 7652.51748
-  tps: 6228.1685
+  dps: 7652.83765
+  tps: 6225.26138
  }
 }
 dps_results: {
@@ -756,8 +756,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-WingedTalisman-37844"
  value: {
-  dps: 7755.11162
-  tps: 6320.25051
+  dps: 7755.43991
+  tps: 6318.87169
  }
 }
 dps_results: {

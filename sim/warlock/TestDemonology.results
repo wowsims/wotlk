@@ -81,17 +81,17 @@ dps_results: {
 dps_results: {
  key: "TestDemonology-AllItems-BaubleofTrueBlood-50354"
  value: {
-  dps: 13006.0771
-  tps: 11284.03967
-  hps: 101.08784
+  dps: 13036.38303
+  tps: 11306.32781
+  hps: 101.99163
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-BaubleofTrueBlood-50726"
  value: {
-  dps: 13006.0771
-  tps: 11284.03967
-  hps: 101.08784
+  dps: 13026.5017
+  tps: 11294.66171
+  hps: 102.0013
  }
 }
 dps_results: {
@@ -567,8 +567,8 @@ dps_results: {
 dps_results: {
  key: "TestDemonology-AllItems-ShinyShardoftheGods"
  value: {
-  dps: 13001.05853
-  tps: 11278.57276
+  dps: 13070.05095
+  tps: 11339.15858
  }
 }
 dps_results: {
@@ -721,8 +721,8 @@ dps_results: {
 dps_results: {
  key: "TestDemonology-AllItems-WingedTalisman-37844"
  value: {
-  dps: 13220.90237
-  tps: 11480.34933
+  dps: 13253.99276
+  tps: 11507.87199
  }
 }
 dps_results: {

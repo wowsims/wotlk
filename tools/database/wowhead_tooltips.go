@@ -177,6 +177,7 @@ var hasteRegex = regexp.MustCompile(`Improves haste rating by <!--rtg36-->([0-9]
 
 var spellPenetrationRegex = regexp.MustCompile(`Increases your spell penetration by ([0-9]+)\.`)
 var mp5Regex = regexp.MustCompile(`Restores ([0-9]+) mana per 5 sec\.`)
+var mp5Regex2 = regexp.MustCompile(`Restores <!--rtg43-->([0-9]+) mana per 5 sec\.`)
 var attackPowerRegex = regexp.MustCompile(`Increases attack power by ([0-9]+)\.`)
 var attackPowerRegex2 = regexp.MustCompile(`Increases attack power by <!--rtg38-->([0-9]+)\.`)
 
@@ -229,7 +230,7 @@ func (item WowheadItemResponse) GetStats() Stats {
 		proto.Stat_StatSpellHaste:        float64(item.GetIntValue(hasteRegex)),
 		proto.Stat_StatMeleeHaste:        float64(item.GetIntValue(hasteRegex)),
 		proto.Stat_StatSpellPenetration:  float64(item.GetIntValue(spellPenetrationRegex)),
-		proto.Stat_StatMP5:               float64(item.GetIntValue(mp5Regex)),
+		proto.Stat_StatMP5:               float64(item.GetIntValue(mp5Regex)) + float64(item.GetIntValue(mp5Regex2)),
 		proto.Stat_StatAttackPower:       baseAP,
 		proto.Stat_StatRangedAttackPower: baseAP + float64(item.GetIntValue(rangedAttackPowerRegex)) + float64(item.GetIntValue(rangedAttackPowerRegex2)),
 		proto.Stat_StatArmorPenetration:  float64(item.GetIntValue(armorPenetrationRegex) + item.GetIntValue(armorPenetrationRegex2)),

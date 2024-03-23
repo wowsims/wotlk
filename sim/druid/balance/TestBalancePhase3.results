@@ -82,7 +82,7 @@ dps_results: {
  key: "TestBalancePhase3-AllItems-BaubleofTrueBlood-50354"
  value: {
   dps: 10899.2661
-  tps: 10617.88774
+  tps: 10615.45208
   hps: 100.88622
  }
 }
@@ -90,7 +90,7 @@ dps_results: {
  key: "TestBalancePhase3-AllItems-BaubleofTrueBlood-50726"
  value: {
   dps: 10899.2661
-  tps: 10617.88774
+  tps: 10615.11851
   hps: 100.88622
  }
 }
@@ -736,7 +736,7 @@ dps_results: {
  key: "TestBalancePhase3-AllItems-ShinyShardoftheGods"
  value: {
   dps: 10897.8371
-  tps: 10620.0108
+  tps: 10616.88347
  }
 }
 dps_results: {
@@ -932,7 +932,7 @@ dps_results: {
  key: "TestBalancePhase3-AllItems-WingedTalisman-37844"
  value: {
   dps: 11063.73427
-  tps: 10775.53674
+  tps: 10774.42461
  }
 }
 dps_results: {
