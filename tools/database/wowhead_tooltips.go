@@ -52,7 +52,6 @@ type ItemResponse interface {
 	GetTooltipRegexValue(pattern *regexp.Regexp, matchIdx int) int
 	GetIntValue(pattern *regexp.Regexp) int
 	GetStats() Stats
-	GetClassAllowlist() []proto.Class
 	IsEquippable() bool
 	GetItemLevel() int
 	GetPhase() int
@@ -247,37 +246,6 @@ func (item WowheadItemResponse) GetStats() Stats {
 		proto.Stat_StatNatureResistance:  float64(item.GetIntValue(natureResistanceRegex)),
 		proto.Stat_StatShadowResistance:  float64(item.GetIntValue(shadowResistanceRegex)),
 	}
-}
-
-type classPattern struct {
-	class   proto.Class
-	pattern *regexp.Regexp
-}
-
-// Detects class-locked items, e.g. tier sets and pvp gear.
-var classPatternsWowhead = []classPattern{
-	{class: proto.Class_ClassWarrior, pattern: regexp.MustCompile(`<a href="/wotlk/class=1/warrior" class="c1">Warrior</a>`)},
-	{class: proto.Class_ClassPaladin, pattern: regexp.MustCompile(`<a href="/wotlk/class=2/paladin" class="c2">Paladin</a>`)},
-	{class: proto.Class_ClassHunter, pattern: regexp.MustCompile(`<a href="/wotlk/class=3/hunter" class="c3">Hunter</a>`)},
-	{class: proto.Class_ClassRogue, pattern: regexp.MustCompile(`<a href="/wotlk/class=4/rogue" class="c4">Rogue</a>`)},
-	{class: proto.Class_ClassPriest, pattern: regexp.MustCompile(`<a href="/wotlk/class=5/priest" class="c5">Priest</a>`)},
-	{class: proto.Class_ClassDeathknight, pattern: regexp.MustCompile(`<a href="/wotlk/class=6/death-knight" class="c6">Death Knight</a>`)},
-	{class: proto.Class_ClassShaman, pattern: regexp.MustCompile(`<a href="/wotlk/class=7/shaman" class="c7">Shaman</a>`)},
-	{class: proto.Class_ClassMage, pattern: regexp.MustCompile(`<a href="/wotlk/class=8/mage" class="c8">Mage</a>`)},
-	{class: proto.Class_ClassWarlock, pattern: regexp.MustCompile(`<a href="/wotlk/class=9/warlock" class="c9">Warlock</a>`)},
-	{class: proto.Class_ClassDruid, pattern: regexp.MustCompile(`<a href="/wotlk/class=11/druid" class="c11">Druid</a>`)},
-}
-
-func (item WowheadItemResponse) GetClassAllowlist() []proto.Class {
-	var allowlist []proto.Class
-
-	for _, entry := range classPatternsWowhead {
-		if entry.pattern.MatchString(item.Tooltip) {
-			allowlist = append(allowlist, entry.class)
-		}
-	}
-
-	return allowlist
 }
 
 var patternRegexes = []*regexp.Regexp{
@@ -648,7 +616,6 @@ func (item WowheadItemResponse) ToItemProto() *proto.UIItem {
 		Unique:  item.GetUnique(),
 		Heroic:  item.IsHeroic(),
 
-		ClassAllowlist:     item.GetClassAllowlist(),
 		RequiredProfession: item.GetRequiredProfession(),
 		SetName:            item.GetItemSetName(),
 	}
