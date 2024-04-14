@@ -170,14 +170,14 @@ $threat-color: #b56d07;
 }
 .rotation-timeline-cast {
 	position: absolute;
-	background-color: #e5cc80;
+	background-color: rgb(229, 204, 128, 0.7);
 	z-index: 1;
 	display: flex;
 }
 .rotation-timeline-travel-time {
 	position: absolute;
 	height: 24px;
-	background-color: #f9c0ff;
+	background-color: rgb(249, 192, 255, 0.6);
 }
 .rotation-timeline-tick {
 	position: absolute;
@@ -189,7 +189,7 @@ $threat-color: #b56d07;
 }
 .rotation-timeline-aura {
 	position: absolute;
-	background-color: blue;
+	background-color: rgba(0, 0, 255, 0.52);
 	opacity: 0.5;
 	height: 20px;
 	top: 2px;
@@ -215,7 +215,7 @@ $threat-color: #b56d07;
 	@include wowhead-background-icon;
 	height: 24px;
 	width: 24px;
-	border: 1px solid grey;
+	border-bottom: 3px solid grey;
 }
 .rotation-timeline-cast.outcome-miss .rotation-timeline-cast-icon {
 	border-color: red;
