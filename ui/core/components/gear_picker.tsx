@@ -6,12 +6,12 @@ import { setItemQualityCssClass } from '../css_utils';
 import { IndividualSimUI } from '../individual_sim_ui.js';
 import { Player } from '../player';
 import { Class, GemColor, ItemQuality, ItemSlot, ItemSpec, ItemType } from '../proto/common';
-import { DatabaseFilters, UIEnchant as Enchant, UIGem as Gem, UIItem as Item } from '../proto/ui.js';
+import { DatabaseFilters, RepFaction, UIEnchant as Enchant, UIGem as Gem, UIItem as Item, UIItem_FactionRestriction } from '../proto/ui.js';
 import { ActionId } from '../proto_utils/action_id';
 import { getEnchantDescription, getUniqueEnchantString } from '../proto_utils/enchants';
 import { EquippedItem } from '../proto_utils/equipped_item';
 import { gemMatchesSocket, getEmptyGemSocketIconUrl } from '../proto_utils/gems';
-import { difficultyNames, professionNames, slotNames } from '../proto_utils/names.js';
+import { difficultyNames, professionNames, REP_FACTION_NAMES, REP_LEVEL_NAMES, slotNames } from '../proto_utils/names.js';
 import { Stats } from '../proto_utils/stats';
 import { Sim } from '../sim.js';
 import { SimUI } from '../sim_ui';
@@ -694,7 +694,7 @@ export class SelectorModal extends BaseModal {
 			ilist.dispose();
 		});
 
-		tabAnchor.value!.addEventListener('shown.bs.tab', event => {
+		tabAnchor.value!.addEventListener('shown.bs.tab', _event => {
 			ilist.sizeRefresh();
 		});
 
@@ -840,14 +840,8 @@ export class ItemList<T> {
 			title: EP_TOOLTIP,
 		});
 
-		const show1hWeaponsSelector = makeShow1hWeaponsSelector(
-			this.tabContent.getElementsByClassName('selector-modal-show-1h-weapons')[0] as HTMLElement,
-			player.sim,
-		);
-		const show2hWeaponsSelector = makeShow2hWeaponsSelector(
-			this.tabContent.getElementsByClassName('selector-modal-show-2h-weapons')[0] as HTMLElement,
-			player.sim,
-		);
+		makeShow1hWeaponsSelector(this.tabContent.getElementsByClassName('selector-modal-show-1h-weapons')[0] as HTMLElement, player.sim);
+		makeShow2hWeaponsSelector(this.tabContent.getElementsByClassName('selector-modal-show-2h-weapons')[0] as HTMLElement, player.sim);
 		if (!(label == 'Items' && (slot == ItemSlot.ItemSlotMainHand || (slot == ItemSlot.ItemSlotOffHand && player.getClass() == Class.ClassWarrior)))) {
 			(this.tabContent.getElementsByClassName('selector-modal-show-1h-weapons')[0] as HTMLElement).style.display = 'none';
 			(this.tabContent.getElementsByClassName('selector-modal-show-2h-weapons')[0] as HTMLElement).style.display = 'none';
@@ -855,15 +849,12 @@ export class ItemList<T> {
 
 		makeShowEPValuesSelector(this.tabContent.getElementsByClassName('selector-modal-show-ep-values')[0] as HTMLElement, player.sim);
 
-		const showMatchingGemsSelector = makeShowMatchingGemsSelector(
-			this.tabContent.getElementsByClassName('selector-modal-show-matching-gems')[0] as HTMLElement,
-			player.sim,
-		);
+		makeShowMatchingGemsSelector(this.tabContent.getElementsByClassName('selector-modal-show-matching-gems')[0] as HTMLElement, player.sim);
 		if (!label.startsWith('Gem')) {
 			(this.tabContent.getElementsByClassName('selector-modal-show-matching-gems')[0] as HTMLElement).style.display = 'none';
 		}
 
-		const phaseSelector = makePhaseSelector(this.tabContent.getElementsByClassName('selector-modal-phase-selector')[0] as HTMLElement, player.sim);
+		makePhaseSelector(this.tabContent.getElementsByClassName('selector-modal-phase-selector')[0] as HTMLElement, player.sim);
 
 		if (label == 'Items') {
 			const filtersButton = this.tabContent.getElementsByClassName('selector-modal-filters-button')[0] as HTMLElement;
@@ -907,7 +898,7 @@ export class ItemList<T> {
 		);
 
 		const removeButton = this.tabContent.getElementsByClassName('selector-modal-remove-button')[0] as HTMLButtonElement;
-		removeButton.addEventListener('click', event => {
+		removeButton.addEventListener('click', _event => {
 			onRemove(TypedEvent.nextEventID());
 		});
 
@@ -928,7 +919,7 @@ export class ItemList<T> {
 			player.sim.showExperimentalChangeEmitter.on(() => {
 				simAllButton.hidden = !player.sim.getShowExperimental();
 			});
-			simAllButton.addEventListener('click', event => {
+			simAllButton.addEventListener('click', _event => {
 				if (simUI instanceof IndividualSimUI) {
 					const itemSpecs = Array<ItemSpec>();
 					const isRangedOrTrinket =
@@ -1222,22 +1213,26 @@ export class ItemList<T> {
 	}
 
 	private getSourceInfo(item: Item, sim: Sim): JSX.Element {
-		if (!item.sources || item.sources.length == 0) {
-			return <></>;
-		}
-
-		const makeAnchor = (href: string, inner: string) => {
+		const makeAnchor = (href: string, inner: string | JSX.Element) => {
 			return (
-				<a href={href}>
+				<a href={href} target="_blank" dataset={{ whtticon: 'false' }}>
 					<small>{inner}</small>
 				</a>
 			);
 		};
 
-		const source = item.sources[0];
+		if (!item.sources || item.sources.length == 0) {
+			return <></>;
+		}
+
+		let source = item.sources[0];
 		if (source.source.oneofKind == 'crafted') {
 			const src = source.source.crafted;
-			return makeAnchor(ActionId.makeSpellUrl(src.spellId), professionNames.get(src.profession) ?? 'Unknown');
+
+			if (src.spellId) {
+				return makeAnchor(ActionId.makeSpellUrl(src.spellId), professionNames.get(src.profession) ?? 'Unknown');
+			}
+			return makeAnchor(ActionId.makeItemUrl(item.id), professionNames.get(src.profession) ?? 'Unknown');
 		} else if (source.source.oneofKind == 'drop') {
 			const src = source.source.drop;
 			const zone = sim.db.getZone(src.zoneId);
@@ -1246,30 +1241,78 @@ export class ItemList<T> {
 				throw new Error('No zone found for item: ' + item);
 			}
 
-			const rtnEl = makeAnchor(ActionId.makeZoneUrl(zone.id), `${zone.name} (${difficultyNames.get(src.difficulty) ?? 'Unknown'})`);
-
 			const category = src.category ? ` - ${src.category}` : '';
 			if (npc) {
-				rtnEl.appendChild(document.createElement('br'));
-				rtnEl.appendChild(makeAnchor(ActionId.makeNpcUrl(npc.id), `${npc.name + category}`));
+				return makeAnchor(
+					ActionId.makeNpcUrl(npc.id),
+					<span>
+						{zone.name} ({difficultyNames.get(src.difficulty) ?? 'Unknown'})
+						<br />
+						{npc.name + category}
+					</span>,
+				);
 			} else if (src.otherName) {
-				/*innerHTML += `
-					<br>
-					<a href="${ActionId.makeZoneUrl(zone.id)}"><small>${src.otherName + category}</small></a>
-				`;*/
-			} else if (category) {
-				/*innerHTML += `
-					<br>
-					<a href="${ActionId.makeZoneUrl(zone.id)}"><small>${category}</small></a>
-				`;*/
+				return makeAnchor(
+					ActionId.makeZoneUrl(zone.id),
+					<span>
+						{zone.name}
+						<br />
+						{src.otherName}
+					</span>,
+				);
 			}
-			return rtnEl;
-		} else if (source.source.oneofKind == 'quest') {
+			return makeAnchor(ActionId.makeZoneUrl(zone.id), zone.name);
+		} else if (source.source.oneofKind == 'quest' && source.source.quest.name) {
 			const src = source.source.quest;
-			return makeAnchor(ActionId.makeQuestUrl(src.id), src.name);
+			return makeAnchor(
+				ActionId.makeQuestUrl(src.id),
+				<span>
+					Quest
+					{item.factionRestriction == UIItem_FactionRestriction.ALLIANCE_ONLY && (
+						<img src="/wotlk/assets/img/alliance.png" className="ms-1" width="15" height="15" />
+					)}
+					{item.factionRestriction == UIItem_FactionRestriction.HORDE_ONLY && (
+						<img src="/wotlk/assets/img/horde.png" className="ms-1" width="15" height="15" />
+					)}
+					<br />
+					{src.name}
+				</span>,
+			);
+		} else if ((source = item.sources.find(source => source.source.oneofKind == 'rep') ?? source).source.oneofKind == 'rep') {
+			const factionNames = item.sources
+				.filter(source => source.source.oneofKind == 'rep')
+				.map(source =>
+					source.source.oneofKind == 'rep' ? REP_FACTION_NAMES[source.source.rep.repFactionId] : REP_FACTION_NAMES[RepFaction.RepFactionUnknown],
+				);
+			const src = source.source.rep;
+			return makeAnchor(
+				ActionId.makeItemUrl(item.id),
+				<>
+					{factionNames.map(name => (
+						<span>
+							{name}
+							{item.factionRestriction == UIItem_FactionRestriction.ALLIANCE_ONLY && (
+								<img src="/wotlk/assets/img/alliance.png" className="ms-1" width="15" height="15" />
+							)}
+							{item.factionRestriction == UIItem_FactionRestriction.HORDE_ONLY && (
+								<img src="/wotlk/assets/img/horde.png" className="ms-1" width="15" height="15" />
+							)}
+							<br />
+						</span>
+					))}
+					<span>{REP_LEVEL_NAMES[src.repLevel]}</span>
+				</>,
+			);
 		} else if (source.source.oneofKind == 'soldBy') {
 			const src = source.source.soldBy;
-			return makeAnchor(ActionId.makeNpcUrl(src.npcId), src.npcName);
+			return makeAnchor(
+				ActionId.makeNpcUrl(src.npcId),
+				<span>
+					Sold by
+					<br />
+					{src.npcName}
+				</span>,
+			);
 		}
 		return <></>;
 	}

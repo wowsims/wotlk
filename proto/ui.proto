@@ -104,12 +104,31 @@ enum DungeonDifficulty {
 	DifficultyRaid25H = 6;
 }
 
+enum RepLevel {
+	RepLevelUnknown 	= 0;
+	RepLevelHated 		= 1;
+	RepLevelHostile 	= 2;
+	RepLevelUnfriendly 	= 3;
+	RepLevelNeutral 	= 4;
+	RepLevelFriendly 	= 5;
+	RepLevelHonored 	= 6;
+	RepLevelRevered 	= 7;
+	RepLevelExalted 	= 8;
+}
+
+// TODO: Wotlk Rep Factions
+// Use the faction ID for the field index
+enum RepFaction {
+	RepFactionUnknown = 0;
+}
+
 message UIItemSource {
 	oneof source {
 		CraftedSource crafted = 1;
 		DropSource drop = 2;
 		QuestSource quest = 3;
 		SoldBySource sold_by = 4;
+		RepSource rep = 5;
 	}
 }
 message CraftedSource {
@@ -132,6 +151,11 @@ message SoldBySource {
 	string npc_name = 2;
 	int32 zone_id = 3;
 }
+message RepSource {
+	RepFaction rep_faction_id = 1;
+	RepLevel rep_level = 2;
+	Faction faction_id = 3;
+}
 
 message UIEnchant {
 	// All enchants have an effect ID. Some also have an item ID, others have a spell ID,
@@ -142,7 +166,7 @@ message UIEnchant {
 	int32 item_id = 2;   // ID of the enchant "item". Might be 0 if not available.
 	int32 spell_id = 3;  // ID of the enchant "spell". Might be 0 if not available.
 
-	string name = 4;     
+	string name = 4;
 	string icon = 5;
 
 	ItemType type = 6;                  // Which type of item this enchant can be applied to.
