@@ -1,20 +1,6 @@
-import {
-	ArmorType,
-	Class,
-	ItemSlot,
-	Profession,
-	PseudoStat,
-	Race,
-	RangedWeaponType,
-	Stat,
-	WeaponType,
-} from '../proto/common.js';
-import {
-	DungeonDifficulty,
-	RaidFilterOption,
-	SourceFilterOption,
-} from '../proto/ui.js';
 import { ResourceType } from '../proto/api.js';
+import { ArmorType, Class, ItemSlot, Profession, PseudoStat, Race, RangedWeaponType, Stat, WeaponType } from '../proto/common.js';
+import { DungeonDifficulty, RaidFilterOption, RepFaction, RepLevel, SourceFilterOption } from '../proto/ui.js';
 
 export const armorTypeNames: Map<ArmorType, string> = new Map([
 	[ArmorType.ArmorTypeUnknown, 'Unknown'],
@@ -117,7 +103,7 @@ export function nameToProfession(name: string): Profession {
 	const lower = name.toLowerCase();
 	for (const [key, value] of professionNames) {
 		if (value.toLowerCase() == lower) {
-			return key
+			return key;
 		}
 	}
 	return Profession.ProfessionUnknown;
@@ -226,8 +212,7 @@ export const pseudoStatNames: Map<PseudoStat, string> = new Map([
 
 export function getClassStatName(stat: Stat, playerClass: Class): string {
 	const statName = statNames.get(stat);
-	if (!statName)
-		return 'UnknownStat';
+	if (!statName) return 'UnknownStat';
 	if (playerClass == Class.ClassHunter) {
 		return statName.replace('Melee', 'Ranged');
 	} else {
@@ -317,7 +302,7 @@ export const raidNames: Map<RaidFilterOption, string> = new Map([
 	[RaidFilterOption.RaidVaultOfArchavon, 'Vault of Archavon'],
 	[RaidFilterOption.RaidUlduar, 'Ulduar'],
 	[RaidFilterOption.RaidTrialOfTheCrusader, 'Trial of the Crusader'],
-	[RaidFilterOption.RaidOnyxiasLair, 'Onyxia\'s Lair'],
+	[RaidFilterOption.RaidOnyxiasLair, "Onyxia's Lair"],
 	[RaidFilterOption.RaidIcecrownCitadel, 'Icecrown Citadel'],
 	[RaidFilterOption.RaidRubySanctum, 'Ruby Sanctum'],
 ]);
@@ -333,3 +318,19 @@ export const difficultyNames: Map<DungeonDifficulty, string> = new Map([
 	[DungeonDifficulty.DifficultyRaid25, '25N'],
 	[DungeonDifficulty.DifficultyRaid25H, '25H'],
 ]);
+
+export const REP_LEVEL_NAMES: Record<RepLevel, string> = {
+	[RepLevel.RepLevelUnknown]: 'Unknown',
+	[RepLevel.RepLevelHated]: 'Hated',
+	[RepLevel.RepLevelHostile]: 'Hostile',
+	[RepLevel.RepLevelUnfriendly]: 'Unfriendly',
+	[RepLevel.RepLevelNeutral]: 'Neutral',
+	[RepLevel.RepLevelFriendly]: 'Friendly',
+	[RepLevel.RepLevelHonored]: 'Honored',
+	[RepLevel.RepLevelRevered]: 'Revered',
+	[RepLevel.RepLevelExalted]: 'Exalted',
+};
+
+export const REP_FACTION_NAMES: Record<RepFaction, string> = {
+	[RepFaction.RepFactionUnknown]: 'Unknown',
+};
