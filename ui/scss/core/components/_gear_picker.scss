@@ -98,6 +98,7 @@ $favorite-cell-width: 2rem;
 	flex: 1;
 	display: flex;
 	flex-direction: column;
+	align-items: flex-start;
 
 	.item-picker-name {
 		color: white;
