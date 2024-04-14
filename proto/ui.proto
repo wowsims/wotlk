@@ -116,7 +116,7 @@ enum RepLevel {
 	RepLevelExalted 	= 8;
 }
 
-// TODO: Cata Rep Factions
+// TODO: Wotlk Rep Factions
 // Use the faction ID for the field index
 enum RepFaction {
 	RepFactionUnknown = 0;
