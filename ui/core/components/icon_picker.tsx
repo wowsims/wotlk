@@ -4,7 +4,6 @@ import { element, ref } from 'tsx-vanilla';
 import { ActionId } from '../proto_utils/action_id.js';
 import { TypedEvent } from '../typed_event.js';
 import { isRightClick } from '../utils.js';
-
 import { Input, InputConfig } from './input.js';
 
 // Data for creating an icon-based input component.
@@ -24,12 +23,12 @@ export interface IconPickerConfig<ModObject, ValueType> extends InputConfig<ModO
 
 	// Only used if states >= 4.
 	improvedId2?: ActionId;
-};
+}
 
 // Icon-based UI for picking buffs / consumes / etc
 // ModObject is the object being modified (Sim, Player, or Target).
 export class IconPicker<ModObject, ValueType> extends Input<ModObject, ValueType> {
-	active: Boolean;
+	active: boolean;
 
 	private readonly config: IconPickerConfig<ModObject, ValueType>;
 
@@ -65,15 +64,21 @@ export class IconPicker<ModObject, ValueType> extends Input<ModObject, ValueType
 			this.rootAnchor.classList.add('use-counter');
 		}
 
-		let ia = ref<HTMLAnchorElement>();
-		let ia2 = ref<HTMLAnchorElement>();
-		let ce = ref<HTMLSpanElement>();
+		const ia = ref<HTMLAnchorElement>();
+		const ia2 = ref<HTMLAnchorElement>();
+		const ce = ref<HTMLSpanElement>();
 		this.rootAnchor.appendChild(
-			<div className='icon-input-level-container'>
-				<a ref={ia} className="icon-picker-button icon-input-improved icon-input-improved1" dataset={{disableWowheadTouchTooltip:'true'}}></a>
-				<a ref={ia2} className="icon-picker-button icon-input-improved icon-input-improved2" dataset={{disableWowheadTouchTooltip:'true'}}></a>
+			<div className="icon-input-level-container">
+				<a
+					ref={ia}
+					className="icon-picker-button icon-input-improved icon-input-improved1"
+					dataset={{ whtticon: 'false', disableWowheadTouchTooltip: 'true' }}></a>
+				<a
+					ref={ia2}
+					className="icon-picker-button icon-input-improved icon-input-improved2"
+					dataset={{ whtticon: 'false', disableWowheadTouchTooltip: 'true' }}></a>
 				<span ref={ce} className={`icon-picker-label ${this.config.states > 2 ? '' : 'hide'}`}></span>
-			</div>
+			</div>,
 		);
 
 		this.improvedAnchor = ia.value!;
@@ -93,7 +98,7 @@ export class IconPicker<ModObject, ValueType> extends Input<ModObject, ValueType
 
 		this.rootAnchor.addEventListener('click', event => {
 			this.handleLeftClick(event);
-		})
+		});
 
 		this.rootAnchor.addEventListener('contextmenu', event => {
 			event.preventDefault();
@@ -102,35 +107,37 @@ export class IconPicker<ModObject, ValueType> extends Input<ModObject, ValueType
 			const rightClick = isRightClick(event);
 
 			if (rightClick) {
-				this.handleRightClick(event)
+				this.handleRightClick(event);
 				event.preventDefault();
 			}
 		});
 	}
 
 	handleLeftClick = (event: UIEvent) => {
-		if (this.config.states == 0 || (this.currentValue + 1) < this.config.states) {
+		if (this.config.states == 0 || this.currentValue + 1 < this.config.states) {
 			this.currentValue++;
 			this.inputChanged(TypedEvent.nextEventID());
-		} else if (this.currentValue > 0) { // roll over
+		} else if (this.currentValue > 0) {
+			// roll over
 			this.currentValue = 0;
 			this.inputChanged(TypedEvent.nextEventID());
 		}
 		event.preventDefault();
-	}
+	};
 
 	handleRightClick = (_event: UIEvent) => {
 		if (this.currentValue > 0) {
 			this.currentValue--;
-		} else { // roll over
+		} else {
+			// roll over
 			if (this.config.states === 0) {
-				this.currentValue = 1
+				this.currentValue = 1;
 			} else {
-				this.currentValue = this.config.states - 1
+				this.currentValue = this.config.states - 1;
 			}
 		}
 		this.inputChanged(TypedEvent.nextEventID());
-	}
+	};
 
 	getInputElem(): HTMLElement {
 		return this.rootAnchor;
@@ -146,7 +153,6 @@ export class IconPicker<ModObject, ValueType> extends Input<ModObject, ValueType
 
 	// Returns the ActionId of the currently selected value, or null if none selected.
 	getActionId(): ActionId | null {
-
 		// Go directly to source because during event propogation
 		//  the internal `this.currentValue` may not yet have been updated.
 		const v = Number(this.config.getValue(this.modObject));
