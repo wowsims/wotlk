@@ -237,6 +237,8 @@ export class APLActionIDPicker extends DropdownPicker<Player<any>, ActionID, Act
 
 				const iconElem = document.createElement('a');
 				iconElem.classList.add('apl-actionid-item-icon');
+				iconElem.dataset.whtticon = 'false';
+				iconElem.classList.add('apl-actionid-item-icon');
 				actionId.setBackgroundAndHref(iconElem);
 				button.appendChild(iconElem);
 
