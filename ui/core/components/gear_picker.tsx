@@ -6,12 +6,7 @@ import { setItemQualityCssClass } from '../css_utils';
 import { IndividualSimUI } from '../individual_sim_ui.js';
 import { Player } from '../player';
 import { Class, GemColor, ItemQuality, ItemSlot, ItemSpec, ItemType } from '../proto/common';
-import {
-	DatabaseFilters,
-	UIEnchant as Enchant,
-	UIGem as Gem,
-	UIItem as Item,
-} from '../proto/ui.js';
+import { DatabaseFilters, UIEnchant as Enchant, UIGem as Gem, UIItem as Item } from '../proto/ui.js';
 import { ActionId } from '../proto_utils/action_id';
 import { getEnchantDescription, getUniqueEnchantString } from '../proto_utils/enchants';
 import { EquippedItem } from '../proto_utils/equipped_item';
@@ -123,25 +118,12 @@ export class ItemRenderer extends Component {
 		const sce = ref<HTMLDivElement>();
 		this.rootElem.appendChild(
 			<>
-				<a
-					ref={iconElem}
-					className="item-picker-icon"
-					href="javascript:void(0)"
-					attributes={{ role: 'button' }}>
+				<a ref={iconElem} className="item-picker-icon" href="javascript:void(0)" attributes={{ role: 'button' }}>
 					<div ref={sce} className="item-picker-sockets-container"></div>
 				</a>
 				<div className="item-picker-labels-container">
-					<a
-						ref={nameElem}
-						className="item-picker-name"
-						href="javascript:void(0)"
-						attributes={{ role: 'button' }}></a>
-					<br />
-					<a
-						ref={enchantElem}
-						className="item-picker-enchant"
-						href="javascript:void(0)"
-						attributes={{ role: 'button' }}></a>
+					<a ref={nameElem} className="item-picker-name" href="javascript:void(0)" attributes={{ role: 'button' }}></a>
+					<a ref={enchantElem} className="item-picker-enchant" href="javascript:void(0)" attributes={{ role: 'button' }}></a>
 				</div>
 			</>,
 		);
@@ -205,10 +187,7 @@ export class ItemRenderer extends Component {
 		newItem.allSocketColors().forEach((socketColor, gemIdx) => {
 			const gemContainer = createGemContainer(socketColor, newItem.gems[gemIdx]);
 
-			if (
-				gemIdx == newItem.numPossibleSockets - 1 &&
-				[ItemType.ItemTypeWrist, ItemType.ItemTypeHands].includes(newItem.item.type)
-			) {
+			if (gemIdx == newItem.numPossibleSockets - 1 && [ItemType.ItemTypeWrist, ItemType.ItemTypeHands].includes(newItem.item.type)) {
 				const updateProfession = () => {
 					if (this.player.isBlacksmithing()) {
 						gemContainer.classList.remove('hide');
@@ -290,9 +269,7 @@ export class ItemPicker extends Component {
 		if (newItem != null) {
 			this.itemElem.update(newItem);
 		} else {
-			this.itemElem.iconElem.style.backgroundImage = `url('${getEmptySlotIconUrl(
-				this.slot,
-			)}')`;
+			this.itemElem.iconElem.style.backgroundImage = `url('${getEmptySlotIconUrl(this.slot)}')`;
 		}
 
 		this._equippedItem = newItem;
@@ -377,9 +354,7 @@ export class IconItemSwapPicker extends Component {
 			this.player.setWowheadData(newItem, this.iconAnchor);
 
 			newItem.allSocketColors().forEach((socketColor, gemIdx) => {
-				this.socketsContainerElem.appendChild(
-					createGemContainer(socketColor, newItem.gems[gemIdx]),
-				);
+				this.socketsContainerElem.appendChild(createGemContainer(socketColor, newItem.gems[gemIdx]));
 			});
 		} else {
 			this.iconAnchor.classList.remove('active');
@@ -419,12 +394,7 @@ export class SelectorModal extends BaseModal {
 	private readonly tabsElem: HTMLElement;
 	private readonly contentElem: HTMLElement;
 
-	constructor(
-		parent: HTMLElement,
-		simUI: SimUI,
-		player: Player<any>,
-		config: SelectorModalConfig,
-	) {
+	constructor(parent: HTMLElement, simUI: SimUI, player: Player<any>, config: SelectorModalConfig) {
 		super(parent, 'selector-modal');
 
 		this.simUI = simUI;
@@ -434,17 +404,12 @@ export class SelectorModal extends BaseModal {
 
 		window.scrollTo({ top: 0 });
 
-		this.header!.insertAdjacentElement(
-			'afterbegin',
-			<ul className="nav nav-tabs selector-modal-tabs"></ul>,
-		);
+		this.header!.insertAdjacentElement('afterbegin', <ul className="nav nav-tabs selector-modal-tabs"></ul>);
 
 		this.body.appendChild(<div className="tab-content selector-modal-tab-content"></div>);
 
 		this.tabsElem = this.rootElem.querySelector('.selector-modal-tabs') as HTMLElement;
-		this.contentElem = this.rootElem.querySelector(
-			'.selector-modal-tab-content',
-		) as HTMLElement;
+		this.contentElem = this.rootElem.querySelector('.selector-modal-tab-content') as HTMLElement;
 
 		this.setData();
 
@@ -464,13 +429,11 @@ export class SelectorModal extends BaseModal {
 
 	// Could be 'Items' 'Enchants' or 'Gem1'-'Gem3'
 	openTabName(name: string) {
-		Array.from(this.tabsElem.getElementsByClassName('selector-modal-item-tab')).forEach(
-			elem => {
-				if (elem.getAttribute('data-content-id') == name + '-tab') {
-					(elem as HTMLElement).click();
-				}
-			},
-		);
+		Array.from(this.tabsElem.getElementsByClassName('selector-modal-item-tab')).forEach(elem => {
+			if (elem.getAttribute('data-content-id') == name + '-tab') {
+				(elem as HTMLElement).click();
+			}
+		});
 	}
 
 	openTab(idx: number) {
@@ -522,9 +485,7 @@ export class SelectorModal extends BaseModal {
 				return {
 					item: enchant,
 					id: enchant.effectId,
-					actionId: enchant.spellId
-						? ActionId.fromSpellId(enchant.spellId)
-						: ActionId.fromItemId(enchant.itemId),
+					actionId: enchant.spellId ? ActionId.fromSpellId(enchant.spellId) : ActionId.fromItemId(enchant.itemId),
 					name: enchant.name,
 					quality: enchant.quality,
 					phase: enchant.phase || 1,
@@ -533,8 +494,7 @@ export class SelectorModal extends BaseModal {
 					heroic: false,
 					onEquip: (eventID, enchant: Enchant) => {
 						const equippedItem = gearData.getEquippedItem();
-						if (equippedItem)
-							gearData.equipItem(eventID, equippedItem.withEnchant(enchant));
+						if (equippedItem) gearData.equipItem(eventID, equippedItem.withEnchant(enchant));
 					},
 				};
 			}),
@@ -566,80 +526,71 @@ export class SelectorModal extends BaseModal {
 			return;
 		}
 
-		const socketBonusEP =
-			this.player.computeStatsEP(new Stats(equippedItem.item.socketBonus)) /
-			(equippedItem.item.gemSockets.length || 1);
-		equippedItem
-			.curSocketColors(this.player.isBlacksmithing())
-			.forEach((socketColor, socketIdx) => {
-				this.addTab<Gem>(
-					'Gem ' + (socketIdx + 1),
-					this.player.getGems(socketColor).map((gem: Gem) => {
-						return {
-							item: gem,
-							id: gem.id,
-							actionId: ActionId.fromItemId(gem.id),
-							name: gem.name,
-							quality: gem.quality,
-							phase: gem.phase,
-							heroic: false,
-							baseEP: this.player.computeStatsEP(new Stats(gem.stats)),
-							ignoreEPFilter: true,
-							onEquip: (eventID, gem: Gem) => {
-								const equippedItem = gearData.getEquippedItem();
-								if (equippedItem)
-									gearData.equipItem(
-										eventID,
-										equippedItem.withGem(gem, socketIdx),
-									);
-							},
-						};
-					}),
-					gem => {
-						let gemEP = this.player.computeGemEP(gem);
-						if (gemMatchesSocket(gem, socketColor)) {
-							gemEP += socketBonusEP;
-						}
-						return gemEP;
-					},
-					equippedItem => equippedItem?.gems[socketIdx],
-					socketColor,
-					eventID => {
-						const equippedItem = gearData.getEquippedItem();
-						if (equippedItem)
-							gearData.equipItem(eventID, equippedItem.withGem(null, socketIdx));
-					},
-					tabAnchor => {
-						const gemContainer = createGemContainer(socketColor, null);
-						tabAnchor.appendChild(gemContainer);
-						tabAnchor.classList.add('selector-modal-tab-gem');
-
-						const gemElem = tabAnchor.querySelector('.gem-icon') as HTMLElement;
-						const emptySocketUrl = getEmptyGemSocketIconUrl(socketColor);
-
-						const updateGemIcon = () => {
+		const socketBonusEP = this.player.computeStatsEP(new Stats(equippedItem.item.socketBonus)) / (equippedItem.item.gemSockets.length || 1);
+		equippedItem.curSocketColors(this.player.isBlacksmithing()).forEach((socketColor, socketIdx) => {
+			this.addTab<Gem>(
+				'Gem ' + (socketIdx + 1),
+				this.player.getGems(socketColor).map((gem: Gem) => {
+					return {
+						item: gem,
+						id: gem.id,
+						actionId: ActionId.fromItemId(gem.id),
+						name: gem.name,
+						quality: gem.quality,
+						phase: gem.phase,
+						heroic: false,
+						baseEP: this.player.computeStatsEP(new Stats(gem.stats)),
+						ignoreEPFilter: true,
+						onEquip: (eventID, gem: Gem) => {
 							const equippedItem = gearData.getEquippedItem();
-							const gem = equippedItem?.gems[socketIdx];
+							if (equippedItem) gearData.equipItem(eventID, equippedItem.withGem(gem, socketIdx));
+						},
+					};
+				}),
+				gem => {
+					let gemEP = this.player.computeGemEP(gem);
+					if (gemMatchesSocket(gem, socketColor)) {
+						gemEP += socketBonusEP;
+					}
+					return gemEP;
+				},
+				equippedItem => equippedItem?.gems[socketIdx],
+				socketColor,
+				eventID => {
+					const equippedItem = gearData.getEquippedItem();
+					if (equippedItem) gearData.equipItem(eventID, equippedItem.withGem(null, socketIdx));
+				},
+				tabAnchor => {
+					const gemContainer = createGemContainer(socketColor, null);
+					tabAnchor.appendChild(gemContainer);
+					tabAnchor.classList.add('selector-modal-tab-gem');
 
-							if (gem) {
-								gemElem.classList.remove('hide');
-								ActionId.fromItemId(gem.id)
-									.fill()
-									.then(filledId => {
-										gemElem.setAttribute('src', filledId.iconUrl);
-									});
-							} else {
-								gemElem.classList.add('hide');
-								gemElem.setAttribute('src', emptySocketUrl);
-							}
-						};
+					const gemElem = tabAnchor.querySelector('.gem-icon') as HTMLElement;
+					const emptySocketUrl = getEmptyGemSocketIconUrl(socketColor);
 
-						gearData.changeEvent.on(updateGemIcon);
-						this.addOnDisposeCallback(() => gearData.changeEvent.off(updateGemIcon));
-						updateGemIcon();
-					},
-				);
-			});
+					const updateGemIcon = () => {
+						const equippedItem = gearData.getEquippedItem();
+						const gem = equippedItem?.gems[socketIdx];
+
+						if (gem) {
+							gemElem.classList.remove('hide');
+							ActionId.fromItemId(gem.id)
+								.fill()
+								.then(filledId => {
+									gemElem.setAttribute('src', filledId.iconUrl);
+								});
+						} else {
+							gemElem.classList.add('hide');
+							gemElem.setAttribute('src', emptySocketUrl);
+						}
+					};
+
+					gearData.changeEvent.on(updateGemIcon);
+					this.addOnDisposeCallback(() => gearData.changeEvent.off(updateGemIcon));
+					updateGemIcon();
+				},
+			);
+		});
 	}
 
 	/**
@@ -755,9 +706,7 @@ export class SelectorModal extends BaseModal {
 			.call(this.tabsElem.getElementsByClassName('selector-modal-item-tab'))
 			.filter(tab => tab.dataset.label.includes(labelSubstring));
 
-		const contentElems = tabElems
-			.map(tabElem => document.getElementById(tabElem.dataset.contentId!))
-			.filter(tabElem => Boolean(tabElem));
+		const contentElems = tabElems.map(tabElem => document.getElementById(tabElem.dataset.contentId!)).filter(tabElem => Boolean(tabElem));
 
 		tabElems.forEach(elem => elem.parentElement.remove());
 		contentElems.forEach(elem => elem!.remove());
@@ -853,33 +802,17 @@ export class ItemList<T> {
 
 		const epButton = ref<HTMLButtonElement>();
 		this.tabContent = (
-			<div
-				id={tabContentId}
-				className={`selector-modal-tab-pane tab-pane fade ${
-					selected ? 'active show' : ''
-				}`}>
+			<div id={tabContentId} className={`selector-modal-tab-pane tab-pane fade ${selected ? 'active show' : ''}`}>
 				<div className="selector-modal-filters">
-					<input
-						className="selector-modal-search form-control"
-						type="text"
-						placeholder="Search..."
-					/>
-					{label == 'Items' && (
-						<button className="selector-modal-filters-button btn btn-primary">
-							Filters
-						</button>
-					)}
+					<input className="selector-modal-search form-control" type="text" placeholder="Search..." />
+					{label == 'Items' && <button className="selector-modal-filters-button btn btn-primary">Filters</button>}
 					<div className="selector-modal-phase-selector"></div>
 					<div className="sim-input selector-modal-boolean-option selector-modal-show-1h-weapons"></div>
 					<div className="sim-input selector-modal-boolean-option selector-modal-show-2h-weapons"></div>
 					<div className="sim-input selector-modal-boolean-option selector-modal-show-matching-gems"></div>
 					<div className="sim-input selector-modal-boolean-option selector-modal-show-ep-values"></div>
-					<button className="selector-modal-simall-button btn btn-warning">
-						Add to Batch Sim
-					</button>
-					<button className="selector-modal-remove-button btn btn-danger">
-						Unequip Item
-					</button>
+					<button className="selector-modal-simall-button btn btn-warning">Add to Batch Sim</button>
+					<button className="selector-modal-remove-button btn btn-danger">Unequip Item</button>
 				</div>
 				<div className="selector-modal-list-labels">
 					<label className="item-label">
@@ -908,74 +841,36 @@ export class ItemList<T> {
 		});
 
 		const show1hWeaponsSelector = makeShow1hWeaponsSelector(
-			this.tabContent.getElementsByClassName(
-				'selector-modal-show-1h-weapons',
-			)[0] as HTMLElement,
+			this.tabContent.getElementsByClassName('selector-modal-show-1h-weapons')[0] as HTMLElement,
 			player.sim,
 		);
 		const show2hWeaponsSelector = makeShow2hWeaponsSelector(
-			this.tabContent.getElementsByClassName(
-				'selector-modal-show-2h-weapons',
-			)[0] as HTMLElement,
+			this.tabContent.getElementsByClassName('selector-modal-show-2h-weapons')[0] as HTMLElement,
 			player.sim,
 		);
-		if (
-			!(
-				label == 'Items' &&
-				(slot == ItemSlot.ItemSlotMainHand ||
-					(slot == ItemSlot.ItemSlotOffHand && player.getClass() == Class.ClassWarrior))
-			)
-		) {
-			(
-				this.tabContent.getElementsByClassName(
-					'selector-modal-show-1h-weapons',
-				)[0] as HTMLElement
-			).style.display = 'none';
-			(
-				this.tabContent.getElementsByClassName(
-					'selector-modal-show-2h-weapons',
-				)[0] as HTMLElement
-			).style.display = 'none';
+		if (!(label == 'Items' && (slot == ItemSlot.ItemSlotMainHand || (slot == ItemSlot.ItemSlotOffHand && player.getClass() == Class.ClassWarrior)))) {
+			(this.tabContent.getElementsByClassName('selector-modal-show-1h-weapons')[0] as HTMLElement).style.display = 'none';
+			(this.tabContent.getElementsByClassName('selector-modal-show-2h-weapons')[0] as HTMLElement).style.display = 'none';
 		}
 
-		makeShowEPValuesSelector(
-			this.tabContent.getElementsByClassName(
-				'selector-modal-show-ep-values',
-			)[0] as HTMLElement,
-			player.sim,
-		);
+		makeShowEPValuesSelector(this.tabContent.getElementsByClassName('selector-modal-show-ep-values')[0] as HTMLElement, player.sim);
 
 		const showMatchingGemsSelector = makeShowMatchingGemsSelector(
-			this.tabContent.getElementsByClassName(
-				'selector-modal-show-matching-gems',
-			)[0] as HTMLElement,
+			this.tabContent.getElementsByClassName('selector-modal-show-matching-gems')[0] as HTMLElement,
 			player.sim,
 		);
 		if (!label.startsWith('Gem')) {
-			(
-				this.tabContent.getElementsByClassName(
-					'selector-modal-show-matching-gems',
-				)[0] as HTMLElement
-			).style.display = 'none';
+			(this.tabContent.getElementsByClassName('selector-modal-show-matching-gems')[0] as HTMLElement).style.display = 'none';
 		}
 
-		const phaseSelector = makePhaseSelector(
-			this.tabContent.getElementsByClassName(
-				'selector-modal-phase-selector',
-			)[0] as HTMLElement,
-			player.sim,
-		);
+		const phaseSelector = makePhaseSelector(this.tabContent.getElementsByClassName('selector-modal-phase-selector')[0] as HTMLElement, player.sim);
 
 		if (label == 'Items') {
-			const filtersButton = this.tabContent.getElementsByClassName(
-				'selector-modal-filters-button',
-			)[0] as HTMLElement;
+			const filtersButton = this.tabContent.getElementsByClassName('selector-modal-filters-button')[0] as HTMLElement;
 			filtersButton.addEventListener('click', () => new FiltersMenu(parent, player, slot));
 		}
 
-		this.listElem = this.tabContent.getElementsByClassName(
-			'selector-modal-list',
-		)[0] as HTMLElement;
+		this.listElem = this.tabContent.getElementsByClassName('selector-modal-list')[0] as HTMLElement;
 
 		this.itemsToDisplay = [];
 
@@ -1011,9 +906,7 @@ export class ItemList<T> {
 			},
 		);
 
-		const removeButton = this.tabContent.getElementsByClassName(
-			'selector-modal-remove-button',
-		)[0] as HTMLButtonElement;
+		const removeButton = this.tabContent.getElementsByClassName('selector-modal-remove-button')[0] as HTMLButtonElement;
 		removeButton.addEventListener('click', event => {
 			onRemove(TypedEvent.nextEventID());
 		});
@@ -1026,14 +919,10 @@ export class ItemList<T> {
 
 		this.updateSelected();
 
-		this.searchInput = this.tabContent.getElementsByClassName(
-			'selector-modal-search',
-		)[0] as HTMLInputElement;
+		this.searchInput = this.tabContent.getElementsByClassName('selector-modal-search')[0] as HTMLInputElement;
 		this.searchInput.addEventListener('input', () => this.applyFilters());
 
-		const simAllButton = this.tabContent.getElementsByClassName(
-			'selector-modal-simall-button',
-		)[0] as HTMLButtonElement;
+		const simAllButton = this.tabContent.getElementsByClassName('selector-modal-simall-button')[0] as HTMLButtonElement;
 		if (label == 'Items') {
 			simAllButton.hidden = !player.sim.getShowExperimental();
 			player.sim.showExperimentalChangeEmitter.on(() => {
@@ -1043,9 +932,7 @@ export class ItemList<T> {
 				if (simUI instanceof IndividualSimUI) {
 					const itemSpecs = Array<ItemSpec>();
 					const isRangedOrTrinket =
-						this.slot == ItemSlot.ItemSlotRanged ||
-						this.slot == ItemSlot.ItemSlotTrinket1 ||
-						this.slot == ItemSlot.ItemSlotTrinket2;
+						this.slot == ItemSlot.ItemSlotRanged || this.slot == ItemSlot.ItemSlotTrinket1 || this.slot == ItemSlot.ItemSlotTrinket2;
 
 					const curItem = this.equippedToItemFn(this.player.getEquippedItem(this.slot));
 					let curEP = 0;
@@ -1087,11 +974,7 @@ export class ItemList<T> {
 		const newEquippedItem = this.gearData.getEquippedItem();
 		const newItem = this.equippedToItemFn(newEquippedItem);
 
-		const newItemId = newItem
-			? this.label == 'Enchants'
-				? (newItem as unknown as Enchant).effectId
-				: (newItem as unknown as Item | Gem).id
-			: 0;
+		const newItemId = newItem ? (this.label == 'Enchants' ? (newItem as unknown as Enchant).effectId : (newItem as unknown as Item | Gem).id) : 0;
 		const newEP = newItem ? this.computeEP(newItem) : 0;
 
 		this.scroller.elementUpdate(item => {
@@ -1100,9 +983,7 @@ export class ItemList<T> {
 			if (itemData.id == newItemId) item.classList.add('active');
 			else item.classList.remove('active');
 
-			const epDeltaElem = item.getElementsByClassName(
-				'selector-modal-list-item-ep-delta',
-			)[0] as HTMLSpanElement;
+			const epDeltaElem = item.getElementsByClassName('selector-modal-list-item-ep-delta')[0] as HTMLSpanElement;
 			if (epDeltaElem) {
 				epDeltaElem.textContent = '';
 				if (itemData.item) {
@@ -1125,25 +1006,11 @@ export class ItemList<T> {
 		const currentEquippedItem = this.player.getEquippedItem(this.slot);
 
 		if (this.label == 'Items') {
-			itemIdxs = this.player.filterItemData(
-				itemIdxs,
-				i => this.itemData[i].item as unknown as Item,
-				this.slot,
-			);
+			itemIdxs = this.player.filterItemData(itemIdxs, i => this.itemData[i].item as unknown as Item, this.slot);
 		} else if (this.label == 'Enchants') {
-			itemIdxs = this.player.filterEnchantData(
-				itemIdxs,
-				i => this.itemData[i].item as unknown as Enchant,
-				this.slot,
-				currentEquippedItem,
-			);
+			itemIdxs = this.player.filterEnchantData(itemIdxs, i => this.itemData[i].item as unknown as Enchant, this.slot, currentEquippedItem);
 		} else if (this.label.startsWith('Gem')) {
-			itemIdxs = this.player.filterGemData(
-				itemIdxs,
-				i => this.itemData[i].item as unknown as Gem,
-				this.slot,
-				this.socketColor,
-			);
+			itemIdxs = this.player.filterGemData(itemIdxs, i => this.itemData[i].item as unknown as Gem, this.slot, this.socketColor);
 		}
 
 		itemIdxs = itemIdxs.filter(i => {
@@ -1175,14 +1042,12 @@ export class ItemList<T> {
 		let sortFn: (itemA: T, itemB: T) => number;
 		if (this.slot == ItemSlot.ItemSlotTrinket1 || this.slot == ItemSlot.ItemSlotTrinket2) {
 			// Trinket EP is weird so just sort by ilvl instead.
-			sortFn = (itemA, itemB) =>
-				(itemB as unknown as Item).ilvl - (itemA as unknown as Item).ilvl;
+			sortFn = (itemA, itemB) => (itemB as unknown as Item).ilvl - (itemA as unknown as Item).ilvl;
 		} else {
 			sortFn = (itemA, itemB) => {
 				const diff = this.computeEP(itemB) - this.computeEP(itemA);
 				// if EP is same, sort by ilvl
-				if (Math.abs(diff) < 0.01)
-					return (itemB as unknown as Item).ilvl - (itemA as unknown as Item).ilvl;
+				if (Math.abs(diff) < 0.01) return (itemB as unknown as Item).ilvl - (itemA as unknown as Item).ilvl;
 				return diff;
 			};
 		}
@@ -1234,16 +1099,9 @@ export class ItemList<T> {
 		const anchorElem = ref<HTMLAnchorElement>();
 		const iconElem = ref<HTMLImageElement>();
 		const listItemElem = (
-			<li
-				className={`selector-modal-list-item ${
-					equippedItemID == itemData.id ? 'active' : ''
-				}`}
-				dataset={{ idx: item.idx.toString() }}>
+			<li className={`selector-modal-list-item ${equippedItemID == itemData.id ? 'active' : ''}`} dataset={{ idx: item.idx.toString() }}>
 				<div className="selector-modal-list-label-cell">
-					<a
-						className="selector-modal-list-item-link"
-						ref={anchorElem}
-						dataset={{ whtticon: 'false' }}>
+					<a className="selector-modal-list-item-link" ref={anchorElem} dataset={{ whtticon: 'false' }}>
 						<img className="selector-modal-list-item-icon" ref={iconElem}></img>
 						<label className="selector-modal-list-item-name" ref={nameElem}>
 							{itemData.name}
@@ -1256,27 +1114,17 @@ export class ItemList<T> {
 
 		if (this.label == 'Items') {
 			listItemElem.appendChild(
-				<div className="selector-modal-list-item-source-container">
-					{this.getSourceInfo(itemData.item as unknown as Item, this.player.sim)}
-				</div>,
+				<div className="selector-modal-list-item-source-container">{this.getSourceInfo(itemData.item as unknown as Item, this.player.sim)}</div>,
 			);
 		}
 
 		if (this.slot != ItemSlot.ItemSlotTrinket1 && this.slot != ItemSlot.ItemSlotTrinket2) {
 			listItemElem.appendChild(
 				<div className="selector-modal-list-item-ep">
-					<span className="selector-modal-list-item-ep-value">
-						{itemEP < 9.95
-							? itemEP.toFixed(1).toString()
-							: Math.round(itemEP).toString()}
-					</span>
+					<span className="selector-modal-list-item-ep-value">{itemEP < 9.95 ? itemEP.toFixed(1).toString() : Math.round(itemEP).toString()}</span>
 					<span
 						className="selector-modal-list-item-ep-delta"
-						ref={e =>
-							itemData.item &&
-							equippedItemEP != itemEP &&
-							formatDeltaTextElem(e, equippedItemEP, itemEP, 0)
-						}></span>
+						ref={e => itemData.item && equippedItemEP != itemEP && formatDeltaTextElem(e, equippedItemEP, itemEP, 0)}></span>
 				</div>,
 			);
 		}
@@ -1366,9 +1214,7 @@ export class ItemList<T> {
 		if (this.label == 'Items') {
 			return this.currentFilters.favoriteItems.includes(itemData.id);
 		} else if (this.label == 'Enchants') {
-			return this.currentFilters.favoriteEnchants.includes(
-				getUniqueEnchantString(itemData.item as unknown as Enchant),
-			);
+			return this.currentFilters.favoriteEnchants.includes(getUniqueEnchantString(itemData.item as unknown as Enchant));
 		} else if (this.label.startsWith('Gem')) {
 			return this.currentFilters.favoriteGems.includes(itemData.id);
 		}
@@ -1391,10 +1237,7 @@ export class ItemList<T> {
 		const source = item.sources[0];
 		if (source.source.oneofKind == 'crafted') {
 			const src = source.source.crafted;
-			return makeAnchor(
-				ActionId.makeSpellUrl(src.spellId),
-				professionNames.get(src.profession) ?? 'Unknown',
-			);
+			return makeAnchor(ActionId.makeSpellUrl(src.spellId), professionNames.get(src.profession) ?? 'Unknown');
 		} else if (source.source.oneofKind == 'drop') {
 			const src = source.source.drop;
 			const zone = sim.db.getZone(src.zoneId);
@@ -1403,17 +1246,12 @@ export class ItemList<T> {
 				throw new Error('No zone found for item: ' + item);
 			}
 
-			const rtnEl = makeAnchor(
-				ActionId.makeZoneUrl(zone.id),
-				`${zone.name} (${difficultyNames.get(src.difficulty) ?? 'Unknown'})`,
-			);
+			const rtnEl = makeAnchor(ActionId.makeZoneUrl(zone.id), `${zone.name} (${difficultyNames.get(src.difficulty) ?? 'Unknown'})`);
 
 			const category = src.category ? ` - ${src.category}` : '';
 			if (npc) {
 				rtnEl.appendChild(document.createElement('br'));
-				rtnEl.appendChild(
-					makeAnchor(ActionId.makeNpcUrl(npc.id), `${npc.name + category}`),
-				);
+				rtnEl.appendChild(makeAnchor(ActionId.makeNpcUrl(npc.id), `${npc.name + category}`));
 			} else if (src.otherName) {
 				/*innerHTML += `
 					<br>

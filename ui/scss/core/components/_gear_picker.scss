@@ -1,6 +1,6 @@
-@use "sass:map";
+@use 'sass:map';
 
-@import "./filters_menu";
+@import './filters_menu';
 
 $source-cell-width: 16rem;
 $ep-cell-width: 4rem;
@@ -46,7 +46,10 @@ $favorite-cell-width: 2rem;
 	.gear-picker-right {
 		.item-picker-root {
 			flex-direction: row-reverse;
-			text-align: right;
+
+			.item-picker-labels-container {
+				align-items: flex-end;
+			}
 		}
 	}
 }
@@ -74,10 +77,11 @@ $favorite-cell-width: 2rem;
 				margin-right: calc(var(--bs-nav-link-padding-x) / -2);
 				display: flex;
 				align-items: center;
-				opacity: .7;
-				transition: opacity .15s ease-in-out;
+				opacity: 0.7;
+				transition: opacity 0.15s ease-in-out;
 
-				&:hover, &.active {
+				&:hover,
+				&.active {
 					opacity: 1;
 				}
 
@@ -89,15 +93,22 @@ $favorite-cell-width: 2rem;
 	}
 }
 
-@include media-breakpoint-down(md) {
-	.gear-picker-root {
-		flex-direction: column;
+.item-picker-labels-container {
+	padding: map.get($spacers, 2);
+	flex: 1;
+	display: flex;
+	flex-direction: column;
 
-		.gear-picker-left,
-		.gear-picker-right {
-			width: 100%;
-			margin-right: 0;
-		}
+	.item-picker-name {
+		color: white;
+		font-size: map-get($font-sizes, 6);
+		letter-spacing: normal;
+	}
+
+	.item-picker-enchant {
+		color: $item-quality-uncommon;
+		font-size: $content-font-size;
+		letter-spacing: normal;
 	}
 }
 
@@ -119,45 +130,28 @@ $favorite-cell-width: 2rem;
 }
 
 @include media-breakpoint-down(xl) {
-	.gear-picker-root {
-		.gear-picker-left {
-			.item-picker-root {
-				// Increase the spacing to help separate the weapons/bonus item slots
-				&:nth-child(6) {
-				margin-bottom: calc(var(--container-padding) * 2);
-				}
-			}
-		}
+	.gear-picker-right {
+		margin-bottom: 2 * map.get($spacers, 3);
 	}
 }
 
 @include media-breakpoint-down(md) {
 	.gear-picker-root {
 		.gear-picker-left {
+			.item-picker-root:last-child {
+				margin-bottom: map.get($spacers, 5);
+			}
+		}
+
+		.gear-picker-right {
 			.item-picker-root {
-				// Increase the spacing to help separate the weapons/bonus item slots
-				&:last-child {
-				margin-bottom: calc(var(--container-padding) * 2);
+				flex-direction: row;
+
+				.item-picker-labels-container {
+					align-items: flex-start;
 				}
 			}
 		}
-	}
-}
-
-.item-picker-labels-container {
-	padding: map-get($spacers, 2);
-	flex: 1;
-
-	.item-picker-name {
-		color: white;
-		font-size: map-get($font-sizes, 6);
-		letter-spacing: normal;
-	}
-
-	.item-picker-enchant {
-		color: $item-quality-uncommon;
-		font-size: $content-font-size;
-		letter-spacing: normal;
 	}
 }
 
@@ -170,11 +164,12 @@ $favorite-cell-width: 2rem;
 			display: flex;
 			align-items: center;
 
-			&> *:not(:last-child) {
+			& > *:not(:last-child) {
 				margin-right: map-get($spacers, 2);
 			}
 
-			input, select {
+			input,
+			select {
 				padding-top: $btn-padding-y;
 				padding-bottom: $btn-padding-y;
 				font-size: $btn-font-size;
@@ -188,49 +183,49 @@ $favorite-cell-width: 2rem;
 }
 
 .selector-modal-phase-selector {
-  min-width: 7rem;
+	min-width: 7rem;
 
-  .phase-selector {
-	margin-bottom: 0;
-  }
+	.phase-selector {
+		margin-bottom: 0;
+	}
 }
 
 .selector-modal-remove-button {
-  margin-left: auto;
+	margin-left: auto;
 }
 
 .selector-modal-list-labels {
-		display: flex;
-		padding-right: map-get($spacers, 2);
-		margin-right: map-get($spacers, 3);
-		margin-bottom: map-get($spacers, 2);
-		font-size: 1.125rem;
+	display: flex;
+	padding-right: map-get($spacers, 2);
+	margin-right: map-get($spacers, 3);
+	margin-bottom: map-get($spacers, 2);
+	font-size: 1.125rem;
 
-		label {
+	label {
 		font-weight: normal;
-		}
+	}
 
-		.item-label {
+	.item-label {
 		flex: 1;
-		}
+	}
 
-		.source-label {
+	.source-label {
 		width: $source-cell-width;
 		margin-left: map-get($spacers, 3);
-		}
+	}
 
-		.ep-label {
+	.ep-label {
 		width: $ep-cell-width;
 		margin-left: map-get($spacers, 3);
 		display: flex;
 		align-items: center;
 		float: right;
-		}
+	}
 
-		.favorite-label {
+	.favorite-label {
 		width: $favorite-cell-width;
 		margin-left: map-get($spacers, 3);
-		}
+	}
 }
 
 .selector-modal-list {
@@ -243,61 +238,61 @@ $favorite-cell-width: 2rem;
 
 	&.hide-ep {
 		.selector-modal-list-item-ep {
-			display:none;
+			display: none;
 		}
 	}
 }
 
 // TODO: Move all of these to a shared file, as they're used in other places too
 .selector-modal-list-item {
-  padding: .5rem;
-  display: flex;
-  align-items: center;
+	padding: 0.5rem;
+	display: flex;
+	align-items: center;
 	background-color: #111218;
 
-  &:nth-child(2n) {
-	background: $table-row-even-bg;
-  }
-
-  &:nth-child(2n+1) {
-	background: $table-row-odd-bg;
-  }
-
-  &:hover {
-	background: #333;
-  }
-
-  &.active {
-	.selector-modal-list-item-icon {
-	  outline: 2px solid $success;
+	&:nth-child(2n) {
+		background: $table-row-even-bg;
 	}
-  }
 
-  .selector-modal-list-item-link {
-	display: flex;
-	align-items: center;
-  }
+	&:nth-child(2n + 1) {
+		background: $table-row-odd-bg;
+	}
 
-  .selector-modal-list-label-cell {
-	flex: 1;
-	display: flex;
-	align-items: center;
-  }
+	&:hover {
+		background: #333;
+	}
 
-  .selector-modal-list-item-icon {
-	@include wowhead-background-icon;
-	width: 3rem;
-	height: 3rem;
-	border: $border-default;
-  }
+	&.active {
+		.selector-modal-list-item-icon {
+			outline: 2px solid $success;
+		}
+	}
 
-  .selector-modal-list-item-name {
-	font-size: 1.125rem;
-	margin-left: map-get($spacers, 3);
-	letter-spacing: normal;
-	font-weight: normal;
-	cursor: pointer;
-  }
+	.selector-modal-list-item-link {
+		display: flex;
+		align-items: center;
+	}
+
+	.selector-modal-list-label-cell {
+		flex: 1;
+		display: flex;
+		align-items: center;
+	}
+
+	.selector-modal-list-item-icon {
+		@include wowhead-background-icon;
+		width: 3rem;
+		height: 3rem;
+		border: $border-default;
+	}
+
+	.selector-modal-list-item-name {
+		font-size: 1.125rem;
+		margin-left: map-get($spacers, 3);
+		letter-spacing: normal;
+		font-weight: normal;
+		cursor: pointer;
+	}
 }
 
 .selector-modal-list-item-source-container {
@@ -322,7 +317,7 @@ $favorite-cell-width: 2rem;
 	display: flex;
 	align-items: center;
 
-	&> span {
+	& > span {
 		display: inline-block;
 		color: white;
 		text-align: right;
@@ -330,18 +325,18 @@ $favorite-cell-width: 2rem;
 
 	.selector-modal-list-item-ep-delta {
 		margin-left: map-get($spacers, 1);
-		font-size: .8rem;
+		font-size: 0.8rem;
 	}
-  }
+}
 
 .heroic-label {
-  margin-left: map-get($spacers, 1);
-  color: $item-quality-uncommon;
+	margin-left: map-get($spacers, 1);
+	color: $item-quality-uncommon;
 }
 
 @include media-breakpoint-down(lg) {
-  .item-picker-icon {
-	width: 3rem;
-	height: 3rem;
-  }
+	.item-picker-icon {
+		width: 3rem;
+		height: 3rem;
+	}
 }

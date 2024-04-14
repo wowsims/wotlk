@@ -1,14 +1,14 @@
-import { SimUI } from "../../sim_ui";
-import { Component } from "../../components/component";
-import { Player } from "../../player";
-import { setItemQualityCssClass } from "../../css_utils";
-import { ActionId } from "../../proto_utils/action_id";
+import { Component } from '../../components/component';
+import { setItemQualityCssClass } from '../../css_utils';
+import { Player } from '../../player';
 import { UIGem as Gem } from '../../proto/ui.js';
-import { ContentBlock } from "../content_block";
+import { ActionId } from '../../proto_utils/action_id';
+import { SimUI } from '../../sim_ui';
+import { ContentBlock } from '../content_block';
 
 interface GemSummaryData {
-	gem: Gem
-	count: number
+	gem: Gem;
+	count: number;
 }
 
 export class GemSummary extends Component {
@@ -23,7 +23,7 @@ export class GemSummary extends Component {
 		this.player = player;
 
 		this.container = new ContentBlock(this.rootElem, 'gem-summary-container', {
-			header: {title: 'Gem Summary'}
+			header: { title: 'Gem Summary' },
 		});
 		player.gearChangeEmitter.on(() => this.updateTable());
 	}
@@ -35,21 +35,21 @@ export class GemSummary extends Component {
 
 		for (const gem of fullGemList) {
 			if (gemCounts[gem.name]) {
-				gemCounts[gem.name].count += 1
+				gemCounts[gem.name].count += 1;
 			} else {
 				gemCounts[gem.name] = {
 					gem: gem,
 					count: 1,
-				}
+				};
 			}
 		}
 
 		for (const gemName of Object.keys(gemCounts)) {
-			const gemData = gemCounts[gemName]
+			const gemData = gemCounts[gemName];
 			const row = document.createElement('div');
-			row.classList.add('d-flex', 'align-items-center', 'justify-content-between')
+			row.classList.add('d-flex', 'align-items-center', 'justify-content-between');
 			row.innerHTML = `
-				<a class="gem-summary-link">
+				<a class="gem-summary-link" data-whtticon="false" target="_blank">
 					<img class="gem-icon"/>
 					<div>${gemName}</div>
 				</a>
@@ -61,10 +61,12 @@ export class GemSummary extends Component {
 
 			setItemQualityCssClass(gemLinkElem, gemData.gem.quality);
 
-			ActionId.fromItemId(gemData.gem.id).fill().then(filledId => {
-				gemIconElem.src = filledId.iconUrl;
-				filledId.setWowheadHref(gemLinkElem);
-			});
+			ActionId.fromItemId(gemData.gem.id)
+				.fill()
+				.then(filledId => {
+					gemIconElem.src = filledId.iconUrl;
+					filledId.setWowheadHref(gemLinkElem);
+				});
 
 			this.container.bodyElement.appendChild(row);
 		}
