@@ -105,14 +105,16 @@ func (wi WowheadItem) ToProto() *proto.UIItem {
 			// Do nothing, we'll get this from AtlasLoot.
 		case 3: // Sold by zone vendor? barely used
 		case 4: // Quest
-			sources = append(sources, &proto.UIItemSource{
-				Source: &proto.UIItemSource_Quest{
-					Quest: &proto.QuestSource{
-						Id:   details.EntityID,
-						Name: details.Name,
+			if details.EntityID != 0 {
+				sources = append(sources, &proto.UIItemSource{
+					Source: &proto.UIItemSource_Quest{
+						Quest: &proto.QuestSource{
+							Id:   details.EntityID,
+							Name: details.Name,
+						},
 					},
-				},
-			})
+				})
+			}
 		case 5: // Sold by
 			sources = append(sources, &proto.UIItemSource{
 				Source: &proto.UIItemSource_SoldBy{

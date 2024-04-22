@@ -1,33 +1,21 @@
-import {
-	EquipmentSpec,
-	GemColor,
-	ItemSlot,
-	ItemSpec,
-	ItemSwap,
-	PresetEncounter,
-	PresetTarget,
-	SimDatabase,
-} from '../proto/common.js';
+import { CHARACTER_LEVEL } from '../constants/mechanics.js';
+import { EquipmentSpec, GemColor, ItemSlot, ItemSpec, ItemSwap, PresetEncounter, PresetTarget, SimDatabase } from '../proto/common.js';
 import {
 	GlyphID,
 	IconData,
 	UIDatabase,
 	UIEnchant as Enchant,
+	UIFaction as Faction,
 	UIGem as Gem,
 	UIItem as Item,
 	UINPC as Npc,
 	UIZone as Zone,
 } from '../proto/ui.js';
-
-import {
-	getEligibleEnchantSlots,
-	getEligibleItemSlots,
-} from './utils.js';
-import { gemEligibleForSocket, gemMatchesSocket } from './gems.js';
+import { distinct } from '../utils.js';
 import { EquippedItem } from './equipped_item.js';
 import { Gear, ItemSwapGear } from './gear.js';
-import { CHARACTER_LEVEL } from '../constants/mechanics.js';
-import { distinct } from '../utils.js';
+import { gemEligibleForSocket, gemMatchesSocket } from './gems.js';
+import { getEligibleEnchantSlots, getEligibleItemSlots } from './utils.js';
 
 const dbUrlJson = '/wotlk/assets/database/db.json';
 const dbUrlBin = '/wotlk/assets/database/db.bin';
@@ -86,12 +74,13 @@ export class Database {
 	private readonly gems = new Map<number, Gem>();
 	private readonly npcs = new Map<number, Npc>();
 	private readonly zones = new Map<number, Zone>();
+	private readonly factions = new Map<number, Faction>();
 	private readonly presetEncounters = new Map<string, PresetEncounter>();
 	private readonly presetTargets = new Map<string, PresetTarget>();
 	private readonly itemIcons: Record<number, Promise<IconData>> = {};
 	private readonly spellIcons: Record<number, Promise<IconData>> = {};
 	private readonly glyphIds: Array<GlyphID> = [];
-	private loadedLeftovers: boolean = false;
+	private loadedLeftovers = false;
 
 	private constructor(db: UIDatabase) {
 		this.loadProto(db);
@@ -113,21 +102,35 @@ export class Database {
 
 		db.npcs.forEach(npc => this.npcs.set(npc.id, npc));
 		db.zones.forEach(zone => this.zones.set(zone.id, zone));
+		db.factions.forEach(faction => this.factions.set(faction.id, faction));
 		db.encounters.forEach(encounter => this.presetEncounters.set(encounter.path, encounter));
-		db.encounters.map(e => e.targets).flat().forEach(target => this.presetTargets.set(target.path, target));
+		db.encounters
+			.map(e => e.targets)
+			.flat()
+			.forEach(target => this.presetTargets.set(target.path, target));
 
-		db.items.forEach(item => this.itemIcons[item.id] = Promise.resolve(IconData.create({
-			id: item.id,
-			name: item.name,
-			icon: item.icon,
-		})));
-		db.gems.forEach(gem => this.itemIcons[gem.id] = Promise.resolve(IconData.create({
-			id: gem.id,
-			name: gem.name,
-			icon: gem.icon,
-		})));
-		db.itemIcons.forEach(data => this.itemIcons[data.id] = Promise.resolve(data));
-		db.spellIcons.forEach(data => this.spellIcons[data.id] = Promise.resolve(data));
+		db.items.forEach(
+			item =>
+				(this.itemIcons[item.id] = Promise.resolve(
+					IconData.create({
+						id: item.id,
+						name: item.name,
+						icon: item.icon,
+					}),
+				)),
+		);
+		db.gems.forEach(
+			gem =>
+				(this.itemIcons[gem.id] = Promise.resolve(
+					IconData.create({
+						id: gem.id,
+						name: gem.name,
+						icon: gem.icon,
+					}),
+				)),
+		);
+		db.itemIcons.forEach(data => (this.itemIcons[data.id] = Promise.resolve(data)));
+		db.spellIcons.forEach(data => (this.spellIcons[data.id] = Promise.resolve(data)));
 		db.glyphIds.forEach(id => this.glyphIds.push(id));
 	}
 
@@ -144,13 +147,11 @@ export class Database {
 	}
 
 	getGems(socketColor?: GemColor): Array<Gem> {
-		if (!socketColor) 
-			return Array.from(this.gems.values());
+		if (!socketColor) return Array.from(this.gems.values());
 
-		let ret = new Array();
-		for (let g of this.gems.values()){
-			if (gemEligibleForSocket(g, socketColor))
-				ret.push(g);
+		const ret = [];
+		for (const g of this.gems.values()) {
+			if (gemEligibleForSocket(g, socketColor)) ret.push(g);
 		}
 		return ret;
 	}
@@ -161,12 +162,14 @@ export class Database {
 	getZone(zoneId: number): Zone | null {
 		return this.zones.get(zoneId) || null;
 	}
+	getFaction(factionId: number): Zone | null {
+		return this.factions.get(factionId) || null;
+	}
 
 	getMatchingGems(socketColor: GemColor): Array<Gem> {
-		let ret = new Array();
-		for (let g of this.gems.values()){
-			if (gemMatchesSocket(g, socketColor))
-				ret.push(g);
+		const ret = [];
+		for (const g of this.gems.values()) {
+			if (gemMatchesSocket(g, socketColor)) ret.push(g);
 		}
 		return ret;
 	}
@@ -177,15 +180,15 @@ export class Database {
 
 	lookupItemSpec(itemSpec: ItemSpec): EquippedItem | null {
 		const item = this.items.get(itemSpec.id);
-		if (!item)
-			return null;
+		if (!item) return null;
 
 		let enchant: Enchant | null = null;
 		if (itemSpec.enchant) {
 			const slots = getEligibleItemSlots(item);
 			for (let i = 0; i < slots.length; i++) {
-				enchant = (this.enchantsBySlot[slots[i]] || [])
-					.find(enchant => [enchant.effectId, enchant.itemId, enchant.spellId].includes(itemSpec.enchant)) || null;
+				enchant =
+					(this.enchantsBySlot[slots[i]] || []).find(enchant => [enchant.effectId, enchant.itemId, enchant.spellId].includes(itemSpec.enchant)) ||
+					null;
 				if (enchant) {
 					break;
 				}
@@ -204,14 +207,12 @@ export class Database {
 
 		equipSpec.items.forEach(itemSpec => {
 			const item = this.lookupItemSpec(itemSpec);
-			if (!item)
-				return;
+			if (!item) return;
 
 			const itemSlots = getEligibleItemSlots(item.item);
 
 			const assignedSlot = itemSlots.find(slot => !gearMap[slot]);
-			if (assignedSlot == null)
-				throw new Error('No slots left to equip ' + Item.toJsonString(item.item));
+			if (assignedSlot == null) throw new Error('No slots left to equip ' + Item.toJsonString(item.item));
 
 			gearMap[assignedSlot] = item;
 		});
@@ -221,14 +222,16 @@ export class Database {
 
 	lookupItemSwap(itemSwap: ItemSwap): ItemSwapGear {
 		return new ItemSwapGear({
-			[ItemSlot.ItemSlotMainHand]: itemSwap.mhItem ? this.lookupItemSpec(itemSwap.mhItem): null,
-			[ItemSlot.ItemSlotOffHand]: itemSwap.ohItem ? this.lookupItemSpec(itemSwap.ohItem): null,
-			[ItemSlot.ItemSlotRanged]: itemSwap.rangedItem ? this.lookupItemSpec(itemSwap.rangedItem): null,
+			[ItemSlot.ItemSlotMainHand]: itemSwap.mhItem ? this.lookupItemSpec(itemSwap.mhItem) : null,
+			[ItemSlot.ItemSlotOffHand]: itemSwap.ohItem ? this.lookupItemSpec(itemSwap.ohItem) : null,
+			[ItemSlot.ItemSlotRanged]: itemSwap.rangedItem ? this.lookupItemSpec(itemSwap.rangedItem) : null,
 		});
 	}
 
 	enchantSpellIdToEffectId(enchantSpellId: number): number {
-		const enchant = Object.values(this.enchantsBySlot).flat().find(enchant => enchant.spellId == enchantSpellId);
+		const enchant = Object.values(this.enchantsBySlot)
+			.flat()
+			.find(enchant => enchant.spellId == enchantSpellId);
 		return enchant ? enchant.effectId : 0;
 	}
 
@@ -295,6 +298,6 @@ export class Database {
 			items: distinct(db1.items.concat(db2.items), (a, b) => a.id == b.id),
 			enchants: distinct(db1.enchants.concat(db2.enchants), (a, b) => a.effectId == b.effectId),
 			gems: distinct(db1.gems.concat(db2.gems), (a, b) => a.id == b.id),
-		})
+		});
 	}
 }

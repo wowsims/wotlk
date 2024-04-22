@@ -9,6 +9,7 @@ import "common.proto";
 import "paladin.proto";
 
 // Holds all WoW data for the UI.
+// NextIndex: 13
 message UIDatabase {
 	repeated UIItem items = 1;
 	repeated UIEnchant enchants = 2;
@@ -17,6 +18,7 @@ message UIDatabase {
 
 	repeated UIZone zones = 8;
 	repeated UINPC npcs = 9;
+	repeated UIFaction factions = 12;
 
 	// Entities for which we just need a name/icon.
 	repeated IconData item_icons = 4;
@@ -34,6 +36,11 @@ message UINPC {
 	int32 id = 1;
 	string name = 2;
 	int32 zone_id = 3;
+}
+message UIFaction {
+	int32 id = 1;
+	string name = 2;
+	Expansion expansion = 3;
 }
 
 // Contains all information about an Item needed by the UI.
@@ -116,12 +123,6 @@ enum RepLevel {
 	RepLevelExalted 	= 8;
 }
 
-// TODO: Wotlk Rep Factions
-// Use the faction ID for the field index
-enum RepFaction {
-	RepFactionUnknown = 0;
-}
-
 message UIItemSource {
 	oneof source {
 		CraftedSource crafted = 1;
@@ -152,9 +153,9 @@ message SoldBySource {
 	int32 zone_id = 3;
 }
 message RepSource {
-	RepFaction rep_faction_id = 1;
+	int32 rep_faction_id = 1;
 	RepLevel rep_level = 2;
-	Faction faction_id = 3;
+	Faction player_faction = 3;
 }
 
 message UIEnchant {
@@ -208,10 +209,12 @@ message GlyphID {
 	int32 spell_id = 2;
 }
 
+// NextIndex: 12
 enum SourceFilterOption {
 	SourceUnknown = 0;
 	SourceCrafting = 1;
 	SourceQuest = 2;
+	SourceReputation = 11;
 	SourceDungeon = 3;
 	SourceDungeonH = 4;
 	SourceDungeonTRA = 9;

@@ -1,6 +1,6 @@
 import { ResourceType } from '../proto/api.js';
 import { ArmorType, Class, ItemSlot, Profession, PseudoStat, Race, RangedWeaponType, Stat, WeaponType } from '../proto/common.js';
-import { DungeonDifficulty, RaidFilterOption, RepFaction, RepLevel, SourceFilterOption } from '../proto/ui.js';
+import { DungeonDifficulty, RaidFilterOption, RepLevel, SourceFilterOption } from '../proto/ui.js';
 
 export const armorTypeNames: Map<ArmorType, string> = new Map([
 	[ArmorType.ArmorTypeUnknown, 'Unknown'],
@@ -283,6 +283,7 @@ export const sourceNames: Map<SourceFilterOption, string> = new Map([
 	[SourceFilterOption.SourceUnknown, 'Unknown'],
 	[SourceFilterOption.SourceCrafting, 'Crafting'],
 	[SourceFilterOption.SourceQuest, 'Quest'],
+	[SourceFilterOption.SourceReputation, 'Reputation'],
 	[SourceFilterOption.SourceDungeon, 'Dungeon'],
 	[SourceFilterOption.SourceDungeonH, 'Dungeon (H)'],
 	[SourceFilterOption.SourceDungeonTRA, 'Dungeon (TRA)'],
@@ -329,8 +330,4 @@ export const REP_LEVEL_NAMES: Record<RepLevel, string> = {
 	[RepLevel.RepLevelHonored]: 'Honored',
 	[RepLevel.RepLevelRevered]: 'Revered',
 	[RepLevel.RepLevelExalted]: 'Exalted',
-};
-
-export const REP_FACTION_NAMES: Record<RepFaction, string> = {
-	[RepFaction.RepFactionUnknown]: 'Unknown',
 };

@@ -42,7 +42,7 @@ func main() {
 	inputsDir := fmt.Sprintf("%s/db_inputs", *outDir)
 
 	if *genAsset == "atlasloot" {
-		db := database.ReadAtlasLootData()
+		db := database.ReadAtlasLootData(inputsDir)
 		db.WriteJson(fmt.Sprintf("%s/atlasloot_db.json", inputsDir))
 		return
 	} else if *genAsset == "wowhead-items" {
@@ -149,6 +149,7 @@ func main() {
 	atlasDBProto := atlaslootDB.ToUIProto()
 	db.MergeZones(atlasDBProto.Zones)
 	db.MergeNpcs(atlasDBProto.Npcs)
+	db.MergeFactions(atlasDBProto.Factions)
 
 	db.WriteBinaryAndJson(fmt.Sprintf("%s/db.bin", dbDir), fmt.Sprintf("%s/db.json", dbDir))
 }

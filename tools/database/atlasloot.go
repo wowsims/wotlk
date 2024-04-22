@@ -1,8 +1,11 @@
 package database
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"log"
+	"os"
 	"regexp"
 	"strconv"
 	"strings"
@@ -12,7 +15,7 @@ import (
 	"github.com/wowsims/wotlk/tools"
 )
 
-func ReadAtlasLootData() *WowDatabase {
+func ReadAtlasLootData(inputsDir string) *WowDatabase {
 	db := NewWowDatabase()
 
 	// Read these in reverse order, because some items are listed in multiple expansions
@@ -25,7 +28,10 @@ func ReadAtlasLootData() *WowDatabase {
 	readAtlasLootDungeonData(db, proto.Expansion_ExpansionTbc, "https://raw.githubusercontent.com/Hoizame/AtlasLootClassic/master/AtlasLootClassic_DungeonsAndRaids/data-tbc.lua")
 	readAtlasLootDungeonData(db, proto.Expansion_ExpansionWotlk, "https://raw.githubusercontent.com/Hoizame/AtlasLootClassic/master/AtlasLootClassic_DungeonsAndRaids/data-wrath.lua")
 
+	readAtlasLootFactionData(db, proto.Expansion_ExpansionWotlk, "https://raw.githubusercontent.com/Hoizame/AtlasLootClassic/master/AtlasLootClassic_Factions/data-wrath.lua")
+
 	readZoneData(db)
+	readFactionData(db, inputsDir)
 
 	return db
 }
@@ -177,6 +183,65 @@ func readAtlasLootDungeonData(db *WowDatabase, expansion proto.Expansion, srcUrl
 	}
 }
 
+func readAtlasLootFactionData(db *WowDatabase, expansion proto.Expansion, srcUrl string) {
+	srcTxt, err := tools.ReadWeb(srcUrl)
+	if err != nil {
+		log.Fatalf("Error reading atlasloot file %s", err)
+	}
+
+	// Convert newline to '@@@' so we can do regexes on the whole file as 1 line.
+	regex := regexp.MustCompile(`\r?\n`)
+	srcTxt = regex.ReplaceAllString(srcTxt, "@@@")
+	srcTxt = strings.ReplaceAll(srcTxt, "Updated in SoD", "")
+
+	factionpattern := regexp.MustCompile(`data\["([^"]+)"] = {.*?\sFactionID = (\d+),.*?items = {(.*?)@@@}@@@`)
+	repLevelPattern := regexp.MustCompile(`{ -- (Friendly|Honored|Revered|Exalted)\s?[\d]?@@@\s+name =(.*?@@@\s+},?@@@\s+},?)`)
+	itemsPattern := regexp.MustCompile(`@@@\s+{(.*?)},`)
+
+	for _, factionMatch := range factionpattern.FindAllStringSubmatch(srcTxt, -1) {
+		factionID, err := strconv.Atoi(factionMatch[2])
+		if err != nil {
+			fmt.Printf("Error reading faction %s\n", factionMatch[1])
+			return
+		}
+		fmt.Printf("Faction: %s\n", factionMatch[1])
+
+		db.MergeFaction(&proto.UIFaction{
+			Id:        int32(factionID),
+			Expansion: expansion,
+		})
+
+		for _, repLevelMatch := range repLevelPattern.FindAllStringSubmatch(factionMatch[3], -1) {
+			repLevel := repLevelMatch[1]
+			fmt.Printf("Reputation: %s\n", repLevel)
+
+			for _, itemMatch := range itemsPattern.FindAllStringSubmatch(repLevelMatch[2], -1) {
+				itemParams := core.MapSlice(strings.Split(itemMatch[1], ","), strings.TrimSpace)
+
+				idStr := itemParams[1]
+				itemID, _ := strconv.Atoi(idStr)
+
+				if itemID != 0 {
+					// fmt.Printf("Item: %d\n", itemID)
+					repSource := &proto.RepSource{
+						RepFactionId: int32(factionID),
+						RepLevel:     AtlasLootRepLevels[repLevel],
+					}
+
+					item := &proto.UIItem{Id: int32(itemID)}
+					item.Sources = append(item.Sources, &proto.UIItemSource{
+						Source: &proto.UIItemSource_Rep{
+							Rep: repSource,
+						},
+					})
+
+					db.MergeItem(item)
+				}
+			}
+		}
+	}
+}
+
 func readZoneData(db *WowDatabase) {
 	zoneIDs := make([]int32, 0, len(db.Zones))
 	for zoneID := range db.Zones {
@@ -203,6 +268,37 @@ func readZoneData(db *WowDatabase) {
 	}
 }
 
+type FactionConfig struct {
+	Id   int32  `json:"id"`
+	Name string `json:"name"`
+}
+
+func readFactionData(db *WowDatabase, inputsDir string) {
+	data, err := os.ReadFile(fmt.Sprintf("%s/factions.json", inputsDir))
+	if err != nil {
+		log.Fatalf("failed to load talent json file: %s", err)
+	}
+
+	var buf bytes.Buffer
+	err = json.Compact(&buf, []byte(data))
+	if err != nil {
+		log.Fatalf("failed to compact json: %s", err)
+	}
+
+	var jsonFactions []FactionConfig
+
+	err = json.Unmarshal(buf.Bytes(), &jsonFactions)
+	if err != nil {
+		log.Fatalf("failed to parse talent to json %s", err)
+	}
+
+	for _, factionConfig := range jsonFactions {
+		if db.Factions[factionConfig.Id] != nil {
+			db.Factions[factionConfig.Id].Name = factionConfig.Name
+		}
+	}
+}
+
 var AtlasLootProfessionIDs = map[int]proto.Profession{
 	//4: proto.Profession_FirstAid,
 	5: proto.Profession_Blacksmithing,
@@ -225,4 +321,15 @@ var AtlasLootDifficulties = map[string]proto.DungeonDifficulty{
 	"RAID10H_DIFF": proto.DungeonDifficulty_DifficultyRaid10H,
 	"RAID25_DIFF":  proto.DungeonDifficulty_DifficultyRaid25,
 	"RAID25H_DIFF": proto.DungeonDifficulty_DifficultyRaid25H,
+}
+
+var AtlasLootRepLevels = map[string]proto.RepLevel{
+	"Hated":      proto.RepLevel_RepLevelHated,
+	"Hostile":    proto.RepLevel_RepLevelHostile,
+	"Unfriendly": proto.RepLevel_RepLevelUnfriendly,
+	"Neutral":    proto.RepLevel_RepLevelNeutral,
+	"Friendly":   proto.RepLevel_RepLevelFriendly,
+	"Honored":    proto.RepLevel_RepLevelHonored,
+	"Revered":    proto.RepLevel_RepLevelRevered,
+	"Exalted":    proto.RepLevel_RepLevelExalted,
 }
