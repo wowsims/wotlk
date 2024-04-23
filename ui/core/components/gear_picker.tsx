@@ -1237,16 +1237,20 @@ export class ItemList<T> {
 			const src = source.source.drop;
 			const zone = sim.db.getZone(src.zoneId);
 			const npc = sim.db.getNpc(src.npcId);
+
 			if (!zone) {
-				return makeAnchor(`${ActionId.makeItemUrl(item.id)}#dropped-by`, 'World Drop');
+				return makeAnchor(`${ActionId.makeItemUrl(item.id)}#dropped-by`, 'Drop');
 			}
 
 			const category = src.category ? ` - ${src.category}` : '';
+			const difficulty = difficultyNames.get(src.difficulty);
+
 			if (npc) {
 				return makeAnchor(
 					ActionId.makeNpcUrl(npc.id),
 					<span>
-						{zone.name} ({difficultyNames.get(src.difficulty) ?? 'Unknown'})
+						{zone.name}
+						{difficulty && `(${difficulty})`}
 						<br />
 						{npc.name + category}
 					</span>,
@@ -1307,14 +1311,19 @@ export class ItemList<T> {
 			);
 		} else if (source.source.oneofKind == 'soldBy') {
 			const src = source.source.soldBy;
-			return makeAnchor(
-				ActionId.makeNpcUrl(src.npcId),
-				<span>
-					Sold by
-					<br />
-					{src.npcName}
-				</span>,
-			);
+
+			if (src.npcName) {
+				return makeAnchor(
+					ActionId.makeNpcUrl(src.npcId),
+					<span>
+						Vendor
+						<br />
+						{src.npcName}
+					</span>,
+				);
+			} else {
+				return makeAnchor(`${ActionId.makeItemUrl(item.id)}#sold-by`, <span>Vendor</span>);
+			}
 		}
 		return <></>;
 	}

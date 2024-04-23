@@ -90,22 +90,30 @@ type WowheadItemSource struct {
 
 func (wi WowheadItem) ToProto() *proto.UIItem {
 	var sources []*proto.UIItemSource
-	for i, details := range wi.SourceDetails {
-		switch wi.SourceTypes[i] {
-		case 1: // Crafted
-			// We'll get this from AtlasLoot instead because it can also tell us the profession.
-			//sources = append(sources, &proto.UIItemSource{
-			//	Source: &proto.UIItemSource_Crafted{
-			//		Crafted: &proto.CraftedSource{
-			//			SpellId: details.EntityID,
-			//		},
-			//	},
-			//})
-		case 2: // Dropped by
-			// Do nothing, we'll get this from AtlasLoot.
-		case 3: // Sold by zone vendor? barely used
-		case 4: // Quest
-			if details.EntityID != 0 {
+	if wi.SourceDetails != nil {
+		for i, details := range wi.SourceDetails {
+			switch wi.SourceTypes[i] {
+			case 1: // Crafted
+				// We'll get this from AtlasLoot instead because it can also tell us the profession.
+				//sources = append(sources, &proto.UIItemSource{
+				//	Source: &proto.UIItemSource_Crafted{
+				//		Crafted: &proto.CraftedSource{
+				//			SpellId: details.EntityID,
+				//		},
+				//	},
+				//})
+			case 2: // Dropped by
+				// Do nothicng, we'll get this from AtlasLoot.
+				sources = append(sources, &proto.UIItemSource{
+					Source: &proto.UIItemSource_Drop{
+						Drop: &proto.DropSource{
+							NpcId:  details.EntityID,
+							ZoneId: details.ZoneID,
+						},
+					},
+				})
+			case 3: // Sold by zone vendor? barely used
+			case 4: // Quest
 				sources = append(sources, &proto.UIItemSource{
 					Source: &proto.UIItemSource_Quest{
 						Quest: &proto.QuestSource{
@@ -114,17 +122,51 @@ func (wi WowheadItem) ToProto() *proto.UIItem {
 						},
 					},
 				})
-			}
-		case 5: // Sold by
-			sources = append(sources, &proto.UIItemSource{
-				Source: &proto.UIItemSource_SoldBy{
-					SoldBy: &proto.SoldBySource{
-						NpcId:   details.EntityID,
-						NpcName: details.Name,
-						ZoneId:  details.ZoneID,
+			case 5: // Sold by
+				sources = append(sources, &proto.UIItemSource{
+					Source: &proto.UIItemSource_SoldBy{
+						SoldBy: &proto.SoldBySource{
+							NpcId:   details.EntityID,
+							NpcName: details.Name,
+							ZoneId:  details.ZoneID,
+						},
 					},
-				},
-			})
+				})
+			}
+		}
+	} else {
+		// Fallback to generic source information so that we can at least provide some information
+		for _, sourceType := range wi.SourceTypes {
+			switch sourceType {
+			case 1: // Crafted
+				// We'll get this from AtlasLoot instead because it can also tell us the profession.
+				//sources = append(sources, &proto.UIItemSource{
+				//	Source: &proto.UIItemSource_Crafted{
+				//		Crafted: &proto.CraftedSource{
+				//			SpellId: details.EntityID,
+				//		},
+				//	},
+				//})
+			case 2: // Dropped by
+				sources = append(sources, &proto.UIItemSource{
+					Source: &proto.UIItemSource_Drop{
+						Drop: &proto.DropSource{},
+					},
+				})
+			case 3: // Sold by zone vendor? barely used
+			case 4: // Quest
+				sources = append(sources, &proto.UIItemSource{
+					Source: &proto.UIItemSource_Quest{
+						Quest: &proto.QuestSource{},
+					},
+				})
+			case 5: // Sold by
+				sources = append(sources, &proto.UIItemSource{
+					Source: &proto.UIItemSource_SoldBy{
+						SoldBy: &proto.SoldBySource{},
+					},
+				})
+			}
 		}
 	}
 

@@ -3,7 +3,7 @@
 @import './filters_menu';
 
 $source-cell-width: 16rem;
-$ep-cell-width: 4rem;
+$ep-cell-width: 6rem;
 $favorite-cell-width: 2rem;
 
 .gear-picker-root {
@@ -232,7 +232,7 @@ $favorite-cell-width: 2rem;
 .selector-modal-list {
 	width: 100%;
 	max-height: 65vh;
-	overflow-y: auto;
+	overflow-y: scroll;
 	overflow-x: hidden;
 	padding: 0;
 	margin-bottom: 0;
@@ -302,6 +302,7 @@ $favorite-cell-width: 2rem;
 }
 
 .selector-modal-list-item-favorite {
+	width: $favorite-cell-width;
 	margin-left: map-get($spacers, 3);
 	color: $brand;
 }

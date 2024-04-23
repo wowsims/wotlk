@@ -309,7 +309,6 @@ export const raidNames: Map<RaidFilterOption, string> = new Map([
 ]);
 
 export const difficultyNames: Map<DungeonDifficulty, string> = new Map([
-	[DungeonDifficulty.DifficultyUnknown, 'Unknown'],
 	[DungeonDifficulty.DifficultyNormal, 'N'],
 	[DungeonDifficulty.DifficultyHeroic, 'H'],
 	[DungeonDifficulty.DifficultyTitanRuneAlpha, 'TRA'],
