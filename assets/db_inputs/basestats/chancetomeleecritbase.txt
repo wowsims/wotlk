@@ -1,0 +1,2 @@
+X	Warrior	Paladin	Hunter	Rogue	Priest	Death Knight	Shaman	Mage	Warlock	Monk	Druid
+1	0.031891	0.032685	-0.015320	-0.002950	0.031765	0.031891	0.029220	0.034540	0.026220	0.200000	0.074755
