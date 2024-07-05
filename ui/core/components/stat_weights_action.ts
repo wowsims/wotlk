@@ -1,28 +1,23 @@
-import { StatWeightsResult, StatWeightValues, ProgressMetrics } from '../proto/api.js';
-import { ItemSlot } from '../proto/common.js';
-import { GemColor } from '../proto/common.js';
-import { Profession } from '../proto/common.js';
-import { Stat, PseudoStat, UnitStats } from '../proto/common.js';
-import { Stats, UnitStat } from '../proto_utils/stats.js';
-import { Gear } from '../proto_utils/gear.js';
-import { getClassStatName } from '../proto_utils/names.js';
-import { IndividualSimUI } from '../individual_sim_ui.js';
-import { EventID, TypedEvent } from '../typed_event.js';
-import { Player } from '../player.js';
-import { formatDeltaTextElem, stDevToConf90 } from '../utils.js';
+import { Tooltip } from 'bootstrap';
+
 import { BooleanPicker } from '../components/boolean_picker.js';
 import { NumberPicker } from '../components/number_picker.js';
-import { combinationsWithDups, permutations, sum } from '../utils.js';
+import { IndividualSimUI } from '../individual_sim_ui.js';
+import { Player } from '../player.js';
+import { ProgressMetrics,StatWeightsResult, StatWeightValues } from '../proto/api.js';
+import { GemColor , ItemSlot , Profession , PseudoStat, Stat, UnitStats } from '../proto/common.js';
 import { UIGem as Gem } from '../proto/ui.js';
-
+import { Gear } from '../proto_utils/gear.js';
 import * as Gems from '../proto_utils/gems.js';
-
+import { getClassStatName } from '../proto_utils/names.js';
+import { Stats, UnitStat } from '../proto_utils/stats.js';
+import { EventID, TypedEvent } from '../typed_event.js';
+import { combinationsWithDups, formatDeltaTextElem, permutations, stDevToConf90 , sum } from '../utils.js';
 import { BaseModal } from './base_modal.js';
-import { Tooltip } from 'bootstrap';
 import { ResultsViewer } from './results_viewer.js';
 
 export function addStatWeightsAction(simUI: IndividualSimUI<any>, epStats: Array<Stat>, epPseudoStats: Array<PseudoStat> | undefined, epReferenceStat: Stat) {
-	simUI.addAction('Stat Weights', 'ep-weights-action', () => {
+	simUI.addAction('属性权重', 'ep-weights-action', () => {
 		new EpWeightsMenu(simUI, epStats, epPseudoStats || [], epReferenceStat);
 	});
 }
@@ -60,7 +55,7 @@ class EpWeightsMenu extends BaseModal {
 	private epStats: Array<Stat>;
 	private epPseudoStats: Array<PseudoStat>;
 	private epReferenceStat: Stat;
-	private showAllStats: boolean = false;
+	private showAllStats = false;
 
 	constructor(simUI: IndividualSimUI<any>, epStats: Array<Stat>, epPseudoStats: Array<PseudoStat>, epReferenceStat: Stat) {
 		super(simUI.rootElem, 'ep-weights-menu', getModalConfig(simUI));
@@ -264,7 +259,7 @@ class EpWeightsMenu extends BaseModal {
 		};
 
 		const getStatFromName = (value: string) => {
-			for (let stat of this.epStats) {
+			for (const stat of this.epStats) {
 				if (getNameFromStat(stat) == value) {
 					return stat;
 				}
@@ -281,7 +276,7 @@ class EpWeightsMenu extends BaseModal {
 
 		const epRefSelects = this.rootElem.querySelectorAll('.ref-stat-select') as NodeListOf<HTMLSelectElement>;
 		epRefSelects.forEach((epSelect: HTMLSelectElement, idx: number) => {
-			this.epStats.forEach((stat) => {
+			this.epStats.forEach(stat => {
 				epSelect.options[epSelect.options.length] = new Option(getNameFromStat(stat));
 			});
 			if (epSelect.classList.contains('damage-metrics')) {
@@ -507,7 +502,7 @@ class EpWeightsMenu extends BaseModal {
 	}
 
 	private makeTableRowCells(stat: UnitStat, statWeights: StatWeightValues|undefined, className: string, epTotal: number, epRatio: number): string {
-		var weightCell, epCell;
+		let weightCell, epCell;
 		if (statWeights) {
 			const weightAvg = stat.getProtoValue(statWeights.weights!);
 			const weightStdev = stat.getProtoValue(statWeights.weightsStdev!)
@@ -521,7 +516,7 @@ class EpWeightsMenu extends BaseModal {
 			epCell = weightCell
 		}
 
-		let template = document.createElement('template');
+		const template = document.createElement('template');
 		template.innerHTML = `
 			<td class="stdev-cell ${className} type-weight">
 				${weightCell}
@@ -535,7 +530,7 @@ class EpWeightsMenu extends BaseModal {
 
 		if (epRatio == 0) {
 			const cells = template.content.querySelectorAll('.stdev-cell')
-			cells.forEach((cell) => cell.classList.add('unused-ep'));
+			cells.forEach(cell => cell.classList.add('unused-ep'));
 			return template.innerHTML;
 		}
 
@@ -564,7 +559,7 @@ class EpWeightsMenu extends BaseModal {
 	}
 
 	private calculateEp(weights: StatWeightsResult) {
-		var result = StatWeightsResult.clone(weights);
+		const result = StatWeightsResult.clone(weights);
 		const normaliseValue = (refStat: Stat, values: StatWeightValues) => {
 			const refUnitStat = UnitStat.fromStat(refStat);
 			const refWeight = refUnitStat.getProtoValue(values.weights!);
@@ -704,7 +699,7 @@ class EpWeightsMenu extends BaseModal {
 		});
 		gear = new Gear(items);
 
-		const allSockets: Array<{ itemSlot: ItemSlot, socketIdx: number }> = Object.keys(items).map((itemSlotStr) => {
+		const allSockets: Array<{ itemSlot: ItemSlot, socketIdx: number }> = Object.keys(items).map(itemSlotStr => {
 			const itemSlot = parseInt(itemSlotStr) as ItemSlot;
 			const item = items[itemSlot];
 			if (!item) {

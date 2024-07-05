@@ -158,7 +158,7 @@ export abstract class SimUI extends Component {
 			'.sim-sidebar-actions',
 		) as HTMLElement;
 		this.iterationsPicker = new NumberPicker(this.simActionsContainer, this.sim, {
-			label: 'Iterations',
+			label: '模拟战斗次数',
 			extraCssClasses: ['iterations-picker', 'within-raid-sim-hide'],
 			changedEvent: (sim: Sim) => sim.iterationsChangeEmitter,
 			getValue: (sim: Sim) => sim.getIterations(),
