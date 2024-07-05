@@ -263,7 +263,7 @@ export class SimHeader extends Component {
 								attributes={{ role: 'button', 'aria-expanded': 'false' }}
 								dataset={{ bsToggle: 'dropdown', bsDisplay: 'dynamic' }}>
 								<i className="fa fa-download"></i>
-								{' Import '}
+								{' 导入 '}
 							</a>
 							<ul className="dropdown-menu"></ul>
 						</div>
