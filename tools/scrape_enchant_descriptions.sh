@@ -6,7 +6,7 @@
 set -e
 
 spell_url_from_item_id() {
-	safe_curl "https://www.wowhead.com/wotlk/item=$1" |
+	safe_curl "https://www.wowhead.com/wotlk/cn/item=$1" |
 		grep -o '\/wotlk\/spell=[0-9]\+' |
 		head -n 1
 }
@@ -40,7 +40,7 @@ grep '^\s*{' |
 		id=$(echo "$line" | id_from_entry)
 		effect=""
 		if echo "$line" | grep 'IsSpellID: true' >/dev/null; then
-			effect=$(spell_effect_from_url "/wotlk/spell=$id")
+			effect=$(spell_effect_from_url "/wotlk/cn/spell=$id")
 		else
 			spell_url_suffix=$(spell_url_from_item_id "$id")
 			effect=$(spell_effect_from_url "$spell_url_suffix")

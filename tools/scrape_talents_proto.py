@@ -18,7 +18,7 @@ output_file_path = sys.argv[2]
 driver = webdriver.Chrome(ChromeDriverManager().install())
 driver.implicitly_wait(2)
 
-driver.get('https://wowhead.com/wotlk/talent-calc/' + class_name)
+driver.get('https://wowhead.com/wotlk/cn/talent-calc/' + class_name)
 trees = driver.find_elements(By.CLASS_NAME, "ctc-tree")
 
 with open(output_file_path, "w") as outfile:
