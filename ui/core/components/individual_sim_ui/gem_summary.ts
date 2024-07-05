@@ -23,7 +23,7 @@ export class GemSummary extends Component {
 		this.player = player;
 
 		this.container = new ContentBlock(this.rootElem, 'gem-summary-container', {
-			header: { title: 'Gem Summary' },
+			header: { title: '宝石列表' },
 		});
 		player.gearChangeEmitter.on(() => this.updateTable());
 	}

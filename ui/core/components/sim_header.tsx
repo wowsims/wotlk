@@ -274,7 +274,7 @@ export class SimHeader extends Component {
 								attributes={{ role: 'button', 'aria-expanded': 'false' }}
 								dataset={{ bsToggle: 'dropdown', bsDisplay: 'dynamic' }}>
 								<i className="fa fa-right-from-bracket"></i>
-								{' Export '}
+								{' 导出 '}
 							</a>
 							<ul className="dropdown-menu"></ul>
 						</div>

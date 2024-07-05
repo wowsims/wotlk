@@ -1,36 +1,31 @@
+import { getBrowserLanguageCode, setLanguageCode } from './constants/lang.js';
+import * as OtherConstants from './constants/other.js';
+import { Encounter } from './encounter.js';
+import { Player, UnitMetadata } from './player.js';
+import { BulkSettings, BulkSimRequest, BulkSimResult, ComputeStatsRequest , Raid as RaidProto , RaidSimRequest, RaidSimResult , SimOptions , StatWeightsRequest, StatWeightsResult } from './proto/api.js';
 import {
 	ArmorType,
 	Faction,
 	Profession,
-	SimDatabase,
-	Stat, PseudoStat,
+PseudoStat,
 	RangedWeaponType,
-	WeaponType,
-	UnitReference,
+	SimDatabase,
+	Stat, 	UnitReference,
 	UnitReference_Type as UnitType,
+	WeaponType,
 } from './proto/common.js';
-import { BulkSimRequest, BulkSimResult, BulkSettings, Raid as RaidProto } from './proto/api.js';
-import { ComputeStatsRequest } from './proto/api.js';
-import { RaidSimRequest, RaidSimResult } from './proto/api.js';
-import { SimOptions } from './proto/api.js';
-import { StatWeightsRequest, StatWeightsResult } from './proto/api.js';
 import {
 	DatabaseFilters,
+	RaidFilterOption,
 	SimSettings as SimSettingsProto,
 	SourceFilterOption,
-	RaidFilterOption,
 } from './proto/ui.js';
 import { Database } from './proto_utils/database.js';
 import { SimResult } from './proto_utils/sim_result.js';
-import { getBrowserLanguageCode, setLanguageCode } from './constants/lang.js';
-import { Encounter } from './encounter.js';
-import { Player, UnitMetadata } from './player.js';
 import { Raid } from './raid.js';
 import { EventID, TypedEvent } from './typed_event.js';
 import { getEnumValues } from './utils.js';
 import { WorkerPool } from './worker_pool.js';
-
-import * as OtherConstants from './constants/other.js';
 
 export type RaidSimData = {
 	request: RaidSimRequest,
@@ -57,17 +52,17 @@ export enum SimSettingCategories {
 export class Sim {
 	private readonly workerPool: WorkerPool;
 
-	private iterations: number = 3000;
+	private iterations = 3000;
 	private phase: number = OtherConstants.CURRENT_PHASE;
 	private faction: Faction = Faction.Alliance;
-	private fixedRngSeed: number = 0;
+	private fixedRngSeed = 0;
 	private filters: DatabaseFilters = Sim.defaultFilters();
-	private showDamageMetrics: boolean = true;
-	private showThreatMetrics: boolean = false;
-	private showHealingMetrics: boolean = false;
-	private showExperimental: boolean = false;
-	private showEPValues: boolean = false;
-	private language: string = '';
+	private showDamageMetrics = true;
+	private showThreatMetrics = false;
+	private showHealingMetrics = false;
+	private showExperimental = false;
+	private showEPValues = false;
+	private language = '';
 
 	readonly raid: Raid;
 	readonly encounter: Encounter;
@@ -106,7 +101,7 @@ export class Sim {
 	readonly bulkSimResultEmitter = new TypedEvent<BulkSimResult>();
 
 	private readonly _initPromise: Promise<any>;
-	private lastUsedRngSeed: number = 0;
+	private lastUsedRngSeed = 0;
 
 	// These callbacks are needed so we can apply BuffBot modifications automatically before sending requests.
 	private modifyRaidProto: ((raidProto: RaidProto) => void) = () => { };
@@ -237,7 +232,7 @@ export class Sim {
 
 		this.bulkSimStartEmitter.emit(TypedEvent.nextEventID(), request);
 
-		var result = await this.workerPool.bulkSimAsync(request, onProgress);
+		const result = await this.workerPool.bulkSimAsync(request, onProgress);
 		if (result.errorResult != "") {
 			throw new SimError(result.errorResult);
 		}
@@ -257,7 +252,7 @@ export class Sim {
 
 		const request = this.makeRaidSimRequest(false);
 
-		var result = await this.workerPool.raidSimAsync(request, onProgress);
+		const result = await this.workerPool.raidSimAsync(request, onProgress);
 		if (result.errorResult != "") {
 			throw new SimError(result.errorResult);
 		}
@@ -324,9 +319,9 @@ export class Sim {
 					}))
 				.flat()
 				.filter(p => p != null) as Array<Promise<boolean>>;
-			
+
 			const targetUpdatePromise = this.encounter.targetsMetadata.update(result.encounterStats!.targets.map(t => t.metadata!));
-			
+
 			const anyUpdates = await Promise.all(playerUpdatePromises.concat([targetUpdatePromise]));
 			if (anyUpdates.some(v => v)) {
 				this.unitMetadataEmitter.emit(eventID);
@@ -367,7 +362,7 @@ export class Sim {
 				pseudoStatsToWeigh: epPseudoStats,
 				epReferenceStat: epReferenceStat,
 			});
-			var result = await this.workerPool.statWeightsAsync(request, onProgress);
+			const result = await this.workerPool.statWeightsAsync(request, onProgress);
 			return result;
 		}
 	}
@@ -607,7 +602,7 @@ export class Sim {
 			showDamageMetrics: !isHealingSim,
 			showThreatMetrics: isTankSim,
 			showHealingMetrics: isHealingSim,
-			language: this.getLanguage(), // Don't change language.
+			language: 'cn', // Don't change language.
 			filters: Sim.defaultFilters(),
 			showEpValues: false,
 		}));

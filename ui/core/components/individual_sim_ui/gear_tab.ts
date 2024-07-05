@@ -1,11 +1,9 @@
 import { IndividualSimUI } from "../../individual_sim_ui";
 import { Player } from "../../player";
-import { EventID, TypedEvent } from "../../typed_event";
-
 import { EquipmentSpec, Spec, UnitStats } from "../../proto/common";
 import { SavedGearSet } from "../../proto/ui";
 import { Stats } from "../../proto_utils/stats";
-
+import { EventID, TypedEvent } from "../../typed_event";
 import { GearPicker } from "../gear_picker";
 import { SavedDataManager } from "../saved_data_manager";
 import { SimTab } from "../sim_tab";
@@ -18,7 +16,7 @@ export class GearTab extends SimTab {
 	readonly rightPanel: HTMLElement;
 
 	constructor(parentElem: HTMLElement, simUI: IndividualSimUI<Spec>) {
-		super(parentElem, simUI, { identifier: 'gear-tab', title: 'Gear' });
+		super(parentElem, simUI, { identifier: 'gear-tab', title: '配装' });
 		this.simUI = simUI;
 
 		this.leftPanel = document.createElement('div');

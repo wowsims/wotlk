@@ -34,7 +34,7 @@ export class SettingsTab extends SimTab {
 	readonly column4?: HTMLElement;
 
 	constructor(parentElem: HTMLElement, simUI: IndividualSimUI<Spec>) {
-		super(parentElem, simUI, { identifier: 'settings-tab', title: 'Settings' });
+		super(parentElem, simUI, { identifier: 'settings-tab', title: '战斗设置' });
 		this.simUI = simUI;
 
 		this.leftPanel = document.createElement('div');

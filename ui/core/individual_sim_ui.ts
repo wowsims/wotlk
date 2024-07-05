@@ -409,7 +409,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 	private addDetailedResultsTab() {
 		this.addTab(
-			'Results',
+			'模拟分析',
 			'detailed-results-tab',
 			`
 			<div class="detailed-results">
