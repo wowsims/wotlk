@@ -36,7 +36,7 @@ func NewWowheadSpellTooltipManager(filePath string) *WowheadTooltipManager {
 	return &WowheadTooltipManager{
 		TooltipManager{
 			FilePath:   filePath,
-			UrlPattern: "https://nether.wowhead.com/wotlk/tooltip/spell/%s",
+			UrlPattern: "https://nether.wowhead.com/wotlk/cn/tooltip/spell/%s",
 		},
 	}
 }
