@@ -47,7 +47,7 @@ export class GearTab extends SimTab {
 
 	private buildSavedGearsetPicker() {
 		const savedGearManager = new SavedDataManager<Player<any>, SavedGearSet>(this.rightPanel, this.simUI.player, {
-			header: { title: "Gear Sets" },
+			header: { title: "已保存配装" },
 			label: 'Gear Set',
 			storageKey: this.simUI.getSavedGearStorageKey(),
 			getData: (player: Player<any>) => {

@@ -27,7 +27,7 @@ func NewWowheadItemTooltipManager(filePath string) *WowheadTooltipManager {
 	return &WowheadTooltipManager{
 		TooltipManager{
 			FilePath:   filePath,
-			UrlPattern: "https://nether.wowhead.com/wotlk/cn/tooltip/item/%s?lvl=80",
+			UrlPattern: "https://nether.wowhead.com/wotlk/tooltip/item/%s?lvl=80",
 		},
 	}
 }

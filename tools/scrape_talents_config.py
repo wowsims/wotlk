@@ -30,7 +30,7 @@ def _get_spell_id_from_link(link):
 
 
 def get_other_spell_ranks(spell_id: int) -> List[int]:
-	driver.get(f"https://wowhead.com/wotlk/cn/spell={spell_id}#see-also-ability")
+	driver.get(f"https://wowhead.com/wotlk/spell={spell_id}#see-also-ability")
 
 	see_also = driver.find_element(By.ID, "tab-see-also-ability")  # ordered by rank
 	rows = see_also.find_elements(By.CLASS_NAME, "listview-row")
@@ -43,7 +43,7 @@ def rowcol(v):
 
 to_export = []
 
-driver.get('https://wowhead.com/wotlk/cn/talent-calc/' + className)
+driver.get('https://wowhead.com/wotlk/talent-calc/' + className)
 trees = driver.find_elements(By.CLASS_NAME, "ctc-tree")
 for tree in trees:
 	_working_talents = {}
