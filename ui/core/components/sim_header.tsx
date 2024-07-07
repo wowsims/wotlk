@@ -34,10 +34,10 @@ export class SimHeader extends Component {
 
 		this.knownIssuesContent = (<ul className="text-start ps-3 mb-0"></ul>) as HTMLElement;
 		this.knownIssuesLink = this.addKnownIssuesLink();
-		this.addBugReportLink();
-		this.addDownloadBinaryLink();
+		// this.addBugReportLink();
+		// this.addDownloadBinaryLink();
 		this.addSimOptionsLink();
-		this.addSocialLinks();
+		// this.addSocialLinks();
 
 		// Allow styling the sticky header
 		new IntersectionObserver(
@@ -263,7 +263,7 @@ export class SimHeader extends Component {
 								attributes={{ role: 'button', 'aria-expanded': 'false' }}
 								dataset={{ bsToggle: 'dropdown', bsDisplay: 'dynamic' }}>
 								<i className="fa fa-download"></i>
-								{' Import '}
+								{' 导入 '}
 							</a>
 							<ul className="dropdown-menu"></ul>
 						</div>
@@ -274,7 +274,7 @@ export class SimHeader extends Component {
 								attributes={{ role: 'button', 'aria-expanded': 'false' }}
 								dataset={{ bsToggle: 'dropdown', bsDisplay: 'dynamic' }}>
 								<i className="fa fa-right-from-bracket"></i>
-								{' Export '}
+								{' 导出 '}
 							</a>
 							<ul className="dropdown-menu"></ul>
 						</div>

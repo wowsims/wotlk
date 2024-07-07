@@ -1,17 +1,16 @@
+import { Tooltip } from 'bootstrap';
+import tippy from 'tippy.js';
+
+import { DistributionMetrics as DistributionMetricsProto , ProgressMetrics,Raid as RaidProto , RaidSimRequest, RaidSimResult } from '../proto/api.js';
 import { Encounter as EncounterProto } from '../proto/common.js';
-import { DistributionMetrics as DistributionMetricsProto } from '../proto/api.js';
-import { Raid as RaidProto } from '../proto/api.js';
-import { RaidSimRequest, RaidSimResult, ProgressMetrics } from '../proto/api.js';
 import { SimRunData } from '../proto/ui.js';
 import { ActionMetrics, SimResult, SimResultFilter } from '../proto_utils/sim_result.js';
 import { SimUI } from '../sim_ui.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 import { formatDeltaTextElem } from '../utils.js';
-import { Tooltip } from 'bootstrap';
-import tippy from 'tippy.js';
 
 export function addRaidSimAction(simUI: SimUI): RaidSimResultsManager {
-	simUI.addAction('Simulate', 'dps-action', async () => simUI.runSim((progress: ProgressMetrics) => {
+	simUI.addAction('开始模拟', 'dps-action', async () => simUI.runSim((progress: ProgressMetrics) => {
 		resultsManager.setSimProgress(progress);
 	}));
 
@@ -49,8 +48,8 @@ export interface ResultMetricCategories {
 }
 
 export interface ResultsLineArgs {
-	average: Number,
-	stdev?: Number,
+	average: number,
+	stdev?: number,
 	classes?: string
 }
 
@@ -242,12 +241,12 @@ export class RaidSimResultsManager {
 		if (!this.referenceData || !this.currentData) {
 			// Remove references
 			this.simUI.resultsViewer.contentElem.querySelector('.results-sim-reference')?.classList.remove('has-reference');
-			this.simUI.resultsViewer.contentElem.querySelectorAll('.results-reference').forEach((e) => e.classList.add('hide'));
+			this.simUI.resultsViewer.contentElem.querySelectorAll('.results-reference').forEach(e => e.classList.add('hide'));
 			return;
 		} else {
 			// Add references references
 			this.simUI.resultsViewer.contentElem.querySelector('.results-sim-reference')?.classList.add('has-reference');
-			this.simUI.resultsViewer.contentElem.querySelectorAll('.results-reference').forEach((e) => e.classList.remove('hide'));
+			this.simUI.resultsViewer.contentElem.querySelectorAll('.results-reference').forEach(e => e.classList.remove('hide'));
 		}
 
 		this.formatToplineResult(`.${RaidSimResultsManager.resultMetricClasses['dps']} .results-reference-diff`, res => res.raidMetrics.dps, 2);
@@ -364,7 +363,7 @@ export class RaidSimResultsManager {
 				}).outerHTML;
 
 				// Hide dpasp if it's zero.
-				let dpaspContent = this.buildResultsLine({
+				const dpaspContent = this.buildResultsLine({
 					average: dpaspMetrics.avg,
 					stdev: dpaspMetrics.stdev,
 					classes: this.getResultsLineClasses('dpasp'),
@@ -453,7 +452,7 @@ export class RaidSimResultsManager {
 	}
 
 	private static getResultsLineClasses(metric: keyof ResultMetrics): string {
-		let classes = [this.resultMetricClasses[metric]];
+		const classes = [this.resultMetricClasses[metric]];
 		if (this.resultMetricCategories[metric])
 			classes.push(this.metricsClasses[this.resultMetricCategories[metric]]);
 
@@ -461,7 +460,7 @@ export class RaidSimResultsManager {
 	}
 
 	private static buildResultsLine(args: ResultsLineArgs): HTMLElement {
-		let resultsFragment = document.createElement('fragment');
+		const resultsFragment = document.createElement('fragment');
 		resultsFragment.innerHTML = `
 			<div class="results-metric ${args.classes}">
 				<span class="topline-result-avg">${args.average.toFixed(2)}</span>

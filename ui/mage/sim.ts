@@ -1,18 +1,16 @@
-import {Class, Cooldowns, Debuffs, Faction, IndividualBuffs, PartyBuffs, Race, RaidBuffs, Spec, Stat, TristateEffect} from '../core/proto/common.js';
-import {APLAction, APLListItem, APLPrepullAction, APLRotation} from '../core/proto/apl.js';
-import {Stats} from '../core/proto_utils/stats.js';
-import { getSpecIcon } from '../core/proto_utils/utils.js';
-import {Player} from '../core/player.js';
+import * as OtherInputs from '../core/components/other_inputs.js';
+import * as Mechanics from '../core/constants/mechanics.js';
 import {IndividualSimUI, registerSpecConfig} from '../core/individual_sim_ui.js';
+import {Player} from '../core/player.js';
+import {APLAction, APLListItem, APLPrepullAction, APLRotation} from '../core/proto/apl.js';
+import {Class, Cooldowns, Debuffs, Faction, IndividualBuffs, PartyBuffs, Race, RaidBuffs, Spec, Stat, TristateEffect} from '../core/proto/common.js';
 import {
 	Mage_Rotation as MageRotation,
 	Mage_Rotation_PrimaryFireSpell as PrimaryFireSpell,
 } from '../core/proto/mage.js';
-
-import * as OtherInputs from '../core/components/other_inputs.js';
-import * as Mechanics from '../core/constants/mechanics.js';
 import * as AplUtils from '../core/proto_utils/apl_utils.js';
-
+import {Stats} from '../core/proto_utils/stats.js';
+import { getSpecIcon } from '../core/proto_utils/utils.js';
 import * as MageInputs from './inputs.js';
 import * as Presets from './presets.js';
 
@@ -120,7 +118,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecMage, {
 	rotationInputs: MageInputs.MageRotationConfig,
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
-		//Should add hymn of hope, revitalize, and 
+		//Should add hymn of hope, revitalize, and
 	],
 	excludeBuffDebuffInputs: [
 	],
@@ -212,7 +210,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecMage, {
 	},
 
 	simpleRotation: (player: Player<Spec.SpecMage>, simple: MageRotation, cooldowns: Cooldowns): APLRotation => {
-		let [prepullActions, actions] = AplUtils.standardCooldownDefaults(cooldowns);
+		const [prepullActions, actions] = AplUtils.standardCooldownDefaults(cooldowns);
 
 		const prepullMirrorImage = APLPrepullAction.fromJsonString(`{"action":{"castSpell":{"spellId":{"spellId":55342}}},"doAtValue":{"const":{"val":"-2s"}}}`);
 
@@ -359,7 +357,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecMage, {
 			spec: Spec.SpecMage,
 			tooltip: 'FFB Fire Mage',
 			defaultName: 'FFB Fire',
-			iconUrl: "https://wow.zamimg.com/images/wow/icons/medium/ability_mage_frostfirebolt.jpg",
+			iconUrl: "https://db.newbeebox.com/wow/wz/images/wow/icons/medium/ability_mage_frostfirebolt.jpg",
 
 			talents: Presets.FrostfireTalents.data,
 			specOptions: Presets.DefaultFFBOptions,

@@ -30,7 +30,7 @@ export class RotationTab extends SimTab {
 	readonly rightPanel: HTMLElement;
 
 	constructor(parentElem: HTMLElement, simUI: IndividualSimUI<Spec>) {
-		super(parentElem, simUI, { identifier: 'rotation-tab', title: 'Rotation' });
+		super(parentElem, simUI, { identifier: 'rotation-tab', title: '输出循环' });
 		this.simUI = simUI;
 
 		this.leftPanel = document.createElement('div');

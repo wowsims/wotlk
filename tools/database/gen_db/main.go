@@ -58,7 +58,7 @@ func main() {
 		database.NewWotlkItemTooltipManager(fmt.Sprintf("%s/wotlk_items_tooltips.csv", inputsDir)).Fetch(int32(*minId), int32(*maxId), []string{})
 		return
 	} else if *genAsset == "wago-db2-items" {
-		tools.WriteFile(fmt.Sprintf("%s/wago_db2_items.csv", inputsDir), tools.ReadWebRequired("https://wago.tools/db2/ItemSparse/csv?build=3.4.2.49311"))
+		tools.WriteFile(fmt.Sprintf("%s/wago_db2_items.csv", inputsDir), tools.ReadWebRequired("https://wago.tools/db2/ItemSparse/csv?build=3.4.3.55417"))
 		return
 	} else if *genAsset != "db" {
 		panic("Invalid gen value")
@@ -150,7 +150,7 @@ func main() {
 	db.MergeZones(atlasDBProto.Zones)
 	db.MergeNpcs(atlasDBProto.Npcs)
 
-	db.WriteBinaryAndJson(fmt.Sprintf("%s/db.bin", dbDir), fmt.Sprintf("%s/db.json", dbDir))
+	db.WriteBinaryAndJson(fmt.Sprintf("%s/db.bin", dbDir), fmt.Sprintf("%s/db_en.json", dbDir))
 }
 
 // Filters out entities which shouldn't be included anywhere.

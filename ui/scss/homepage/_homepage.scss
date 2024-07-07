@@ -9,6 +9,7 @@
 	background-size: cover;
 	background-position: center;
 	z-index: -1;
+	filter: brightness(0.5); /* Adjust the value to make the image darker (0.5 is 50% brightness) */
 }
 
 #homepage {

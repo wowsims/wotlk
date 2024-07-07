@@ -1,18 +1,14 @@
-import { Stat, Class, PseudoStat, Spec } from '..//proto/common.js';
-import { TristateEffect } from '..//proto/common.js'
+import { Popover, Tooltip } from 'bootstrap';
+import { element, fragment } from 'tsx-vanilla';
+
+import { Player } from '..//player.js';
+import { Class, PseudoStat, Spec,Stat , TristateEffect } from '..//proto/common.js';
 import { getClassStatName, statOrder } from '..//proto_utils/names.js';
 import { Stats } from '..//proto_utils/stats.js';
-import { Player } from '..//player.js';
 import { EventID, TypedEvent } from '..//typed_event.js';
-
 import * as Mechanics from '../constants/mechanics.js';
-
-import { NumberPicker } from './number_picker';
 import { Component } from './component.js';
-
-import { Popover, Tooltip } from 'bootstrap';
-
-import { element, fragment } from 'tsx-vanilla';
+import { NumberPicker } from './number_picker';
 
 export type StatMods = { talents: Stats };
 
@@ -32,22 +28,57 @@ export class CharacterStats extends Component {
 
 		const label = document.createElement('label');
 		label.classList.add('character-stats-label');
-		label.textContent = 'Stats';
+		label.textContent = '面板属性';
 		this.rootElem.appendChild(label);
 
 		const table = document.createElement('table');
 		table.classList.add('character-stats-table');
 		this.rootElem.appendChild(table);
 
+		const cnStat: { [key: string]: string } = {
+			'Health': '生命值',
+			'Armor': '护甲',
+			'Bonus Armor': '绿甲',
+			'Stamina': '耐力',
+			'Strength': '力量',
+			'Agility': '敏捷',
+			'Spell Hit': '法术命中',
+			'Spell Crit': '法术暴击',
+			'Spell Haste': '法术急速',
+			'Attack Power': '攻击强度',
+			'Melee Hit': '物理命中',
+			'Melee Crit': '物理暴击',
+			'Melee Haste': '物理急速',
+			'Armor Pen': '破甲',
+			'Expertise': '精准',
+			'Defense': '防御',
+			'Dodge': '闪避',
+			'Parry': '招架',
+			'Block Value': '格挡',
+			'Resilience': '韧性',
+			'Frost Resistance': '冰霜抗性',
+			'Nature Resistance': '自然抗性',
+			'Shadow Resistance': '暗影抗性',
+			'Mana': '法力值',
+			'Intellect': '智力',
+			'Spirit': '精神',
+			'MP5': '5秒回蓝',
+			'Ranged AP': '远程攻强',
+			'Ranged Hit': '远程命中',
+			'Ranged Crit': '远程暴击',
+			'Ranged Haste': '远程急速',
+			'Spell Dmg': '法术强度'
+		};
+
 		this.valueElems = [];
 		this.stats.forEach(stat => {
-			let statName = getClassStatName(stat, player.getClass());
+			const statName = getClassStatName(stat, player.getClass());
 
 			const row = (
 			<tr
 				className='character-stats-table-row'
 			>
-				<td className="character-stats-table-label">{statName}</td>
+				<td className="character-stats-table-label">{cnStat[statName] || statName}</td>
 				<td className="character-stats-table-value">
 					{this.bonusStatsLink(stat)}
 				</td>
@@ -64,7 +95,7 @@ export class CharacterStats extends Component {
 			<tr
 				className='character-stats-table-row'
 			>
-				<td className="character-stats-table-label">Melee Crit Cap</td>
+				<td className="character-stats-table-label">物理暴击阈值</td>
 				<td className="character-stats-table-value"></td>
 			</tr>);
 
@@ -104,7 +135,7 @@ export class CharacterStats extends Component {
 		const finalStats = Stats.fromProto(playerStats.finalStats).add(statMods.talents).add(debuffStats);
 
 		this.stats.forEach((stat, idx) => {
-			let valueElem = (
+			const valueElem = (
 				<a
 					href="javascript:void(0)"
 					className="stat-value-link"
@@ -116,7 +147,7 @@ export class CharacterStats extends Component {
 			this.valueElems[idx].querySelector('.stat-value-link')?.remove();
 			this.valueElems[idx].prepend(valueElem);
 
-			let bonusStatValue = bonusStats.getStat(stat);
+			const bonusStatValue = bonusStats.getStat(stat);
 
 			if (bonusStatValue == 0) {
 				valueElem.classList.add('text-white');
@@ -126,7 +157,7 @@ export class CharacterStats extends Component {
 				valueElem.classList.add('text-danger');
 			}
 
-			let tooltipContent =
+			const tooltipContent =
 			<div>
 				<div className="character-stats-tooltip-row">
 					<span>Base:</span>
@@ -310,9 +341,9 @@ export class CharacterStats extends Component {
 	}
 
 	private bonusStatsLink(stat: Stat): HTMLElement {
-		let statName = getClassStatName(stat, this.player.getClass());
+		const statName = getClassStatName(stat, this.player.getClass());
 
-		let link = (
+		const link = (
 			<a
 				href="javascript:void(0)"
 				className='add-bonus-stats text-white ms-2'
@@ -325,7 +356,7 @@ export class CharacterStats extends Component {
 
 		let popover: Popover | null = null;
 
-		let picker = new NumberPicker(null, this.player, {
+		const picker = new NumberPicker(null, this.player, {
 			label: `Bonus ${statName}`,
 			extraCssClasses: ['mb-0'],
 			changedEvent: (player: Player<any>) => player.bonusStatsChangeEmitter,

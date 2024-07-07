@@ -1,12 +1,13 @@
-import { SimUI } from '../sim_ui.js';
-import { Sim } from '../sim.js';
-import { EventID, TypedEvent } from '../typed_event.js';
-import { wowheadSupportedLanguages } from '../constants/lang.js';
+import { Tooltip } from 'bootstrap';
+
 import { BooleanPicker } from '../components/boolean_picker.js';
 import { EnumPicker } from '../components/enum_picker.js';
 import { NumberPicker } from '../components/number_picker.js';
+import { wowheadSupportedLanguages } from '../constants/lang.js';
+import { Sim } from '../sim.js';
+import { SimUI } from '../sim_ui.js';
+import { EventID, TypedEvent } from '../typed_event.js';
 import { BaseModal } from './base_modal.js';
-import { Tooltip } from 'bootstrap';
 
 export class SettingsMenu extends BaseModal {
 	private readonly simUI: SimUI;
@@ -58,29 +59,29 @@ export class SettingsMenu extends BaseModal {
 		lastUsedRngSeed.textContent = String(this.simUI.sim.getLastUsedRngSeed());
 		this.simUI.sim.lastUsedRngSeedChangeEmitter.on(() => lastUsedRngSeed.textContent = String(this.simUI.sim.getLastUsedRngSeed()));
 
-		const language = this.rootElem.getElementsByClassName('language-picker')[0] as HTMLElement;
-		const langs = Object.keys(wowheadSupportedLanguages);
-		const defaultLang = langs.indexOf('en');
-		const languagePicker = new EnumPicker(language, this.simUI.sim, {
-			label: 'Language',
-			labelTooltip: 'Controls the language for Wowhead tooltips.',
-			values: langs.map((lang, i) => {
-				return {
-					name: wowheadSupportedLanguages[lang],
-					value: i,
-				};
-			}),
-			changedEvent: (sim: Sim) => sim.languageChangeEmitter,
-			getValue: (sim: Sim) => {
-				const idx = langs.indexOf(sim.getLanguage());
-				return idx == -1 ? defaultLang : idx;
-			},
-			setValue: (eventID: EventID, sim: Sim, newValue: number) => {
-				sim.setLanguage(eventID, langs[newValue] || 'en');
-			},
-		});
-		// Refresh page after language change, to apply the changes.
-		languagePicker.changeEmitter.on(() => setTimeout(() => location.reload(), 100));
+		// const language = this.rootElem.getElementsByClassName('language-picker')[0] as HTMLElement;
+		// const langs = Object.keys(wowheadSupportedLanguages);
+		// const defaultLang = langs.indexOf('cn');
+		// const languagePicker = new EnumPicker(language, this.simUI.sim, {
+		// 	label: 'Language',
+		// 	labelTooltip: 'Controls the language for Wowhead tooltips.',
+		// 	values: langs.map((lang, i) => {
+		// 		return {
+		// 			name: wowheadSupportedLanguages[lang],
+		// 			value: i,
+		// 		};
+		// 	}),
+		// 	changedEvent: (sim: Sim) => sim.languageChangeEmitter,
+		// 	getValue: (sim: Sim) => {
+		// 		const idx = langs.indexOf(sim.getLanguage());
+		// 		return idx == -1 ? defaultLang : idx;
+		// 	},
+		// 	setValue: (eventID: EventID, sim: Sim, newValue: number) => {
+		// 		sim.setLanguage(eventID, langs[newValue] || 'en');
+		// 	},
+		// });
+		// // Refresh page after language change, to apply the changes.
+		// languagePicker.changeEmitter.on(() => setTimeout(() => location.reload(), 100));
 
 		const showThreatMetrics = this.rootElem.getElementsByClassName('show-threat-metrics-picker')[0] as HTMLElement;
 		new BooleanPicker(showThreatMetrics, this.simUI.sim, {

@@ -44,7 +44,7 @@ export abstract class Importer extends BaseModal {
 			}
 			<button class="importer-button btn btn-primary import-button">
 				<i class="fa fa-download"></i>
-				Import
+				导入
 			</button>
 		`;
 

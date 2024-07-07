@@ -1,9 +1,8 @@
-import { GemColor } from '../proto/common.js';
-import { Profession } from '../proto/common.js';
-import { getEnumValues } from '../utils.js';
+import { GemColor , Profession } from '../proto/common.js';
 import {
 	UIGem as Gem,
 } from '../proto/ui.js';
+import { getEnumValues } from '../utils.js';
 
 export const GEM_COLORS = (getEnumValues(GemColor) as Array<GemColor>).filter(color => color != GemColor.GemColorUnknown);
 export const PRIMARY_COLORS = [GemColor.GemColorRed, GemColor.GemColorYellow, GemColor.GemColorBlue];
@@ -193,11 +192,11 @@ export const MYSTICAL_SKYFIRE_DIAMOND = MetaGemCondition.fromCompareColors(25893
 export const POTENT_UNSTABLE_DIAMOND = MetaGemCondition.fromCompareColors(32640, 'Requires more Blue Gems than Yellow Gems.', GemColor.GemColorBlue, GemColor.GemColorYellow);
 
 const emptyGemSocketIcons: Partial<Record<GemColor, string>> = {
-	[GemColor.GemColorBlue]: 'https://wow.zamimg.com/images/icons/socket-blue.gif',
-	[GemColor.GemColorMeta]: 'https://wow.zamimg.com/images/icons/socket-meta.gif',
-	[GemColor.GemColorRed]: 'https://wow.zamimg.com/images/icons/socket-red.gif',
-	[GemColor.GemColorYellow]: 'https://wow.zamimg.com/images/icons/socket-yellow.gif',
-	[GemColor.GemColorPrismatic]: 'https://wow.zamimg.com/images/icons/socket-prismatic.gif',
+	[GemColor.GemColorBlue]: 'https://db.newbeebox.com/wow/wz/images/icons/socket-blue.gif',
+	[GemColor.GemColorMeta]: 'https://db.newbeebox.com/wow/wz/images/icons/socket-meta.gif',
+	[GemColor.GemColorRed]: 'https://db.newbeebox.com/wow/wz/images/icons/socket-red.gif',
+	[GemColor.GemColorYellow]: 'https://db.newbeebox.com/wow/wz/images/icons/socket-yellow.gif',
+	[GemColor.GemColorPrismatic]: 'https://db.newbeebox.com/wow/wz/images/icons/socket-prismatic.gif',
 };
 export function getEmptyGemSocketIconUrl(color: GemColor): string {
 	if (emptyGemSocketIcons[color])

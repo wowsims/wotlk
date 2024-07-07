@@ -58,7 +58,7 @@ export abstract class SimUI extends Component {
 		this.cssClass = config.cssClass;
 		this.cssScheme = config.cssScheme;
 		this.isWithinRaidSim = this.rootElem.closest('.within-raid-sim') != null;
-		config.noticeText = `Cataclysm sim development has begun! <a href="https://discord.gg/p3DgvmnDCS" target="_blank">Join our Discord</a> for more details or to contribute to the project.`;
+		// config.noticeText = `Cataclysm sim development has begun! <a href="https://discord.gg/p3DgvmnDCS" target="_blank">Join our Discord</a> for more details or to contribute to the project.`;
 		this.rootElem.innerHTML = `
 			<div class="sim-root">
 				<div class="sim-bg"></div>
@@ -158,7 +158,7 @@ export abstract class SimUI extends Component {
 			'.sim-sidebar-actions',
 		) as HTMLElement;
 		this.iterationsPicker = new NumberPicker(this.simActionsContainer, this.sim, {
-			label: 'Iterations',
+			label: '模拟战斗次数',
 			extraCssClasses: ['iterations-picker', 'within-raid-sim-hide'],
 			changedEvent: (sim: Sim) => sim.iterationsChangeEmitter,
 			getValue: (sim: Sim) => sim.getIterations(),
@@ -173,9 +173,9 @@ export abstract class SimUI extends Component {
 		this.resultsViewer = new ResultsViewer(resultsViewerElem);
 
 		const socialsContainer = this.rootElem.querySelector('.sim-sidebar-socials') as HTMLElement;
-		socialsContainer.appendChild(SocialLinks.buildDiscordLink());
-		socialsContainer.appendChild(SocialLinks.buildGitHubLink());
-		socialsContainer.appendChild(SocialLinks.buildPatreonLink());
+		// socialsContainer.appendChild(SocialLinks.buildDiscordLink());
+		// socialsContainer.appendChild(SocialLinks.buildGitHubLink());
+		// socialsContainer.appendChild(SocialLinks.buildPatreonLink());
 
 		this.simTabContentsContainer = this.rootElem.querySelector(
 			'.sim-main.tab-content',
