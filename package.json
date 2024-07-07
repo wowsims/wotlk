@@ -55,6 +55,7 @@
         "terser": "^5.14.2",
         "typescript": "5.2.2",
         "typescript-formatter": "^7.2.2",
-        "vite": "^3.0.3"
+        "vite": "^3.0.3",
+        "vite-plugin-copy": "^0.1.6"
     }
 }

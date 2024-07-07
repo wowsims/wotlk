@@ -30,11 +30,21 @@ HTML_INDECIES := ui/balance_druid/index.html \
 				 ui/raid/index.html \
 				 ui/detailed_results/index.html
 
+$(OUT_DIR)/tooltips.js: ui/tooltips.js
+	mkdir -p $(@D)
+	cp $< $@
+
+$(OUT_DIR)/universal.css: ui/universal.css
+	mkdir -p $(@D)
+	cp $< $@
+
 $(OUT_DIR)/.dirstamp: \
   $(OUT_DIR)/lib.wasm \
   ui/core/proto/api.ts \
   $(ASSETS) \
-  $(OUT_DIR)/bundle/.dirstamp
+  $(OUT_DIR)/bundle/.dirstamp \
+  $(OUT_DIR)/tooltips.js \
+  $(OUT_DIR)/universal.css
 	touch $@
 
 $(OUT_DIR)/bundle/.dirstamp: \
@@ -120,7 +130,7 @@ $(OUT_DIR)/lib.wasm: sim/wasm/* sim/core/proto/api.pb.go $(filter-out sim/core/i
 		printf "\033[1;31mWASM COMPILE FAILED\033[0m\n"; \
 		exit 1; \
 	fi
-	
+
 $(OUT_DIR)/assets/%: assets/%
 	mkdir -p $(@D)
 	cp $< $@
