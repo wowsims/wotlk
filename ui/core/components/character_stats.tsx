@@ -73,7 +73,6 @@ export class CharacterStats extends Component {
 		this.valueElems = [];
 		this.stats.forEach(stat => {
 			const statName = getClassStatName(stat, player.getClass());
-			console.log(statName);
 
 			const row = (
 			<tr
