@@ -55,8 +55,8 @@ const processDatabase = async () => {
 
 	for (const key of Object.keys(dbData) as Array<keyof Database>) {
 		let prefix = "";
-		if (key === "items" || key === "gems") prefix = "item";
-		if (key === "enchants") prefix = "spell";
+		if (key === "items" || key === "gems" || key === "itemIcons") prefix = "item";
+		if (key === "enchants" || key === "spellIcons") prefix = "spell";
 		if (key === "zones" || key === "npcs") prefix = key.slice(0, -1);
 		console.log(`Processing ${key}`);
 		if (!prefix.length) {
@@ -76,7 +76,7 @@ const processDatabase = async () => {
 				responseType: "json",
 			});
 			const tooltip = response.data as Tooltip;
-			if (tooltip && tooltip.name) {
+			if (tooltip && tooltip.name && tooltip.name.length !== 0) {
 				newDbData[key].push({...entry, name: tooltip.name});
 			} else {
 				console.log(`failed at ${prefix}/${id}`);
