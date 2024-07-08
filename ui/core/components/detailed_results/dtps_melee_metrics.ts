@@ -1,5 +1,4 @@
 import { ActionMetrics, SimResult, SimResultFilter } from '../../proto_utils/sim_result.js';
-
 import { ColumnSortType, MetricsTable } from './metrics_table.js';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
 
@@ -15,66 +14,67 @@ export class DtpsMeleeMetricsTable extends MetricsTable<ActionMetrics> {
 			}),
 			{
 				name: 'DPS',
-				tooltip: 'Damage / Encounter Duration',
+				tooltip: '伤害 / 战斗时长',
 				sort: ColumnSortType.Descending,
 				getValue: (metric: ActionMetrics) => metric.dps,
 				getDisplayString: (metric: ActionMetrics) => metric.dps.toFixed(1),
 			},
 			{
-				name: 'Avg Cast',
-				tooltip: 'Damage / Casts',
+				name: '平均施法',
+				tooltip: '伤害 / 施法次数',
 				getValue: (metric: ActionMetrics) => metric.avgCast,
 				getDisplayString: (metric: ActionMetrics) => metric.avgCast.toFixed(1),
 			},
 			{
-				name: 'Avg Hit',
-				tooltip: 'Damage / (Hits + Crits + Glances + Blocks)',
+				name: '平均命中',
+				tooltip: '伤害 / (命中 + 暴击 + 擦过 + 格挡)',
 				getValue: (metric: ActionMetrics) => metric.avgHit,
 				getDisplayString: (metric: ActionMetrics) => metric.avgHit.toFixed(1),
 			},
 			{
-				name: 'Casts',
-				tooltip: 'Casts',
+				name: '施法次数',
+				tooltip: '施法次数',
 				getValue: (metric: ActionMetrics) => metric.casts,
 				getDisplayString: (metric: ActionMetrics) => metric.casts.toFixed(1),
 			},
 			{
-				name: 'Hits',
-				tooltip: 'Hits + Crits + Glances + Blocks',
+				name: '命中次数',
+				tooltip: '命中 + 暴击 + 擦过 + 格挡',
 				getValue: (metric: ActionMetrics) => metric.landedHits,
 				getDisplayString: (metric: ActionMetrics) => metric.landedHits.toFixed(1),
 			},
 			{
-				name: 'Miss %',
-				tooltip: 'Misses / Swings',
+				name: '未命中 %',
+				tooltip: '未命中 / 攻击次数',
 				getValue: (metric: ActionMetrics) => metric.missPercent,
 				getDisplayString: (metric: ActionMetrics) => metric.missPercent.toFixed(2) + '%',
 			},
 			{
-				name: 'Dodge %',
-				tooltip: 'Dodges / Swings',
+				name: '闪避 %',
+				tooltip: '闪避 / 攻击次数',
 				getValue: (metric: ActionMetrics) => metric.dodgePercent,
 				getDisplayString: (metric: ActionMetrics) => metric.dodgePercent.toFixed(2) + '%',
 			},
 			{
-				name: 'Parry %',
-				tooltip: 'Parries / Swings',
+				name: '招架 %',
+				tooltip: '招架 / 攻击次数',
 				getValue: (metric: ActionMetrics) => metric.parryPercent,
 				getDisplayString: (metric: ActionMetrics) => metric.parryPercent.toFixed(2) + '%',
 			},
 			{
-				name: 'Block %',
-				tooltip: 'Blocks / Swings',
+				name: '格挡 %',
+				tooltip: '格挡 / 攻击次数',
 				getValue: (metric: ActionMetrics) => metric.blockPercent,
 				getDisplayString: (metric: ActionMetrics) => metric.blockPercent.toFixed(2) + '%',
 			},
 			{
-				name: 'Crit %',
-				tooltip: 'Crits / Swings',
+				name: '暴击 %',
+				tooltip: '暴击 / 攻击次数',
 				getValue: (metric: ActionMetrics) => metric.critPercent,
 				getDisplayString: (metric: ActionMetrics) => metric.critPercent.toFixed(2) + '%',
 			},
 		]);
+
 	}
 
 	getGroupedMetrics(resultData: SimResultData): Array<Array<ActionMetrics>> {

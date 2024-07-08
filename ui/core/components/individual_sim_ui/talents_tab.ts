@@ -116,7 +116,7 @@ export class TalentsTab extends SimTab {
   private buildSavedTalentsPicker() {
     const savedTalentsManager = new SavedDataManager<Player<any>, SavedTalents>(this.rightPanel, this.simUI.player, {
 			label: 'Talents',
-			header: { title: 'Saved Talents' },
+			header: { title: '已保存天赋' },
 			storageKey: this.simUI.getSavedTalentsStorageKey(),
 			getData: (player: Player<any>) => SavedTalents.create({
 				talentsString: player.getTalentsString(),

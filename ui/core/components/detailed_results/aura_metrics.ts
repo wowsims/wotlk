@@ -1,6 +1,5 @@
 import { ActionId } from '../../proto_utils/action_id';
 import { AuraMetrics, SimResult, SimResultFilter } from '../../proto_utils/sim_result';
-
 import { ColumnSortType, MetricsTable } from './metrics_table';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component';
 
@@ -21,25 +20,26 @@ export class AuraMetricsTable extends MetricsTable<AuraMetrics> {
 				};
 			}),
 			{
-				name: 'Procs',
-				tooltip: 'Procs',
+				name: '触发次数',
+				tooltip: '触发次数',
 				getValue: (metric: AuraMetrics) => metric.averageProcs,
 				getDisplayString: (metric: AuraMetrics) => metric.averageProcs.toFixed(2),
 			},
 			{
 				name: 'PPM',
-				tooltip: 'Procs Per Minute',
+				tooltip: '每分钟触发次数',
 				getValue: (metric: AuraMetrics) => metric.ppm,
 				getDisplayString: (metric: AuraMetrics) => metric.ppm.toFixed(2),
 			},
 			{
-				name: 'Uptime',
-				tooltip: 'Uptime / Encounter Duration',
+				name: '持续时间',
+				tooltip: '持续时间 / 战斗时长',
 				sort: ColumnSortType.Descending,
 				getValue: (metric: AuraMetrics) => metric.uptimePercent,
 				getDisplayString: (metric: AuraMetrics) => metric.uptimePercent.toFixed(2) + '%',
 			},
 		]);
+
 		this.useDebuffs = useDebuffs;
 	}
 

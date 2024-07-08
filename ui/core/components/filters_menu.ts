@@ -1,3 +1,4 @@
+import { Player } from '../player.js';
 import {
 	ArmorType,
 	ItemSlot,
@@ -20,35 +21,33 @@ import {
 	classToMaxArmorType,
 	isDualWieldSpec,
 } from '../proto_utils/utils.js';
-import { Player } from '../player.js';
 import { Sim } from '../sim.js';
 import { EventID } from '../typed_event.js';
 import { getEnumValues } from '../utils.js';
-
-import { BooleanPicker } from './boolean_picker.js';
-import { NumberPicker } from './number_picker.js';
 import { BaseModal } from './base_modal.js';
+import { BooleanPicker } from './boolean_picker.js';
 import { EnumPicker } from './enum_picker.js';
+import { NumberPicker } from './number_picker.js';
 
 const factionRestrictionsToLabels: Record<UIItem_FactionRestriction, string> = {
-	[UIItem_FactionRestriction.UNSPECIFIED]: 'None',
-	[UIItem_FactionRestriction.ALLIANCE_ONLY]: 'Alliance only',
-	[UIItem_FactionRestriction.HORDE_ONLY]: 'Horde only',
+	[UIItem_FactionRestriction.UNSPECIFIED]: '无限制',
+	[UIItem_FactionRestriction.ALLIANCE_ONLY]: '仅联盟',
+	[UIItem_FactionRestriction.HORDE_ONLY]: '仅部落',
 };
 
 export class FiltersMenu extends BaseModal {
 	constructor(rootElem: HTMLElement, player: Player<any>, slot: ItemSlot) {
-		super(rootElem, 'filters-menu', { size: 'md', title: 'Filters' });
+		super(rootElem, 'filters-menu', { size: 'md', title: '筛选' });
 
-		let section = this.newSection('Factions');
+		let section = this.newSection('阵营');
 
 		new EnumPicker(section, player.sim, {
-			label: 'Faction Restrictions',
+			label: '阵营限制',
 			values: [
 				UIItem_FactionRestriction.UNSPECIFIED,
 				UIItem_FactionRestriction.ALLIANCE_ONLY,
 				UIItem_FactionRestriction.HORDE_ONLY
-			].map((restriction) => {
+			].map(restriction => {
 				return {
 					name: factionRestrictionsToLabels[restriction],
 					value: restriction,
@@ -63,7 +62,7 @@ export class FiltersMenu extends BaseModal {
 			},
 		});
 
-		section = this.newSection('Source');
+		section = this.newSection('来源');
 		section.classList.add('filters-menu-section-bool-list');
 		const sources = Sim.ALL_SOURCES.filter(s => s != SourceFilterOption.SourceUnknown);
 		sources.forEach(source => {
@@ -84,7 +83,7 @@ export class FiltersMenu extends BaseModal {
 			});
 		});
 
-		section = this.newSection('Raids');
+		section = this.newSection('团队副本');
 		section.classList.add('filters-menu-section-bool-list');
 		const raids = Sim.ALL_RAIDS.filter(s => s != RaidFilterOption.RaidUnknown);
 		raids.forEach(raid => {
@@ -108,7 +107,7 @@ export class FiltersMenu extends BaseModal {
 		if (Player.ARMOR_SLOTS.includes(slot)) {
 			const maxArmorType = classToMaxArmorType[player.getClass()];
 			if (maxArmorType >= ArmorType.ArmorTypeLeather) {
-				const section = this.newSection('Armor Type');
+				const section = this.newSection('护甲类型');
 				section.classList.add('filters-menu-section-bool-list');
 				const armorTypes = (getEnumValues(ArmorType) as Array<ArmorType>)
 					.filter(at => at != ArmorType.ArmorTypeUnknown)
@@ -133,7 +132,7 @@ export class FiltersMenu extends BaseModal {
 				});
 			}
 		} else if (Player.WEAPON_SLOTS.includes(slot)) {
-			const weaponTypeSection = this.newSection('Weapon Type');
+			const weaponTypeSection = this.newSection('武器类型');
 			weaponTypeSection.classList.add('filters-menu-section-bool-list');
 			const weaponTypes = classToEligibleWeaponTypes[player.getClass()].map(ewt => ewt.weaponType);
 
@@ -155,10 +154,10 @@ export class FiltersMenu extends BaseModal {
 				});
 			});
 
-			const weaponSpeedSection = this.newSection('Weapon Speed');
+			const weaponSpeedSection = this.newSection('武器速度');
 			weaponSpeedSection.classList.add('filters-menu-section-number-list');
 			new NumberPicker<Sim>(weaponSpeedSection, player.sim, {
-				label: 'Min MH Speed',
+				label: '最低主手攻速',
 				//labelTooltip: 'Maximum speed for the mainhand weapon. If 0, no maximum value is applied.',
 				float: true,
 				positive: true,
@@ -171,7 +170,7 @@ export class FiltersMenu extends BaseModal {
 				},
 			});
 			new NumberPicker<Sim>(weaponSpeedSection, player.sim, {
-				label: 'Max MH Speed',
+				label: '最高主手攻速',
 				//labelTooltip: 'Maximum speed for the mainhand weapon. If 0, no maximum value is applied.',
 				float: true,
 				positive: true,
@@ -185,7 +184,7 @@ export class FiltersMenu extends BaseModal {
 			});
 			if (isDualWieldSpec(player.spec)) {
 				new NumberPicker<Sim>(weaponSpeedSection, player.sim, {
-					label: 'Min OH Speed',
+					label: '最低副手攻速',
 					//labelTooltip: 'Minimum speed for the offhand weapon. If 0, no minimum value is applied.',
 					float: true,
 					positive: true,
@@ -198,7 +197,7 @@ export class FiltersMenu extends BaseModal {
 					},
 				});
 				new NumberPicker<Sim>(weaponSpeedSection, player.sim, {
-					label: 'Max OH Speed',
+					label: '最高副手攻速',
 					//labelTooltip: 'Maximum speed for the offhand weapon. If 0, no maximum value is applied.',
 					float: true,
 					positive: true,
@@ -216,7 +215,7 @@ export class FiltersMenu extends BaseModal {
 			if (rangedWeaponTypes.length <= 1) {
 				return;
 			}
-			const rangedWeaponTypeSection = this.newSection('Ranged Weapon Type');
+			const rangedWeaponTypeSection = this.newSection('远程武器类型');
 			rangedWeaponTypeSection.classList.add('filters-menu-section-bool-list');
 
 			rangedWeaponTypes.forEach(rangedWeaponType => {
@@ -237,10 +236,10 @@ export class FiltersMenu extends BaseModal {
 				});
 			});
 
-			const rangedWeaponSpeedSection = this.newSection('Ranged Weapon Speed');
+			const rangedWeaponSpeedSection = this.newSection('远程武器速度');
 			rangedWeaponSpeedSection.classList.add('filters-menu-section-number-list');
 			new NumberPicker<Sim>(rangedWeaponSpeedSection, player.sim, {
-				label: 'Min Ranged Speed',
+				label: '最低远程武器攻速',
 				//labelTooltip: 'Maximum speed for the ranged weapon. If 0, no maximum value is applied.',
 				float: true,
 				positive: true,
@@ -253,7 +252,7 @@ export class FiltersMenu extends BaseModal {
 				},
 			});
 			new NumberPicker<Sim>(rangedWeaponSpeedSection, player.sim, {
-				label: 'Max Ranged Speed',
+				label: '最高远程武器攻速',
 				//labelTooltip: 'Maximum speed for the ranged weapon. If 0, no maximum value is applied.',
 				float: true,
 				positive: true,

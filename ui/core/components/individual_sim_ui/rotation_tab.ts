@@ -82,15 +82,15 @@ export class RotationTab extends SimTab {
 		this.leftPanel.appendChild(header);
 
 		new EnumPicker(header, this.simUI.player, {
-			label: 'Rotation Type',
+			label: '输出循环类型',
 			labelTooltip: 'Which set of options to use for specifying the rotation.',
 			inline: true,
 			values: this.simUI.player.hasSimpleRotationGenerator() ? [
-				{ value: APLRotationType.TypeAuto, name: 'Auto' },
-				{ value: APLRotationType.TypeSimple, name: 'Simple' },
+				{ value: APLRotationType.TypeAuto, name: '自动' },
+				{ value: APLRotationType.TypeSimple, name: '简单' },
 				{ value: APLRotationType.TypeAPL, name: 'APL' },
 			] : [
-				{ value: APLRotationType.TypeAuto, name: 'Auto' },
+				{ value: APLRotationType.TypeAuto, name: '自动' },
 				{ value: APLRotationType.TypeAPL, name: 'APL' },
 			],
 			changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
@@ -123,7 +123,7 @@ export class RotationTab extends SimTab {
 		const cssClass = 'rotation-tab-simple';
 
 		const contentBlock = new ContentBlock(this.leftPanel, 'rotation-settings', {
-			header: { title: 'Rotation' }
+			header: { title: '输出循环' }
 		});
 		contentBlock.rootElem.classList.add(cssClass);
 
@@ -146,7 +146,7 @@ export class RotationTab extends SimTab {
 		})
 
 		const cooldownsContentBlock = new ContentBlock(this.leftPanel, 'cooldown-settings', {
-			header: { title: 'Cooldowns', tooltip: Tooltips.COOLDOWNS_SECTION }
+			header: { title: '技能和物品冷却', tooltip: Tooltips.COOLDOWNS_SECTION }
 		});
 		cooldownsContentBlock.rootElem.classList.add(cssClass);
 
@@ -180,7 +180,7 @@ export class RotationTab extends SimTab {
 	private buildSavedDataPickers() {
 		const savedRotationsManager = new SavedDataManager<Player<any>, SavedRotation>(this.rightPanel, this.simUI.player, {
 			label: 'Rotation',
-			header: { title: 'Saved Rotations' },
+			header: { title: '已保存输出循环' },
 			storageKey: this.simUI.getSavedRotationStorageKey(),
 			getData: (player: Player<any>) => SavedRotation.create({
 				rotation: APLRotation.clone(player.aplRotation),

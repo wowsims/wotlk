@@ -141,14 +141,14 @@ export class RaidSimResultsManager {
 						class="results-sim-set-reference"
 						role="button"
 					>
-						<i class="fa fa-map-pin fa-lg text-${this.simUI.cssScheme} me-2"></i>Save as Reference
+						<i class="fa fa-map-pin fa-lg text-${this.simUI.cssScheme} me-2"></i>设为参考指标
 					</a>
 					<div class="results-sim-reference-bar">
 						<a href="javascript:void(0)" class="results-sim-reference-swap me-3" role="button">
-							<i class="fas fa-arrows-rotate me-1"></i>Swap
+							<i class="fas fa-arrows-rotate me-1"></i>替换
 						</a>
 						<a href="javascript:void(0)" class="results-sim-reference-delete" role="button">
-							<i class="fa fa-times fa-lg me-1"></i>Cancel
+							<i class="fa fa-times fa-lg me-1"></i>取消参考指标
 						</a>
 					</div>
 				</div>
@@ -161,21 +161,21 @@ export class RaidSimResultsManager {
 				Tooltip.getOrCreateInstance(resultDivElem, {title: tooltip, html: true, placement: 'right'});
 			}
 		};
-		setResultTooltip('results-sim-dps', 'Damage Per Second');
-		setResultTooltip('results-sim-dpasp', 'Demonic Pact Average Spell Power');
-		setResultTooltip('results-sim-tto', 'Time To OOM');
-		setResultTooltip('results-sim-hps', 'Healing+Shielding Per Second, including overhealing.');
-		setResultTooltip('results-sim-tps', 'Threat Per Second');
-		setResultTooltip('results-sim-dtps', 'Damage Taken Per Second');
+		setResultTooltip('results-sim-dps', '每秒伤害');
+		setResultTooltip('results-sim-dpasp', '恶魔契约的平均法术强度');
+		setResultTooltip('results-sim-tto', '空蓝耗时');
+		setResultTooltip('results-sim-hps', '每秒治疗+护盾，包括过量治疗');
+		setResultTooltip('results-sim-tps', '每秒仇恨');
+		setResultTooltip('results-sim-dtps', '每秒承受伤害');
 		setResultTooltip('results-sim-tmi', `
-			<p>Theck-Meloree Index (TMI)</p>
-			<p>A measure of incoming damage smoothness which combines the benefits of avoidance with effective health.</p>
-			<p><b>Lower is better.</b> This represents the % of your HP to expect in a 6-second burst window based on the encounter settings.</p>
+			<p>Theck-Meloree 指数 (TMI)</p>
+			<p>将闪避的优点与有效生命值结合起来以衡量输入伤害平滑度的指标</p>
+			<p><b>越低越好</b> 这表示根据战斗设置，在6秒爆发窗口中预期会损失的生命值百分比。</p>
 		`);
 		setResultTooltip('results-sim-cod', `
-			<p>Chance of Death</p>
-			<p>The percentage of iterations in which the player died, based on incoming damage from the enemies and incoming healing (see the <b>Incoming HPS</b> and <b>Healing Cadence</b> options).</p>
-			<p>DTPS alone is not a good measure of tankiness because it is not affected by health and ignores damage spikes. Chance of Death attempts to capture overall tankiness.</p>
+			<p>死亡几率</p>
+			<p>基于来自敌人的输入伤害和输入治疗（参见<b>输入HPS</b>和<b>治疗节奏</b>选项），表示玩家死亡的迭代次数百分比。</p>
+			<p>单靠每秒承受伤害（DTPS）并不能很好地衡量坦克的坚韧度，因为它不受生命值影响并忽略了伤害尖峰。死亡概率试图捕捉整体的坦克硬度。</p>
 		`);
 
 		if (!this.simUI.isIndividualSim()) {
@@ -198,7 +198,6 @@ export class RaidSimResultsManager {
 			this.referenceChangeEmitter.emit(TypedEvent.nextEventID());
 			this.updateReference();
 		});
-		Tooltip.getOrCreateInstance(simReferenceSetButton, {title: "Use as reference"});
 
 		const simReferenceSwapButton = this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-swap')[0] as HTMLSpanElement;
 		simReferenceSwapButton.addEventListener('click', event => {
@@ -218,20 +217,12 @@ export class RaidSimResultsManager {
 				}
 			});
 		});
-		tippy(simReferenceSwapButton, {
-			'content': 'Swap reference with current',
-			ignoreAttributes: true,
-		});
 
 		const simReferenceDeleteButton = this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-delete')[0] as HTMLSpanElement;
 		simReferenceDeleteButton.addEventListener('click', event => {
 			this.referenceData = null;
 			this.referenceChangeEmitter.emit(TypedEvent.nextEventID());
 			this.updateReference();
-		});
-		tippy(simReferenceDeleteButton, {
-			'content': 'Remove reference',
-			ignoreAttributes: true,
 		});
 
 		this.updateReference();
@@ -470,7 +461,7 @@ export class RaidSimResultsManager {
 					</span>` : ''
 			}
 				<div class="results-reference hide">
-					<span class="results-reference-diff"></span> vs reference
+					<span class="results-reference-diff"></span> 对比参考指标
 				</div>
 			</div>
 		`;

@@ -30,8 +30,8 @@ import {
 import { Clusterize } from './virtual_scroll/clusterize.js';
 
 const EP_TOOLTIP = `
-	EP (Equivalence Points) is way of comparing items by multiplying the raw stats of an item with your current stat weights.
-	More EP does not necessarily mean more DPS, as EP doesn't take into account stat caps and non-linear stat calculations.
+	EP权重是通过将物品的属性与您当前的属性权重相乘的总和来比较物品的方法。
+	更多的EP并不一定意味着更多的DPS，因为EP没有考虑属性上限(比如命中和精准)和非线性属性计算。
 `;
 
 const createHeroicLabel = () => {
@@ -369,11 +369,11 @@ export interface GearData {
 }
 
 export enum SelectorModalTabs {
-	Items = 'Items',
-	Enchants = 'Enchants',
-	Gem1 = 'Gem1',
-	Gem2 = 'Gem2',
-	Gem3 = 'Gem3',
+	Items = '装备',
+	Enchants = '附魔',
+	Gem1 = '宝石1',
+	Gem2 = '宝石2',
+	Gem3 = '宝石3',
 }
 
 interface SelectorModalConfig {
@@ -435,7 +435,7 @@ export class SelectorModal extends BaseModal {
 		const { slot, equippedItem, eligibleItems, eligibleEnchants, gearData } = this.config;
 
 		this.addTab<Item>(
-			'Items',
+			'装备',
 			eligibleItems.map(item => {
 				return {
 					item: item,
@@ -462,12 +462,12 @@ export class SelectorModal extends BaseModal {
 			GemColor.GemColorUnknown,
 			eventID => {
 				gearData.equipItem(eventID, null);
-				this.removeTabs('Gem');
+				this.removeTabs('宝石');
 			},
 		);
 
 		this.addTab<Enchant>(
-			'Enchants',
+			'附魔',
 			eligibleEnchants.map(enchant => {
 				return {
 					item: enchant,
@@ -501,9 +501,9 @@ export class SelectorModal extends BaseModal {
 		// Only refresh opened tab
 		const t = e.target! as HTMLElement;
 		const tab = t.querySelector<HTMLElement>('.active')!.dataset.contentId!;
-		if (tab.includes('Item')) {
+		if (tab.includes('装备')) {
 			this.ilists[0].sizeRefresh();
-		} else if (tab.includes('Enchant')) {
+		} else if (tab.includes('附魔')) {
 			this.ilists[1].sizeRefresh();
 		}
 	}
@@ -516,7 +516,7 @@ export class SelectorModal extends BaseModal {
 		const socketBonusEP = this.player.computeStatsEP(new Stats(equippedItem.item.socketBonus)) / (equippedItem.item.gemSockets.length || 1);
 		equippedItem.curSocketColors(this.player.isBlacksmithing()).forEach((socketColor, socketIdx) => {
 			this.addTab<Gem>(
-				'Gem ' + (socketIdx + 1),
+				'宝石 ' + (socketIdx + 1),
 				this.player.getGems(socketColor).map((gem: Gem) => {
 					return {
 						item: gem,
@@ -651,7 +651,7 @@ export class SelectorModal extends BaseModal {
 
 				// If the item changes, the gem slots might change, so remove and recreate the gem tabs
 				if (Item.is(item)) {
-					this.removeTabs('Gem');
+					this.removeTabs('宝石');
 					this.addGemTabs(slot, gearData.getEquippedItem(), gearData);
 				}
 			},
@@ -791,25 +791,25 @@ export class ItemList<T> {
 		this.tabContent = (
 			<div id={tabContentId} className={`selector-modal-tab-pane tab-pane fade ${selected ? 'active show' : ''}`}>
 				<div className="selector-modal-filters">
-					<input className="selector-modal-search form-control" type="text" placeholder="Search..." />
-					{label == 'Items' && <button className="selector-modal-filters-button btn btn-primary">Filters</button>}
+					<input className="selector-modal-search form-control" type="text" placeholder="搜索..." />
+					{label == '装备' && <button className="selector-modal-filters-button btn btn-primary">筛选</button>}
 					<div className="selector-modal-phase-selector"></div>
 					<div className="sim-input selector-modal-boolean-option selector-modal-show-1h-weapons"></div>
 					<div className="sim-input selector-modal-boolean-option selector-modal-show-2h-weapons"></div>
 					<div className="sim-input selector-modal-boolean-option selector-modal-show-matching-gems"></div>
 					<div className="sim-input selector-modal-boolean-option selector-modal-show-ep-values"></div>
-					<button className="selector-modal-simall-button btn btn-warning">Add to Batch Sim</button>
-					<button className="selector-modal-remove-button btn btn-danger">Unequip Item</button>
+					<button className="selector-modal-simall-button btn btn-warning">添加至批量模拟</button>
+					<button className="selector-modal-remove-button btn btn-danger">取消装备</button>
 				</div>
 				<div className="selector-modal-list-labels">
 					<label className="item-label">
-						<small>Item</small>
+						<small>装备</small>
 					</label>
 					<label className="source-label">
-						<small>Source</small>
+						<small>来源</small>
 					</label>
 					<label className="ep-label">
-						<small>EP</small>
+						<small>权重</small>
 						<i className="fa-solid fa-plus-minus fa-2xs"></i>
 						<button ref={epButton} className="btn btn-link p-0 ms-1">
 							<i className="far fa-question-circle fa-lg"></i>
@@ -829,7 +829,7 @@ export class ItemList<T> {
 
 		makeShow1hWeaponsSelector(this.tabContent.getElementsByClassName('selector-modal-show-1h-weapons')[0] as HTMLElement, player.sim);
 		makeShow2hWeaponsSelector(this.tabContent.getElementsByClassName('selector-modal-show-2h-weapons')[0] as HTMLElement, player.sim);
-		if (!(label == 'Items' && (slot == ItemSlot.ItemSlotMainHand || (slot == ItemSlot.ItemSlotOffHand && player.getClass() == Class.ClassWarrior)))) {
+		if (!(label == '装备' && (slot == ItemSlot.ItemSlotMainHand || (slot == ItemSlot.ItemSlotOffHand && player.getClass() == Class.ClassWarrior)))) {
 			(this.tabContent.getElementsByClassName('selector-modal-show-1h-weapons')[0] as HTMLElement).style.display = 'none';
 			(this.tabContent.getElementsByClassName('selector-modal-show-2h-weapons')[0] as HTMLElement).style.display = 'none';
 		}
@@ -837,13 +837,13 @@ export class ItemList<T> {
 		makeShowEPValuesSelector(this.tabContent.getElementsByClassName('selector-modal-show-ep-values')[0] as HTMLElement, player.sim);
 
 		makeShowMatchingGemsSelector(this.tabContent.getElementsByClassName('selector-modal-show-matching-gems')[0] as HTMLElement, player.sim);
-		if (!label.startsWith('Gem')) {
+		if (!label.startsWith('宝石')) {
 			(this.tabContent.getElementsByClassName('selector-modal-show-matching-gems')[0] as HTMLElement).style.display = 'none';
 		}
 
 		makePhaseSelector(this.tabContent.getElementsByClassName('selector-modal-phase-selector')[0] as HTMLElement, player.sim);
 
-		if (label == 'Items') {
+		if (label == '装备') {
 			const filtersButton = this.tabContent.getElementsByClassName('selector-modal-filters-button')[0] as HTMLElement;
 			filtersButton.addEventListener('click', () => new FiltersMenu(parent, player, slot));
 		}
@@ -889,10 +889,10 @@ export class ItemList<T> {
 			onRemove(TypedEvent.nextEventID());
 		});
 
-		if (label.startsWith('Enchants')) {
-			removeButton.textContent = 'Remove Enchant';
-		} else if (label.startsWith('Gem')) {
-			removeButton.textContent = 'Remove Gem';
+		if (label.startsWith('附魔')) {
+			removeButton.textContent = '移除附魔';
+		} else if (label.startsWith('宝石')) {
+			removeButton.textContent = '移除宝石';
 		}
 
 		this.updateSelected();
@@ -901,7 +901,7 @@ export class ItemList<T> {
 		this.searchInput.addEventListener('input', () => this.applyFilters());
 
 		const simAllButton = this.tabContent.getElementsByClassName('selector-modal-simall-button')[0] as HTMLButtonElement;
-		if (label == 'Items') {
+		if (label == '装备') {
 			simAllButton.hidden = !player.sim.getShowExperimental();
 			player.sim.showExperimentalChangeEmitter.on(() => {
 				simAllButton.hidden = !player.sim.getShowExperimental();
@@ -952,7 +952,7 @@ export class ItemList<T> {
 		const newEquippedItem = this.gearData.getEquippedItem();
 		const newItem = this.equippedToItemFn(newEquippedItem);
 
-		const newItemId = newItem ? (this.label == 'Enchants' ? (newItem as unknown as Enchant).effectId : (newItem as unknown as Item | Gem).id) : 0;
+		const newItemId = newItem ? (this.label == '附魔' ? (newItem as unknown as Enchant).effectId : (newItem as unknown as Item | Gem).id) : 0;
 		const newEP = newItem ? this.computeEP(newItem) : 0;
 
 		this.scroller.elementUpdate(item => {
@@ -983,11 +983,11 @@ export class ItemList<T> {
 
 		const currentEquippedItem = this.player.getEquippedItem(this.slot);
 
-		if (this.label == 'Items') {
+		if (this.label == '装备') {
 			itemIdxs = this.player.filterItemData(itemIdxs, i => this.itemData[i].item as unknown as Item, this.slot);
-		} else if (this.label == 'Enchants') {
+		} else if (this.label == '附魔') {
 			itemIdxs = this.player.filterEnchantData(itemIdxs, i => this.itemData[i].item as unknown as Enchant, this.slot, currentEquippedItem);
-		} else if (this.label.startsWith('Gem')) {
+		} else if (this.label.startsWith('宝石')) {
 			itemIdxs = this.player.filterGemData(itemIdxs, i => this.itemData[i].item as unknown as Gem, this.slot, this.socketColor);
 		}
 
@@ -1067,7 +1067,7 @@ export class ItemList<T> {
 
 		const equippedItem = this.equippedToItemFn(this.gearData.getEquippedItem());
 		const equippedItemID = equippedItem
-			? this.label == 'Enchants'
+			? this.label == '附魔'
 				? (equippedItem as unknown as Enchant).effectId
 				: (equippedItem as unknown as Item).id
 			: 0;
@@ -1090,7 +1090,7 @@ export class ItemList<T> {
 			</li>
 		);
 
-		if (this.label == 'Items') {
+		if (this.label == '装备') {
 			listItemElem.appendChild(
 				<div className="selector-modal-list-item-source-container">{this.getSourceInfo(itemData.item as unknown as Item, this.player.sim)}</div>,
 			);
@@ -1133,11 +1133,11 @@ export class ItemList<T> {
 		setItemQualityCssClass(nameElem.value!, itemData.quality);
 
 		new Tooltip(favoriteElem.value!, {
-			title: 'Add to favorites',
+			title: '添加至收藏',
 		});
 		const setFavorite = (isFavorite: boolean) => {
 			const filters = this.player.sim.getFilters();
-			if (this.label == 'Items') {
+			if (this.label == '装备') {
 				const favId = itemData.id;
 				if (isFavorite) {
 					filters.favoriteItems.push(favId);
@@ -1147,7 +1147,7 @@ export class ItemList<T> {
 						filters.favoriteItems.splice(favIdx, 1);
 					}
 				}
-			} else if (this.label == 'Enchants') {
+			} else if (this.label == '附魔') {
 				const favId = getUniqueEnchantString(itemData.item as unknown as Enchant);
 				if (isFavorite) {
 					filters.favoriteEnchants.push(favId);
@@ -1157,7 +1157,7 @@ export class ItemList<T> {
 						filters.favoriteEnchants.splice(favIdx, 1);
 					}
 				}
-			} else if (this.label.startsWith('Gem')) {
+			} else if (this.label.startsWith('宝石')) {
 				const favId = itemData.id;
 				if (isFavorite) {
 					filters.favoriteGems.push(favId);
@@ -1189,11 +1189,11 @@ export class ItemList<T> {
 	}
 
 	private isItemFavorited(itemData: ItemData<T>): boolean {
-		if (this.label == 'Items') {
+		if (this.label == '装备') {
 			return this.currentFilters.favoriteItems.includes(itemData.id);
-		} else if (this.label == 'Enchants') {
+		} else if (this.label == '附魔') {
 			return this.currentFilters.favoriteEnchants.includes(getUniqueEnchantString(itemData.item as unknown as Enchant));
-		} else if (this.label.startsWith('Gem')) {
+		} else if (this.label.startsWith('宝石')) {
 			return this.currentFilters.favoriteGems.includes(itemData.id);
 		}
 		return false;

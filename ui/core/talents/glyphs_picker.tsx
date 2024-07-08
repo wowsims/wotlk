@@ -49,10 +49,6 @@ export class GlyphsPicker extends Component {
 		super(parent, 'glyphs-picker-root');
 		this.glyphsConfig = glyphsConfig;
 
-		this.rootElem.appendChild(
-			<h6 className="mt-2 fw-bold d-xl-block d-none">Glyphs</h6>
-		)
-
 		const majorGlyphs = Object.keys(glyphsConfig.majorGlyphs).map(idStr => Number(idStr));
 		const minorGlyphs = Object.keys(glyphsConfig.minorGlyphs).map(idStr => Number(idStr));
 
@@ -63,10 +59,10 @@ export class GlyphsPicker extends Component {
 		minorGlyphsData.sort((a, b) => stringComparator(a.name, b.name));
 
 		const majorGlyphsBlock = new ContentBlock(this.rootElem, 'major-glyphs', {
-			header: { title: 'Major', extraCssClasses: ['border-0', 'mb-1'] }
+			header: { title: '大雕文', extraCssClasses: ['border-0', 'mb-1'] }
 		});
 		const minorGlyphsBlock = new ContentBlock(this.rootElem, 'minor-glyphs', {
-			header: { title: 'Minor', extraCssClasses: ['border-0', 'mb-1'] }
+			header: { title: '小雕文', extraCssClasses: ['border-0', 'mb-1'] }
 		});
 
 		this.majorGlyphPickers = (['major1', 'major2', 'major3'] as Array<keyof Glyphs>).map(glyphField => {
@@ -145,11 +141,11 @@ class GlyphPicker extends Input<Player<any>, number> {
 
 class GlyphSelectorModal extends BaseModal {
 	constructor(parent: HTMLElement, glyphPicker: GlyphPicker, glyphOptions: Array<GlyphData>) {
-		super(parent, 'glyph-modal', { title: 'Glyphs' });
+		super(parent, 'glyph-modal', { title: '雕文' });
 
 		this.body.innerHTML = `
 			<div class="input-root">
-				<input class="selector-modal-search form-control" type="text" placeholder="Search...">
+				<input class="selector-modal-search form-control" type="text" placeholder="搜索...">
 			</div>
 			<ul class="selector-modal-list"></ul>
 		`;

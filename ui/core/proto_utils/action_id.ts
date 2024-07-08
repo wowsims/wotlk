@@ -31,82 +31,83 @@ export class ActionId {
 			case OtherAction.OtherActionNone:
 				break;
 			case OtherAction.OtherActionWait:
-				baseName = 'Wait';
+				baseName = '等待';
 				iconUrl = 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/inv_misc_pocketwatch_01.jpg';
 				break;
 			case OtherAction.OtherActionManaRegen:
-				name = 'Mana Tick';
+				name = '法力回复';
 				iconUrl = resourceTypeToIcon[ResourceType.ResourceTypeMana];
 				if (tag == 1) {
-					name += ' (Casting)';
+					name += ' (施法中)';
 				} else if (tag == 2) {
-					name += ' (Not Casting)';
+					name += ' (未施法)';
 				}
 				break;
 			case OtherAction.OtherActionEnergyRegen:
-				baseName = 'Energy Tick';
+				baseName = '能量回复';
 				iconUrl = resourceTypeToIcon[ResourceType.ResourceTypeEnergy];
 				break;
 			case OtherAction.OtherActionFocusRegen:
-				baseName = 'Focus Tick';
+				baseName = '集中回复';
 				iconUrl = resourceTypeToIcon[ResourceType.ResourceTypeFocus];
 				break;
 			case OtherAction.OtherActionManaGain:
-				baseName = 'Mana Gain';
+				baseName = '法力获得';
 				iconUrl = resourceTypeToIcon[ResourceType.ResourceTypeMana];
 				break;
 			case OtherAction.OtherActionRageGain:
-				baseName = 'Rage Gain';
+				baseName = '怒气获得';
 				iconUrl = resourceTypeToIcon[ResourceType.ResourceTypeRage];
 				break;
 			case OtherAction.OtherActionAttack:
-				name = 'Attack';
+				name = '攻击';
 				iconUrl = 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/inv_sword_04.jpg';
 				if (tag == 1) {
-					name += ' (Main Hand)';
+					name += ' (主手)';
 				} else if (tag == 2) {
-					name += ' (Off Hand)';
+					name += ' (副手)';
 				}
 				break;
 			case OtherAction.OtherActionShoot:
-				name = 'Shoot';
+				name = '射击';
 				iconUrl = 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_marksmanship.jpg';
 				break;
 			case OtherAction.OtherActionPet:
 				break;
 			case OtherAction.OtherActionRefund:
-				baseName = 'Refund';
+				baseName = '退款';
 				iconUrl = 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/inv_misc_coin_01.jpg';
 				break;
 			case OtherAction.OtherActionDamageTaken:
-				baseName = 'Damage Taken';
+				baseName = '受到的伤害';
 				iconUrl = 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/inv_sword_04.jpg';
 				break;
 			case OtherAction.OtherActionHealingModel:
-				baseName = 'Incoming HPS';
+				baseName = '治疗量';
 				iconUrl = 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/spell_holy_renew.jpg';
 				break;
 			case OtherAction.OtherActionBloodRuneGain:
-				baseName = 'Blood Rune Gain';
+				baseName = '血符文获得';
 				iconUrl = 'https://db.newbeebox.com/wow/wz/images/wow/icons/medium/spell_deathknight_deathstrike.jpg';
 				break;
 			case OtherAction.OtherActionFrostRuneGain:
-				baseName = 'Frost Rune Gain';
+				baseName = '冰霜符文获得';
 				iconUrl = 'https://db.newbeebox.com/wow/wz/images/wow/icons/medium/spell_deathknight_deathstrike2.jpg';
 				break;
 			case OtherAction.OtherActionUnholyRuneGain:
-				baseName = 'Unholy Rune Gain';
+				baseName = '邪恶符文获得';
 				iconUrl = 'https://db.newbeebox.com/wow/wz/images/wow/icons/medium/spell_deathknight_empowerruneblade.jpg';
 				break;
 			case OtherAction.OtherActionDeathRuneGain:
-				baseName = 'Death Rune Gain';
+				baseName = '死亡符文获得';
 				iconUrl = 'https://db.newbeebox.com/wow/wz/images/wow/icons/medium/spell_deathknight_empowerruneblade.jpg';
 				break;
 			case OtherAction.OtherActionPotion:
-				baseName = 'Potion';
+				baseName = '药水';
 				iconUrl = 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/inv_alchemy_elixir_04.jpg';
 				break;
 		}
+
 		this.baseName = baseName;
 		this.name = name || baseName;
 		this.iconUrl = iconUrl;
@@ -134,44 +135,19 @@ export class ActionId {
 	}
 
 	static makeItemUrl(id: number): string {
-		const langPrefix = getWowheadLanguagePrefix();
-		if (USE_WOTLK_DB) {
-			return 'https://wotlkdb.com/?item=' + id;
-		} else {
-			return `https://wowhead.com/wotlk/${langPrefix}item=${id}?lvl=${CHARACTER_LEVEL}`;
-		}
+		return `https://www.wclbox.com/db/wotlk/item/${id}`;
 	}
 	static makeSpellUrl(id: number): string {
-		const langPrefix = getWowheadLanguagePrefix();
-		if (USE_WOTLK_DB) {
-			return 'https://wotlkdb.com/?spell=' + id;
-		} else {
-			return `https://wowhead.com/wotlk/${langPrefix}spell=${id}`;
-		}
+		return `https://www.wclbox.com/db/wotlk/spell/${id}`;
 	}
 	static makeQuestUrl(id: number): string {
-		const langPrefix = getWowheadLanguagePrefix();
-		if (USE_WOTLK_DB) {
-			return 'https://wotlkdb.com/?quest=' + id;
-		} else {
-			return `https://wowhead.com/wotlk/${langPrefix}quest=${id}`;
-		}
+		return `https://wowhead.com/wotlk/cn/quest=${id}`;
 	}
 	static makeNpcUrl(id: number): string {
-		const langPrefix = getWowheadLanguagePrefix();
-		if (USE_WOTLK_DB) {
-			return 'https://wotlkdb.com/?npc=' + id;
-		} else {
-			return `https://wowhead.com/wotlk/${langPrefix}npc=${id}`;
-		}
+		return `https://wowhead.com/wotlk/cn/npc=${id}`;
 	}
 	static makeZoneUrl(id: number): string {
-		const langPrefix = getWowheadLanguagePrefix();
-		if (USE_WOTLK_DB) {
-			return 'https://wotlkdb.com/?zone=' + id;
-		} else {
-			return `https://wowhead.com/wotlk/${langPrefix}zone=${id}`;
-		}
+		return `https://wowhead.com/wotlk/cn/zone=${id}`;
 	}
 
 	setWowheadHref(elem: HTMLAnchorElement) {
@@ -223,69 +199,69 @@ export class ActionId {
 				break;
 			case 'Explosive Trap':
 				if (this.tag == 1) {
-					name += ' (Weaving)';
+					name += ' (编织)';
 				}
 				break;
 			case 'Arcane Blast':
 				if (this.tag == 1) {
-					name += ' (No Stacks)';
+					name += ' (无层数)';
 				} else if (this.tag == 2) {
-					name += ` (1 Stack)`;
+					name += ` (1层)`;
 				} else if (this.tag > 2) {
-					name += ` (${this.tag - 1} Stacks)`;
+					name += ` (${this.tag - 1}层)`;
 				}
 				break;
 			case 'Hot Streak':
-				if (this.tag) name += ' (Crits)';
+				if (this.tag) name += ' (暴击)';
 				break;
 			case 'Fireball':
 			case 'Flamestrike':
 				if (this.tag == 8) {
-					name += ' (Rank 8)';
+					name += ' (等级 8)';
 				} else if (this.tag == 9) {
-					name += ' (Rank 9)';
+					name += ' (等级 9)';
 				}
 				break;
 			case 'Pyroblast':
 				if (this.tag) name += ' (DoT)';
 				break;
 			case 'Living Bomb':
-				if (this.spellId == 55362) name += ' (Explosion)';
+				if (this.spellId == 55362) name += ' (爆炸)';
 				break;
 			case 'Evocation':
 				if (this.tag == 1) {
-					name += ' (1 Tick)';
+					name += ' (1次)';
 				} else if (this.tag == 2) {
-					name += ' (2 Tick)';
+					name += ' (2次)';
 				} else if (this.tag == 3) {
-					name += ' (3 Tick)';
+					name += ' (3次)';
 				} else if (this.tag == 4) {
-					name += ' (4 Tick)';
+					name += ' (4次)';
 				} else if (this.tag == 5) {
-					name += ' (5 Tick)';
+					name += ' (5次)';
 				}
 				break;
 			case 'Mind Flay':
 				if (this.tag == 1) {
-					name += ' (1 Tick)';
+					name += ' (1次)';
 				} else if (this.tag == 2) {
-					name += ' (2 Tick)';
+					name += ' (2次)';
 				} else if (this.tag == 3) {
-					name += ' (3 Tick)';
+					name += ' (3次)';
 				}
 				break;
 			case 'Mind Sear':
 				if (this.tag == 1) {
-					name += ' (1 Tick)';
+					name += ' (1次)';
 				} else if (this.tag == 2) {
-					name += ' (2 Tick)';
+					name += ' (2次)';
 				} else if (this.tag == 3) {
-					name += ' (3 Tick)';
+					name += ' (3次)';
 				}
 				break;
 			case 'Shattering Throw':
 				if (this.tag === playerIndex) {
-					name += ` (self)`;
+					name += ` (自身)`;
 				}
 				break;
 			case 'Envenom':
@@ -293,57 +269,56 @@ export class ActionId {
 			case 'Expose Armor':
 			case 'Rupture':
 			case 'Slice and Dice':
-				if (this.tag) name += ` (${this.tag} CP)`;
+				if (this.tag) name += ` (${this.tag} 连击点)`;
 				break;
 			case 'Instant Poison IX':
 			case 'Wound Poison VII':
 				if (this.tag == 1) {
-					name += ' (Deadly)'
+					name += ' (致命)';
 				} else if (this.tag == 2) {
-					name += ' (Shiv)'
+					name += ' (毒化)';
 				}
 				break;
 			case 'Fan of Knives':
 			case 'Killing Spree':
 				if (this.tag == 1) {
-					name += ' (Main Hand)'
+					name += ' (主手)';
 				} else if (this.tag == 2) {
-					name += ' (Off Hand)'
+					name += ' (副手)';
 				}
 				break;
 			case 'Tricks of the Trade':
 				if (this.tag == 1) {
-					name += ' (Not Self)'
+					name += ' (非自身)';
 				}
 				break;
 			case 'Chain Lightning':
 			case 'Lightning Bolt':
 				if (this.tag == 6) {
-					name += ' (LO)';
+					name += ' (过载)';
 				} else if (this.tag) {
-					name += ` (${this.tag} MW)`;
+					name += ` (${this.tag} 魔杖充能)`;
 				}
 				break;
 			case 'Holy Shield':
 				if (this.tag == 1) {
-					name += ' (Proc)';
+					name += ' (触发)';
 				}
 				break;
 			case 'Righteous Vengeance':
 				if (this.tag == 1) {
-					name += ' (Application)'
+					name += ' (应用)';
 				} else if (this.tag == 2) {
-					name += ' (DoT)'
+					name += ' (DoT)';
 				}
 				break;
 			case 'Holy Vengeance':
 				if (this.tag == 1) {
-					name += ' (Application)'
+					name += ' (应用)';
 				} else if (this.tag == 2) {
-					name += ' (DoT)'
+					name += ' (DoT)';
 				}
 				break;
-			// For targetted buffs, tag is the source player's raid index or -1 if none.
 			case 'Bloodlust':
 			case 'Ferocious Inspiration':
 			case 'Innervate':
@@ -352,49 +327,47 @@ export class ActionId {
 			case 'Power Infusion':
 				if (this.tag != -1) {
 					if (this.tag === playerIndex || playerIndex == undefined) {
-						name += ` (self)`;
+						name += ` (自身)`;
 					} else {
-						name += ` (from #${this.tag + 1})`;
+						name += ` (来自 #${this.tag + 1})`;
 					}
 				} else {
-					name += " (raid)"
+					name += " (团队)";
 				}
 				break;
 			case 'Darkmoon Card: Crusade':
 				if (this.tag == 1) {
-					name += ' (Melee)';
+					name += ' (近战)';
 				} else if (this.tag == 2) {
-					name += ' (Spell)';
+					name += ' (法术)';
 				}
 				break;
 			case 'Frozen Blows':
 				if (this.tag == 1) {
-					name += ' (Physical)';
+					name += ' (物理)';
 				} else if (this.tag == 2) {
-					name += ' (Frost)';
+					name += ' (冰霜)';
 				}
 				break;
 			case 'Scourge Strike':
 				if (this.tag == 1) {
-					name += ' (Physical)';
+					name += ' (物理)';
 				} else if (this.tag == 2) {
-					name += ' (Shadow)';
+					name += ' (暗影)';
 				}
 				break;
 			case 'Heart Strike':
-				/*if (this.tag == 1) {
-					name += ' (Physical)';
-				} else */if (this.tag == 2) {
-					name += ' (Off-target)';
+				if (this.tag == 2) {
+					name += ' (次要目标)';
 				}
 				break;
 			case 'Rune Strike':
 				if (this.tag == 0) {
-					name += ' (Queue)'
+					name += ' (排队)';
 				} else if (this.tag == 1) {
-					name += ' (Main Hand)';
+					name += ' (主手)';
 				} else if (this.tag == 2) {
-					name += ' (Off Hand)';
+					name += ' (副手)';
 				}
 				break;
 			case 'Frost Strike':
@@ -407,48 +380,49 @@ export class ActionId {
 			case 'Windfury Weapon':
 			case 'Berserk':
 				if (this.tag == 1) {
-					name += ' (Main Hand)';
+					name += ' (主手)';
 				} else if (this.tag == 2) {
-					name += ' (Off Hand)';
+					name += ' (副手)';
 				}
 				break;
 			case 'Battle Shout':
 				if (this.tag == 1) {
-					name += ' (Snapshot)';
+					name += ' (快照)';
 				}
 				break;
 			case 'Heroic Strike':
 			case 'Cleave':
 			case 'Maul':
 				if (this.tag == 1) {
-					name += ' (Queue)';
+					name += ' (排队)';
 				}
 				break;
 			case 'Whirlwind':
 				if (this.tag == 1) {
-					name += ' (OH)';
+					name += ' (副手)';
 				}
 				break;
 			case 'Seed of Corruption':
 				if (this.tag == 0) {
 					name += ' (DoT)';
 				} else if (this.tag == 1) {
-					name += ' (Explosion)';
+					name += ' (爆炸)';
 				}
 				break;
 			case 'Thunderfury':
 				if (this.tag == 1) {
-					name += ' (ST)';
+					name += ' (单目标)';
 				} else if (this.tag == 2) {
-					name += ' (MT)';
+					name += ' (多目标)';
 				}
 				break;
 			default:
 				if (this.tag) {
-					name += ' (??)';
+					name += ' (未知)';
 				}
 				break;
 		}
+
 
 		const idString = this.toProtoString();
 		const iconOverrideId = idOverrides[idString] || null;

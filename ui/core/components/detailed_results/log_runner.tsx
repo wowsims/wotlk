@@ -37,7 +37,7 @@ export class LogRunner extends ResultComponent {
 
 		new BooleanPicker<LogRunner>(this.rootElem.querySelector('.show-debug-container')!, this, {
 			extraCssClasses: ['show-debug-picker'],
-			label: 'Show Debug Statements',
+			label: '显示debug信息',
 			inline: true,
 			reverse: true,
 			changedEvent: () => this.showDebugChangeEmitter,

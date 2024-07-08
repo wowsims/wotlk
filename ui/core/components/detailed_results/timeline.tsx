@@ -58,14 +58,14 @@ export class Timeline extends ResultComponent {
 				<div className="d-flex flex-column">
 					<p>
 						<i className="warning fa fa-exclamation-triangle fa-xl me-2"></i>
-						Timeline data visualizes only 1 sim iteration.
+						战斗时间轴仅显示单次战斗的内容
 					</p>
-					<p>Note: You can move the timeline by holding <kbd>Shift</kbd> while scrolling, or by clicking and dragging.</p>
+					<p>提示: 你可以按住<kbd>Shift</kbd>键加上鼠标滚轮来横向滚动时间轴</p>
 				</div>
 				<select className="timeline-chart-picker form-select">
-					<option className="rotation-option" value="rotation">Rotation</option>
+					<option className="rotation-option" value="rotation">输出循环</option>
 					<option className="dps-option" value="dps">DPS</option>
-					<option className="threat-option" value="threat">Threat</option>
+					<option className="threat-option" value="threat">仇恨</option>
 				</select>
 			</div>
 		);
@@ -110,11 +110,11 @@ export class Timeline extends ResultComponent {
 			series: [], // Set dynamically
 			xaxis: {
 				title: {
-					text: 'Time (s)',
+					text: '时间(秒)',
 				},
 			},
 			noData: {
-				text: 'Waiting for data...',
+				text: '等待数据中...',
 			},
 			stroke: {
 				width: 2,
@@ -181,7 +181,7 @@ export class Timeline extends ResultComponent {
 					show: true,
 				},
 				title: {
-					text: 'Time (s)',
+					text: '时间(秒)',
 				},
 			},
 			yaxis: [],
@@ -306,13 +306,13 @@ export class Timeline extends ResultComponent {
 		const axisMax = Math.ceil(maxThreat / 10000) * 10000;
 		options.yaxis.push({
 			color: threatColor,
-			seriesName: 'Threat',
+			seriesName: '仇恨',
 			min: 0,
 			max: axisMax,
 			tickAmount: 10,
 			decimalsInFloat: 0,
 			title: {
-				text: 'Threat',
+				text: '仇恨',
 				style: {
 					color: threatColor,
 				},
@@ -368,7 +368,7 @@ export class Timeline extends ResultComponent {
 
 		options.colors.push(manaColor);
 		options.series.push({
-			name: 'Mana',
+			name: '蓝量',
 			type: 'line',
 			data: manaLogs.map(log => {
 				return {
@@ -418,7 +418,7 @@ export class Timeline extends ResultComponent {
 	private addThreatSeries(unit: UnitMetrics, options: any, colorOverride: string): TooltipHandler | null {
 		options.colors.push(colorOverride || threatColor);
 		options.series.push({
-			name: 'Threat',
+			name: '仇恨',
 			type: 'line',
 			data: unit.threatLogs.filter(log => log.timestamp >= 0).map(log => {
 				return {

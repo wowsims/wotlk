@@ -426,7 +426,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 	private addTopbarComponents() {
 		this.simHeader.addImportLink(
-			'插件',
+			'WSE插件',
 			_parent => new Importers.IndividualAddonImporter(this.rootElem, this),
 			true,
 		);
@@ -435,11 +435,11 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			_parent => new Importers.IndividualJsonImporter(this.rootElem, this),
 			true,
 		);
-		this.simHeader.addExportLink(
-			'链接',
-			_parent => new Exporters.IndividualLinkExporter(this.rootElem, this),
-			false,
-		);
+		// this.simHeader.addExportLink(
+		// 	'链接',
+		// 	_parent => new Exporters.IndividualLinkExporter(this.rootElem, this),
+		// 	false,
+		// );
 		this.simHeader.addExportLink(
 			'JSON',
 			_parent => new Exporters.IndividualJsonExporter(this.rootElem, this),

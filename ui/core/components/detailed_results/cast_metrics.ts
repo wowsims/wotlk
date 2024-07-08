@@ -1,5 +1,4 @@
 import { ActionMetrics, SimResult, SimResultFilter } from '../../proto_utils/sim_result.js';
-
 import { ColumnSortType, MetricsTable } from './metrics_table.js';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
 
@@ -14,19 +13,20 @@ export class CastMetricsTable extends MetricsTable<ActionMetrics> {
 				};
 			}),
 			{
-				name: 'Casts',
-				tooltip: 'Casts',
+				name: '施法次数',
+				tooltip: '施法次数',
 				sort: ColumnSortType.Descending,
 				getValue: (metric: ActionMetrics) => metric.casts,
 				getDisplayString: (metric: ActionMetrics) => metric.casts.toFixed(1),
 			},
 			{
 				name: 'CPM',
-				tooltip: 'Casts / (Encounter Duration / 60 Seconds)',
+				tooltip: '施法次数 / (战斗时长 / 60 秒)',
 				getValue: (metric: ActionMetrics) => metric.castsPerMinute,
 				getDisplayString: (metric: ActionMetrics) => metric.castsPerMinute.toFixed(1),
 			},
 		]);
+
 	}
 
 	getGroupedMetrics(resultData: SimResultData): Array<Array<ActionMetrics>> {

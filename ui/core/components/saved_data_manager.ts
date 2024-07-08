@@ -1,8 +1,8 @@
-import { EventID, TypedEvent } from '../typed_event.js';
-import { ContentBlock, ContentBlockHeaderConfig } from './content_block';
+import { Tooltip } from 'bootstrap';
 
 import { Component } from '../components/component.js';
-import { Tooltip } from 'bootstrap';
+import { EventID, TypedEvent } from '../typed_event.js';
+import { ContentBlock, ContentBlockHeaderConfig } from './content_block';
 
 export type SavedDataManagerConfig<ModObject, T> = {
 	label: string;
@@ -57,7 +57,7 @@ export class SavedDataManager<ModObject, T> extends Component {
 		this.presets = [];
 		this.frozen = false;
 
-		let contentBlock = new ContentBlock(this.rootElem, 'saved-data', { header: config.header });
+		const contentBlock = new ContentBlock(this.rootElem, 'saved-data', { header: config.header });
 
 		contentBlock.bodyElement.innerHTML = `
 			<div class="saved-data-container hide">
@@ -112,7 +112,7 @@ export class SavedDataManager<ModObject, T> extends Component {
 		});
 
 		if (!config.isPreset) {
-			let deleteFragment = document.createElement('fragment');
+			const deleteFragment = document.createElement('fragment');
 			deleteFragment.innerHTML = `
 				<a
 					href="javascript:void(0)"
@@ -126,11 +126,11 @@ export class SavedDataManager<ModObject, T> extends Component {
 			const deleteButton = deleteFragment.children[0] as HTMLElement;
 			dataElem.appendChild(deleteButton);
 
-			const tooltip = Tooltip.getOrCreateInstance(deleteButton, {title:`Delete saved ${this.config.label}`});
+			const tooltip = Tooltip.getOrCreateInstance(deleteButton, {title:`删除已经保存的配装`});
 
 			deleteButton.addEventListener('click', event => {
 				event.stopPropagation();
-				const shouldDelete = confirm(`Delete saved ${this.config.label} '${config.name}'?`);
+				const shouldDelete = confirm(`确定删除已经保存的配装 '${config.name}'?`);
 				if (!shouldDelete)
 					return;
 
@@ -202,7 +202,7 @@ export class SavedDataManager<ModObject, T> extends Component {
 			console.warn('Invalid json for local storage value: ' + dataStr);
 		}
 
-		for (let name in jsonData) {
+		for (const name in jsonData) {
 			try {
 				this.addSavedData({
 					name: name,
@@ -220,13 +220,20 @@ export class SavedDataManager<ModObject, T> extends Component {
 		this.rootElem.classList.add('frozen');
 	}
 
+	private settingTranslation: { [key: string]: string }= {
+		'Settings': '战斗设置',
+		'Encounter': '敌人设置',
+		'Gear Set': '配装',
+		'Talents': '天赋',
+		'Rotation': '输出循环'
+	};
+
 	private buildCreateContainer(): HTMLElement {
-		let savedDataCreateFragment = document.createElement('fragment');
+		const savedDataCreateFragment = document.createElement('fragment');
 		savedDataCreateFragment.innerHTML = `
 			<div class="saved-data-create-container">
-				<label class="form-label">${this.config.label} Name</label>
-				<input class="saved-data-save-input form-control" type="text" placeholder="Name">
-				<button class="saved-data-save-button btn btn-primary">Save ${this.config.label}</button>
+				<input class="saved-data-save-input form-control" type="text" placeholder="输入名称...">
+				<button class="saved-data-save-button btn btn-primary">保存${this.settingTranslation[this.config.label]}</button>
 			</div>
 		`;
 
@@ -238,12 +245,12 @@ export class SavedDataManager<ModObject, T> extends Component {
 
 			const newName = this.saveInput?.value;
 			if (!newName) {
-				alert(`Choose a label for your saved ${this.config.label}!`);
+				alert(`选择配装名称 ${this.config.label}!`);
 				return;
 			}
 
 			if (newName in this.presets) {
-				alert(`${this.config.label} with name ${newName} already exists.`);
+				alert(`${newName} 已经存在.`);
 				return;
 			}
 

@@ -1,5 +1,4 @@
 import { ActionMetrics, SimResult, SimResultFilter } from '../../proto_utils/sim_result.js';
-
 import { ColumnSortType, MetricsTable } from './metrics_table.js';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
 
@@ -14,69 +13,70 @@ export class HealingMetricsTable extends MetricsTable<ActionMetrics> {
 				};
 			}),
 			{
-				name: 'Casts',
-				tooltip: 'Casts',
+				name: '施法次数',
+				tooltip: '施法次数',
 				getValue: (metric: ActionMetrics) => metric.casts,
 				getDisplayString: (metric: ActionMetrics) => metric.casts.toFixed(1),
 			},
 			{
 				name: 'CPM',
-				tooltip: 'Casts / (Encounter Duration / 60 Seconds)',
+				tooltip: '施法次数 / (战斗时长 / 60 秒)',
 				getValue: (metric: ActionMetrics) => metric.castsPerMinute,
 				getDisplayString: (metric: ActionMetrics) => metric.castsPerMinute.toFixed(1),
 			},
 			{
-				name: 'Cast Time',
-				tooltip: 'Average cast time in seconds',
+				name: '施法时间',
+				tooltip: '平均施法时间（秒）',
 				getValue: (metric: ActionMetrics) => metric.avgCastTimeMs,
 				getDisplayString: (metric: ActionMetrics) => (metric.avgCastTimeMs / 1000).toFixed(2),
 			},
 			{
-				name: 'HPM',
-				tooltip: 'Healing / Mana',
+				name: '每法力治疗量',
+				tooltip: '治疗 / 法力',
 				getValue: (metric: ActionMetrics) => metric.hpm,
 				getDisplayString: (metric: ActionMetrics) => metric.hpm.toFixed(1),
 			},
 			{
-				name: 'HPET',
-				tooltip: 'Healing / Avg Cast Time',
+				name: '每施法时间治疗量',
+				tooltip: '治疗 / 平均施法时间',
 				getValue: (metric: ActionMetrics) => metric.healingThroughput,
 				getDisplayString: (metric: ActionMetrics) => metric.healingThroughput.toFixed(1),
 			},
 			{
 				name: 'HPS',
-				tooltip: 'Healing / Encounter Duration',
+				tooltip: '治疗 / 战斗时长',
 				sort: ColumnSortType.Descending,
 				getValue: (metric: ActionMetrics) => metric.hps,
 				getDisplayString: (metric: ActionMetrics) => metric.hps.toFixed(1),
 			},
 			{
-				name: 'Avg Cast',
-				tooltip: 'Healing / Casts',
+				name: '平均施法治疗量',
+				tooltip: '治疗 / 施法次数',
 				getValue: (metric: ActionMetrics) => metric.avgCastHealing,
 				getDisplayString: (metric: ActionMetrics) => metric.avgCastHealing.toFixed(1),
 			},
 			{
 				name: 'TPS',
-				tooltip: 'Threat / Encounter Duration',
+				tooltip: '仇恨 / 战斗时长',
 				columnClass: 'threat-metrics',
 				getValue: (metric: ActionMetrics) => metric.tps,
 				getDisplayString: (metric: ActionMetrics) => metric.tps.toFixed(1),
 			},
 			{
-				name: 'Avg Cast',
-				tooltip: 'Threat / Casts',
+				name: '平均施法仇恨',
+				tooltip: '仇恨 / 施法次数',
 				columnClass: 'threat-metrics',
 				getValue: (metric: ActionMetrics) => metric.avgCastThreat,
 				getDisplayString: (metric: ActionMetrics) => metric.avgCastThreat.toFixed(1),
 			},
 			{
-				name: 'Crit %',
-				tooltip: 'Crits / Hits',
+				name: '暴击 %',
+				tooltip: '暴击 / 命中',
 				getValue: (metric: ActionMetrics) => metric.critPercent,
 				getDisplayString: (metric: ActionMetrics) => metric.critPercent.toFixed(2) + '%',
 			},
 		]);
+
 	}
 
 	customizeRowElem(action: ActionMetrics, rowElem: HTMLElement) {

@@ -1,16 +1,13 @@
-import { UnitReference, UnitReference_Type as UnitType } from '../core/proto/common.js';
-import { Spec } from '../core/proto/common.js';
-import { APLRotation_Type } from '../core/proto/apl.js';
-import { ActionId } from '../core/proto_utils/action_id.js';
-import { Player } from '../core/player.js';
-import { EventID, TypedEvent } from '../core/typed_event.js';
-
 import * as InputHelpers from '../core/components/input_helpers.js';
-
+import { Player } from '../core/player.js';
+import { APLRotation_Type } from '../core/proto/apl.js';
+import { Spec,UnitReference, UnitReference_Type as UnitType  } from '../core/proto/common.js';
 import {
 	FeralDruid_Rotation_AplType as AplType,
 	FeralDruid_Rotation_BiteModeType as BiteModeType,
 } from '../core/proto/druid.js';
+import { ActionId } from '../core/proto_utils/action_id.js';
+import { EventID, TypedEvent } from '../core/typed_event.js';
 
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
@@ -34,24 +31,24 @@ export const SelfInnervate = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.S
 
 export const LatencyMs = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecFeralDruid>({
 	fieldName: 'latencyMs',
-	label: 'Latency',
-	labelTooltip: 'Player latency, in milliseconds. Adds a delay to actions that cannot be spell queued.',
+	label: '网络延迟',
+	labelTooltip: '玩家延迟，以毫秒为单位。会给无法法术排队的动作增加延迟。',
 });
 
 export const AssumeBleedActive = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecFeralDruid>({
 	fieldName: 'assumeBleedActive',
-	label: 'Assume Bleed Always Active',
-	labelTooltip: 'Assume bleed always exists for \'Rend and Tear\' calculations. Otherwise will only calculate based on own rip/rake/lacerate.',
+	label: '假设流血始终存在',
+	labelTooltip: '假设流血始终存在于“狂乱撕扯”天赋的计算中。否则，将仅基于自己的割伤/斜掠/割裂进行计算。',
 	extraCssClasses: ['within-raid-sim-hide'],
-})
+});
 
 function ShouldShowAdvParamST(player: Player<Spec.SpecFeralDruid>): boolean {
-	let rot = player.getSimpleRotation();
+	const rot = player.getSimpleRotation();
 	return rot.manualParams && rot.rotationType == AplType.SingleTarget;
 }
 
 function ShouldShowAdvParamAoe(player: Player<Spec.SpecFeralDruid>): boolean {
-	let rot = player.getSimpleRotation();
+	const rot = player.getSimpleRotation();
 	return rot.manualParams && rot.rotationType == AplType.Aoe;
 }
 
@@ -61,8 +58,8 @@ export const FeralDruidRotationConfig = {
 			fieldName: 'rotationType',
 			label: 'Type',
 			values: [
-				{ name: 'Single Target', value: AplType.SingleTarget },
-				{ name: 'AOE', value: AplType.Aoe },
+				{ name: '单体木桩', value: AplType.SingleTarget },
+				{ name: '群体AOE', value: AplType.Aoe },
 			],
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({

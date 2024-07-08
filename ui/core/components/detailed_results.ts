@@ -1,29 +1,27 @@
-import { REPO_NAME } from '../constants/other'
 import { TypedEvent } from '../../core/typed_event';
-import { DetailedResultsUpdate, SimRunData, SimRun } from '../proto/ui';
+import { REPO_NAME } from '../constants/other'
+import { DetailedResultsUpdate, SimRun,SimRunData } from '../proto/ui';
 import { SimResult } from '../proto_utils/sim_result';
 import { SimUI } from '../sim_ui';
-
-import { SimResultData } from './detailed_results/result_component';
-import { ResultsFilter } from './detailed_results/results_filter';
+import { Component } from './component';
+import { AuraMetricsTable } from './detailed_results/aura_metrics'
 import { CastMetricsTable } from './detailed_results/cast_metrics';
+import { DpsHistogram } from './detailed_results/dps_histogram';
 import { DtpsMeleeMetricsTable } from './detailed_results/dtps_melee_metrics';
 import { DtpsSpellMetricsTable } from './detailed_results/dtps_spell_metrics';
 import { HealingMetricsTable } from './detailed_results/healing_metrics';
-import { MeleeMetricsTable } from './detailed_results/melee_metrics';
-import { SpellMetricsTable } from './detailed_results/spell_metrics';
-import { ResourceMetricsTable } from './detailed_results/resource_metrics';
-import { PlayerDamageMetricsTable } from './detailed_results/player_damage';
-import { AuraMetricsTable } from './detailed_results/aura_metrics'
-import { DpsHistogram } from './detailed_results/dps_histogram';
-import { Timeline } from './detailed_results/timeline';
 import { LogRunner } from './detailed_results/log_runner';
+import { MeleeMetricsTable } from './detailed_results/melee_metrics';
+import { PlayerDamageMetricsTable } from './detailed_results/player_damage';
+import { ResourceMetricsTable } from './detailed_results/resource_metrics';
+import { SimResultData } from './detailed_results/result_component';
+import { ResultsFilter } from './detailed_results/results_filter';
+import { SpellMetricsTable } from './detailed_results/spell_metrics';
+import { Timeline } from './detailed_results/timeline';
 import { ToplineResults } from './detailed_results/topline_results';
-
-import { Component } from './component';
 import { RaidSimResultsManager } from './raid_sim_action';
 
-declare var Chart: any;
+declare let Chart: any;
 
 const layoutHTML = `
 <div class="dr-root dr-no-results">
@@ -40,7 +38,7 @@ const layoutHTML = `
 					role="tab"
 					aria-controls="damageTab"
 					aria-selected="true"
-				>Damage</a>
+				>伤害</a>
 			</li>
 			<li class="nav-item dr-tab-tab healing-metrics" role="presentation">
 				<a
@@ -51,7 +49,7 @@ const layoutHTML = `
 					role="tab"
 					aria-controls="healingTab"
 					aria-selected="false"
-				>Healing</a>
+				>治疗</a>
 			</li>
 			<li class="nav-item dr-tab-tab threat-metrics" role="presentation">
 				<a
@@ -62,7 +60,7 @@ const layoutHTML = `
 					role="tab"
 					aria-controls="damageTakenTab"
 					aria-selected="false"
-				>Damage Taken</a>
+				>承伤</a>
 			</li>
 			<li class="nav-item dr-tab-tab" role="presentation">
 				<a
@@ -95,7 +93,7 @@ const layoutHTML = `
 					role="tab"
 					aria-controls="castsTab"
 					aria-selected="false"
-				>Casts</a>
+				>施法</a>
 			</li>
 			<li class="nav-item dr-tab-tab" role="presentation">
 				<a
@@ -106,7 +104,7 @@ const layoutHTML = `
 					role="tab"
 					aria-controls="resourcesTab"
 					aria-selected="false"
-				>Resources</a>
+				>资源</a>
 			</li>
 			<li class="nav-item dr-tab-tab" role="presentation">
 				<a
@@ -118,7 +116,7 @@ const layoutHTML = `
 					role="tab"
 					aria-controls="timelineTab"
 					aria-selected="false"
-				>Timeline</a>
+				>时间轴</a>
 			<li class="nav-item dr-tab-tab" role="presentation">
 				<a
 					id="logTabTab"
@@ -392,7 +390,7 @@ export class WindowedDetailedResults extends DetailedResults {
 		super(parent, null, new URLSearchParams(window.location.search).get("cssScheme") ?? "")
 
 		window.addEventListener('message',
-			async (event) => await this.handleMessage(DetailedResultsUpdate.fromJson(event.data))
+			async event => await this.handleMessage(DetailedResultsUpdate.fromJson(event.data))
 		);
 
 		this.rootElem.insertAdjacentHTML('beforeend', `
@@ -414,8 +412,8 @@ export class EmbeddedDetailedResults extends DetailedResults {
 		const newTabBtn = document.createElement('div');
 		newTabBtn.classList.add('detailed-results-controls-div');
 		newTabBtn.innerHTML = `
-			<button class="detailed-results-new-tab-button btn btn-primary">View in Separate Tab</button>
-			<button class="detailed-results-1-iteration-button btn btn-primary">Sim 1 Iteration</button>
+			<button class="detailed-results-new-tab-button btn btn-primary">在新窗口中打开</button>
+			<button class="detailed-results-1-iteration-button btn btn-primary">快速模拟一次</button>
 		`;
 
 		this.rootElem.prepend(newTabBtn);

@@ -12,6 +12,41 @@ import { NumberPicker } from './number_picker';
 
 export type StatMods = { talents: Stats };
 
+const cnStat: { [key: string]: string } = {
+	'Health': '生命值',
+	'Armor': '护甲',
+	'Bonus Armor': '绿甲',
+	'Stamina': '耐力',
+	'Strength': '力量',
+	'Agility': '敏捷',
+	'Spell Hit': '法术命中',
+	'Spell Crit': '法术暴击',
+	'Spell Haste': '法术急速',
+	'Attack Power': '攻击强度',
+	'Melee Hit': '物理命中',
+	'Melee Crit': '物理暴击',
+	'Melee Haste': '物理急速',
+	'Armor Pen': '破甲',
+	'Expertise': '精准',
+	'Defense': '防御',
+	'Dodge': '闪避',
+	'Parry': '招架',
+	'Block Value': '格挡',
+	'Resilience': '韧性',
+	'Frost Resistance': '冰霜抗性',
+	'Nature Resistance': '自然抗性',
+	'Shadow Resistance': '暗影抗性',
+	'Mana': '法力值',
+	'Intellect': '智力',
+	'Spirit': '精神',
+	'MP5': '5秒回蓝',
+	'Ranged AP': '远程攻强',
+	'Ranged Hit': '远程命中',
+	'Ranged Crit': '远程暴击',
+	'Ranged Haste': '远程急速',
+	'Spell Dmg': '法术强度'
+};
+
 export class CharacterStats extends Component {
 	readonly stats: Array<Stat>;
 	readonly valueElems: Array<HTMLTableCellElement>;
@@ -34,41 +69,6 @@ export class CharacterStats extends Component {
 		const table = document.createElement('table');
 		table.classList.add('character-stats-table');
 		this.rootElem.appendChild(table);
-
-		const cnStat: { [key: string]: string } = {
-			'Health': '生命值',
-			'Armor': '护甲',
-			'Bonus Armor': '绿甲',
-			'Stamina': '耐力',
-			'Strength': '力量',
-			'Agility': '敏捷',
-			'Spell Hit': '法术命中',
-			'Spell Crit': '法术暴击',
-			'Spell Haste': '法术急速',
-			'Attack Power': '攻击强度',
-			'Melee Hit': '物理命中',
-			'Melee Crit': '物理暴击',
-			'Melee Haste': '物理急速',
-			'Armor Pen': '破甲',
-			'Expertise': '精准',
-			'Defense': '防御',
-			'Dodge': '闪避',
-			'Parry': '招架',
-			'Block Value': '格挡',
-			'Resilience': '韧性',
-			'Frost Resistance': '冰霜抗性',
-			'Nature Resistance': '自然抗性',
-			'Shadow Resistance': '暗影抗性',
-			'Mana': '法力值',
-			'Intellect': '智力',
-			'Spirit': '精神',
-			'MP5': '5秒回蓝',
-			'Ranged AP': '远程攻强',
-			'Ranged Hit': '远程命中',
-			'Ranged Crit': '远程暴击',
-			'Ranged Haste': '远程急速',
-			'Spell Dmg': '法术强度'
-		};
 
 		this.valueElems = [];
 		this.stats.forEach(stat => {
@@ -357,7 +357,7 @@ export class CharacterStats extends Component {
 		let popover: Popover | null = null;
 
 		const picker = new NumberPicker(null, this.player, {
-			label: `Bonus ${statName}`,
+			label: `额外增加${cnStat[statName]}`,
 			extraCssClasses: ['mb-0'],
 			changedEvent: (player: Player<any>) => player.bonusStatsChangeEmitter,
 			getValue: (player: Player<any>) => player.getBonusStats().getStat(stat),

@@ -1,6 +1,5 @@
 import { ActionMetrics, SimResult, SimResultFilter } from '../../proto_utils/sim_result.js';
 import { bucket } from '../../utils.js';
-
 import { ColumnSortType, MetricsTable } from './metrics_table.js';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
 
@@ -16,69 +15,70 @@ export class SpellMetricsTable extends MetricsTable<ActionMetrics> {
 			}),
 			{
 				name: 'DPS',
-				tooltip: 'Damage / Encounter Duration',
+				tooltip: '伤害 / 战斗时长',
 				sort: ColumnSortType.Descending,
 				getValue: (metric: ActionMetrics) => metric.dps,
 				getDisplayString: (metric: ActionMetrics) => metric.dps.toFixed(1),
 			},
 			{
-				name: 'Avg Cast',
-				tooltip: 'Damage / Casts',
+				name: '平均施法',
+				tooltip: '伤害 / 施法次数',
 				getValue: (metric: ActionMetrics) => metric.avgCast,
 				getDisplayString: (metric: ActionMetrics) => metric.avgCast.toFixed(1),
 			},
 			{
-				name: 'Avg Hit',
-				tooltip: 'Damage / Hits',
+				name: '平均命中',
+				tooltip: '伤害 / 命中',
 				getValue: (metric: ActionMetrics) => metric.avgHit,
 				getDisplayString: (metric: ActionMetrics) => metric.avgHit.toFixed(1),
 			},
 			{
 				name: 'TPS',
-				tooltip: 'Threat / Encounter Duration',
+				tooltip: '仇恨 / 战斗时长',
 				columnClass: 'threat-metrics',
 				getValue: (metric: ActionMetrics) => metric.tps,
 				getDisplayString: (metric: ActionMetrics) => metric.tps.toFixed(1),
 			},
 			{
-				name: 'Avg Cast',
-				tooltip: 'Threat / Casts',
+				name: '平均施法仇恨',
+				tooltip: '仇恨 / 施法次数',
 				columnClass: 'threat-metrics',
 				getValue: (metric: ActionMetrics) => metric.avgCastThreat,
 				getDisplayString: (metric: ActionMetrics) => metric.avgCastThreat.toFixed(1),
 			},
 			{
-				name: 'Avg Hit',
-				tooltip: 'Threat / Hits',
+				name: '平均命中仇恨',
+				tooltip: '仇恨 / 命中',
 				columnClass: 'threat-metrics',
 				getValue: (metric: ActionMetrics) => metric.avgHitThreat,
 				getDisplayString: (metric: ActionMetrics) => metric.avgHitThreat.toFixed(1),
 			},
 			{
-				name: 'Casts',
-				tooltip: 'Casts',
+				name: '施法次数',
+				tooltip: '施法次数',
 				getValue: (metric: ActionMetrics) => metric.casts,
 				getDisplayString: (metric: ActionMetrics) => metric.casts.toFixed(1),
 			},
 			{
-				name: 'Hits',
-				tooltip: 'Hits',
+				name: '命中次数',
+				tooltip: '命中次数',
 				getValue: (metric: ActionMetrics) => metric.landedHits,
 				getDisplayString: (metric: ActionMetrics) => metric.landedHits.toFixed(1),
 			},
 			{
-				name: 'Miss %',
-				tooltip: 'Misses / Casts',
+				name: '未命中 %',
+				tooltip: '未命中 / 施法次数',
 				getValue: (metric: ActionMetrics) => metric.missPercent,
 				getDisplayString: (metric: ActionMetrics) => metric.missPercent.toFixed(2) + '%',
 			},
 			{
-				name: 'Crit %',
-				tooltip: 'Crits / Hits',
+				name: '暴击 %',
+				tooltip: '暴击 / 命中',
 				getValue: (metric: ActionMetrics) => metric.critPercent,
 				getDisplayString: (metric: ActionMetrics) => metric.critPercent.toFixed(2) + '%',
 			},
 		]);
+
 	}
 
 	customizeRowElem(action: ActionMetrics, rowElem: HTMLElement) {

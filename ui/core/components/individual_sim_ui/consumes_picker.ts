@@ -4,15 +4,12 @@ import {
 	Spec,
 } from "../../proto/common";
 import { TypedEvent } from "../../typed_event";
-
 import { Component } from "../component";
 import { buildIconInput } from "../icon_inputs.js";
-import { relevantStatOptions } from "../inputs/stat_options";
 import { TypedIconEnumPickerConfig, TypedIconPickerConfig } from "../input_helpers";
-
-import { SettingsTab } from "./settings_tab";
-
 import * as ConsumablesInputs from '../inputs/consumables';
+import { relevantStatOptions } from "../inputs/stat_options";
+import { SettingsTab } from "./settings_tab";
 
 export class ConsumesPicker extends Component {
 	protected settingsTab: SettingsTab;
@@ -31,10 +28,10 @@ export class ConsumesPicker extends Component {
 	}
 
 	private buildPotionsPicker() {
-		let fragment = document.createElement('fragment');
+		const fragment = document.createElement('fragment');
 		fragment.innerHTML = `
 			<div class="consumes-row input-root input-inline">
-				<label class="form-label">Potions</label>
+				<label class="form-label">药水</label>
 				<div class="consumes-row-inputs">
 					<div class="consumes-prepot"></div>
           <div class="consumes-potions"></div>
@@ -56,7 +53,7 @@ export class ConsumesPicker extends Component {
 				{
 					getConfig: () => ConsumablesInputs.makePrepopPotionsInput(
 						relevantStatOptions(ConsumablesInputs.PRE_POTIONS_CONFIG, this.simUI),
-						'Combat Potion',
+						'战斗药水',
 					),
 					parentElem: prePotsElem,
 				},
@@ -77,13 +74,13 @@ export class ConsumesPicker extends Component {
 	}
 
 	private buildElixirsPicker() {
-		let fragment = document.createElement('fragment');
+		const fragment = document.createElement('fragment');
 		fragment.innerHTML = `
       <div class="consumes-row input-root input-inline">
-        <label class="form-label">Elixirs</label>
+        <label class="form-label">合剂</label>
         <div class="consumes-row-inputs">
 					<div class="consumes-flasks"></div>
-					<span class="elixir-space">or</span>
+					<span class="elixir-space">或</span>
 					<div class="consumes-battle-elixirs"></div>
 					<div class="consumes-guardian-elixirs"></div>
 				</div>
@@ -122,10 +119,10 @@ export class ConsumesPicker extends Component {
 	}
 
 	private buildFoodPicker() {
-		let fragment = document.createElement('fragment');
+		const fragment = document.createElement('fragment');
 		fragment.innerHTML = `
       <div class="consumes-row input-root input-inline">
-        <label class="form-label">Food</label>
+        <label class="form-label">食物</label>
         <div class="consumes-row-inputs">
           <div class="consumes-food"></div>
         </div>
@@ -150,10 +147,10 @@ export class ConsumesPicker extends Component {
 	}
 
 	private buildEngPicker() {
-		let fragment = document.createElement('fragment');
+		const fragment = document.createElement('fragment');
 		fragment.innerHTML = `
       <div class="consumes-row input-root input-inline">
-        <label class="form-label">Engineering</label>
+        <label class="form-label">工程</label>
         <div class="consumes-row-inputs">
 					<div class="consumes-sapper"></div>
 					<div class="consumes-decoy"></div>
@@ -182,7 +179,7 @@ export class ConsumesPicker extends Component {
 				{
 					getConfig: () => ConsumablesInputs.makeExplosivesInput(
 						relevantStatOptions(ConsumablesInputs.EXPLOSIVES_CONFIG, this.simUI),
-						'Explosives',
+						'炸弹',
 					),
 					parentElem: explosivesElem,
 				}
@@ -192,7 +189,7 @@ export class ConsumesPicker extends Component {
 
 	private buildPetPicker() {
 		if (this.simUI.individualConfig.petConsumeInputs?.length) {
-			let fragment = document.createElement('fragment');
+			const fragment = document.createElement('fragment');
 			fragment.innerHTML = `
         <div class="consumes-row input-root input-inline">
           <label class="form-label">Pet</label>
