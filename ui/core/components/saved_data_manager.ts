@@ -222,15 +222,17 @@ export class SavedDataManager<ModObject, T> extends Component {
 
 	private settingTranslation: { [key: string]: string }= {
 		'Settings': '战斗设置',
-		'Encounters': '敌人设置',
-		'Gear Set': '配装'
+		'Encounter': '敌人设置',
+		'Gear Set': '配装',
+		'Talents': '天赋',
+		'Rotation': '输出循环'
 	};
 
 	private buildCreateContainer(): HTMLElement {
 		const savedDataCreateFragment = document.createElement('fragment');
 		savedDataCreateFragment.innerHTML = `
 			<div class="saved-data-create-container">
-				<input class="saved-data-save-input form-control" type="text" placeholder="输入名字">
+				<input class="saved-data-save-input form-control" type="text" placeholder="输入名称...">
 				<button class="saved-data-save-button btn btn-primary">保存${this.settingTranslation[this.config.label]}</button>
 			</div>
 		`;

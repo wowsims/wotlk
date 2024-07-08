@@ -31,7 +31,7 @@ export const SelfInnervate = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.S
 
 export const LatencyMs = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecFeralDruid>({
 	fieldName: 'latencyMs',
-	label: '延迟',
+	label: '网络延迟',
 	labelTooltip: '玩家延迟，以毫秒为单位。会给无法法术排队的动作增加延迟。',
 });
 
@@ -58,8 +58,8 @@ export const FeralDruidRotationConfig = {
 			fieldName: 'rotationType',
 			label: 'Type',
 			values: [
-				{ name: 'Single Target', value: AplType.SingleTarget },
-				{ name: 'AOE', value: AplType.Aoe },
+				{ name: '单体木桩', value: AplType.SingleTarget },
+				{ name: '群体AOE', value: AplType.Aoe },
 			],
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({

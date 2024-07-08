@@ -282,7 +282,7 @@ export function stringToResourceType(str: string): ResourceType {
 
 export const sourceNames: Map<SourceFilterOption, string> = new Map([
 	[SourceFilterOption.SourceUnknown, '未知'],
-	[SourceFilterOption.SourceCrafting, '制作'],
+	[SourceFilterOption.SourceCrafting, '制造业'],
 	[SourceFilterOption.SourceQuest, '任务'],
 	[SourceFilterOption.SourceDungeon, '地下城'],
 	[SourceFilterOption.SourceDungeonH, '地下城（英雄）'],

@@ -1,25 +1,23 @@
 import { Tooltip } from 'bootstrap';
 
-import { EventID, TypedEvent } from '../../typed_event.js';
 import { Player } from '../../player.js';
-import { ListItemPickerConfig, ListPicker } from '../list_picker.js';
-import { AdaptiveStringPicker } from '../string_picker.js';
 import {
-	APLRotation,
-	APLListItem,
 	APLAction,
+	APLListItem,
 	APLPrepullAction,
+	APLRotation,
 	APLValue,
 	APLValueConst,
 } from '../../proto/apl.js';
-
-import { Component } from '../component.js';
-import { Input, InputConfig } from '../input.js';
 import { ActionId } from '../../proto_utils/action_id.js';
 import { SimUI } from '../../sim_ui.js';
-
+import { EventID, TypedEvent } from '../../typed_event.js';
+import { Component } from '../component.js';
+import { Input, InputConfig } from '../input.js';
+import { ListItemPickerConfig, ListPicker } from '../list_picker.js';
+import { AdaptiveStringPicker } from '../string_picker.js';
 import { APLActionPicker } from './apl_actions.js';
-import { APLValuePicker, APLValueImplStruct } from './apl_values.js';
+import { APLValueImplStruct,APLValuePicker } from './apl_values.js';
 
 export class APLRotationPicker extends Component {
 	constructor(parent: HTMLElement, simUI: SimUI, modPlayer: Player<any>) {
@@ -27,9 +25,9 @@ export class APLRotationPicker extends Component {
 
 		new ListPicker<Player<any>, APLPrepullAction>(this.rootElem, modPlayer, {
 			extraCssClasses: ['apl-prepull-action-picker'],
-			title: 'Prepull Actions',
-			titleTooltip: 'Actions to perform before the pull.',
-			itemLabel: 'Prepull Action',
+			title: '战斗前动作',
+			titleTooltip: '开怪前的动作,比如药水/技能CD等',
+			itemLabel: '战斗前动作',
 			changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
 			getValue: (player: Player<any>) => player.aplRotation.prepullActions,
 			setValue: (eventID: EventID, player: Player<any>, newValue: Array<APLPrepullAction>) => {
@@ -49,9 +47,9 @@ export class APLRotationPicker extends Component {
 
 		new ListPicker<Player<any>, APLListItem>(this.rootElem, modPlayer, {
 			extraCssClasses: ['apl-list-item-picker'],
-			title: 'Priority List',
-			titleTooltip: 'At each decision point, the simulation will perform the first valid action from this list.',
-			itemLabel: 'Action',
+			title: '优先级列表',
+			titleTooltip: '模拟器会根据优先级顺序进行自动施法',
+			itemLabel: '优先级',
 			changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
 			getValue: (player: Player<any>) => player.aplRotation.priorityList,
 			setValue: (eventID: EventID, player: Player<any>, newValue: Array<APLListItem>) => {

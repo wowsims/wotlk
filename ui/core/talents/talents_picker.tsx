@@ -1,17 +1,16 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { element, fragment, ref } from 'tsx-vanilla';
 import { Tooltip } from 'bootstrap';
+import { element, fragment, ref } from 'tsx-vanilla';
 
 import { Component } from '../components/component.js';
 import { CopyButton } from '../components/copy_button.js';
 import { Input, InputConfig } from '../components/input.js';
+import { Player } from '../player.js';
 import { Class, Spec } from '../proto/common.js';
 import { ActionId } from '../proto_utils/action_id.js';
 import { getSpecIcon } from '../proto_utils/utils.js';
 import { TypedEvent } from '../typed_event.js';
-import { isRightClick } from '../utils.js';
-import { sum } from '../utils.js';
-import { Player } from '../player.js';
+import { isRightClick , sum } from '../utils.js';
 
 const MAX_POINTS_PLAYER = 71;
 const MAX_POINTS_HUNTER_PET = 16;
@@ -59,7 +58,7 @@ export class TalentsPicker<TalentsProto> extends Input<Player<Spec>, string> {
 			<div id="talents-carousel" className="carousel slide">
 				<div className="talents-picker-header">
 					<div>
-						<label>Points Remaining:</label>
+						<label>剩余点数:</label>
 						{PointsRemainingElem()}
 					</div>
 					<div className="talents-picker-actions" ref={actionsContainerRef}></div>
@@ -81,12 +80,12 @@ export class TalentsPicker<TalentsProto> extends Input<Player<Spec>, string> {
 			</div>
 		);
 
-		new CopyButton(actionsContainerRef.value!, {
-			extraCssClasses: ['btn-sm', 'btn-outline-primary', 'copy-talents'],
-			getContent: () => player.getTalentsString(),
-			text: "Copy",
-			tooltip: "Copy talent string",
-		});
+		// new CopyButton(actionsContainerRef.value!, {
+		// 	extraCssClasses: ['btn-sm', 'btn-outline-primary', 'copy-talents'],
+		// 	getContent: () => player.getTalentsString(),
+		// 	text: "Copy",
+		// 	tooltip: "Copy talent string",
+		// });
 
 		const carouselContainer = this.rootElem.querySelector('.carousel-inner') as HTMLElement;
 		const carouselPrevBtn = this.rootElem.querySelector('.carousel-control-prev') as HTMLButtonElement;
@@ -250,7 +249,7 @@ class TalentTreePicker<TalentsProto> extends Component {
 		}
 		const resetBtn = this.rootElem.querySelector('.talent-tree-reset') as HTMLElement;
 		new Tooltip(resetBtn, {
-			title: 'Reset talent points',
+			title: '重置天赋点数',
 		});
 		resetBtn.addEventListener('click', _event => {
 			this.talents.forEach(talent => talent.setPoints(0, false));
@@ -405,7 +404,7 @@ class TalentPicker<TalentsProto> extends Component {
 			} else {
 				return;
 			}
-			var newPoints = this.getPoints() + 1;
+			let newPoints = this.getPoints() + 1;
 			if (this.config.maxPoints < newPoints) {
 				newPoints = 0;
 			}
@@ -433,7 +432,7 @@ class TalentPicker<TalentsProto> extends Component {
 	}
 
 	getChildReqArrow(loc: TalentLocation): TalentReqArrow {
-		for (let c of this.childReqs) {
+		for (const c of this.childReqs) {
 			if (c.childLoc === loc) {
 				return c;
 			}
@@ -555,7 +554,7 @@ class TalentPicker<TalentsProto> extends Component {
 	}
 
 	update() {
-		let canSetPoints = this.canSetPoints(this.getPoints() + 1);
+		const canSetPoints = this.canSetPoints(this.getPoints() + 1);
 		if (canSetPoints) {
 			this.rootElem.classList.add('talent-picker-can-add');
 		} else {

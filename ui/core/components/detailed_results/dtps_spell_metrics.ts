@@ -1,5 +1,4 @@
 import { ActionMetrics, SimResult, SimResultFilter } from '../../proto_utils/sim_result.js';
-
 import { ColumnSortType, MetricsTable } from './metrics_table.js';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
 
@@ -15,48 +14,49 @@ export class DtpsSpellMetricsTable extends MetricsTable<ActionMetrics> {
 			}),
 			{
 				name: 'DPS',
-				tooltip: 'Damage / Encounter Duration',
+				tooltip: '伤害 / 战斗时长',
 				sort: ColumnSortType.Descending,
 				getValue: (metric: ActionMetrics) => metric.dps,
 				getDisplayString: (metric: ActionMetrics) => metric.dps.toFixed(1),
 			},
 			{
-				name: 'Avg Cast',
-				tooltip: 'Damage / Casts',
+				name: '平均施法',
+				tooltip: '伤害 / 施法次数',
 				getValue: (metric: ActionMetrics) => metric.avgCast,
 				getDisplayString: (metric: ActionMetrics) => metric.avgCast.toFixed(1),
 			},
 			{
-				name: 'Avg Hit',
-				tooltip: 'Damage / (Hits + Crits)',
+				name: '平均命中',
+				tooltip: '伤害 / (命中 + 暴击)',
 				getValue: (metric: ActionMetrics) => metric.avgHit,
 				getDisplayString: (metric: ActionMetrics) => metric.avgHit.toFixed(1),
 			},
 			{
-				name: 'Casts',
-				tooltip: 'Casts',
+				name: '施法次数',
+				tooltip: '施法次数',
 				getValue: (metric: ActionMetrics) => metric.casts,
 				getDisplayString: (metric: ActionMetrics) => metric.casts.toFixed(1),
 			},
 			{
-				name: 'Hits',
-				tooltip: 'Hits + Crits',
+				name: '命中次数',
+				tooltip: '命中 + 暴击',
 				getValue: (metric: ActionMetrics) => metric.landedHits,
 				getDisplayString: (metric: ActionMetrics) => metric.landedHits.toFixed(1),
 			},
 			{
-				name: 'Miss %',
-				tooltip: 'Misses / Swings',
+				name: '未命中 %',
+				tooltip: '未命中 / 攻击次数',
 				getValue: (metric: ActionMetrics) => metric.missPercent,
 				getDisplayString: (metric: ActionMetrics) => metric.missPercent.toFixed(2) + '%',
 			},
 			{
-				name: 'Crit %',
-				tooltip: 'Crits / Swings',
+				name: '暴击 %',
+				tooltip: '暴击 / 攻击次数',
 				getValue: (metric: ActionMetrics) => metric.critPercent,
 				getDisplayString: (metric: ActionMetrics) => metric.critPercent.toFixed(2) + '%',
 			},
 		]);
+
 	}
 
 	getGroupedMetrics(resultData: SimResultData): Array<Array<ActionMetrics>> {

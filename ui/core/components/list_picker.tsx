@@ -103,7 +103,7 @@ export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<Item
 			} else {
 				newItemButton = document.createElement('button');
 				newItemButton.classList.add('btn', 'btn-primary');
-				newItemButton.textContent = `New ${config.itemLabel}`;
+				newItemButton.textContent = `新建${config.itemLabel}`;
 			}
 			newItemButton.classList.add('list-picker-new-button');
 			newItemButton.addEventListener('click', event => {
