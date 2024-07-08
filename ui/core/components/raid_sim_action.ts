@@ -461,7 +461,7 @@ export class RaidSimResultsManager {
 					</span>` : ''
 			}
 				<div class="results-reference hide">
-					<span class="results-reference-diff"></span> vs reference
+					<span class="results-reference-diff"></span> 对比参考指标
 				</div>
 			</div>
 		`;

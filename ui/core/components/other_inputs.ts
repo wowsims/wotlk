@@ -1,15 +1,15 @@
 import {BooleanPicker} from '../components/boolean_picker.js';
 import {EnumPicker} from '../components/enum_picker.js';
-import {ItemSlot, UnitReference} from '../proto/common.js';
 import {Player} from '../player.js';
+import {ItemSlot, UnitReference} from '../proto/common.js';
+import {emptyUnitReference} from '../proto_utils/utils.js';
 import {Sim} from '../sim.js';
 import {EventID} from '../typed_event.js';
-import {emptyUnitReference} from '../proto_utils/utils.js';
 
 export function makeShow1hWeaponsSelector(parent: HTMLElement, sim: Sim): BooleanPicker<Sim> {
 	return new BooleanPicker<Sim>(parent, sim, {
 		extraCssClasses: ['show-1h-weapons-selector', 'mb-0'],
-		label: '1H',
+		label: '单手',
 		inline: true,
 		changedEvent: (sim: Sim) => sim.filtersChangeEmitter,
 		getValue: (sim: Sim) => sim.getFilters().oneHandedWeapons,
@@ -24,7 +24,7 @@ export function makeShow1hWeaponsSelector(parent: HTMLElement, sim: Sim): Boolea
 export function makeShow2hWeaponsSelector(parent: HTMLElement, sim: Sim): BooleanPicker<Sim> {
 	return new BooleanPicker<Sim>(parent, sim, {
 		extraCssClasses: ['show-2h-weapons-selector', 'mb-0'],
-		label: '2H',
+		label: '双手',
 		inline: true,
 		changedEvent: (sim: Sim) => sim.filtersChangeEmitter,
 		getValue: (sim: Sim) => sim.getFilters().twoHandedWeapons,
@@ -39,7 +39,7 @@ export function makeShow2hWeaponsSelector(parent: HTMLElement, sim: Sim): Boolea
 export function makeShowMatchingGemsSelector(parent: HTMLElement, sim: Sim): BooleanPicker<Sim> {
 	return new BooleanPicker<Sim>(parent, sim, {
 		extraCssClasses: ['show-matching-gems-selector', 'input-inline', 'mb-0'],
-		label: 'Match Socket',
+		label: '符合孔位颜色',
 		inline: true,
 		changedEvent: (sim: Sim) => sim.filtersChangeEmitter,
 		getValue: (sim: Sim) => sim.getFilters().matchingGemsOnly,
@@ -54,7 +54,7 @@ export function makeShowMatchingGemsSelector(parent: HTMLElement, sim: Sim): Boo
 export function makeShowEPValuesSelector(parent: HTMLElement, sim: Sim): BooleanPicker<Sim> {
 	return new BooleanPicker<Sim>(parent, sim, {
 		extraCssClasses: ['show-ep-values-selector', 'input-inline', 'mb-0'],
-		label: 'Show EP',
+		label: '显示装备权重',
 		inline: true,
 		changedEvent: (sim: Sim) => sim.showEPValuesChangeEmitter,
 		getValue: (sim: Sim) => sim.getShowEPValues(),
@@ -68,11 +68,11 @@ export function makePhaseSelector(parent: HTMLElement, sim: Sim): EnumPicker<Sim
 	return new EnumPicker<Sim>(parent, sim, {
 		extraCssClasses: ['phase-selector'],
 		values: [
-			{ name: 'Phase 1', value: 1 },
-			{ name: 'Phase 2', value: 2 },
-			{ name: 'Phase 3', value: 3 },
-			{ name: 'Phase 4', value: 4 },
-			{ name: 'Phase 5', value: 5 },
+			{ name: 'P1阶段', value: 1 },
+			{ name: 'P2阶段', value: 2 },
+			{ name: 'P3阶段', value: 3 },
+			{ name: 'P4阶段', value: 4 },
+			{ name: 'P5阶段', value: 5 },
 		],
 		changedEvent: (sim: Sim) => sim.phaseChangeEmitter,
 		getValue: (sim: Sim) => sim.getPhase(),
@@ -84,8 +84,8 @@ export function makePhaseSelector(parent: HTMLElement, sim: Sim): EnumPicker<Sim
 
 export const ReactionTime = {
 	type: 'number' as const,
-	label: 'Reaction Time',
-	labelTooltip: 'Reaction time of the player, in milliseconds. Used with certain APL values (such as \'Aura Is Active With Reaction Time\').',
+	label: '反应时间',
+	labelTooltip: '玩家的反应时间，以毫秒为单位。用于某些 APL 值（例如“光环在反应时间内激活”）。',
 	changedEvent: (player: Player<any>) => player.miscOptionsChangeEmitter,
 	getValue: (player: Player<any>) => player.getReactionTime(),
 	setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
@@ -95,8 +95,8 @@ export const ReactionTime = {
 
 export const ChannelClipDelay = {
 	type: 'number' as const,
-	label: 'Channel Clip Delay',
-	labelTooltip: 'Clip delay following channeled spells, in milliseconds. This delay occurs following any full or partial channel ending after the GCD becomes available, due to the player not being able to queue the next spell.',
+	label: '通道剪辑延迟',
+	labelTooltip: '引导法术后的剪辑延迟，以毫秒为单位。由于玩家无法在GCD可用后排队下一个法术，因此在任何完整或部分引导结束后会发生此延迟。',
 	changedEvent: (player: Player<any>) => player.miscOptionsChangeEmitter,
 	getValue: (player: Player<any>) => player.getChannelClipDelay(),
 	setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
@@ -106,8 +106,8 @@ export const ChannelClipDelay = {
 
 export const InFrontOfTarget = {
 	type: 'boolean' as const,
-	label: 'In Front of Target',
-	labelTooltip: 'Stand in front of the target, causing Blocks and Parries to be included in the attack table.',
+	label: '正面战斗(无法打背)',
+	labelTooltip: '站在目标前方，使格挡和招架包含在攻击表中。',
 	changedEvent: (player: Player<any>) => player.inFrontOfTargetChangeEmitter,
 	getValue: (player: Player<any>) => player.getInFrontOfTarget(),
 	setValue: (eventID: EventID, player: Player<any>, newValue: boolean) => {
@@ -117,8 +117,8 @@ export const InFrontOfTarget = {
 
 export const DistanceFromTarget = {
 	type: 'number' as const,
-	label: 'Distance From Target',
-	labelTooltip: 'Distance from targets, in yards. Used to calculate travel time for certain spells.',
+	label: '距离目标的距离',
+	labelTooltip: '距离目标的距离，以码为单位。用于计算某些法术的飞行时间。',
 	changedEvent: (player: Player<any>) => player.distanceFromTargetChangeEmitter,
 	getValue: (player: Player<any>) => player.getDistanceFromTarget(),
 	setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
@@ -128,8 +128,8 @@ export const DistanceFromTarget = {
 
 export const nibelungAverageCasts =  {
 	type: 'number' as const,
-	label: "Nibelung's Valkyr Survival (in # of casts)",
-	labelTooltip: 'Number of casts of Nibelung\'s summoned Valkyrs get out before they die (max 16)',
+	label: "尼伯龙之瓦基里生存（以施法次数计）",
+	labelTooltip: '尼伯龙之召唤的瓦基里在死亡前能施放的次数（最多16次）',
 	changedEvent: (player: Player<any>) => player.changeEmitter,
 	getValue: (player: Player<any>) => player.getNibelungAverageCasts(),
 	setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
@@ -146,14 +146,14 @@ export const TankAssignment = {
 		'threat-metrics',
 		'within-raid-sim-hide',
 	],
-	label: 'Tank Assignment',
-	labelTooltip: 'Determines which mobs will be tanked. Most mobs default to targeting the Main Tank, but in preset multi-target encounters this is not always true.',
+	label: '坦克分配',
+	labelTooltip: '确定哪些怪物将由谁坦克。大多数怪物默认会攻击主坦克，但在预设的多目标战斗中，这并不总是如此。',
 	values: [
-		{ name: 'None', value: -1 },
-		{ name: 'Main Tank', value: 0 },
-		{ name: 'Tank 2', value: 1 },
-		{ name: 'Tank 3', value: 2 },
-		{ name: 'Tank 4', value: 3 },
+		{ name: '无', value: -1 },
+		{ name: '主坦克', value: 0 },
+		{ name: '坦克2', value: 1 },
+		{ name: '坦克3', value: 2 },
+		{ name: '坦克4', value: 3 },
 	],
 	changedEvent: (player: Player<any>) => player.getRaid()!.tanksChangeEmitter,
 	getValue: (player: Player<any>) => (player.getRaid()?.getTanks() || []).findIndex(tank => UnitReference.equals(tank, player.makeUnitReference())),
@@ -171,10 +171,10 @@ export const TankAssignment = {
 
 export const IncomingHps = {
 	type: 'number' as const,
-	label: 'Incoming HPS',
+	label: 'HPS',
 	labelTooltip: `
-		<p>Average amount of healing received per second. Used for calculating chance of death.</p>
-		<p>If set to 0, defaults to 17.5% of the primary target's base DPS.</p>
+		<p>每秒接收的平均治疗量。用于计算死亡概率。</p>
+		<p>如果设置为 0，则默认为主要目标基础 DPS 的 17.5%。</p>
 	`,
 	changedEvent: (player: Player<any>) => player.getRaid()!.changeEmitter,
 	getValue: (player: Player<any>) => player.getHealingModel().hps,
@@ -189,11 +189,11 @@ export const IncomingHps = {
 export const HealingCadence = {
 	type: 'number' as const,
 	float: true,
-	label: 'Healing Cadence',
+	label: '治疗节奏',
 	labelTooltip: `
-		<p>How often the incoming heal 'ticks', in seconds. Generally, longer durations favor Effective Hit Points (EHP) for minimizing Chance of Death, while shorter durations favor avoidance.</p>
-		<p>Example: if Incoming HPS is set to 1000 and this is set to 1s, then every 1s a heal will be received for 1000. If this is instead set to 2s, then every 2s a heal will be recieved for 2000.</p>
-		<p>If set to 0, defaults to 1.5 times the primary target's base swing timer, and half that for dual wielding targets.</p>
+		<p>输入治疗“跳动”的频率，以秒为单位。一般来说，较长的时间段有利于有效生命值 (EHP) 来最大限度减少死亡概率，而较短的时间段则有利于闪避。</p>
+		<p>例如：如果输入 HPS 设置为 1000 而此项设置为 1s，则每 1s 将接收 1000 的治疗。如果此项设置为 2s，则每 2s 将接收 2000 的治疗。</p>
+		<p>如果设置为 0，则默认为主要目标基础攻击间隔的 1.5 倍，双持目标则为其一半。</p>
 	`,
 	changedEvent: (player: Player<any>) => player.getRaid()!.changeEmitter,
 	getValue: (player: Player<any>) => player.getHealingModel().cadenceSeconds,
@@ -208,11 +208,11 @@ export const HealingCadence = {
 export const HealingCadenceVariation = {
 	type: 'number' as const,
 	float: true,
-	label: 'Cadence +/-',
+	label: '节奏 +/-',
 	labelTooltip: `
-		<p>Magnitude of random variation in healing intervals, in seconds.</p>
-		<p>Example: if Healing Cadence is set to 1s with 0.5s variation, then the interval between successive heals will vary uniformly between 0.5 and 1.5s. If the variation is instead set to 2s, then 50% of healing intervals will fall between 0s and 1s, and the other 50% will fall between 1s and 3s.</p>
-		<p>The amount of healing per 'tick' is automatically scaled up or down based on the randomized time since the last tick, so as to keep HPS constant.</p>
+		<p>治疗间隔中的随机变化幅度，以秒为单位。</p>
+		<p>例如：如果治疗节奏设置为 1s，变化幅度为 0.5s，则连续治疗之间的间隔将均匀变化在 0.5 到 1.5s 之间。如果变化幅度设置为 2s，则 50% 的治疗间隔将在 0s 到 1s 之间，另 50% 的治疗间隔将在 1s 到 3s 之间。</p>
+		<p>每“跳”的治疗量会根据上一次跳动以来的随机时间自动调整，以保持 HPS 恒定。</p>
 	`,
 	changedEvent: (player: Player<any>) => player.getRaid()!.changeEmitter,
 	getValue: (player: Player<any>) => player.getHealingModel().cadenceVariation,
@@ -227,10 +227,10 @@ export const HealingCadenceVariation = {
 export const BurstWindow = {
 	type: 'number' as const,
 	float: false,
-	label: 'TMI Burst Window',
+	label: 'TMI 爆发窗口',
 	labelTooltip: `
-		<p>Size in whole seconds of the burst window for calculating TMI. It is important to use a consistent setting when comparing this metric.</p>
-		<p>Default is 6 seconds. If set to 0, TMI calculations are disabled.</p>
+		<p>用于计算 TMI 的爆发窗口大小，以整秒为单位。在比较此指标时，使用一致的设置非常重要。</p>
+		<p>默认是 6 秒。如果设置为 0，则禁用 TMI 计算。</p>
 	`,
 	changedEvent: (player: Player<any>) => player.getRaid()!.changeEmitter,
 	getValue: (player: Player<any>) => player.getHealingModel().burstWindow,
@@ -245,10 +245,10 @@ export const BurstWindow = {
 export const HpPercentForDefensives = {
 	type: 'number' as const,
 	float: true,
-	label: 'HP % for Defensive CDs',
+	label: '防御性技能使用的HP百分比',
 	labelTooltip: `
-		<p>% of Maximum Health, below which defensive cooldowns are allowed to be used.</p>
-		<p>If set to 0, this restriction is disabled.</p>
+		<p>防御性技能允许使用时的最大生命值百分比。</p>
+		<p>如果设置为 0，则禁用此限制。</p>
 	`,
 	changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
 	getValue: (player: Player<any>) => player.getSimpleCooldowns().hpPercentForDefensives * 100,
@@ -262,10 +262,10 @@ export const HpPercentForDefensives = {
 export const InspirationUptime = {
 	type: 'number' as const,
 	float: true,
-	label: 'Inspiration % Uptime',
+	label: '灵感持续时间百分比',
 	labelTooltip: `
-		<p>% average of Encounter Duration, during which you have the Inspiration buff.</p>
-		<p>If set to 0, the buff isn't applied.</p>
+		<p>战斗期间获得灵感增益的平均持续时间百分比。</p>
+		<p>如果设置为 0，则不应用此增益。</p>
 	`,
 	changedEvent: (player: Player<any>) => player.healingModelChangeEmitter,
 	getValue: (player: Player<any>) => player.getHealingModel().inspirationUptime * 100,

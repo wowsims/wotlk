@@ -65,13 +65,13 @@ class EpWeightsMenu extends BaseModal {
 		this.epPseudoStats = epPseudoStats;
 		this.epReferenceStat = epReferenceStat;
 
-		this.header?.insertAdjacentHTML('afterbegin', '<h5 class="modal-title">Calculate Stat Weights</h5>');
+		this.header?.insertAdjacentHTML('afterbegin', '<h5 class="modal-title">计算属性权重</h5>');
 		this.body.innerHTML = `
 			<div class="ep-weights-options row">
 				<div class="col col-sm-3">
 					<select class="ep-type-select form-select">
-						<option value="ep">EP</option>
-						<option value="weight">Weights</option>
+						<option value="ep">EP权重</option>
+						<option value="weight">标准权重</option>
 					</select>
 				</div>
 				<div class="show-all-stats-container col col-sm-3"></div>
@@ -94,95 +94,95 @@ class EpWeightsMenu extends BaseModal {
 				</div>
 				<p>The above stat selectors control which reference stat is used for EP normalisation for the different EP columns.</p>
 			</div>
-			<p>The 'Current EP' column displays the values currently used by the item pickers to sort items.</br>
-			Use the <a href='javascript:void(0)' class="fa fa-copy"></a> icon above the EPs to use newly calculated EPs.</p>
+			<p>'当前权重'显示的是装备列表里正在使用的权重</br>
+			点击 <a href='javascript:void(0)' class="fa fa-copy"></a> 图标以应用新计算的权重.</p>
 			<div class="results-ep-table-container modal-scroll-table">
 				<div class="results-pending-overlay"></div>
 				<table class="results-ep-table">
 					<thead>
 						<tr>
-							<th>Stat</th>
+							<th>属性</th>
 							<th class="damage-metrics type-weight">
-								<span>DPS Weight</span>
+								<span>计算后权重</span>
 								<a href="javascript:void(0)" role="button" class="col-action">
 									<i class="fa fa-copy"></i>
 								</a>
 							</th>
 							<th class="damage-metrics type-ep">
-								<span>DPS EP</span>
+								<span>DPS权重</span>
 								<a href="javascript:void(0)" role="button" class="col-action">
 									<i class="fa fa-copy"></i>
 								</a>
 							</th>
 							<th class="healing-metrics type-weight">
-								<span>HPS Weight</span>
+								<span>HPS权重</span>
 								<a href="javascript:void(0)" role="button" class="col-action">
 									<i class="fa fa-copy"></i>
 								</a>
 							</th>
 							<th class="healing-metrics type-ep">
-								<span>HPS EP</span>
+								<span>HPS权重</span>
 								<a href="javascript:void(0)" role="button" class="col-action">
 									<i class="fa fa-copy"></i>
 								</a>
 							</th>
 							<th class="threat-metrics type-weight">
-								<span>TPS Weight</span>
+								<span>TPS权重</span>
 								<a href="javascript:void(0)" role="button" class="col-action">
 									<i class="fa fa-copy"></i>
 								</a>
 							</th>
 							<th class="threat-metrics type-ep">
-								<span>TPS EP</span>
+								<span>TPS权重</span>
 								<a href="javascript:void(0)" role="button" class="col-action">
 									<i class="fa fa-copy"></i>
 								</a>
 							</th>
 							<th class="threat-metrics type-weight">
-								<span>DTPS Weight</span>
+								<span>DTPS权重</span>
 								<a href="javascript:void(0)" role="button" class="col-action">
 									<i class="fa fa-copy"></i>
 								</a>
 							</th>
 							<th class="threat-metrics type-ep">
-								<span>DTPS EP</span>
+								<span>DTPS权重</span>
 								<a href="javascript:void(0)" role="button" class="col-action">
 									<i class="fa fa-copy"></i>
 								</a>
 							</th>
 							<th class="threat-metrics type-weight experimental">
-								<span>TMI Weight</span>
+								<span>TMI权重</span>
 								<a href="javascript:void(0)" role="button" class="col-action">
 									<i class="fa fa-copy"></i>
 								</a>
 							</th>
 							<th class="threat-metrics type-ep experimental">
-								<span>TMI EP</span>
+								<span>TMI权重</span>
 								<a href="javascript:void(0)" role="button" class="col-action">
 									<i class="fa fa-copy"></i>
 								</a>
 							</th>
 							<th class="threat-metrics type-weight experimental">
-								<span>Death Weight</span>
+								<span>死亡权重</span>
 								<a href="javascript:void(0)" role="button" class="col-action">
 									<i class="fa fa-copy"></i>
 								</a>
 							</th>
 							<th class="threat-metrics type-ep experimental">
-								<span>Death EP</span>
+								<span>Death权重</span>
 								<a href="javascript:void(0)" role="button" class="col-action">
 									<i class="fa fa-copy"></i>
 								</a>
 							</th>
 							<th style="text-align: center">
-								<span>Current EP</span>
+								<span>当前权重</span>
 								<a href="javascript:void(0)" role="button" class="col-action">
 									<i class="fas fa-arrows-rotate"></i>
 								</a>
 							</th>
 						</tr>
 						<tr class="ep-ratios">
-							<td>EP Ratio</td>
+							<td>权重比例</td>
 							<td class="damage-metrics type-ratio type-weight">
 							</td>
 							<td class="damage-metrics type-ratio type-ep">
@@ -210,7 +210,7 @@ class EpWeightsMenu extends BaseModal {
 							<td style="text-align: center; vertical-align: middle;">
 								<button class="btn btn-primary compute-ep">
 									<i class="fas fa-calculator"></i>
-									<span class="not-tiny">Update </span>EP
+									<span class="not-tiny">更新</span>权重
 								</button>
 							</td>
 						</tr>
@@ -221,11 +221,11 @@ class EpWeightsMenu extends BaseModal {
 		`;
 		this.footer!.innerHTML = `
 			<button class="btn btn-primary optimize-gems experimental me-2">
-				Optimize Gems
+				优化宝石
 			</button>
 			<button class="btn btn-primary calc-weights">
 				<i class="fas fa-calculator"></i>
-				Calculate
+				开始计算
 			</button>
 		`;
 
@@ -382,7 +382,7 @@ class EpWeightsMenu extends BaseModal {
 
 		const showAllStatsContainer = this.rootElem.getElementsByClassName('show-all-stats-container')[0] as HTMLElement;
 		new BooleanPicker(showAllStatsContainer, this, {
-			label: 'Show All Stats',
+			label: '显示所有属性',
 			inline: true,
 			changedEvent: () => new TypedEvent(),
 			getValue: () => this.showAllStats,
@@ -447,9 +447,9 @@ class EpWeightsMenu extends BaseModal {
 	private setSimProgress(progress: ProgressMetrics) {
 		this.resultsViewer.setContent(`
 			<div class="results-sim">
-				<div class=""> ${progress.completedSims} / ${progress.totalSims}<br>simulations complete</div>
+				<div class=""> ${progress.completedSims} / ${progress.totalSims}<br>已完成模拟</div>
 				<div class="">
-					${progress.completedIterations} / ${progress.totalIterations}<br>iterations complete
+					${progress.completedIterations} / ${progress.totalIterations}<br>已完成迭代
 				</div>
 			</div>
 		`);

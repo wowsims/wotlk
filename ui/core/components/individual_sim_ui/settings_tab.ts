@@ -81,7 +81,7 @@ export class SettingsTab extends SimTab {
 
 	private buildEncounterSettings() {
 		const contentBlock = new ContentBlock(this.column1, 'encounter-settings', {
-			header: { title: 'Encounter' },
+			header: { title: '敌人' },
 		});
 
 		new EncounterPicker(contentBlock.bodyElement, this.simUI.sim.encounter, this.simUI.individualConfig.encounterPicker, this.simUI);
@@ -90,7 +90,7 @@ export class SettingsTab extends SimTab {
 	private buildPlayerSettings() {
 		const column = this.column1;
 		const contentBlock = new ContentBlock(column, 'player-settings', {
-			header: { title: 'Player' },
+			header: { title: '角色' },
 		});
 
 		const playerIconGroup = Input.newGroupContainer();
@@ -105,7 +105,7 @@ export class SettingsTab extends SimTab {
 
 		const races = specToEligibleRaces[this.simUI.player.spec];
 		const _racePicker = new EnumPicker(contentBlock.bodyElement, this.simUI.player, {
-			label: 'Race',
+			label: '种族',
 			values: races.map(race => {
 				return {
 					name: raceNames.get(race)!,
@@ -126,7 +126,7 @@ export class SettingsTab extends SimTab {
 
 		const professions = getEnumValues(Profession) as Array<Profession>;
 		const _profession1Picker = new EnumPicker(professionGroup, this.simUI.player, {
-			label: 'Profession 1',
+			label: '专业1',
 			values: professions.map(p => {
 				return {
 					name: professionNames.get(p)!,
@@ -139,7 +139,7 @@ export class SettingsTab extends SimTab {
 		});
 
 		const _profession2Picker = new EnumPicker(professionGroup, this.simUI.player, {
-			label: 'Profession 2',
+			label: '专业2',
 			values: professions.map(p => {
 				return {
 					name: professionNames.get(p)!,
@@ -162,7 +162,7 @@ export class SettingsTab extends SimTab {
 	private buildConsumesSection() {
 		const column = this.simUI.isWithinRaidSim ? this.column3 : this.column2;
 		const contentBlock = new ContentBlock(column, 'consumes-settings', {
-			header: { title: 'Consumables' },
+			header: { title: '消耗品' },
 		});
 
 		new ConsumesPicker(contentBlock.bodyElement, this, this.simUI);
@@ -174,7 +174,7 @@ export class SettingsTab extends SimTab {
 		const swapSlots = this.simUI.individualConfig.itemSwapSlots || [];
 		if (settings.length > 0 || swapSlots.length > 0) {
 			const contentBlock = new ContentBlock(this.column2, 'other-settings', {
-				header: { title: 'Other' },
+				header: { title: '其他' },
 			});
 
 			if (settings.length > 0) {
@@ -194,7 +194,7 @@ export class SettingsTab extends SimTab {
 
 	private buildBuffsSettings() {
 		const contentBlock = new ContentBlock(this.column3, 'buffs-settings', {
-			header: { title: 'Raid Buffs', tooltip: Tooltips.BUFFS_SECTION },
+			header: { title: '团队增益', tooltip: Tooltips.BUFFS_SECTION },
 		});
 
 		const buffOptions = relevantStatOptions(BuffDebuffInputs.RAID_BUFFS_CONFIG, this.simUI);
@@ -219,7 +219,7 @@ export class SettingsTab extends SimTab {
 
 	private buildDebuffsSettings() {
 		const contentBlock = new ContentBlock(this.column3, 'debuffs-settings', {
-			header: { title: 'Debuffs', tooltip: Tooltips.DEBUFFS_SECTION },
+			header: { title: '团队减益', tooltip: Tooltips.DEBUFFS_SECTION },
 		});
 
 		const debuffOptions = relevantStatOptions(BuffDebuffInputs.DEBUFFS_CONFIG, this.simUI);
@@ -245,7 +245,7 @@ export class SettingsTab extends SimTab {
 	private buildSavedDataPickers() {
 		const savedEncounterManager = new SavedDataManager<Encounter, SavedEncounter>(this.rightPanel, this.simUI.sim.encounter, {
 			label: 'Encounter',
-			header: { title: 'Saved Encounters' },
+			header: { title: '已保存敌人' },
 			storageKey: this.simUI.getSavedEncounterStorageKey(),
 			getData: (encounter: Encounter) => SavedEncounter.create({ encounter: encounter.toProto() }),
 			setData: (eventID: EventID, encounter: Encounter, newEncounter: SavedEncounter) => encounter.fromProto(eventID, newEncounter.encounter!),
@@ -257,7 +257,7 @@ export class SettingsTab extends SimTab {
 
 		const savedSettingsManager = new SavedDataManager<IndividualSimUI<any>, SavedSettings>(this.rightPanel, this.simUI, {
 			label: 'Settings',
-			header: { title: 'Saved Settings' },
+			header: { title: '已保存战斗设置' },
 			storageKey: this.simUI.getSavedSettingsStorageKey(),
 			getData: (simUI: IndividualSimUI<any>) => {
 				const player = simUI.player;

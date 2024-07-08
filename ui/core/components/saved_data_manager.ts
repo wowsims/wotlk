@@ -126,11 +126,11 @@ export class SavedDataManager<ModObject, T> extends Component {
 			const deleteButton = deleteFragment.children[0] as HTMLElement;
 			dataElem.appendChild(deleteButton);
 
-			const tooltip = Tooltip.getOrCreateInstance(deleteButton, {title:`删除已经保存的${this.config.label}`});
+			const tooltip = Tooltip.getOrCreateInstance(deleteButton, {title:`删除已经保存的配装`});
 
 			deleteButton.addEventListener('click', event => {
 				event.stopPropagation();
-				const shouldDelete = confirm(`删除已经保存的${this.config.label} '${config.name}'?`);
+				const shouldDelete = confirm(`确定删除已经保存的配装 '${config.name}'?`);
 				if (!shouldDelete)
 					return;
 
@@ -220,13 +220,18 @@ export class SavedDataManager<ModObject, T> extends Component {
 		this.rootElem.classList.add('frozen');
 	}
 
+	private settingTranslation: { [key: string]: string }= {
+		'Settings': '战斗设置',
+		'Encounters': '敌人设置',
+		'Gear Set': '配装'
+	};
+
 	private buildCreateContainer(): HTMLElement {
 		const savedDataCreateFragment = document.createElement('fragment');
 		savedDataCreateFragment.innerHTML = `
 			<div class="saved-data-create-container">
-				<label class="form-label">新建配装</label>
-				<input class="saved-data-save-input form-control" type="text" placeholder="输入配装名称">
-				<button class="saved-data-save-button btn btn-primary">保存配装</button>
+				<input class="saved-data-save-input form-control" type="text" placeholder="输入名字">
+				<button class="saved-data-save-button btn btn-primary">保存${this.settingTranslation[this.config.label]}</button>
 			</div>
 		`;
 

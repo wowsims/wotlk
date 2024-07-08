@@ -32,9 +32,9 @@ export class EncounterPicker extends Component {
 
 			new EnumPicker<Encounter>(this.rootElem, modEncounter, {
 				extraCssClasses: ['damage-metrics', 'npc-picker'],
-				label: 'NPC',
+				label: '敌方类型',
 				labelTooltip: 'Selects a preset NPC configuration.',
-				values: [{ name: 'Custom', value: -1 }].concat(
+				values: [{ name: '自定义', value: -1 }].concat(
 					presetTargets.map((pe, i) => {
 						return {
 							name: pe.path,
@@ -132,7 +132,7 @@ export class EncounterPicker extends Component {
 
 			const advancedButton = document.createElement('button');
 			advancedButton.classList.add('advanced-button', 'btn', 'btn-primary');
-			advancedButton.textContent = 'Advanced';
+			advancedButton.textContent = '进阶设置';
 			advancedButton.addEventListener('click', () => new AdvancedEncounterModal(simUI.rootElem, simUI, modEncounter));
 			this.rootElem.appendChild(advancedButton);
 		});
@@ -171,7 +171,7 @@ class AdvancedEncounterModal extends BaseModal {
 		}
 		new ListPicker<Encounter, TargetProto>(targetsElem, this.encounter, {
 			extraCssClasses: ['targets-picker', 'mb-0'],
-			itemLabel: 'Target',
+			itemLabel: '敌人',
 			changedEvent: (encounter: Encounter) => encounter.targetsChangeEmitter,
 			getValue: (encounter: Encounter) => encounter.targets,
 			setValue: (eventID: EventID, encounter: Encounter, newValue: Array<TargetProto>) => {
@@ -193,9 +193,9 @@ class AdvancedEncounterModal extends BaseModal {
 		const presetEncounters = this.encounter.sim.db.getAllPresetEncounters();
 
 		new EnumPicker<Encounter>(this.header as HTMLElement, this.encounter, {
-			label: 'Encounter',
+			label: '敌方设置',
 			extraCssClasses: ['encounter-picker', 'mb-0', 'pe-2'],
-			values: [{ name: 'Custom', value: -1 }].concat(
+			values: [{ name: '自定义', value: -1 }].concat(
 				presetEncounters.map((pe, i) => {
 					return {
 						name: pe.path,
@@ -255,9 +255,9 @@ class TargetPicker extends Input<Encounter, TargetProto> {
 		const presetTargets = encounter.sim.db.getAllPresetTargets();
 		new EnumPicker<null>(section1, null, {
 			extraCssClasses: ['npc-picker'],
-			label: 'NPC',
-			labelTooltip: 'Selects a preset NPC configuration.',
-			values: [{ name: 'Custom', value: -1 }].concat(
+			label: '敌人',
+			labelTooltip: '选择敌方配置.',
+			values: [{ name: '自定义', value: -1 }].concat(
 				presetTargets.map((pe, i) => {
 					return {
 						name: pe.path,
@@ -279,8 +279,8 @@ class TargetPicker extends Input<Encounter, TargetProto> {
 			extraCssClasses: ['ai-picker'],
 			label: 'AI',
 			labelTooltip: `
-				<p>Determines the target\'s ability rotation.</p>
-				<p>Note that most rotations are not yet implemented.</p>
+				<p>模拟特定BOSS的输出循环</p>
+				<p>需要注意的是某一些敌人的AI还未完全有效</p>
 			`,
 			values: [{ name: 'None', value: 0 }].concat(
 				presetTargets.map(pe => {
@@ -304,7 +304,7 @@ class TargetPicker extends Input<Encounter, TargetProto> {
 		});
 
 		this.levelPicker = new EnumPicker<null>(section1, null, {
-			label: 'Level',
+			label: '等级',
 			values: [
 				{ name: '83', value: 83 },
 				{ name: '82', value: 82 },
@@ -319,7 +319,7 @@ class TargetPicker extends Input<Encounter, TargetProto> {
 			},
 		});
 		this.mobTypePicker = new EnumPicker(section1, null, {
-			label: 'Mob Type',
+			label: '类型',
 			values: mobTypeEnumValues,
 			changedEvent: () => encounter.targetsChangeEmitter,
 			getValue: () => this.getTarget().mobType,
@@ -599,8 +599,8 @@ function addEncounterFieldPickers(rootElem: HTMLElement, encounter: Encounter, s
 	rootElem.appendChild(durationGroup);
 
 	new NumberPicker(durationGroup, encounter, {
-		label: 'Duration',
-		labelTooltip: 'The fight length for each sim iteration, in seconds.',
+		label: '战斗时长',
+		labelTooltip: '每次模拟迭代的战斗时长，以秒为单位。',
 		changedEvent: (encounter: Encounter) => encounter.changeEmitter,
 		getValue: (encounter: Encounter) => encounter.getDuration(),
 		setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
@@ -611,9 +611,8 @@ function addEncounterFieldPickers(rootElem: HTMLElement, encounter: Encounter, s
 		},
 	});
 	new NumberPicker(durationGroup, encounter, {
-		label: 'Duration +/-',
-		labelTooltip:
-			'Adds a random amount of time, in seconds, between [value, -1 * value] to each sim iteration. For example, setting Duration to 180 and Duration +/- to 10 will result in random durations between 170s and 190s.',
+		label: '战斗时长差异 +/-',
+		labelTooltip: '在每次模拟迭代中添加一个随机的时间，以秒为单位，范围在 [value, -1 * value] 之间。例如，将持续时间设置为 180，将持续时间 +/- 设置为 10 将导致随机持续时间在 170s 到 190s 之间。',
 		changedEvent: (encounter: Encounter) => encounter.changeEmitter,
 		getValue: (encounter: Encounter) => encounter.getDurationVariation(),
 		setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
@@ -630,9 +629,9 @@ function addEncounterFieldPickers(rootElem: HTMLElement, encounter: Encounter, s
 		rootElem.appendChild(executeGroup);
 
 		new NumberPicker(executeGroup, encounter, {
-			label: 'Execute Duration 20 (%)',
+			label: '斩杀阶段时长 20 (%)',
 			labelTooltip:
-				'Percentage of the total encounter duration, for which the targets will be considered to be in execute range (< 20% HP) for the purpose of effects like Warrior Execute or Mage Molten Fury.',
+				'整个战斗持续时间中，将目标视为处于斩杀范围（< 20% HP）的百分比，用于计算如战士的斩杀或法师的熔火之怒等效果。',
 			changedEvent: (encounter: Encounter) => encounter.changeEmitter,
 			getValue: (encounter: Encounter) => encounter.getExecuteProportion20() * 100,
 			setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
@@ -643,9 +642,9 @@ function addEncounterFieldPickers(rootElem: HTMLElement, encounter: Encounter, s
 			},
 		});
 		new NumberPicker(executeGroup, encounter, {
-			label: 'Execute Duration 25 (%)',
+			label: '斩杀阶段时长 25 (%)',
 			labelTooltip:
-				"Percentage of the total encounter duration, for which the targets will be considered to be in execute range (< 25% HP) for the purpose of effects like Warlock's Drain Soul.",
+				'整个战斗持续时间中，将目标视为处于斩杀范围（< 25% HP）的百分比，用于计算如术士的吸取灵魂等效果。',
 			changedEvent: (encounter: Encounter) => encounter.changeEmitter,
 			getValue: (encounter: Encounter) => encounter.getExecuteProportion25() * 100,
 			setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
@@ -656,9 +655,9 @@ function addEncounterFieldPickers(rootElem: HTMLElement, encounter: Encounter, s
 			},
 		});
 		new NumberPicker(executeGroup, encounter, {
-			label: 'Execute Duration 35 (%)',
+			label: '斩杀阶段时长 35 (%)',
 			labelTooltip:
-				'Percentage of the total encounter duration, for which the targets will be considered to be in execute range (< 35% HP) for the purpose of effects like Warrior Execute or Mage Molten Fury.',
+				'整个战斗持续时间中，将目标视为处于斩杀范围（< 35% HP）的百分比，用于计算如战士的斩杀或法师的熔火之怒等效果。',
 			changedEvent: (encounter: Encounter) => encounter.changeEmitter,
 			getValue: (encounter: Encounter) => encounter.getExecuteProportion35() * 100,
 			setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
@@ -669,6 +668,7 @@ function addEncounterFieldPickers(rootElem: HTMLElement, encounter: Encounter, s
 			},
 		});
 	}
+
 }
 
 function makeTargetInputsPicker(parent: HTMLElement, encounter: Encounter, targetIndex: number): ListPicker<Encounter, TargetInput> {
@@ -717,13 +717,14 @@ const ALL_TARGET_STATS: Array<{ stat: Stat; tooltip: string; extraCssClasses: Ar
 ];
 
 const mobTypeEnumValues = [
-	{ name: 'None', value: MobType.MobTypeUnknown },
-	{ name: 'Beast', value: MobType.MobTypeBeast },
-	{ name: 'Demon', value: MobType.MobTypeDemon },
-	{ name: 'Dragonkin', value: MobType.MobTypeDragonkin },
-	{ name: 'Elemental', value: MobType.MobTypeElemental },
-	{ name: 'Giant', value: MobType.MobTypeGiant },
-	{ name: 'Humanoid', value: MobType.MobTypeHumanoid },
-	{ name: 'Mechanical', value: MobType.MobTypeMechanical },
-	{ name: 'Undead', value: MobType.MobTypeUndead },
+	{ name: '无', value: MobType.MobTypeUnknown },
+	{ name: '野兽', value: MobType.MobTypeBeast },
+	{ name: '恶魔', value: MobType.MobTypeDemon },
+	{ name: '龙', value: MobType.MobTypeDragonkin },
+	{ name: '元素', value: MobType.MobTypeElemental },
+	{ name: '巨人', value: MobType.MobTypeGiant },
+	{ name: '人形', value: MobType.MobTypeHumanoid },
+	{ name: '机械', value: MobType.MobTypeMechanical },
+	{ name: '亡灵', value: MobType.MobTypeUndead },
 ];
+

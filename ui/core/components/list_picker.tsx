@@ -1,10 +1,9 @@
 import { Tooltip } from 'bootstrap';
+import { element, fragment } from 'tsx-vanilla';
+
 import { EventID, TypedEvent } from '../typed_event.js';
 import { swap } from '../utils.js';
-
 import { Input, InputConfig } from './input.js';
-
-import { element, fragment } from 'tsx-vanilla';
 
 export type ListItemAction = 'create' | 'delete' | 'move' | 'copy';
 
@@ -12,7 +11,7 @@ export interface ListPickerActionsConfig {
 	create?: {
 		// Whether or not to use an icon for the create action button
 		// defaults to FALSE
-		useIcon?: boolean	
+		useIcon?: boolean
 	}
 }
 
@@ -54,7 +53,7 @@ interface ListDragData<ModObject, ItemType> {
 	item: ItemPickerPair<ItemType>;
 }
 
-var curDragData: ListDragData<any, any>|null = null;
+let curDragData: ListDragData<any, any>|null = null;
 
 export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<ItemType>> {
 	readonly config: ListPickerConfig<ModObject, ItemType>;
@@ -87,7 +86,7 @@ export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<Item
 		}
 
 		if (this.config.titleTooltip) {
-			let cfg = {
+			const cfg = {
 				title: this.config.titleTooltip
 			}
 			Tooltip.getOrCreateInstance(this.rootElem.querySelector('.list-picker-title') as HTMLElement, cfg);
@@ -100,7 +99,7 @@ export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<Item
 			let newButtonTooltip: Tooltip | null = null;
 			if (this.config.actions?.create?.useIcon) {
 				newItemButton = ListPicker.makeActionElem('link-success', 'fa-plus')
-				newButtonTooltip = Tooltip.getOrCreateInstance(newItemButton, {title: `New ${config.itemLabel}`});
+				newButtonTooltip = Tooltip.getOrCreateInstance(newItemButton, {title: `新建${config.itemLabel}`});
 			} else {
 				newItemButton = document.createElement('button');
 				newItemButton.classList.add('btn', 'btn-primary');
@@ -195,7 +194,7 @@ export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<Item
 			const moveButton = ListPicker.makeActionElem('list-picker-item-move', 'fa-arrows-up-down');
 			itemHeader.appendChild(moveButton);
 
-			const moveButtonTooltip = Tooltip.getOrCreateInstance(moveButton, {title: 'Move (Drag+Drop)'});
+			const moveButtonTooltip = Tooltip.getOrCreateInstance(moveButton, {title: '拖拽以移动顺序)'});
 			moveButton.addEventListener('click', event => {
 				moveButtonTooltip.hide();
 			});
@@ -262,7 +261,7 @@ export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<Item
 		if (this.actionEnabled('copy')) {
 			const copyButton = ListPicker.makeActionElem('list-picker-item-copy', 'fa-copy');
 			itemHeader.appendChild(copyButton);
-			const copyButtonTooltip = Tooltip.getOrCreateInstance(copyButton, {title: `Copy to New ${this.config.itemLabel}`});
+			const copyButtonTooltip = Tooltip.getOrCreateInstance(copyButton, {title: `复制`});
 
 			copyButton.addEventListener('click', event => {
 				const newList = this.config.getValue(this.modObject).slice();
@@ -276,7 +275,7 @@ export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<Item
 			const deleteButton = ListPicker.makeActionElem('list-picker-item-delete', 'fa-times');
 			deleteButton.classList.add('link-danger');
 			itemHeader.appendChild(deleteButton);
-			const deleteButtonTooltip = Tooltip.getOrCreateInstance(deleteButton, { title: `Delete ${this.config.itemLabel}`});
+			const deleteButtonTooltip = Tooltip.getOrCreateInstance(deleteButton, { title: `删除`});
 
 			deleteButton.addEventListener('click', event => {
 				const newList = this.config.getValue(this.modObject);
