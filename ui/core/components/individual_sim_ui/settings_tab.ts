@@ -210,7 +210,7 @@ export class SettingsTab extends SimTab {
 				this.simUI.player,
 				{
 					inputs: miscBuffOptions.map(option => option.config),
-					label: 'Misc',
+					label: '特殊',
 				},
 				this.simUI,
 			);
