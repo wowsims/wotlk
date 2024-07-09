@@ -359,6 +359,7 @@ export class IconItemSwapPicker extends Component {
 		} else {
 			this.iconAnchor.classList.remove('active');
 		}
+
 	}
 }
 

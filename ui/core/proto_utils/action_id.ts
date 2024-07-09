@@ -135,19 +135,44 @@ export class ActionId {
 	}
 
 	static makeItemUrl(id: number): string {
-		return `https://www.wclbox.com/db/wotlk/item/${id}`;
+		const langPrefix = getWowheadLanguagePrefix();
+		if (USE_WOTLK_DB) {
+			return 'https://wotlkdb.com/?item=' + id;
+		} else {
+			return `https://wowhead.com/wotlk/${langPrefix}item=${id}?lvl=${CHARACTER_LEVEL}`;
+		}
 	}
 	static makeSpellUrl(id: number): string {
-		return `https://www.wclbox.com/db/wotlk/spell/${id}`;
+		const langPrefix = getWowheadLanguagePrefix();
+		if (USE_WOTLK_DB) {
+			return 'https://wotlkdb.com/?spell=' + id;
+		} else {
+			return `https://wowhead.com/wotlk/${langPrefix}spell=${id}`;
+		}
 	}
 	static makeQuestUrl(id: number): string {
-		return `https://wowhead.com/wotlk/cn/quest=${id}`;
+		const langPrefix = getWowheadLanguagePrefix();
+		if (USE_WOTLK_DB) {
+			return 'https://wotlkdb.com/?quest=' + id;
+		} else {
+			return `https://wowhead.com/wotlk/${langPrefix}quest=${id}`;
+		}
 	}
 	static makeNpcUrl(id: number): string {
-		return `https://wowhead.com/wotlk/cn/npc=${id}`;
+		const langPrefix = getWowheadLanguagePrefix();
+		if (USE_WOTLK_DB) {
+			return 'https://wotlkdb.com/?npc=' + id;
+		} else {
+			return `https://wowhead.com/wotlk/${langPrefix}npc=${id}`;
+		}
 	}
 	static makeZoneUrl(id: number): string {
-		return `https://wowhead.com/wotlk/cn/zone=${id}`;
+		const langPrefix = getWowheadLanguagePrefix();
+		if (USE_WOTLK_DB) {
+			return 'https://wotlkdb.com/?zone=' + id;
+		} else {
+			return `https://wowhead.com/wotlk/${langPrefix}zone=${id}`;
+		}
 	}
 
 	setWowheadHref(elem: HTMLAnchorElement) {
