@@ -26,8 +26,8 @@ export class ItemSwapPicker<SpecType extends Spec> extends Component {
 
 		this.enableItemSwapPicker = new BooleanPicker(this.rootElem, player, {
 			reverse: true,
-			label: 'Enable Item Swapping',
-			labelTooltip: 'Allows configuring an Item Swap Set which is used with the <b>Item Swap</b> APL action.',
+			label: '启用物品交换',
+			labelTooltip: '允许配置一个物品交换集，并在APL动作<b>物品交换</b>中使用。',
 			extraCssClasses: ['input-inline'],
 			getValue: (player: Player<SpecType>) => player.getEnableItemSwap(),
 			setValue(eventID: EventID, player: Player<SpecType>, newValue: boolean) {
