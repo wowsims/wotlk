@@ -397,7 +397,7 @@ export class CharacterStats extends Component {
 			return 'Exact';
 		}
 
-		const prefix = playerCritCapDelta > 0 ? 'Over by ' : 'Under by ';
+		const prefix = playerCritCapDelta > 0 ? '超过了' : '还差';
 		return `${prefix} ${Math.abs(playerCritCapDelta).toFixed(2)}%`;
 	}
 }

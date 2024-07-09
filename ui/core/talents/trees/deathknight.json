@@ -1,6 +1,6 @@
 [
 	{
-		"name": "Blood",
+		"name": "鲜血",
 		"backgroundUrl": "https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/wrath/398.jpg",
 		"talents": [
 			{
@@ -370,7 +370,7 @@
 		]
 	},
 	{
-		"name": "Frost",
+		"name": "冰霜",
 		"backgroundUrl": "https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/wrath/399.jpg",
 		"talents": [
 			{
@@ -751,7 +751,7 @@
 		]
 	},
 	{
-		"name": "Unholy",
+		"name": "邪恶",
 		"backgroundUrl": "https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/wrath/400.jpg",
 		"talents": [
 			{
