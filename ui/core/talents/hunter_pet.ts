@@ -1,17 +1,14 @@
-import { Spec } from '../proto/common.js';
-import { HunterPetTalents, Hunter_Options_PetType as PetType } from '../proto/hunter.js';
-import { Player } from '../player.js';
 import { Component } from '../components/component.js';
-import { SavedDataManager } from '../components/saved_data_manager.js';
-import { EventID, TypedEvent } from '../typed_event.js';
-import { ActionId } from '../proto_utils/action_id.js';
-
-import { TalentsConfig, TalentsPicker, newTalentsConfig } from './talents_picker.js';
-import { protoToTalentString, talentStringToProto } from './factory.js';
-
 import * as InputHelpers from '../components/input_helpers.js';
+import { SavedDataManager } from '../components/saved_data_manager.js';
+import { Player } from '../player.js';
+import { Spec } from '../proto/common.js';
+import { Hunter_Options_PetType as PetType,HunterPetTalents } from '../proto/hunter.js';
+import { ActionId } from '../proto_utils/action_id.js';
 import { SimUI } from '../sim_ui.js';
-
+import { EventID, TypedEvent } from '../typed_event.js';
+import { protoToTalentString, talentStringToProto } from './factory.js';
+import { newTalentsConfig,TalentsConfig, TalentsPicker } from './talents_picker.js';
 import HunterPetCunningJson from './trees/hunter_cunning.json'
 import HunterPetFerocityJson from './trees/hunter_ferocity.json'
 import HunterPetTenacityJson from './trees/hunter_tenacity.json'
@@ -21,40 +18,41 @@ export function makePetTypeInputConfig(): InputHelpers.TypedIconEnumPickerConfig
 		fieldName: 'petType',
 		numColumns: 5,
 		values: [
-			{ value: PetType.PetNone, tooltip: 'No Pet' },
-			{ actionId: ActionId.fromPetName('Bat'), tooltip: 'Bat', value: PetType.Bat },
-			{ actionId: ActionId.fromPetName('Bear'), tooltip: 'Bear', value: PetType.Bear },
-			{ actionId: ActionId.fromPetName('Bird of Prey'), tooltip: 'Bird of Prey', value: PetType.BirdOfPrey },
-			{ actionId: ActionId.fromPetName('Boar'), tooltip: 'Boar', value: PetType.Boar },
-			{ actionId: ActionId.fromPetName('Carrion Bird'), tooltip: 'Carrion Bird', value: PetType.CarrionBird },
-			{ actionId: ActionId.fromPetName('Cat'), tooltip: 'Cat', value: PetType.Cat },
-			{ actionId: ActionId.fromPetName('Chimaera'), tooltip: 'Chimaera (Exotic)', value: PetType.Chimaera },
-			{ actionId: ActionId.fromPetName('Core Hound'), tooltip: 'Core Hound (Exotic)', value: PetType.CoreHound },
-			{ actionId: ActionId.fromPetName('Crab'), tooltip: 'Crab', value: PetType.Crab },
-			{ actionId: ActionId.fromPetName('Crocolisk'), tooltip: 'Crocolisk', value: PetType.Crocolisk },
-			{ actionId: ActionId.fromPetName('Devilsaur'), tooltip: 'Devilsaur (Exotic)', value: PetType.Devilsaur },
-			{ actionId: ActionId.fromPetName('Dragonhawk'), tooltip: 'Dragonhawk', value: PetType.Dragonhawk },
-			{ actionId: ActionId.fromPetName('Gorilla'), tooltip: 'Gorilla', value: PetType.Gorilla },
-			{ actionId: ActionId.fromPetName('Hyena'), tooltip: 'Hyena', value: PetType.Hyena },
-			{ actionId: ActionId.fromPetName('Moth'), tooltip: 'Moth', value: PetType.Moth },
-			{ actionId: ActionId.fromPetName('Nether Ray'), tooltip: 'Nether Ray', value: PetType.NetherRay },
-			{ actionId: ActionId.fromPetName('Raptor'), tooltip: 'Raptor', value: PetType.Raptor },
-			{ actionId: ActionId.fromPetName('Ravager'), tooltip: 'Ravager', value: PetType.Ravager },
-			{ actionId: ActionId.fromPetName('Rhino'), tooltip: 'Rhino', value: PetType.Rhino },
-			{ actionId: ActionId.fromPetName('Scorpid'), tooltip: 'Scorpid', value: PetType.Scorpid },
-			{ actionId: ActionId.fromPetName('Serpent'), tooltip: 'Serpent', value: PetType.Serpent },
-			{ actionId: ActionId.fromPetName('Silithid'), tooltip: 'Silithid (Exotic)', value: PetType.Silithid },
-			{ actionId: ActionId.fromPetName('Spider'), tooltip: 'Spider', value: PetType.Spider },
-			{ actionId: ActionId.fromPetName('Spirit Beast'), tooltip: 'Spirit Beast (Exotic)', value: PetType.SpiritBeast },
-			{ actionId: ActionId.fromPetName('Spore Bat'), tooltip: 'Spore Bat', value: PetType.SporeBat },
-			{ actionId: ActionId.fromPetName('Tallstrider'), tooltip: 'Tallstrider', value: PetType.Tallstrider },
-			{ actionId: ActionId.fromPetName('Turtle'), tooltip: 'Turtle', value: PetType.Turtle },
-			{ actionId: ActionId.fromPetName('Warp Stalker'), tooltip: 'Warp Stalker', value: PetType.WarpStalker },
-			{ actionId: ActionId.fromPetName('Wasp'), tooltip: 'Wasp', value: PetType.Wasp },
-			{ actionId: ActionId.fromPetName('Wind Serpent'), tooltip: 'Wind Serpent', value: PetType.WindSerpent },
-			{ actionId: ActionId.fromPetName('Wolf'), tooltip: 'Wolf', value: PetType.Wolf },
-			{ actionId: ActionId.fromPetName('Worm'), tooltip: 'Worm (Exotic)', value: PetType.Worm },
+			{ value: PetType.PetNone, tooltip: '无宠物' },
+			{ actionId: ActionId.fromPetName('Bat'), tooltip: '蝙蝠', value: PetType.Bat },
+			{ actionId: ActionId.fromPetName('Bear'), tooltip: '熊', value: PetType.Bear },
+			{ actionId: ActionId.fromPetName('Bird of Prey'), tooltip: '猛禽', value: PetType.BirdOfPrey },
+			{ actionId: ActionId.fromPetName('Boar'), tooltip: '野猪', value: PetType.Boar },
+			{ actionId: ActionId.fromPetName('Carrion Bird'), tooltip: '食腐鸟', value: PetType.CarrionBird },
+			{ actionId: ActionId.fromPetName('Cat'), tooltip: '猫', value: PetType.Cat },
+			{ actionId: ActionId.fromPetName('Chimaera'), tooltip: '奇美拉（稀有）', value: PetType.Chimaera },
+			{ actionId: ActionId.fromPetName('Core Hound'), tooltip: '熔岩犬（稀有）', value: PetType.CoreHound },
+			{ actionId: ActionId.fromPetName('Crab'), tooltip: '螃蟹', value: PetType.Crab },
+			{ actionId: ActionId.fromPetName('Crocolisk'), tooltip: '鳄鱼', value: PetType.Crocolisk },
+			{ actionId: ActionId.fromPetName('Devilsaur'), tooltip: '魔暴龙（稀有）', value: PetType.Devilsaur },
+			{ actionId: ActionId.fromPetName('Dragonhawk'), tooltip: '龙鹰', value: PetType.Dragonhawk },
+			{ actionId: ActionId.fromPetName('Gorilla'), tooltip: '猩猩', value: PetType.Gorilla },
+			{ actionId: ActionId.fromPetName('Hyena'), tooltip: '土狼', value: PetType.Hyena },
+			{ actionId: ActionId.fromPetName('Moth'), tooltip: '蛾子', value: PetType.Moth },
+			{ actionId: ActionId.fromPetName('Nether Ray'), tooltip: '虚空鳐', value: PetType.NetherRay },
+			{ actionId: ActionId.fromPetName('Raptor'), tooltip: '迅猛龙', value: PetType.Raptor },
+			{ actionId: ActionId.fromPetName('Ravager'), tooltip: '掠食者', value: PetType.Ravager },
+			{ actionId: ActionId.fromPetName('Rhino'), tooltip: '犀牛', value: PetType.Rhino },
+			{ actionId: ActionId.fromPetName('Scorpid'), tooltip: '蝎子', value: PetType.Scorpid },
+			{ actionId: ActionId.fromPetName('Serpent'), tooltip: '蛇', value: PetType.Serpent },
+			{ actionId: ActionId.fromPetName('Silithid'), tooltip: '异种虫（稀有）', value: PetType.Silithid },
+			{ actionId: ActionId.fromPetName('Spider'), tooltip: '蜘蛛', value: PetType.Spider },
+			{ actionId: ActionId.fromPetName('Spirit Beast'), tooltip: '灵魂兽（稀有）', value: PetType.SpiritBeast },
+			{ actionId: ActionId.fromPetName('Spore Bat'), tooltip: '孢子蝙蝠', value: PetType.SporeBat },
+			{ actionId: ActionId.fromPetName('Tallstrider'), tooltip: '陆行鸟', value: PetType.Tallstrider },
+			{ actionId: ActionId.fromPetName('Turtle'), tooltip: '乌龟', value: PetType.Turtle },
+			{ actionId: ActionId.fromPetName('Warp Stalker'), tooltip: '迁跃捕猎者', value: PetType.WarpStalker },
+			{ actionId: ActionId.fromPetName('Wasp'), tooltip: '黄蜂', value: PetType.Wasp },
+			{ actionId: ActionId.fromPetName('Wind Serpent'), tooltip: '风蛇', value: PetType.WindSerpent },
+			{ actionId: ActionId.fromPetName('Wolf'), tooltip: '狼', value: PetType.Wolf },
+			{ actionId: ActionId.fromPetName('Worm'), tooltip: '蠕虫（稀有）', value: PetType.Worm },
 		],
+
 	});
 }
 
@@ -172,12 +170,12 @@ export class HunterPetTalentsPicker extends Component {
 				fromJson: (_obj: any) => '',
 			});
 			savedTalentsManager.addSavedData({
-				name: 'Default',
+				name: '默认',
 				isPreset: true,
 				data: protoToTalentString(defaultTalents[i], talentsConfig),
 			});
 			savedTalentsManager.addSavedData({
-				name: 'Beast Mastery',
+				name: '野兽控制',
 				isPreset: true,
 				data: protoToTalentString(defaultBMTalents[i], talentsConfig),
 			});

@@ -219,7 +219,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 				}
 
 				const metaGem = this.player.getGear().getMetaGem()!;
-				return `Meta gem disabled (${metaGem.name}): ${getMetaGemConditionDescription(
+				return `多彩宝石未触发(${metaGem.name}): ${getMetaGemConditionDescription(
 					metaGem,
 				)}`;
 			},
@@ -239,9 +239,9 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 				return failedProfReqs.map(
 					fpr =>
-						`${fpr.name} requires ${professionNames.get(
+						`${fpr.name}需要${professionNames.get(
 							fpr.requiredProfession,
-						)!}, but it is not selected.`,
+						)!},但设置中未选择`,
 				);
 			},
 		});
@@ -253,7 +253,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 					return '';
 				}
 
-				return `Only 3 Jewelcrafting Gems are allowed, but ${jcGems.length} are equipped.`;
+				return `只能用三个珠宝专属宝石,额外的${jcGems.length}需要删掉.`;
 			},
 		});
 		this.addWarning({
@@ -265,9 +265,9 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 					// Just return here, so we don't show a warning during page load.
 					return '';
 				} else if (talentPoints < Mechanics.MAX_TALENT_POINTS) {
-					return 'Unspent talent points.';
+					return '还有未使用的天赋点';
 				} else if (talentPoints > Mechanics.MAX_TALENT_POINTS) {
-					return 'More than maximum talent points spent.';
+					return '超过天赋点上限';
 				} else {
 					return '';
 				}
@@ -287,7 +287,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 						this.player.getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.handType ==
 							HandType.HandTypeTwoHand)
 				) {
-					return "Dual wielding two-handed weapon(s) without Titan's Grip spec.";
+					return "双持双手武器（未点泰坦之握天赋）";
 				} else {
 					return '';
 				}

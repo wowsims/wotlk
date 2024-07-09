@@ -1,7 +1,7 @@
 [
     {
        "name":"Holy",
-       "backgroundUrl":"https://wow.zamimg.com/images/wow/talents/backgrounds/classic/382.jpg",
+       "backgroundUrl":"https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/classic/382.jpg",
        "talents":[
           {
              "fieldName":"spiritualFocus",
@@ -319,7 +319,7 @@
     },
     {
        "name":"Protection",
-       "backgroundUrl":"https://wow.zamimg.com/images/wow/talents/backgrounds/classic/383.jpg",
+       "backgroundUrl":"https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/classic/383.jpg",
        "talents":[
           {
              "fieldName":"divinity",
@@ -638,7 +638,7 @@
     },
     {
        "name":"Retribution",
-       "backgroundUrl":"https://wow.zamimg.com/images/wow/talents/backgrounds/classic/381.jpg",
+       "backgroundUrl":"https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/classic/381.jpg",
        "talents":[
           {
              "fieldName":"deflection",

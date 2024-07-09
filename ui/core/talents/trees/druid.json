@@ -1,7 +1,7 @@
 [
 	{
 		"name": "平衡",
-		"backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/283.jpg",
+		"backgroundUrl": "https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/wrath/283.jpg",
 		"talents": [
 			{
 				"fieldName": "starlightWrath",
@@ -386,7 +386,7 @@
 	},
 	{
 		"name": "野性战斗",
-		"backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/281.jpg",
+		"backgroundUrl": "https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/wrath/281.jpg",
 		"talents": [
 			{
 				"fieldName": "ferocity",
@@ -802,7 +802,7 @@
 	},
 	{
 		"name": "恢复",
-		"backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/282.jpg",
+		"backgroundUrl": "https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/wrath/282.jpg",
 		"talents": [
 			{
 				"fieldName": "improvedMarkOfTheWild",

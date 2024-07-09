@@ -76,7 +76,7 @@ export class TalentsTab extends SimTab {
               aria-controls="#player-talents-tab"
               aria-selected="true"
             >
-              Player
+              角色
             </a>
           </li>
           <li class="nav-item" role="presentation">
@@ -89,7 +89,7 @@ export class TalentsTab extends SimTab {
               aria-controls="#pet-talents-tab"
               aria-selected="false"
             >
-              Pet</a
+              宠物</a
             >
           </li>
         </ul>

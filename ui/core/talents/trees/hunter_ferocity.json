@@ -1,7 +1,7 @@
 [
     {
-       "name":"Ferocity",
-       "backgroundUrl":"https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/410.jpg",
+       "name":"狂野",
+       "backgroundUrl":"https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/wrath/410.jpg",
        "talents":[
           {
              "fieldName":"cobraReflexes",

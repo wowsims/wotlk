@@ -1,7 +1,7 @@
 [
     {
        "name":"Discipline",
-       "backgroundUrl":"https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/201.jpg",
+       "backgroundUrl":"https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/wrath/201.jpg",
        "talents":[
           {
              "fieldName":"unbreakableWill",
@@ -369,7 +369,7 @@
     },
     {
        "name":"Holy",
-       "backgroundUrl":"https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/202.jpg",
+       "backgroundUrl":"https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/wrath/202.jpg",
        "talents":[
           {
              "fieldName":"healingFocus",
@@ -732,7 +732,7 @@
     },
     {
        "name":"Shadow",
-       "backgroundUrl":"https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/203.jpg",
+       "backgroundUrl":"https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/wrath/203.jpg",
        "talents":[
           {
              "fieldName":"spiritTap",

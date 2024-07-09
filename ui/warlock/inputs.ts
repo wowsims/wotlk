@@ -1,14 +1,12 @@
+import * as InputHelpers from '../core/components/input_helpers.js';
+import { Player } from '../core/player.js';
+import { Spec } from '../core/proto/common.js';
 import {
-	Warlock_Options_WeaponImbue as WeaponImbue,
 	Warlock_Options_Armor as Armor,
 	Warlock_Options_Summon as Summon,
+	Warlock_Options_WeaponImbue as WeaponImbue,
 } from '../core/proto/warlock.js';
-
-import { Spec } from '../core/proto/common.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
-import { Player } from '../core/player.js';
-
-import * as InputHelpers from '../core/components/input_helpers.js';
 
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
@@ -34,7 +32,7 @@ export const WeaponImbueInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.S
 export const PetInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecWarlock, Summon>({
 	fieldName: 'summon',
 	values: [
-		{ value: Summon.NoSummon, tooltip: 'No Pet' },
+		{ value: Summon.NoSummon, tooltip: '无' },
 		{ actionId: ActionId.fromSpellId(688), value: Summon.Imp },
 		{ actionId: ActionId.fromSpellId(712), value: Summon.Succubus },
 		{ actionId: ActionId.fromSpellId(691), value: Summon.Felhunter },

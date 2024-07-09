@@ -1,7 +1,7 @@
 [
 	{
-		"name": "Beast Mastery",
-		"backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/361.jpg",
+		"name": "野兽控制",
+		"backgroundUrl": "https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/wrath/361.jpg",
 		"talents": [
 			{
 				"fieldName": "improvedAspectOfTheHawk",
@@ -360,8 +360,8 @@
 		]
 	},
 	{
-		"name": "Marksmanship",
-		"backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/363.jpg",
+		"name": "射击",
+		"backgroundUrl": "https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/wrath/363.jpg",
 		"talents": [
 			{
 				"fieldName": "improvedConcussiveShot",
@@ -727,8 +727,8 @@
 		]
 	},
 	{
-		"name": "Survival",
-		"backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/362.jpg",
+		"name": "生存",
+		"backgroundUrl": "https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/wrath/362.jpg",
 		"talents": [
 			{
 				"fieldName": "improvedTracking",

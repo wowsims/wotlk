@@ -1,7 +1,7 @@
 [
     {
        "name":"Elemental",
-       "backgroundUrl":"https://wow.zamimg.com/images/wow/talents/backgrounds/classic/261.jpg",
+       "backgroundUrl":"https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/classic/261.jpg",
        "talents":[
           {
              "fieldName":"convection",
@@ -330,7 +330,7 @@
     },
     {
        "name":"Enhancement",
-       "backgroundUrl":"https://wow.zamimg.com/images/wow/talents/backgrounds/classic/263.jpg",
+       "backgroundUrl":"https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/classic/263.jpg",
        "talents":[
           {
              "fieldName":"enhancingTotems",
@@ -697,7 +697,7 @@
     },
     {
        "name":"Restoration",
-       "backgroundUrl":"https://wow.zamimg.com/images/wow/talents/backgrounds/classic/262.jpg",
+       "backgroundUrl":"https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/classic/262.jpg",
        "talents":[
           {
             "fieldName":"improvedHealingWave",
