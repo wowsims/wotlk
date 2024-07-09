@@ -133,6 +133,36 @@ export const naturalClassOrder: Array<Class> = [
 	Class.ClassWarrior,
 ]
 
+export const classAndSpecTranslation: { [key: string]: string } = {
+    // Spec Names
+    'Balance Druid': '鸟德',
+    'Feral DPS Druid': '猫德',
+    'Feral Tank Druid': '熊德',
+    'Restoration Druid': '奶德',
+    'Elemental Shaman': '元素萨',
+    'Enhancement Shaman': '增强萨',
+    'Restoration Shaman': '恢复萨',
+    'Hunter': '猎人',
+    'Mage': '法师',
+    'Rogue': '盗贼',
+    'Holy Paladin': '奶骑',
+    'Protection Paladin': '防骑',
+    'Retribution Paladin': '惩戒骑',
+    'Priest': '牧师',
+    'Shadow Priest': '暗牧',
+    'Smite Priest': '惩击牧',
+    'Warlock': '术士',
+    'DPS Warrior': '战士',
+    'Protection Warrior': '防战',
+    'DPS Death Knight': 'DPS死骑',
+    'Tank Death Knight': '坦克死骑',
+    'Druid': '德鲁伊',
+    'Paladin': '圣骑士',
+    'Shaman': '萨满祭司',
+    'Warrior': '战士',
+    'Death Knight': '死亡骑士'
+};
+
 export const specNames: Record<Spec, string> = {
 	[Spec.SpecBalanceDruid]: 'Balance Druid',
 	[Spec.SpecFeralDruid]: 'Feral DPS Druid',
@@ -271,7 +301,7 @@ export const titleIcons: Record<Class | Spec, string> = {
 };
 
 export const raidSimIcon = '/wotlk/assets/img/raid_icon.png';
-export const raidSimLabel = 'Full Raid Sim';
+export const raidSimLabel = '团队战斗模拟';
 
 // Converts '1231321-12313123-0' to [40, 21, 0].
 export function getTalentTreePoints(talentsString: string): Array<number> {

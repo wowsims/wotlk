@@ -591,6 +591,7 @@ export class ActionId {
 	}
 
 	private static makeIconUrl(iconLabel: string): string {
+		if (iconLabel === 'unknown_type') return `https://wotlkdb.com/static/images/wow/icons/large/inv_misc_questionmark.jpg`;
 		if (USE_WOTLK_DB) {
 			return `https://wotlkdb.com/static/images/wow/icons/large/${iconLabel}.jpg`;
 		} else {

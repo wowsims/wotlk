@@ -33,7 +33,7 @@ interface GlyphData {
 
 const emptyGlyphData: GlyphData = {
 	id: 0,
-	name: 'Empty',
+	name: '无雕文',
 	description: '',
 	iconUrl: 'https://db.newbeebox.com/wow/wz/images/wow/icons/medium/inventoryslot_empty.jpg',
 	quality: null,

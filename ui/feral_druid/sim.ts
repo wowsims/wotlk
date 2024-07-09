@@ -1,3 +1,14 @@
+import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs.js';
+import * as OtherInputs from '../core/components/other_inputs.js';
+import { PhysicalDPSGemOptimizer } from '../core/components/suggest_gems_action.js';
+import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
+import { Player } from '../core/player.js';
+import {
+	APLAction,
+	APLListItem,
+	APLPrepullAction,
+	APLRotation,
+} from '../core/proto/apl.js';
 import {
 	Class,
 	Cooldowns,
@@ -12,29 +23,15 @@ import {
 	Stat,
 	TristateEffect,
 } from '../core/proto/common.js';
-import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
-import { Gear } from '../core/proto_utils/gear.js';
-import { PhysicalDPSGemOptimizer } from '../core/components/suggest_gems_action.js';
-import { Stats } from '../core/proto_utils/stats.js';
-import { getSpecIcon, specNames } from '../core/proto_utils/utils.js';
-import { Player } from '../core/player.js';
-
 import {
 	FeralDruid_Rotation as DruidRotation,
 } from '../core/proto/druid.js';
-
-import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs.js';
-import * as OtherInputs from '../core/components/other_inputs.js';
 import * as AplUtils from '../core/proto_utils/apl_utils.js';
-
+import { Gear } from '../core/proto_utils/gear.js';
+import { Stats } from '../core/proto_utils/stats.js';
+import { classAndSpecTranslation, getSpecIcon, specNames } from '../core/proto_utils/utils.js';
 import * as DruidInputs from './inputs.js';
 import * as Presets from './presets.js';
-import {
-	APLAction,
-	APLPrepullAction,
-	APLListItem,
-	APLRotation,
-} from '../core/proto/apl.js';
 
 const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 	cssClass: 'feral-druid-sim-ui',
@@ -175,13 +172,13 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 			Presets.P4_PRESET,
 		],
 	},
-	
+
 	autoRotation: (_player: Player<Spec.SpecFeralDruid>): APLRotation => {
 		return Presets.APL_ROTATION_DEFAULT.rotation.rotation!;
 	},
 
 	simpleRotation: (player: Player<Spec.SpecFeralDruid>, simple: DruidRotation, cooldowns: Cooldowns): APLRotation => {
-		let [prepullActions, actions] = AplUtils.standardCooldownDefaults(cooldowns);
+		const [prepullActions, actions] = AplUtils.standardCooldownDefaults(cooldowns);
 
 		const preOmen = APLPrepullAction.fromJsonString(`{"action":{"activateAura":{"auraId":{"spellId":16870}}},"doAtValue":{"const":{"val":"-1s"}}}`);
 		const preZerk = APLPrepullAction.fromJsonString(`{"action":{"castSpell":{"spellId":{"spellId":50334}}},"doAtValue":{"const":{"val":"-1s"}}}`);
@@ -209,7 +206,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 	raidSimPresets: [
 		{
 			spec: Spec.SpecFeralDruid,
-			tooltip: specNames[Spec.SpecFeralDruid],
+			tooltip: classAndSpecTranslation[specNames[Spec.SpecFeralDruid]],
 			defaultName: 'Cat',
 			iconUrl: getSpecIcon(Class.ClassDruid, 3),
 

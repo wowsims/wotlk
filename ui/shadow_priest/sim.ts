@@ -1,3 +1,11 @@
+import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs.js';
+import * as OtherInputs from '../core/components/other_inputs.js';
+import * as Mechanics from '../core/constants/mechanics.js';
+import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
+import { Player } from '../core/player.js';
+import {
+	APLRotation,
+} from '../core/proto/apl.js';
 import {
 	Class,
 	Faction,
@@ -6,19 +14,8 @@ import {
 	Spec,
 	Stat,
 } from '../core/proto/common.js';
-import {
-	APLRotation,
-} from '../core/proto/apl.js';
-
 import { Stats } from '../core/proto_utils/stats.js';
-import { Player } from '../core/player.js';
-import { getSpecIcon, specNames } from '../core/proto_utils/utils.js';
-import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
-
-import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs.js';
-import * as OtherInputs from '../core/components/other_inputs.js';
-import * as Mechanics from '../core/constants/mechanics.js';
-
+import { classAndSpecTranslation, getSpecIcon, specNames } from '../core/proto_utils/utils.js';
 import * as ShadowPriestInputs from './inputs.js';
 import * as Presets from './presets.js';
 
@@ -158,7 +155,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecShadowPriest, {
 	raidSimPresets: [
 		{
 			spec: Spec.SpecShadowPriest,
-			tooltip: specNames[Spec.SpecShadowPriest],
+			tooltip: classAndSpecTranslation[specNames[Spec.SpecShadowPriest]],
 			defaultName: 'Shadow',
 			iconUrl: getSpecIcon(Class.ClassPriest, 2),
 

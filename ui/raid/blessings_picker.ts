@@ -1,24 +1,23 @@
+import { Tooltip } from 'bootstrap';
+
 import { Component } from '../core/components/component';
 import { IconEnumPicker } from '../core/components/icon_enum_picker';
-
 import { memeSpecs } from '../core/launched_sims';
-import { EventID, TypedEvent } from '../core/typed_event';
-
 import { Class, Spec } from '../core/proto/common';
 import { Blessings } from '../core/proto/paladin';
 import { BlessingsAssignments } from '../core/proto/ui';
 import { ActionId } from '../core/proto_utils/action_id';
 import {
-	makeDefaultBlessings,
+	classAndSpecTranslation,
 	classColors,
+	makeDefaultBlessings,
 	naturalSpecOrder,
 	specNames,
 	titleIcons,
 } from '../core/proto_utils/utils';
-
-import { RaidSimUI } from './raid_sim_ui';
+import { EventID, TypedEvent } from '../core/typed_event';
 import { implementedSpecs } from './presets';
-import { Tooltip } from 'bootstrap';
+import { RaidSimUI } from './raid_sim_ui';
 
 const MAX_PALADINS = 4;
 
@@ -99,7 +98,7 @@ export class BlessingsPicker extends Component {
 	}
 
 	private buildSpecIcon(spec: Spec): HTMLElement {
-		let fragment = document.createElement('fragment');
+		const fragment = document.createElement('fragment');
 		fragment.innerHTML = `
 			<div class="blessings-picker-spec">
 				<img
@@ -110,7 +109,7 @@ export class BlessingsPicker extends Component {
 		`;
 
 		const icon = fragment.querySelector('.blessings-spec-icon') as HTMLElement;
-		Tooltip.getOrCreateInstance(icon, { title: specNames[spec]});
+		Tooltip.getOrCreateInstance(icon, { title: classAndSpecTranslation[specNames[spec]]});
 
 		return fragment.children[0] as HTMLElement;
 	}

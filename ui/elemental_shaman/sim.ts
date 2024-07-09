@@ -1,3 +1,11 @@
+import * as OtherInputs from '../core/components/other_inputs.js';
+import { TotemsSection } from '../core/components/totem_inputs.js';
+import * as Mechanics from '../core/constants/mechanics.js';
+import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
+import { Player } from '../core/player.js';
+import {
+	APLRotation,
+} from '../core/proto/apl.js';
 import {
 	Class,
 	Debuffs,
@@ -10,18 +18,9 @@ import {
 	Stat,
 	TristateEffect,
 } from '../core/proto/common.js';
-import {
-	APLRotation,
-} from '../core/proto/apl.js';
-import { Player } from '../core/player.js';
 import { Stats } from '../core/proto_utils/stats.js';
-import { getSpecIcon, specNames } from '../core/proto_utils/utils.js';
-import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
+import { classAndSpecTranslation, getSpecIcon, specNames } from '../core/proto_utils/utils.js';
 import { TypedEvent } from '../core/typed_event.js';
-import { TotemsSection } from '../core/components/totem_inputs.js';
-
-import * as OtherInputs from '../core/components/other_inputs.js';
-import * as Mechanics from '../core/constants/mechanics.js';
 import * as ShamanInputs from './inputs.js';
 import * as Presets from './presets.js';
 
@@ -180,7 +179,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecElementalShaman, {
 	raidSimPresets: [
 		{
 			spec: Spec.SpecElementalShaman,
-			tooltip: specNames[Spec.SpecElementalShaman],
+			tooltip: classAndSpecTranslation[specNames[Spec.SpecElementalShaman]],
 			defaultName: 'Elemental',
 			iconUrl: getSpecIcon(Class.ClassShaman, 0),
 
