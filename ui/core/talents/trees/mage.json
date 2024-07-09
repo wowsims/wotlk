@@ -1,6 +1,6 @@
 [
 	{
-		"name": "Arcane",
+		"name": "奥术",
 		"backgroundUrl": "https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/wrath/81.jpg",
 		"talents": [
 			{
@@ -403,7 +403,7 @@
 		]
 	},
 	{
-		"name": "Fire",
+		"name": "火焰",
 		"backgroundUrl": "https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/wrath/41.jpg",
 		"talents": [
 			{
@@ -778,7 +778,7 @@
 		]
 	},
 	{
-		"name": "Frost",
+		"name": "冰霜",
 		"backgroundUrl": "https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/wrath/61.jpg",
 		"talents": [
 			{
