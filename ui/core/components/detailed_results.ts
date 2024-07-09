@@ -133,7 +133,7 @@ const layoutHTML = `
 	</div>
 	<div class="tab-content">
 		<div id="noResultsTab" class="tab-pane dr-tab-content fade active show">
-			Run a simulation to view results
+			至少跑一次模拟来查看结果
 		</div>
 		<div id="damageTab" class="tab-pane dr-tab-content damage-content fade active show">
 			<div class="dr-row topline-results">

@@ -1,47 +1,38 @@
+import { itemSwapEnabledSpecs } from '../../individual_sim_ui.js';
+import { Player } from '../../player.js';
+import {
+	APLAction,
+	APLActionActivateAura,
+	APLActionAutocastOtherCooldowns,
+	APLActionCancelAura,
+	APLActionCastSpell,
+	APLActionCatOptimalRotationAction,
+	APLActionChangeTarget,
+	APLActionChannelSpell,
+	APLActionCustomRotation,
+	APLActionItemSwap,
+	APLActionItemSwap_SwapSet as ItemSwapSet,
+	APLActionMultidot,
+	APLActionMultishield,
+	APLActionResetSequence,
+	APLActionSchedule,
+	APLActionSequence,
+	APLActionStrictSequence,
+	APLActionTriggerICD,
+	APLActionWait,
+	APLActionWaitUntil,
+	APLValue,
+} from '../../proto/apl.js';
 import {
 	Class,
 	Spec,
 } from '../../proto/common.js';
-
-import {
-	APLAction,
-
-	APLActionCastSpell,
-	APLActionChannelSpell,
-	APLActionMultidot,
-	APLActionMultishield,
-	APLActionAutocastOtherCooldowns,
-
-	APLActionWait,
-	APLActionWaitUntil,
-	APLActionSchedule,
-
-	APLActionSequence,
-	APLActionResetSequence,
-	APLActionStrictSequence,
-
-	APLActionChangeTarget,
-	APLActionActivateAura,
-	APLActionCancelAura,
-	APLActionTriggerICD,
-	APLActionItemSwap,
-	APLActionItemSwap_SwapSet as ItemSwapSet,
-
-	APLActionCustomRotation,
-	APLActionCatOptimalRotationAction,
-
-	APLValue,
-} from '../../proto/apl.js';
-
+import { FeralDruid_Rotation_AplType } from '../../proto/druid.js';
 import { isHealingSpec } from '../../proto_utils/utils.js';
 import { EventID } from '../../typed_event.js';
-import { itemSwapEnabledSpecs } from '../../individual_sim_ui.js';
-import { Input, InputConfig } from '../input.js';
-import { Player } from '../../player.js';
 import { TextDropdownPicker } from '../dropdown_picker.js';
+import { Input, InputConfig } from '../input.js';
 import { ListItemPickerConfig, ListPicker } from '../list_picker.js';
-import { FeralDruid_Rotation_AplType } from '../../proto/druid.js';
-
 import * as AplHelpers from './apl_helpers.js';
 import * as AplValues from './apl_values.js';
 
@@ -604,29 +595,29 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 				'labelTooltip': 'Manually specify advanced parameters, otherwise will use preset defaults.',
 			}),
 			AplHelpers.numberFieldConfig('maxFfDelay', true, {
-				'label': 'Max FF Delay',
-				'labelTooltip': 'Max allowed FF delay to fit in damage casts. Ignored if not using manual advanced parameters.',
+				'label': '最大精灵活延迟',
+				'labelTooltip': '精灵火CD到了后能允许最多的间歇时间,一般情况下我们希望卡CD施放',
 			}),
 			AplHelpers.numberFieldConfig('minRoarOffset', true, {
-				'label': 'Roar Offset',
-				'labelTooltip': 'Targeted offset in Rip/Roar timings. Ignored for AOE rotation or if not using manual advanced parameters.',
+				'label': '咆哮割裂差值(Offset)',
+				'labelTooltip': '指的是一个通过大样本模拟计算出来的最佳常数.当这个常数计算在条件里时,他能有效的最大化DPS且保证覆盖的有效性.过晚的覆盖咆哮会造成同步,过早的覆盖会造成DPS的损失.因此一个正确的Offset值会达到最平衡的效果,而这个值会根据阶段和装备不同有可能不同.',
 			}),
 			AplHelpers.numberFieldConfig('ripLeeway', false, {
-				'label': 'Rip Leeway',
-				'labelTooltip': 'Rip leeway when optimizing Roar clips. Ignored for AOE rotation or if not using manual advanced parameters.',
+				'label': '割裂延迟(Leeway)',
+				'labelTooltip': '指的是,比如说当你补了一个割裂,但你的能量来不及回复到足够你多打一个星然后补野蛮咆哮.因此Leeway作为一个常数是需要计算在里面以保证前后两个技能之间是有缓冲空间进行下一步决策.',
 			}),
-			AplHelpers.booleanFieldConfig('useRake', 'Use Rake', {
-				'labelTooltip': 'Use Rake during rotation. Ignored for AOE rotation or if not using manual advanced parameters.',
+			AplHelpers.booleanFieldConfig('useRake', '加入斜掠', {
+				'labelTooltip': '在某些配装下,斜掠不一定会带来正面收益.',
 			}),
-			AplHelpers.booleanFieldConfig('useBite', 'Bite during rotation', {
-				'labelTooltip': 'Use Bite during rotation rather than exclusively at end of fight. Ignored for AOE rotation or if not using manual advanced parameters.',
+			AplHelpers.booleanFieldConfig('useBite', '加入凶猛撕咬', {
+				'labelTooltip': '使用凶猛撕咬.',
 			}),
 			AplHelpers.numberFieldConfig('biteTime', true, {
-				'label': 'Bite Time',
-				'labelTooltip': 'Min seconds remaining on Rip/Roar to allow a Bite. Ignored if not Biting during rotation.',
+				'label': '撕咬常数(Bite Rule)',
+				'labelTooltip': '是通过大样本计算出来在副本环境里最佳的一个咆哮/割裂剩余时间条件值,一般是4或者5.这个数字意味着"当我当前割裂/咆哮还剩大于X秒的时候我就可以打一个撕咬,这样能保证我后面的循环不被(大幅度的)影响',
 			}),
-			AplHelpers.booleanFieldConfig('flowerWeave', 'Flower Weave', {
-				'labelTooltip': 'Fish for Clearcasting procs during AOE rotation with GotW. Ignored for Single Target rotation or if not using manual advanced parameters.',
+			AplHelpers.booleanFieldConfig('flowerWeave', '使用爪子舞', {
+				'labelTooltip': '在空能且精灵火CD时进行爪子舞来获取额外的AOE资源',
 			}),
 		],
 	}),

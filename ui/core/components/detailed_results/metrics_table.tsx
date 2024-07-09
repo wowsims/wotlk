@@ -1,12 +1,12 @@
-import { ActionMetrics, UnitMetrics, SimResult, SimResultFilter } from '../../proto_utils/sim_result.js';
-import { ActionId } from '../../proto_utils/action_id.js';
-import { EventID, TypedEvent } from '../../typed_event.js';
-
-import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
 import tippy from 'tippy.js'
 import { element, fragment, ref } from 'tsx-vanilla'
 
-declare var $: any;
+import { ActionId } from '../../proto_utils/action_id.js';
+import { ActionMetrics, SimResult, SimResultFilter,UnitMetrics } from '../../proto_utils/sim_result.js';
+import { EventID, TypedEvent } from '../../typed_event.js';
+import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
+
+declare let $: any;
 
 export enum ColumnSortType {
 	None,
@@ -185,7 +185,7 @@ export abstract class MetricsTable<T> extends ResultComponent {
 
 	static nameCellConfig<T>(getData: (metric: T) => { name: string, actionId: ActionId }): MetricsColumnConfig<T> {
 		return {
-			name: 'Name',
+			name: '名字',
 			fillCell: (metric: T, cellElem: HTMLElement, rowElem: HTMLElement) => {
 				const data = getData(metric);
 				const iconElem = ref<HTMLAnchorElement>();
@@ -204,7 +204,7 @@ export abstract class MetricsTable<T> extends ResultComponent {
 
 	static playerNameCellConfig(): MetricsColumnConfig<UnitMetrics> {
 		return {
-			name: 'Name',
+			name: '名字',
 			fillCell: (player: UnitMetrics, cellElem: HTMLElement, rowElem: HTMLElement) => {
 				cellElem.appendChild(
 					<>

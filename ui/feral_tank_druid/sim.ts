@@ -1,3 +1,13 @@
+import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs.js';
+import * as OtherInputs from '../core/components/other_inputs.js';
+import { TankGemOptimizer } from '../core/components/suggest_gems_action.js';
+import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
+import { Player } from '../core/player.js';
+import {
+	APLAction,
+	APLListItem,
+	APLRotation,
+} from '../core/proto/apl.js';
 import {
 	Class,
 	Cooldowns,
@@ -13,24 +23,11 @@ import {
 	TristateEffect,
 } from '../core/proto/common.js';
 import {
-	APLAction,
-	APLListItem,
-	APLRotation,
-} from '../core/proto/apl.js';
-import { Stats } from '../core/proto_utils/stats.js';
-import { getSpecIcon, specNames } from '../core/proto_utils/utils.js';
-import { Player } from '../core/player.js';
-import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
-import { TankGemOptimizer } from '../core/components/suggest_gems_action.js';
-
-import {
 	FeralTankDruid_Rotation as DruidRotation,
 } from '../core/proto/druid.js';
-
-import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs.js';
-import * as OtherInputs from '../core/components/other_inputs.js';
 import * as AplUtils from '../core/proto_utils/apl_utils.js';
-
+import { Stats } from '../core/proto_utils/stats.js';
+import { classAndSpecTranslation, getSpecIcon, specNames } from '../core/proto_utils/utils.js';
 import * as DruidInputs from './inputs.js';
 import * as Presets from './presets.js';
 
@@ -207,7 +204,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralTankDruid, {
 	},
 
 	simpleRotation: (player: Player<Spec.SpecFeralTankDruid>, simple: DruidRotation, cooldowns: Cooldowns): APLRotation => {
-		let [prepullActions, actions] = AplUtils.standardCooldownDefaults(cooldowns);
+		const [prepullActions, actions] = AplUtils.standardCooldownDefaults(cooldowns);
 
 		const emergencyLacerate = APLAction.fromJsonString(`{"condition":{"and":{"vals":[{"cmp":{"op":"OpEq","lhs":{"auraNumStacks":{"sourceUnit":{"type":"CurrentTarget"},"auraId":{"spellId":48568}}},"rhs":{"const":{"val":"5"}}}},{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":48568}}},"rhs":{"const":{"val":"1.5s"}}}}]}},"castSpell":{"spellId":{"spellId":48568}}}`);
 		const demoRoar = APLAction.fromJsonString(`{"condition":{"auraShouldRefresh":{"auraId":{"spellId":48560},"maxOverlap":{"const":{"val":"1.5s"}}}},"castSpell":{"spellId":{"spellId":48560}}}`);
@@ -244,7 +241,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralTankDruid, {
 	raidSimPresets: [
 		{
 			spec: Spec.SpecFeralTankDruid,
-			tooltip: specNames[Spec.SpecFeralTankDruid],
+			tooltip: classAndSpecTranslation[specNames[Spec.SpecFeralTankDruid]],
 			defaultName: 'Bear',
 			iconUrl: getSpecIcon(Class.ClassDruid, 1),
 

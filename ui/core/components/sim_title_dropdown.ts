@@ -6,6 +6,7 @@ import {
 } from '../launched_sims.js';
 import { Class, Spec } from '../proto/common.js';
 import {
+	classAndSpecTranslation,
 	classNames,
 	getSpecSiteUrl,
 	naturalClassOrder,
@@ -168,9 +169,9 @@ export class SimTitleDropdown extends Component {
 			const classIndex = specToClass[data.index];
 			if (getLaunchedSimsForClass(classIndex).length > 1)
 				// If the class has multiple sims, use the spec name
-				label = specNames[data.index];
+				label = classAndSpecTranslation[specNames[data.index]];
 			// If the class has only 1 sim, use the class name
-			else label = classNames[classIndex];
+			else label = classAndSpecTranslation[classNames[classIndex]];
 		}
 
 		const fragment = document.createElement('fragment');
@@ -179,7 +180,7 @@ export class SimTitleDropdown extends Component {
 				<div class="sim-link-content">
 					<img src="${iconPath}" class="sim-link-icon">
 					<div class="d-flex flex-column">
-						<span class="sim-link-label text-white">WoWSims - WOTLK</span>
+						<span class="sim-link-label text-white">WoWSims - 巫妖王之怒 by 财高八抖</span>
 						<span class="sim-link-title">${label}</span>
 						${this.launchStatusLabel(data)}
 					</div>
@@ -217,7 +218,7 @@ export class SimTitleDropdown extends Component {
 		const href = specIndexes.length > 1 ? 'javascript:void(0)' : getSpecSiteUrl(specIndexes[0]);
 		const textKlass = this.getContextualKlass({ type: 'Class', index: classIndex });
 		const iconPath = this.getSimIconPath({ type: 'Class', index: classIndex });
-		const label = classNames[classIndex];
+		const label = classAndSpecTranslation[classNames[classIndex]];
 
 		const fragment = document.createElement('fragment');
 		fragment.innerHTML = `
@@ -243,8 +244,8 @@ export class SimTitleDropdown extends Component {
 		const href = getSpecSiteUrl(specIndex);
 		const textKlass = this.getContextualKlass({ type: 'Spec', index: specIndex });
 		const iconPath = this.getSimIconPath({ type: 'Spec', index: specIndex });
-		const className = classNames[specToClass[specIndex]];
-		const specLabel = this.specLabels[specIndex];
+		const className = classAndSpecTranslation[classNames[specToClass[specIndex]]];
+		const specLabel = classAndSpecTranslation[specNames[specIndex]];
 
 		const fragment = document.createElement('fragment');
 		fragment.innerHTML = `

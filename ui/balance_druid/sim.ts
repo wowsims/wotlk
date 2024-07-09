@@ -1,3 +1,10 @@
+import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs.js';
+import * as OtherInputs from '../core/components/other_inputs.js';
+import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
+import { Player } from '../core/player.js';
+import {
+	APLRotation,
+} from '../core/proto/apl.js';
 import {
 	Class,
 	Faction,
@@ -5,17 +12,8 @@ import {
 	Spec,
 	Stat,
 } from '../core/proto/common.js';
-import {
-	APLRotation,
-} from '../core/proto/apl.js';
 import { Stats } from '../core/proto_utils/stats.js';
-import { getSpecIcon, specNames } from '../core/proto_utils/utils.js';
-import { Player } from '../core/player.js';
-import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
-
-import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs.js';
-import * as OtherInputs from '../core/components/other_inputs.js';
-
+import { classAndSpecTranslation, getSpecIcon, specNames } from '../core/proto_utils/utils.js';
 import * as DruidInputs from './inputs.js';
 import * as Presets from './presets.js';
 
@@ -140,7 +138,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecBalanceDruid, {
 	raidSimPresets: [
 		{
 			spec: Spec.SpecBalanceDruid,
-			tooltip: specNames[Spec.SpecBalanceDruid],
+			tooltip: classAndSpecTranslation[specNames[Spec.SpecBalanceDruid]],
 			defaultName: 'Balance',
 			iconUrl: getSpecIcon(Class.ClassDruid, 0),
 

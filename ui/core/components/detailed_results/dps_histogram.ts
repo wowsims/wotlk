@@ -1,6 +1,6 @@
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
 
-declare var Chart: any;
+declare let Chart: any;
 
 export class DpsHistogram extends ResultComponent {
 	constructor(config: ResultComponentConfig) {
@@ -50,7 +50,7 @@ export class DpsHistogram extends ResultComponent {
 				plugins: {
 					title: {
 						display: true,
-						text: 'DPS Histogram',
+						text: 'DPS分布直方图',
 					},
 					legend: {
 						display: false,

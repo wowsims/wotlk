@@ -37,7 +37,7 @@ export class SimHeader extends Component {
 		// this.addBugReportLink();
 		// this.addDownloadBinaryLink();
 		this.addSimOptionsLink();
-		// this.addSocialLinks();
+		this.addSocialLinks();
 
 		// Allow styling the sticky header
 		new IntersectionObserver(
@@ -216,7 +216,7 @@ export class SimHeader extends Component {
 		this.addToolbarLink({
 			parent: this.simToolbar,
 			icon: 'fas fa-cog fa-lg',
-			tooltip: 'Show Sim Options',
+			tooltip: '模拟器选项',
 			classes: 'sim-options',
 			onclick: () => new SettingsMenu(this.simUI.rootElem, this.simUI),
 		});
@@ -226,10 +226,10 @@ export class SimHeader extends Component {
 		const container = document.createElement('div');
 		container.classList.add('sim-toolbar-socials');
 		this.simToolbar.appendChild(container);
-
+		this.addBilibiliLink(container);
 		this.addDiscordLink(container);
 		this.addGitHubLink(container);
-		this.addPatreonLink(container);
+		// this.addPatreonLink(container);
 	}
 
 	private addDiscordLink(container: HTMLElement) {
@@ -247,6 +247,12 @@ export class SimHeader extends Component {
 	private addPatreonLink(container: HTMLElement) {
 		container.appendChild(
 			<div className="sim-toolbar-item">{SocialLinks.buildPatreonLink()}</div>,
+		);
+	}
+
+	private addBilibiliLink(container: HTMLElement) {
+		container.appendChild(
+			<div className="sim-toolbar-item">{SocialLinks.buildBilibiliLink()}</div>,
 		);
 	}
 

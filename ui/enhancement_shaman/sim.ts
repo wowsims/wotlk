@@ -1,3 +1,12 @@
+import { FireElementalSection } from '../core/components/fire_elemental_inputs.js';
+import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs.js';
+import * as OtherInputs from '../core/components/other_inputs.js';
+import { TotemsSection } from '../core/components/totem_inputs.js';
+import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
+import { Player } from '../core/player.js';
+import {
+	APLRotation,
+} from '../core/proto/apl.js';
 import {
 	Class,
 	Faction,
@@ -10,22 +19,11 @@ import {
 	Stat,
 	TristateEffect,
 } from '../core/proto/common.js';
-import {
-	APLRotation,
-} from '../core/proto/apl.js';
 import { ShamanImbue } from '../core/proto/shaman.js';
-import { Player } from '../core/player.js';
 import { Stats } from '../core/proto_utils/stats.js';
-import { getSpecIcon, specNames } from '../core/proto_utils/utils.js';
-import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
-import { TotemsSection } from '../core/components/totem_inputs.js';
-
-import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs.js';
-import * as OtherInputs from '../core/components/other_inputs.js';
-
+import { classAndSpecTranslation, getSpecIcon, specNames } from '../core/proto_utils/utils.js';
 import * as ShamanInputs from './inputs.js';
 import * as Presets from './presets.js';
-import { FireElementalSection } from '../core/components/fire_elemental_inputs.js';
 
 const SPEC_CONFIG = registerSpecConfig(Spec.SpecEnhancementShaman, {
 	cssClass: 'enhancement-shaman-sim-ui',
@@ -195,7 +193,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecEnhancementShaman, {
 	raidSimPresets: [
 		{
 			spec: Spec.SpecEnhancementShaman,
-			tooltip: specNames[Spec.SpecEnhancementShaman],
+			tooltip: classAndSpecTranslation[specNames[Spec.SpecEnhancementShaman]],
 			defaultName: 'Enhancement',
 			iconUrl: getSpecIcon(Class.ClassShaman, 1),
 

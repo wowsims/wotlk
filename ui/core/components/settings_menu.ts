@@ -13,7 +13,7 @@ export class SettingsMenu extends BaseModal {
 	private readonly simUI: SimUI;
 
 	constructor(parent: HTMLElement, simUI: SimUI) {
-		super(parent, 'settings-menu', { title: "Options", footer: true });
+		super(parent, 'settings-menu', { title: "选项", footer: true });
 		this.simUI = simUI;
 
 		this.body.innerHTML = `
@@ -21,7 +21,7 @@ export class SettingsMenu extends BaseModal {
 				<div class="fixed-rng-seed-container">
 					<div class="fixed-rng-seed"></div>
 					<div class="form-text">
-						<span>Last used RNG seed:</span>&nbsp;<span class="last-used-rng-seed">0</span>
+						<span>上次使用RNG种子:</span>&nbsp;<span class="last-used-rng-seed">0</span>
 					</div>
 				</div>
 				<div class="language-picker within-raid-sim-hide"></div>
@@ -32,12 +32,12 @@ export class SettingsMenu extends BaseModal {
 		this.footer!.innerHTML = `
 			<button
 				class="restore-defaults-button btn btn-primary"
-			>Restore Defaults</button>
+			>重置所有选项</button>
 		`
 
 		const restoreDefaultsButton = this.rootElem.getElementsByClassName('restore-defaults-button')[0] as HTMLElement;
 		Tooltip.getOrCreateInstance(restoreDefaultsButton, {
-			title: "Restores all default settings (gear, consumes, buffs, talents, EP weights, etc). Saved settings are preserved."
+			title: "恢复所有默认设置（装备、消耗品、增益、天赋、EP权重等）。保存的设置会被保留。"
 		});
 		restoreDefaultsButton.addEventListener('click', event => {
 			this.simUI.applyDefaults(TypedEvent.nextEventID());
@@ -45,8 +45,8 @@ export class SettingsMenu extends BaseModal {
 
 		const fixedRngSeed = this.rootElem.getElementsByClassName('fixed-rng-seed')[0] as HTMLElement;
 		new NumberPicker(fixedRngSeed, this.simUI.sim, {
-			label: 'Fixed RNG Seed',
-			labelTooltip: 'Seed value for the random number generator used during sims, or 0 to use different randomness each run. Use this to share exact sim results or for debugging.',
+			label: '固定RNG种子',
+			labelTooltip: '用于模拟期间的随机数生成器的种子值，或设置为0以在每次运行时使用不同的随机性。使用此值可以共享精确的模拟结果或用于调试。',
 			extraCssClasses: ['mb-0'],
 			changedEvent: (sim: Sim) => sim.fixedRngSeedChangeEmitter,
 			getValue: (sim: Sim) => sim.getFixedRngSeed(),
@@ -85,8 +85,8 @@ export class SettingsMenu extends BaseModal {
 
 		const showThreatMetrics = this.rootElem.getElementsByClassName('show-threat-metrics-picker')[0] as HTMLElement;
 		new BooleanPicker(showThreatMetrics, this.simUI.sim, {
-			label: 'Show Threat/Tank Options',
-			labelTooltip: 'Shows all options and metrics relevant to tanks, like TPS/DTPS.',
+			label: '显示威胁/坦克选项和指标',
+			labelTooltip: '显示与坦克相关的所有选项和指标，例如TPS/DTPS。',
 			inline: true,
 			changedEvent: (sim: Sim) => sim.showThreatMetricsChangeEmitter,
 			getValue: (sim: Sim) => sim.getShowThreatMetrics(),
@@ -97,8 +97,8 @@ export class SettingsMenu extends BaseModal {
 
 		const showExperimental = this.rootElem.getElementsByClassName('show-experimental-picker')[0] as HTMLElement;
 		new BooleanPicker(showExperimental, this.simUI.sim, {
-			label: 'Show Experimental',
-			labelTooltip: 'Shows experimental options, if there are any active experiments.',
+			label: '显示实验功能',
+			labelTooltip: '如果有任何活跃的实验功能，显示实验功能。',
 			inline: true,
 			changedEvent: (sim: Sim) => sim.showExperimentalChangeEmitter,
 			getValue: (sim: Sim) => sim.getShowExperimental(),
@@ -106,5 +106,6 @@ export class SettingsMenu extends BaseModal {
 				sim.setShowExperimental(eventID, newValue);
 			},
 		});
+
 	}
 }

@@ -1,6 +1,6 @@
 [
 	{
-		"name": "Balance",
+		"name": "平衡",
 		"backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/283.jpg",
 		"talents": [
 			{
@@ -385,7 +385,7 @@
 		]
 	},
 	{
-		"name": "Feral Combat",
+		"name": "野性战斗",
 		"backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/281.jpg",
 		"talents": [
 			{
@@ -801,7 +801,7 @@
 		]
 	},
 	{
-		"name": "Restoration",
+		"name": "恢复",
 		"backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/282.jpg",
 		"talents": [
 			{
