@@ -40,7 +40,7 @@ import {
 } from './proto/common';
 import { IndividualSimSettings, SavedTalents } from './proto/ui';
 import { getMetaGemConditionDescription } from './proto_utils/gems';
-import { professionNames } from './proto_utils/names';
+import { professionNames, professionNamesCn } from './proto_utils/names';
 import { Stats } from './proto_utils/stats';
 import {
 	getTalentPoints,
@@ -239,7 +239,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 				return failedProfReqs.map(
 					fpr =>
-						`${fpr.name}需要${professionNames.get(
+						`${fpr.name}需要${professionNamesCn.get(
 							fpr.requiredProfession,
 						)!},但设置中未选择`,
 				);

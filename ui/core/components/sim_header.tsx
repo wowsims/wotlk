@@ -35,7 +35,7 @@ export class SimHeader extends Component {
 		this.knownIssuesContent = (<ul className="text-start ps-3 mb-0"></ul>) as HTMLElement;
 		this.knownIssuesLink = this.addKnownIssuesLink();
 		// this.addBugReportLink();
-		// this.addDownloadBinaryLink();
+		this.addDownloadBinaryLink();
 		this.addSimOptionsLink();
 		this.addSocialLinks();
 
@@ -179,34 +179,16 @@ export class SimHeader extends Component {
 	}
 
 	private addDownloadBinaryLink() {
-		const href = 'https://github.com/wowsims/wotlk/releases';
+		const href = 'https://space.bilibili.com/919498';
 		const icon = 'fas fa-gauge-high fa-lg';
 		const parent = this.simToolbar;
 
 		if (document.location.href.includes('localhost')) {
-			fetch('/version').then(resp => {
-				resp.json()
-					.then(versionInfo => {
-						if (versionInfo.outdated == 2) {
-							this.addToolbarLink({
-								href: href,
-								parent: parent,
-								icon: icon,
-								tooltip: 'Newer version of simulator available for download',
-								classes: 'downbin link-danger',
-							});
-						}
-					})
-					.catch(error => {
-						console.warn('No version info found!');
-					});
-			});
-		} else {
 			this.addToolbarLink({
 				href: href,
 				parent: parent,
 				icon: icon,
-				tooltip: 'Download simulator for faster simulating',
+				tooltip: '你可以通过B站充电来获取本地版本的Wowsims中文版,模拟速度会比普通版本快20倍.部分收入会通过Patreon捐赠于开发团队以支持社区开发!',
 				classes: 'downbin',
 			});
 		}

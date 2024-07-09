@@ -3,7 +3,7 @@ import { Encounter } from '../../encounter';
 import { IndividualSimUI, InputSection } from '../../individual_sim_ui';
 import { Consumes, Debuffs, HealingModel, IndividualBuffs, ItemSwap, PartyBuffs, Profession, RaidBuffs, Spec } from '../../proto/common';
 import { SavedEncounter, SavedSettings } from '../../proto/ui';
-import { professionNames, raceNames } from '../../proto_utils/names';
+import { professionNames, professionNamesCn, raceNames, raceNamesCn } from '../../proto_utils/names';
 import { specToEligibleRaces } from '../../proto_utils/utils';
 import { EventID, TypedEvent } from '../../typed_event';
 import { getEnumValues } from '../../utils';
@@ -108,7 +108,7 @@ export class SettingsTab extends SimTab {
 			label: '种族',
 			values: races.map(race => {
 				return {
-					name: raceNames.get(race)!,
+					name: raceNamesCn.get(race)!,
 					value: race,
 				};
 			}),
@@ -129,7 +129,7 @@ export class SettingsTab extends SimTab {
 			label: '专业1',
 			values: professions.map(p => {
 				return {
-					name: professionNames.get(p)!,
+					name: professionNamesCn.get(p)!,
 					value: p,
 				};
 			}),
@@ -142,7 +142,7 @@ export class SettingsTab extends SimTab {
 			label: '专业2',
 			values: professions.map(p => {
 				return {
-					name: professionNames.get(p)!,
+					name: professionNamesCn.get(p)!,
 					value: p,
 				};
 			}),

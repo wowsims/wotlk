@@ -37,6 +37,20 @@ export const rangedWeaponTypeNames: Map<RangedWeaponType, string> = new Map([
 ]);
 
 export const raceNames: Map<Race, string> = new Map([
+	[Race.RaceUnknown, 'None'],
+	[Race.RaceBloodElf, 'Blood Elf'],
+	[Race.RaceDraenei, 'Draenei'],
+	[Race.RaceDwarf, 'Dwarf'],
+	[Race.RaceGnome, 'Gnome'],
+	[Race.RaceHuman, 'Human'],
+	[Race.RaceNightElf, 'Night Elf'],
+	[Race.RaceOrc, 'Orc'],
+	[Race.RaceTauren, 'Tauren'],
+	[Race.RaceTroll, 'Troll'],
+	[Race.RaceUndead, 'Undead'],
+]);
+
+export const raceNamesCn: Map<Race, string> = new Map([
 	[Race.RaceUnknown, '无'],
 	[Race.RaceBloodElf, '血精灵'],
 	[Race.RaceDraenei, '德莱尼'],
@@ -61,6 +75,20 @@ export function nameToRace(name: string): Race {
 }
 
 export const classNames: Map<Class, string> = new Map([
+	[Class.ClassUnknown, 'None'],
+	[Class.ClassDruid, 'Druid'],
+	[Class.ClassHunter, 'Hunter'],
+	[Class.ClassMage, 'Mage'],
+	[Class.ClassPaladin, 'Paladin'],
+	[Class.ClassPriest, 'Priest'],
+	[Class.ClassRogue, 'Rogue'],
+	[Class.ClassShaman, 'Shaman'],
+	[Class.ClassWarlock, 'Warlock'],
+	[Class.ClassWarrior, 'Warrior'],
+	[Class.ClassDeathknight, 'Death Knight'],
+]);
+
+export const classNamesCn: Map<Class, string> = new Map([
 	[Class.ClassUnknown, '无'],
 	[Class.ClassDruid, '德鲁伊'],
 	[Class.ClassHunter, '猎人'],
@@ -85,6 +113,21 @@ export function nameToClass(name: string): Class {
 }
 
 export const professionNames: Map<Profession, string> = new Map([
+	[Profession.ProfessionUnknown, 'None'],
+	[Profession.Alchemy, 'Alchemy'],
+	[Profession.Blacksmithing, 'Blacksmithing'],
+	[Profession.Enchanting, 'Enchanting'],
+	[Profession.Engineering, 'Engineering'],
+	[Profession.Herbalism, 'Herbalism'],
+	[Profession.Inscription, 'Inscription'],
+	[Profession.Jewelcrafting, 'Jewelcrafting'],
+	[Profession.Leatherworking, 'Leatherworking'],
+	[Profession.Mining, 'Mining'],
+	[Profession.Skinning, 'Skinning'],
+	[Profession.Tailoring, 'Tailoring'],
+]);
+
+export const professionNamesCn: Map<Profession, string> = new Map([
 	[Profession.ProfessionUnknown, '无'],
 	[Profession.Alchemy, '炼金'],
 	[Profession.Blacksmithing, '锻造'],
