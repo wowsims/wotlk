@@ -1,188 +1,195 @@
-import { WarriorMajorGlyph, WarriorMinorGlyph,WarriorTalents } from '../proto/warrior.js';
-import { GlyphsConfig } from './glyphs_picker.js';
-import { newTalentsConfig,TalentsConfig } from './talents_picker.js';
-import WarriorTalentJson from './trees/warrior.json';
+import {
+  WarriorTalents,
+  WarriorMajorGlyph,
+  WarriorMinorGlyph,
+} from "../proto/warrior.js";
 
-export const warriorTalentsConfig: TalentsConfig<WarriorTalents> = newTalentsConfig(WarriorTalentJson);
+import { GlyphsConfig } from "./glyphs_picker.js";
+import { TalentsConfig, newTalentsConfig } from "./talents_picker.js";
+
+import WarriorTalentJson from "./trees/warrior.json";
+
+export const warriorTalentsConfig: TalentsConfig<WarriorTalents> =
+  newTalentsConfig(WarriorTalentJson);
 
 export const warriorGlyphsConfig: GlyphsConfig = {
-	majorGlyphs: {
-		[WarriorMajorGlyph.GlyphOfBarbaricInsults]: {
-			name: 'Glyph of Barbaric Insults',
-			description: 'Your Mocking Blow ability generates 100% additional threat.',
-			iconUrl: 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_punishingblow.jpg',
-		},
-		[WarriorMajorGlyph.GlyphOfBladestorm]: {
-			name: 'Glyph of Bladestorm',
-			description: 'Reduces the cooldown on Bladestorm by 15 sec.',
-			iconUrl: 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_bladestorm.jpg',
-		},
-		[WarriorMajorGlyph.GlyphOfBlocking]: {
-			name: 'Glyph of Blocking',
-			description: 'Increases your block value by 10% for 10 sec after using your Shield Slam ability.',
-			iconUrl: 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/inv_shield_05.jpg',
-		},
-		[WarriorMajorGlyph.GlyphOfBloodthirst]: {
-			name: 'Glyph of Bloodthirst',
-			description: 'Increases the healing you receive from your Bloodthirst ability by 100%.',
-			iconUrl: 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/spell_nature_bloodlust.jpg',
-		},
-		[WarriorMajorGlyph.GlyphOfCleaving]: {
-			name: 'Glyph of Cleaving',
-			description: 'Increases the number of targets your Cleave hits by 1.',
-			iconUrl: 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_cleave.jpg',
-		},
-		[WarriorMajorGlyph.GlyphOfDevastate]: {
-			name: 'Glyph of Devastate',
-			description: 'Your Devastate ability now applies two stacks of Sunder Armor.',
-			iconUrl: 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/inv_sword_11.jpg',
-		},
-		[WarriorMajorGlyph.GlyphOfEnragedRegeneration]: {
-			name: 'Glyph of Enraged Regeneration',
-			description: 'Your Enraged Regeneration ability heals for an additional 10% of your health over its duration.',
-			iconUrl: 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_focusedrage.jpg',
-		},
-		[WarriorMajorGlyph.GlyphOfExecution]: {
-			name: 'Glyph of Execution',
-			description: 'Your Execute ability deals damage as if you had 10 additional rage.',
-			iconUrl: 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/inv_sword_48.jpg',
-		},
-		[WarriorMajorGlyph.GlyphOfHamstring]: {
-			name: 'Glyph of Hamstring',
-			description: 'Gives your Hamstring ability a 10% chance to immobilize the target for 5 sec.',
-			iconUrl: 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_shockwave.jpg',
-		},
-		[WarriorMajorGlyph.GlyphOfHeroicStrike]: {
-			name: 'Glyph of Heroic Strike',
-			description: 'You gain 10 rage when you critically strike with your Heroic Strike ability.',
-			iconUrl: 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_rogue_ambush.jpg',
-		},
-		[WarriorMajorGlyph.GlyphOfIntervene]: {
-			name: 'Glyph of Intervene',
-			description: 'Increases the number attacks you intercept for your Intervene target by 1.',
-			iconUrl: 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_victoryrush.jpg',
-		},
-		[WarriorMajorGlyph.GlyphOfLastStand]: {
-			name: 'Glyph of Last Stand',
-			description: 'Reduces the cooldown of your Last Stand ability by 1 min.',
-			iconUrl: 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/spell_holy_ashestoashes.jpg',
-		},
-		[WarriorMajorGlyph.GlyphOfMortalStrike]: {
-			name: 'Glyph of Mortal Strike',
-			description: 'Increases the damage of your Mortal Strike ability by 10%.',
-			iconUrl: 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_savageblow.jpg',
-		},
-		[WarriorMajorGlyph.GlyphOfOverpower]: {
-			name: 'Glyph of Overpower',
-			description: 'Adds a 100% chance to enable your Overpower when your attacks are parried.',
-			iconUrl: 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_meleedamage.jpg',
-		},
-		[WarriorMajorGlyph.GlyphOfRapidCharge]: {
-			name: 'Glyph of Rapid Charge',
-			description: 'Reduces the cooldown of your Charge ability by 7%.',
-			iconUrl: 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_charge.jpg',
-		},
-		[WarriorMajorGlyph.GlyphOfRending]: {
-			name: 'Glyph of Rending',
-			description: 'Increases the duration of your Rend ability by 6 sec.',
-			iconUrl: 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_gouge.jpg',
-		},
-		[WarriorMajorGlyph.GlyphOfResonatingPower]: {
-			name: 'Glyph of Resonating Power',
-			description: 'Reduces the rage cost of your Thunder Clap ability by 5.',
-			iconUrl: 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/spell_nature_thunderclap.jpg',
-		},
-		[WarriorMajorGlyph.GlyphOfRevenge]: {
-			name: 'Glyph of Revenge',
-			description: 'After using Revenge, your next Heroic Strike costs no rage.',
-			iconUrl: 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_revenge.jpg',
-		},
-		[WarriorMajorGlyph.GlyphOfShieldWall]: {
-			name: 'Glyph of Shield Wall',
-			description: 'Reduces the cooldown on Shield Wall by 2 min, but Shield Wall now only reduces damage taken by 40%.',
-			iconUrl: 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_shieldwall.jpg',
-		},
-		[WarriorMajorGlyph.GlyphOfShockwave]: {
-			name: 'Glyph of Shockwave',
-			description: 'Reduces the cooldown on Shockwave by 3 sec.',
-			iconUrl: 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_shockwave.jpg',
-		},
-		[WarriorMajorGlyph.GlyphOfSpellReflection]: {
-			name: 'Glyph of Spell Reflection',
-			description: 'Reduces the cooldown on Spell Reflection by 1 sec.',
-			iconUrl: 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_shieldreflection.jpg',
-		},
-		[WarriorMajorGlyph.GlyphOfSunderArmor]: {
-			name: 'Glyph of Sunder Armor',
-			description: 'Your Sunder Armor ability affects a second nearby target.',
-			iconUrl: 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_sunder.jpg',
-		},
-		[WarriorMajorGlyph.GlyphOfSweepingStrikes]: {
-			name: 'Glyph of Sweeping Strikes',
-			description: 'Reduces the rage cost of your Sweeping Strikes ability by 100%.',
-			iconUrl: 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_rogue_slicedice.jpg',
-		},
-		[WarriorMajorGlyph.GlyphOfTaunt]: {
-			name: 'Glyph of Taunt',
-			description: 'Increases the chance for your Taunt ability to succeed by 8%.',
-			iconUrl: 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/spell_nature_reincarnation.jpg',
-		},
-		[WarriorMajorGlyph.GlyphOfVictoryRush]: {
-			name: 'Glyph of Victory Rush',
-			description: 'Your Victory Rush ability has a 30% increased critical strike chance.',
-			iconUrl: 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_devastate.jpg',
-		},
-		[WarriorMajorGlyph.GlyphOfVigilance]: {
-			name: 'Glyph of Vigilance',
-			description: 'Your Vigilance ability transfers an additional 5% of your target\'s threat to you.',
-			iconUrl: 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_vigilance.jpg',
-		},
-		[WarriorMajorGlyph.GlyphOfWhirlwind]: {
-			name: 'Glyph of Whirlwind',
-			description: 'Reduces the cooldown of your Whirlwind by 2 sec.',
-			iconUrl: 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_whirlwind.jpg',
-		},
-	},
-	minorGlyphs: {
-		[WarriorMinorGlyph.GlyphOfBattle]: {
-			name: 'Glyph of Battle',
-			description: 'Increases the duration of your Battle Shout ability by 2 min.',
-			iconUrl: 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_battleshout.jpg',
-		},
-		[WarriorMinorGlyph.GlyphOfBloodrage]: {
-			name: 'Glyph of Bloodrage',
-			description: 'Reduces the health cost of your Bloodrage ability by 100%.',
-			iconUrl: 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_racial_bloodrage.jpg',
-		},
-		[WarriorMinorGlyph.GlyphOfCharge]: {
-			name: 'Glyph of Charge',
-			description: 'Increases the range of your Charge ability by 5 yards.',
-			iconUrl: 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_charge.jpg',
-		},
-		[WarriorMinorGlyph.GlyphOfCommand]: {
-			name: 'Glyph of Command',
-			description: 'Increases the duration of your Commanding Shout ability by 2 min.',
-			iconUrl: 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_rallyingcry.jpg',
-		},
-		[WarriorMinorGlyph.GlyphOfEnduringVictory]: {
-			name: 'Glyph of Enduring Victory',
-			description: 'Increases the window of opportunity in which you can use Victory Rush by 5 sec.',
-			iconUrl: 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_devastate.jpg',
-		},
-		[WarriorMinorGlyph.GlyphOfMockingBlow]: {
-			name: 'Glyph of Mocking Blow',
-			description: 'Increases the damage of your Mocking Blow ability by 25%.',
-			iconUrl: 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_punishingblow.jpg',
-		},
-		[WarriorMinorGlyph.GlyphOfThunderClap]: {
-			name: 'Glyph of Thunder Clap',
-			description: 'Increases the radius of your Thunder Clap ability by 2 yards.',
-			iconUrl: 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/spell_nature_thunderclap.jpg',
-		},
-		[WarriorMinorGlyph.GlyphOfShatteringThrow]: {
-			name: 'Glyph of Shattering Throw',
-			description: 'Your Shattering Throw is now instant and can be used in any stance, but it no longer removes invulnerabilities and cannot be used on players or player-controlled targets.',
-			iconUrl: 'https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_shatteringthrow.jpg',
-		},
-	},
+  majorGlyphs: {
+    [WarriorMajorGlyph.GlyphOfBarbaricInsults]: {
+      name: "野蛮侵犯雕文",
+      description: "你的惩戒痛击技能造成的威胁值提高100%。",
+      iconUrl: "https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_punishingblow.jpg",
+    },
+    [WarriorMajorGlyph.GlyphOfBladestorm]: {
+      name: "利刃风暴雕文",
+      description: "利刃风暴的冷却时间缩短15秒。",
+      iconUrl: "https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_bladestorm.jpg",
+    },
+    [WarriorMajorGlyph.GlyphOfBlocking]: {
+      name: "格挡雕文",
+      description: "使你在使用盾牌猛击技能后的10 sec内格挡值提高10%。",
+      iconUrl: "https://db.newbeebox.com/wow/wz/images/wow/icons/large/inv_shield_05.jpg",
+    },
+    [WarriorMajorGlyph.GlyphOfBloodthirst]: {
+      name: "嗜血雕文",
+      description: "使你的嗜血技能恢复的生命值提高100%。",
+      iconUrl: "https://db.newbeebox.com/wow/wz/images/wow/icons/large/spell_nature_bloodlust.jpg",
+    },
+    [WarriorMajorGlyph.GlyphOfCleaving]: {
+      name: "顺劈斩雕文",
+      description: "使你的顺劈斩的目标数量提高1个。",
+      iconUrl: "https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_cleave.jpg",
+    },
+    [WarriorMajorGlyph.GlyphOfDevastate]: {
+      name: "毁灭打击雕文",
+      description: "你的毁灭打击技能附加两层破甲效果。",
+      iconUrl: "https://db.newbeebox.com/wow/wz/images/wow/icons/large/inv_sword_11.jpg",
+    },
+    [WarriorMajorGlyph.GlyphOfEnragedRegeneration]: {
+      name: "狂怒回复雕文",
+      description: "你的狂怒回复技能为你回复生命值的效果提高10%。",
+      iconUrl: "https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_focusedrage.jpg",
+    },
+    [WarriorMajorGlyph.GlyphOfExecution]: {
+      name: "斩杀雕文",
+      description: "你的斩杀技能造成的伤害按照你拥有10点额外怒气值的情况计算。",
+      iconUrl: "https://db.newbeebox.com/wow/wz/images/wow/icons/large/inv_sword_48.jpg",
+    },
+    [WarriorMajorGlyph.GlyphOfHamstring]: {
+      name: "断筋雕文",
+      description: "使你的断筋技能有10%的几率令目标无法移动，持续5 sec。",
+      iconUrl: "https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_shockwave.jpg",
+    },
+    [WarriorMajorGlyph.GlyphOfHeroicStrike]: {
+      name: "英勇打击雕文",
+      description: "当你的英勇打击技能爆击时，你可以获得10点怒气值。",
+      iconUrl: "https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_rogue_ambush.jpg",
+    },
+    [WarriorMajorGlyph.GlyphOfIntervene]: {
+      name: "援护雕文",
+      description: "使你帮助援护目标承受攻击的次数增加1次。",
+      iconUrl: "https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_victoryrush.jpg",
+    },
+    [WarriorMajorGlyph.GlyphOfLastStand]: {
+      name: "破釜沉舟雕文",
+      description: "使你的破釜沉舟技能的冷却时间缩短1分钟。",
+      iconUrl: "https://db.newbeebox.com/wow/wz/images/wow/icons/large/spell_holy_ashestoashes.jpg",
+    },
+    [WarriorMajorGlyph.GlyphOfMortalStrike]: {
+      name: "致死打击雕文",
+      description: "使你的致死打击造成的伤害提高10%。",
+      iconUrl: "https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_savageblow.jpg",
+    },
+    [WarriorMajorGlyph.GlyphOfOverpower]: {
+      name: "压制雕文",
+      description: "当你的攻击被招架时，有100%的几率使你可以发动压制。",
+      iconUrl: "https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_meleedamage.jpg",
+    },
+    [WarriorMajorGlyph.GlyphOfRapidCharge]: {
+      name: "疾速冲锋雕文",
+      description: "你的冲锋技能的冷却时间缩短7%。",
+      iconUrl: "https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_charge.jpg",
+    },
+    [WarriorMajorGlyph.GlyphOfRending]: {
+      name: "撕裂雕文",
+      description: "使你的撕裂技能的持续时间延长6秒。",
+      iconUrl: "https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_gouge.jpg",
+    },
+    [WarriorMajorGlyph.GlyphOfResonatingPower]: {
+      name: "共鸣雕文",
+      description: "使你的雷霆一击消耗的怒气值减少5点。",
+      iconUrl: "https://db.newbeebox.com/wow/wz/images/wow/icons/large/spell_nature_thunderclap.jpg",
+    },
+    [WarriorMajorGlyph.GlyphOfRevenge]: {
+      name: "复仇雕文",
+      description: "在使用复仇技能之后，你的下一次英勇打击技能不消耗怒气值。",
+      iconUrl: "https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_revenge.jpg",
+    },
+    [WarriorMajorGlyph.GlyphOfShieldWall]: {
+      name: "盾墙雕文",
+      description: "盾墙的冷却时间缩短2分钟，但是只能减免40%的伤害。",
+      iconUrl: "https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_shieldwall.jpg",
+    },
+    [WarriorMajorGlyph.GlyphOfShockwave]: {
+      name: "震荡波雕文",
+      description: "震荡波的冷却时间缩短3秒。",
+      iconUrl: "https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_shockwave.jpg",
+    },
+    [WarriorMajorGlyph.GlyphOfSpellReflection]: {
+      name: "法术反射雕文",
+      description: "法术反射的冷却时间缩短1秒。",
+      iconUrl: "https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_shieldreflection.jpg",
+    },
+    [WarriorMajorGlyph.GlyphOfSunderArmor]: {
+      name: "破甲雕文",
+      description: "你的破甲技能可以影响到附近的一个额外目标。",
+      iconUrl: "https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_sunder.jpg",
+    },
+    [WarriorMajorGlyph.GlyphOfSweepingStrikes]: {
+      name: "横扫攻击雕文",
+      description: "你的横扫攻击技能的怒气值消耗降低100%。",
+      iconUrl: "https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_rogue_slicedice.jpg",
+    },
+    [WarriorMajorGlyph.GlyphOfTaunt]: {
+      name: "嘲讽雕文",
+      description: "使你的嘲讽技能的命中几率提高8%。",
+      iconUrl: "https://db.newbeebox.com/wow/wz/images/wow/icons/large/spell_nature_reincarnation.jpg",
+    },
+    [WarriorMajorGlyph.GlyphOfVictoryRush]: {
+      name: "乘胜追击雕文",
+      description: "你的乘胜追击技能造成爆击的几率提高30% 。",
+      iconUrl: "https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_devastate.jpg",
+    },
+    [WarriorMajorGlyph.GlyphOfVigilance]: {
+      name: "警戒雕文",
+      description: "你的警戒技能转移目标威胁值的效果提高5%。",
+      iconUrl: "https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_vigilance.jpg",
+    },
+    [WarriorMajorGlyph.GlyphOfWhirlwind]: {
+      name: "旋风斩雕文",
+      description: "使你的旋风斩的冷却时间缩短2秒。",
+      iconUrl: "https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_whirlwind.jpg",
+    },
+  },
+  minorGlyphs: {
+    [WarriorMinorGlyph.GlyphOfBattle]: {
+      name: "战斗雕文",
+      description: "使你的战斗怒吼的持续时间延长2分钟。",
+      iconUrl: "https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_battleshout.jpg",
+    },
+    [WarriorMinorGlyph.GlyphOfBloodrage]: {
+      name: "血性狂暴雕文",
+      description: "你的血性狂暴技能消耗的生命值降低100%。",
+      iconUrl: "https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_racial_bloodrage.jpg",
+    },
+    [WarriorMinorGlyph.GlyphOfCharge]: {
+      name: "冲锋雕文",
+      description: "使你的冲锋技能的射程延长5码。",
+      iconUrl: "https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_charge.jpg",
+    },
+    [WarriorMinorGlyph.GlyphOfCommand]: {
+      name: "命令雕文",
+      description: "使你的命令怒吼能力的持续时间延长2分钟。",
+      iconUrl: "https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_rallyingcry.jpg",
+    },
+    [WarriorMinorGlyph.GlyphOfEnduringVictory]: {
+      name: "持久追击雕文",
+      description: "使你可以使用乘胜追击技能的时间范围延长5秒。",
+      iconUrl: "https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_devastate.jpg",
+    },
+    [WarriorMinorGlyph.GlyphOfMockingBlow]: {
+      name: "惩戒痛击雕文",
+      description: "使你的惩戒痛击技能造成的伤害提高25%。",
+      iconUrl: "https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_punishingblow.jpg",
+    },
+    [WarriorMinorGlyph.GlyphOfThunderClap]: {
+      name: "雷霆一击雕文",
+      description: "使你的雷霆一击技能的影响半径延长2码。",
+      iconUrl: "https://db.newbeebox.com/wow/wz/images/wow/icons/large/spell_nature_thunderclap.jpg",
+    },
+    [WarriorMinorGlyph.GlyphOfShatteringThrow]: {
+      name: "碎裂投掷雕文",
+      description: "你的碎裂投掷变为瞬发，而且可以在任何姿态下使用，但不再移除无敌效果，而且不能对玩家和玩家控制的目标使用。",
+      iconUrl: "https://db.newbeebox.com/wow/wz/images/wow/icons/large/ability_warrior_shatteringthrow.jpg",
+    },
+  },
 };
