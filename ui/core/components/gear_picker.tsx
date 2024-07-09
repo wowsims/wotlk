@@ -1001,10 +1001,10 @@ export class ItemList<T> {
 
 			if (this.searchInput.value.length > 0) {
 				const searchQuery = this.searchInput.value
-					.toLowerCase()
-					.replaceAll(/[^a-zA-Z0-9\s]/g, '')
+					// .toLowerCase()
+					// .replaceAll(/[^a-zA-Z0-9\s]/g, '')
 					.split(' ');
-				const name = listItemData.name.toLowerCase().replaceAll(/[^a-zA-Z0-9\s]/g, '');
+				const name = listItemData.name //.toLowerCase().replaceAll(/[^a-zA-Z0-9\s]/g, '');
 
 				let include = true;
 				searchQuery.forEach(v => {

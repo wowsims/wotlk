@@ -4,7 +4,7 @@ import { IndividualSimUI } from '../individual_sim_ui';
 import { Class, EquipmentSpec, Glyphs, ItemSlot, ItemSpec, Profession, Race, Spec } from '../proto/common';
 import { IndividualSimSettings } from '../proto/ui';
 import { Database } from '../proto_utils/database';
-import { classNames, nameToClass, nameToProfession, nameToRace } from '../proto_utils/names';
+import { classNames, classNamesCn, nameToClass, nameToProfession, nameToRace } from '../proto_utils/names';
 import { SimSettingCategories } from '../sim';
 import { SimUI } from '../sim_ui';
 import { classGlyphsConfig, talentSpellIdsToTalentString } from '../talents/factory';
@@ -36,7 +36,7 @@ export abstract class Importer extends BaseModal {
 					? `
 				<label for="${uploadInputId}" class="importer-button btn btn-primary upload-button me-2">
 					<i class="fas fa-file-arrow-up"></i>
-					Upload File
+					上传文件
 				</label>
 				<input type="file" id="${uploadInputId}" class="importer-upload-input d-none" hidden>
 			`
@@ -83,7 +83,7 @@ ${error?.message}`);
 	): Promise<void> {
 		const playerClass = simUI.player.getClass();
 		if (charClass != playerClass) {
-			throw new Error(`Wrong Class! Expected ${classNames.get(playerClass)} but found ${classNames.get(charClass)}!`);
+			throw new Error(`错误的导入 ${classNamesCn.get(charClass)} 而不是 ${classNamesCn.get(playerClass)}`);
 		}
 
 		await Database.loadLeftoversIfNecessary(equipmentSpec);
@@ -475,18 +475,18 @@ export class IndividualWowheadGearPlannerImporter<SpecType extends Spec> extends
 export class IndividualAddonImporter<SpecType extends Spec> extends Importer {
 	private readonly simUI: IndividualSimUI<SpecType>;
 	constructor(parent: HTMLElement, simUI: IndividualSimUI<SpecType>) {
-		super(parent, simUI, 'Addon Import', true);
+		super(parent, simUI, 'Wowsims Exporter (WSE) 插件字符串导入', true);
 		this.simUI = simUI;
 
 		this.descriptionElem.innerHTML = `
 			<p>
-				Import settings from the <a href="https://www.curseforge.com/wow/addons/wowsimsexporter" target="_blank">WoWSims Importer In-Game Addon</a>.
+				通过<a href="https://www.curseforge.com/wow/addons/wowsimsexporter/files/5168772" target="_blank">WSE插件</a>,在游戏内使用/wse命令来复制你角色的装备字符串.你可以在新手盒子上下载.其他渠道请确保WSE版本为v2.9以保证兼容国服版本.
 			</p>
 			<p>
-				This feature imports gear, race, talents, glyphs, and professions. It does NOT import buffs, debuffs, consumes, rotation, or custom stats.
+				WSE字符串会导入你的装备,种族,天赋,雕文,以及专业. 团队增益,减益,消耗品,循环等数据不会被导入.
 			</p>
 			<p>
-				To import, paste the output from the addon below and click, 'Import'.
+				在下方粘贴字符串后点击导入
 			</p>
 		`;
 	}
@@ -497,18 +497,18 @@ export class IndividualAddonImporter<SpecType extends Spec> extends Importer {
 		// Parse all the settings.
 		const charClass = nameToClass((importJson['class'] as string) || '');
 		if (charClass == Class.ClassUnknown) {
-			throw new Error('Could not parse Class!');
+			throw new Error('职业错误!');
 		}
 
 		const race = nameToRace((importJson['race'] as string) || '');
 		if (race == Race.RaceUnknown) {
-			throw new Error('Could not parse Race!');
+			throw new Error('种族错误!');
 		}
 
 		const professions = (importJson['professions'] as Array<{ name: string; level: number }>).map(profData => nameToProfession(profData.name));
 		professions.forEach((prof, i) => {
 			if (prof == Profession.ProfessionUnknown) {
-				throw new Error(`Could not parse profession '${importJson['professions'][i]}'`);
+				throw new Error(`专业错误!`);
 			}
 		});
 
@@ -546,8 +546,7 @@ export class IndividualAddonImporter<SpecType extends Spec> extends Importer {
 }
 
 const throwCataError = () => {
-	throw new Error(`WowSims does not support the Cata Pre-patch.
-Please use: https://wowsims.github.io/cata/ instead`);
+	throw new Error(`你的WSE游戏插件版本不兼容,请确保你下载的是v2.9以保证国服WLK的兼容性.`);
 };
 
 function glyphNameToID(glyphName: string, glyphsConfig: Record<number, GlyphConfig>): number {
@@ -560,7 +559,7 @@ function glyphNameToID(glyphName: string, glyphsConfig: Record<number, GlyphConf
 			return parseInt(glyphIDStr);
 		}
 	}
-	throw new Error(`Unknown glyph name '${glyphName}'`);
+	throw new Error(`未知雕文 '${glyphName}'`);
 }
 
 function glyphToID(glyph: string | JsonObject, db: Database, glyphsConfig: Record<number, GlyphConfig>): number {
