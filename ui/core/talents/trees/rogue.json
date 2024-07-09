@@ -1,7 +1,7 @@
 [
     {
        "name":"Assassination",
-       "backgroundUrl":"https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/182.jpg",
+       "backgroundUrl":"https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/wrath/182.jpg",
        "talents":[
           {
              "fieldName":"improvedEviscerate",
@@ -362,7 +362,7 @@
     },
     {
        "name":"Combat",
-       "backgroundUrl":"https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/181.jpg",
+       "backgroundUrl":"https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/wrath/181.jpg",
        "talents":[
           {
              "fieldName":"improvedGouge",
@@ -743,7 +743,7 @@
     },
     {
        "name":"Subtlety",
-       "backgroundUrl":"https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/183.jpg",
+       "backgroundUrl":"https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/wrath/183.jpg",
        "talents":[
           {
              "fieldName":"relentlessStrikes",

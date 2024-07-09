@@ -1,7 +1,7 @@
 [
 	{
 		"name": "Arcane",
-		"backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/81.jpg",
+		"backgroundUrl": "https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/wrath/81.jpg",
 		"talents": [
 			{
 				"fieldName": "arcaneSubtlety",
@@ -404,7 +404,7 @@
 	},
 	{
 		"name": "Fire",
-		"backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/41.jpg",
+		"backgroundUrl": "https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/wrath/41.jpg",
 		"talents": [
 			{
 				"fieldName": "improvedFireBlast",
@@ -779,7 +779,7 @@
 	},
 	{
 		"name": "Frost",
-		"backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/61.jpg",
+		"backgroundUrl": "https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/wrath/61.jpg",
 		"talents": [
 			{
 				"fieldName": "frostbite",

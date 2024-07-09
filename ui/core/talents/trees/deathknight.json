@@ -1,7 +1,7 @@
 [
 	{
 		"name": "Blood",
-		"backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/398.jpg",
+		"backgroundUrl": "https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/wrath/398.jpg",
 		"talents": [
 			{
 				"fieldName": "butchery",
@@ -371,7 +371,7 @@
 	},
 	{
 		"name": "Frost",
-		"backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/399.jpg",
+		"backgroundUrl": "https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/wrath/399.jpg",
 		"talents": [
 			{
 				"fieldName": "improvedIcyTouch",
@@ -752,7 +752,7 @@
 	},
 	{
 		"name": "Unholy",
-		"backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/400.jpg",
+		"backgroundUrl": "https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/wrath/400.jpg",
 		"talents": [
 			{
 				"fieldName": "viciousStrikes",

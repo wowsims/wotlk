@@ -85,7 +85,7 @@ export class SettingsMenu extends BaseModal {
 
 		const showThreatMetrics = this.rootElem.getElementsByClassName('show-threat-metrics-picker')[0] as HTMLElement;
 		new BooleanPicker(showThreatMetrics, this.simUI.sim, {
-			label: '显示威胁/坦克选项和指标',
+			label: '显示威胁/坦克选项指标',
 			labelTooltip: '显示与坦克相关的所有选项和指标，例如TPS/DTPS。',
 			inline: true,
 			changedEvent: (sim: Sim) => sim.showThreatMetricsChangeEmitter,
