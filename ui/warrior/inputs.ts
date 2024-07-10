@@ -1,11 +1,9 @@
+import * as InputHelpers from '../core/components/input_helpers.js';
 import { Spec } from '../core/proto/common.js';
-import { ActionId } from '../core/proto_utils/action_id.js';
-
 import {
 	WarriorShout,
 } from '../core/proto/warrior.js';
-
-import * as InputHelpers from '../core/components/input_helpers.js';
+import { ActionId } from '../core/proto_utils/action_id.js';
 
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
@@ -22,23 +20,22 @@ export const ShatteringThrow = InputHelpers.makeSpecOptionsBooleanIconInput<Spec
 
 export const StartingRage = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecWarrior>({
 	fieldName: 'startingRage',
-	label: 'Starting Rage',
-	labelTooltip: 'Initial rage at the start of each iteration.',
+	label: '初始怒气',
+	labelTooltip: '每次战斗开始时的初始怒气值。',
 });
-
 
 export const StanceSnapshot = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecWarrior>({
 	fieldName: 'stanceSnapshot',
-	label: 'Stance Snapshot',
-	labelTooltip: 'Ability that is cast at the same time as stance swap will benefit from the bonus of the stance before the swap.',
+	label: '姿态快照',
+	labelTooltip: '在切换姿态时同时施放的技能将受益于切换前的姿态加成。',
 });
 
-// Allows for auto gemming whilst ignoring expertise cap
-// (Useful for Arms)
+// 允许在自动镶嵌宝石时忽略精准上限
+// （对武器战有用）
 export const DisableExpertiseGemming = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecWarrior>({
 	fieldName: 'disableExpertiseGemming',
-	label: 'Disable expertise gemming',
-	labelTooltip: 'Disables auto gemming for expertise',
+	label: '禁用精准宝石',
+	labelTooltip: '禁用精准属性的自动镶嵌。',
 });
 
 export const ShoutPicker = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecWarrior, WarriorShout>({
