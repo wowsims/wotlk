@@ -1,5 +1,12 @@
+import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs.js';
+import * as OtherInputs from '../core/components/other_inputs.js';
+import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
+import { Player } from '../core/player.js';
 import {
-	Class, 
+	APLRotation,
+} from '../core/proto/apl.js';
+import {
+	Class,
 	Debuffs,
 	Faction,
 	IndividualBuffs,
@@ -14,20 +21,10 @@ import {
 	WeaponType
 } from '../core/proto/common.js';
 import {
-	APLRotation,
-} from '../core/proto/apl.js';
-import { Player } from '../core/player.js';
-import { Stats } from '../core/proto_utils/stats.js';
-import { getSpecIcon } from '../core/proto_utils/utils.js';
-import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
-
-import {
 	Rogue_Options_PoisonImbue,
 } from '../core/proto/rogue.js';
-
-import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs.js';
-import * as OtherInputs from '../core/components/other_inputs.js';
-
+import { Stats } from '../core/proto_utils/stats.js';
+import { getSpecIcon } from '../core/proto_utils/utils.js';
 import * as RogueInputs from './inputs.js';
 import * as Presets from './presets.js';
 
@@ -36,7 +33,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 	cssScheme: 'rogue',
 	// List any known bugs / issues here and they'll be shown on the site.
 	knownIssues: [
-		'Rotations are not fully optimized, especially for non-standard setups.',
+		'循环尚未完全优化，特别是对于非标准预设的设置。',
 	],
 	warnings: [
 		(simUI: IndividualSimUI<Spec.SpecRogue>) => {
@@ -402,7 +399,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecRogue>) {
 		super(parentElem, player, SPEC_CONFIG);
-		this.player.changeEmitter.on((c) => {
+		this.player.changeEmitter.on(c => {
 			const options = this.player.getSpecOptions()
 			const encounter = this.sim.encounter
 			if (!options.applyPoisonsManually) {
@@ -426,7 +423,7 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 			}
 			this.player.setSpecOptions(c, options)
 		});
-		this.sim.encounter.changeEmitter.on((c) => {
+		this.sim.encounter.changeEmitter.on(c => {
 			const options = this.player.getSpecOptions()
 			const encounter = this.sim.encounter
 			if (!options.applyPoisonsManually) {

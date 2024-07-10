@@ -226,13 +226,13 @@ export abstract class SimUI extends Component {
 		let statusStr = '';
 		if (config.launchStatus == LaunchStatus.Unlaunched) {
 			statusStr =
-				'This sim is a WORK IN PROGRESS. It is not fully developed and should not be used for general purposes.';
+				'此专精仍在开发中。尚未完全开发完成，不应用于一般目的。';
 		} else if (config.launchStatus == LaunchStatus.Alpha) {
 			statusStr =
-				'This sim is in ALPHA. Bugs are expected; please let us know if you find one!';
+				'此专精处于ALPHA测试阶段。预期会有错误；如果您发现错误，请告诉我们！';
 		} else if (config.launchStatus == LaunchStatus.Beta) {
 			statusStr =
-				'This sim is in BETA. There may still be a few bugs; please let us know if you find one!';
+				'此专精处于BETA测试阶段。可能仍然存在一些错误；如果您发现错误，请告诉我们！';
 		}
 		if (statusStr) {
 			config.knownIssues = [statusStr].concat(config.knownIssues || []);

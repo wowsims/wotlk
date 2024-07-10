@@ -1,3 +1,4 @@
+import * as PresetUtils from '../core/preset_utils.js';
 import {
 	Consumes,
 	Debuffs,
@@ -10,32 +11,27 @@ import {
 	TristateEffect,
 	UnitReference,
 } from '../core/proto/common.js';
-import { SavedTalents } from '../core/proto/ui.js';
-
 import {
-	SmitePriest_Options as Options,
 	PriestMajorGlyph as MajorGlyph,
 	PriestMinorGlyph as MinorGlyph,
+	SmitePriest_Options as Options,
 } from '../core/proto/priest.js';
-
-import * as PresetUtils from '../core/preset_utils.js';
-
+import { SavedTalents } from '../core/proto/ui.js';
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
 // keep them in a separate file.
-
 import PreraidGear from './gear_sets/preraid.gear.json';
-export const PRERAID_PRESET = PresetUtils.makePresetGear('Preraid Preset', PreraidGear);
+export const PRERAID_PRESET = PresetUtils.makePresetGear('Preraid预设', PreraidGear);
 import P1Gear from './gear_sets/p1.gear.json';
-export const P1_PRESET = PresetUtils.makePresetGear('P1 Preset', P1Gear);
+export const P1_PRESET = PresetUtils.makePresetGear('P1预设', P1Gear);
 
 import DefaultApl from './apls/default.apl.json'
-export const ROTATION_PRESET_APL = PresetUtils.makePresetAPLRotation('Default', DefaultApl);
+export const ROTATION_PRESET_APL = PresetUtils.makePresetAPLRotation('标准预设', DefaultApl);
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
 export const StandardTalents = {
-	name: 'Standard',
+	name: '标准预设',
 	data: SavedTalents.create({
 		talentsString: '05332031013005023310001-005551002020152-00502',
 		glyphs: Glyphs.create({

@@ -155,7 +155,7 @@ export class SimHeader extends Component {
 	private addKnownIssuesLink(): HTMLElement {
 		return this.addToolbarLink({
 			parent: this.simToolbar,
-			text: 'Known Issues',
+			text: '已知问题',
 			tooltip: this.knownIssuesContent,
 			classes: 'known-issues link-danger hide',
 		}).children[0] as HTMLElement;
