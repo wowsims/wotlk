@@ -25,7 +25,7 @@ import { SavedTalents } from '../core/proto/ui.js';
 // Eventually we will import these values for the raid sim too, so its good to
 // keep them in a separate file.
 import PreraidGear from './gear_sets/preraid.gear.json';
-export const PRERAID_PRESET = PresetUtils.makePresetGear('Pre-raid预设', PreraidGear);
+export const PRERAID_PRESET = PresetUtils.makePresetGear('Preraid预设', PreraidGear);
 import P1Gear from './gear_sets/p1.gear.json';
 export const P1_PRESET = PresetUtils.makePresetGear('P1预设', P1Gear);
 import P2Gear from './gear_sets/p2.gear.json';

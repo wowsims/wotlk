@@ -1,3 +1,4 @@
+import * as PresetUtils from '../core/preset_utils.js';
 import {
 	Consumes,
 	Faction,
@@ -7,48 +8,43 @@ import {
 	Potions,
   Profession,
 } from '../core/proto/common.js';
-import { SavedTalents } from '../core/proto/ui.js';
-
 import {
-  ElementalShaman_Options as ElementalShamanOptions,
-  ShamanShield,
-  ShamanMajorGlyph,
-  ShamanMinorGlyph,
   AirTotem,
   EarthTotem,
+  ElementalShaman_Options as ElementalShamanOptions,
   FireTotem,
-  WaterTotem,
+  ShamanMajorGlyph,
+  ShamanMinorGlyph,
+  ShamanShield,
   ShamanTotems,
+  WaterTotem,
 } from '../core/proto/shaman.js';
-
-import * as PresetUtils from '../core/preset_utils.js';
-
+import { SavedTalents } from '../core/proto/ui.js';
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
 // keep them in a separate file.
-
 import PreraidGear from './gear_sets/preraid.gear.json';
-export const PRERAID_PRESET = PresetUtils.makePresetGear('Pre-raid Preset', PreraidGear);
+export const PRERAID_PRESET = PresetUtils.makePresetGear('Preraid预设', PreraidGear);
 import P1Gear from './gear_sets/p1.gear.json';
-export const P1_PRESET = PresetUtils.makePresetGear('P1 Preset', P1Gear);
+export const P1_PRESET = PresetUtils.makePresetGear('P1预设', P1Gear);
 import P2Gear from './gear_sets/p2.gear.json';
-export const P2_PRESET = PresetUtils.makePresetGear('P2 Preset', P2Gear);
+export const P2_PRESET = PresetUtils.makePresetGear('P2预设', P2Gear);
 import P3AllianceGear from './gear_sets/p3_alliance.gear.json';
-export const P3_PRESET_ALLI = PresetUtils.makePresetGear('P3 Preset [A]', P3AllianceGear, { faction: Faction.Alliance });
+export const P3_PRESET_ALLI = PresetUtils.makePresetGear('P3预设[A]', P3AllianceGear, { faction: Faction.Alliance });
 import P3HordeGear from './gear_sets/p3_horde.gear.json';
-export const P3_PRESET_HORDE = PresetUtils.makePresetGear('P3 Preset [H]', P3HordeGear, { faction: Faction.Horde });
+export const P3_PRESET_HORDE = PresetUtils.makePresetGear('P3预设[H]', P3HordeGear, { faction: Faction.Horde });
 import P4Gear from './gear_sets/p4.gear.json';
-export const P4_PRESET = PresetUtils.makePresetGear('P4 Preset', P4Gear);
+export const P4_PRESET = PresetUtils.makePresetGear('P4预设', P4Gear);
 
 import DefaultApl from './apls/default.apl.json';
-export const ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Default', DefaultApl);
+export const ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('标准预设', DefaultApl);
 import AdvancedApl from './apls/advanced.apl.json';
-export const ROTATION_PRESET_ADVANCED = PresetUtils.makePresetAPLRotation('Advanced', AdvancedApl);
+export const ROTATION_PRESET_ADVANCED = PresetUtils.makePresetAPLRotation('进阶', AdvancedApl);
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
 export const StandardTalents = {
-  name: 'Standard',
+  name: '标准预设',
   data: SavedTalents.create({
     talentsString: '0533001523213351322301351-005050031',
     glyphs: Glyphs.create({
