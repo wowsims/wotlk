@@ -1,6 +1,6 @@
 [
     {
-       "name":"Discipline",
+       "name":"戒律",
        "backgroundUrl":"https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/wrath/201.jpg",
        "talents":[
           {
@@ -368,7 +368,7 @@
        ]
     },
     {
-       "name":"Holy",
+       "name":"神圣",
        "backgroundUrl":"https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/wrath/202.jpg",
        "talents":[
           {
@@ -731,7 +731,7 @@
        ]
     },
     {
-       "name":"Shadow",
+       "name":"暗影",
        "backgroundUrl":"https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/wrath/203.jpg",
        "talents":[
           {

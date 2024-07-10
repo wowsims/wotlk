@@ -142,11 +142,12 @@ export class SimTitleDropdown extends Component {
 
 		// Generate links for a class's specs
 		sims.forEach(specIndex => {
-			const listItem = document.createElement('li');
-			const link = this.buildSpecLink(specIndex);
-
-			listItem.appendChild(link);
-			dropdownMenu.appendChild(listItem);
+			if (specIndex !== 10) {
+				const listItem = document.createElement('li');
+				const link = this.buildSpecLink(specIndex);
+				listItem.appendChild(link);
+				dropdownMenu.appendChild(listItem);
+			}
 		});
 
 		dropdownFragment.innerHTML = `
@@ -181,7 +182,7 @@ export class SimTitleDropdown extends Component {
 					<img src="${iconPath}" class="sim-link-icon">
 					<div class="d-flex flex-column">
 						<span class="sim-link-label text-white">WowsimsCN  by 财高八抖</span>
-						<span class="sim-link-title">${label}</span>
+						<span class="sim-link-title">${label === '牧师' ? '治疗' : label}</span>
 						${this.launchStatusLabel(data)}
 					</div>
 				</div>
@@ -254,7 +255,7 @@ export class SimTitleDropdown extends Component {
 					<img src="${iconPath}" class="sim-link-icon">
 					<div class="d-flex flex-column">
 						<span class="sim-link-label">${className}</span>
-						<span class="sim-link-title">${specLabel}</span>
+						<span class="sim-link-title">${specLabel === '牧师' ? '治疗' : specLabel}</span>
 						${this.launchStatusLabel({ type: 'Spec', index: specIndex })}
 					</div>
 				</div>

@@ -1,3 +1,8 @@
+import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
+import { Player } from '../core/player.js';
+import {
+	APLRotation,
+} from '../core/proto/apl.js';
 import {
 	Class,
 	Faction,
@@ -7,13 +12,7 @@ import {
 	Stat,
 } from '../core/proto/common.js';
 import { Stats } from '../core/proto_utils/stats.js';
-import { Player } from '../core/player.js';
 import { getSpecIcon } from '../core/proto_utils/utils.js';
-import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
-import {
-	APLRotation,
-} from '../core/proto/apl.js';
-
 import * as HealingPriestInputs from './inputs.js';
 import * as Presets from './presets.js';
 
@@ -22,9 +21,10 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHealingPriest, {
 	cssScheme: 'priest',
 	// List any known bugs / issues here and they'll be shown on the site.
 	knownIssues: [
-		'Talents that apply to, "friendly targets at or below 50% health" are not implemented.',
-		'Prayer of Mending always bounces the maximum number of times.',
+		'适用于“生命值在 50% 以下的友方目标”的天赋尚未实现。',
+		'愈合祷言总是弹跳最大次数。',
 	],
+
 
 	// All stats for which EP should be calculated.
 	epStats: [
