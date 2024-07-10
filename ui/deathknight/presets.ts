@@ -27,7 +27,7 @@ export const P3_BLOOD_PRESET = PresetUtils.makePresetGear('P3血DPS', P3BloodGea
 import P4BloodGear from './gear_sets/p4_blood.gear.json';
 export const P4_BLOOD_PRESET = PresetUtils.makePresetGear('P4血DPS', P4BloodGear, { talentTree: 0 });
 import PreraidFrostGear from './gear_sets/preraid_frost.gear.json';
-export const PRERAID_FROST_PRESET = PresetUtils.makePresetGear('Pre-Raid冰', PreraidFrostGear, { talentTree: 1 });
+export const PRERAID_FROST_PRESET = PresetUtils.makePresetGear('Preraid冰', PreraidFrostGear, { talentTree: 1 });
 import P1FrostGear from './gear_sets/p1_frost.gear.json';
 export const P1_FROST_PRESET = PresetUtils.makePresetGear('P1冰', P1FrostGear, { talentTree: 1 });
 import P2FrostGear from './gear_sets/p2_frost.gear.json';
@@ -39,13 +39,13 @@ export const P4_FROST_PRESET = PresetUtils.makePresetGear('P4冰', P4FrostGear, 
 import P1FrostSubUhGear from './gear_sets/p1_frost_subUh.gear.json';
 export const P1_FROSTSUBUNH_PRESET = PresetUtils.makePresetGear('P1冰邪', P1FrostSubUhGear, { talentTree: 1 });
 import PreraidUh2hGear from './gear_sets/preraid_uh_2h.gear.json';
-export const PRERAID_UNHOLY_2H_PRESET = PresetUtils.makePresetGear('Pre-Raid双手邪', PreraidUh2hGear, { talentTree: 2 });
+export const PRERAID_UNHOLY_2H_PRESET = PresetUtils.makePresetGear('Preraid双手邪', PreraidUh2hGear, { talentTree: 2 });
 import P1Uh2hGear from './gear_sets/p1_uh_2h.gear.json';
 export const P1_UNHOLY_2H_PRESET = PresetUtils.makePresetGear('P1双手邪', P1Uh2hGear, { talentTree: 2 });
 import P4Uh2hGear from './gear_sets/p4_uh_2h.gear.json';
 export const P4_UNHOLY_2H_PRESET = PresetUtils.makePresetGear('P4双手邪', P4Uh2hGear, { talentTree: 2 });
 import PreraidUhDwGear from './gear_sets/preraid_uh_dw.gear.json';
-export const PRERAID_UNHOLY_DW_PRESET = PresetUtils.makePresetGear('Pre-Raid双持邪', PreraidUhDwGear, { talentTree: 2 });
+export const PRERAID_UNHOLY_DW_PRESET = PresetUtils.makePresetGear('Preraid双持邪', PreraidUhDwGear, { talentTree: 2 });
 import P1UhDwGear from './gear_sets/p1_uh_dw.gear.json';
 export const P1_UNHOLY_DW_PRESET = PresetUtils.makePresetGear('P1双持邪', P1UhDwGear, { talentTree: 2 });
 import P2UhDwGear from './gear_sets/p2_uh_dw.gear.json';

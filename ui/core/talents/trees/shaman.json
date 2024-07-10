@@ -1,6 +1,6 @@
 [
     {
-       "name":"Elemental",
+       "name":"元素",
        "backgroundUrl":"https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/classic/261.jpg",
        "talents":[
           {
@@ -329,7 +329,7 @@
        ]
     },
     {
-       "name":"Enhancement",
+       "name":"增强",
        "backgroundUrl":"https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/classic/263.jpg",
        "talents":[
           {
@@ -696,7 +696,7 @@
        ]
     },
     {
-       "name":"Restoration",
+       "name":"恢复",
        "backgroundUrl":"https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/classic/262.jpg",
        "talents":[
           {
