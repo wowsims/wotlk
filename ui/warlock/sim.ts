@@ -1,3 +1,11 @@
+import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs.js';
+import * as ConsumablesInputs from '../core/components/inputs/consumables.js';
+import * as OtherInputs from '../core/components/other_inputs.js';
+import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
+import { Player } from '../core/player.js';
+import {
+	APLRotation,
+} from '../core/proto/apl.js';
 import {
 	Class,
 	Faction,
@@ -7,18 +15,8 @@ import {
 	Spec,
 	Stat,
 } from '../core/proto/common.js';
-import {
-	APLRotation,
-} from '../core/proto/apl.js';
-
 import { Stats } from '../core/proto_utils/stats.js';
-import { Player } from '../core/player.js';
 import { getSpecIcon } from '../core/proto_utils/utils.js';
-import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
-
-import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs.js';
-import * as ConsumablesInputs from '../core/components/inputs/consumables.js';
-import * as OtherInputs from '../core/components/other_inputs.js';
 import * as WarlockInputs from './inputs.js';
 import * as Presets from './presets.js';
 
@@ -147,7 +145,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 
 		// Preset gear configurations that the user can quickly select.
 		gear: [
-			Presets.SWP_BIS,
+			// Presets.SWP_BIS,
 			Presets.PRERAID_AFFLICTION_PRESET,
 			Presets.P1_AFFLICTION_PRESET,
 			Presets.P2_AFFLICTION_PRESET,
