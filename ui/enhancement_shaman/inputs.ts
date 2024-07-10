@@ -1,12 +1,11 @@
+import * as InputHelpers from '../core/components/input_helpers.js';
+import { Spec } from '../core/proto/common.js';
 import {
-	ShamanShield,
 	ShamanImbue,
+	ShamanShield,
 	ShamanSyncType,
 } from '../core/proto/shaman.js';
-import { Spec } from '../core/proto/common.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
-
-import * as InputHelpers from '../core/components/input_helpers.js';
 
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
@@ -44,19 +43,19 @@ export const ShamanImbueOH = InputHelpers.makeSpecOptionsEnumIconInput<Spec.Spec
 
 export const SyncTypeInput = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecEnhancementShaman, ShamanSyncType>({
 	fieldName: 'syncType',
-	label: 'Sync/Stagger Setting',
+	label: '攻速同步设置',
 	labelTooltip:
-		`Choose your sync or stagger option Perfect
+		`选择你的同步或错开选项：
 		<ul>
-			<li><div>Auto: Will auto pick sync options based on your weapons attack speeds</div></li>
-			<li><div>None: No Sync or Staggering, used for mismatched weapon speeds</div></li>
-			<li><div>Perfect Sync: Makes your weapons always attack at the same time, for match weapon speeds</div></li>
-			<li><div>Delayed Offhand: Adds a slight delay to the offhand attacks while staying within the 0.5s flurry ICD window</div></li>
+			<li><div>自动：将根据你的武器攻击速度自动选择同步选项</div></li>
+			<li><div>无：不进行同步或错开，适用于武器速度不匹配的情况</div></li>
+			<li><div>完美同步：使主手和副手武器总是同时攻击，适用于匹配的武器速度</div></li>
+			<li><div>副手延迟：在保持0.5秒怒火急速触发窗口内的同时，为副手攻击增加一个轻微的延迟</div></li>
 		</ul>`,
 	values: [
-		{ name: "Automatic", value: ShamanSyncType.Auto },
-		{ name: 'None', value: ShamanSyncType.NoSync },
-		{ name: 'Perfect Sync', value: ShamanSyncType.SyncMainhandOffhandSwings },
-		{ name: 'Delayed Offhand', value: ShamanSyncType.DelayOffhandSwings },
+		{ name: "自动", value: ShamanSyncType.Auto },
+		{ name: '无', value: ShamanSyncType.NoSync },
+		{ name: '完美同步', value: ShamanSyncType.SyncMainhandOffhandSwings },
+		{ name: '副手延迟', value: ShamanSyncType.DelayOffhandSwings },
 	],
 });

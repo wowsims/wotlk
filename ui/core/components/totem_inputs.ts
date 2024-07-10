@@ -1,31 +1,31 @@
 import { IconEnumPicker } from '../components/icon_enum_picker.js';
 import { IconPicker } from '../components/icon_picker.js';
+import * as InputHelpers from '../components/input_helpers.js';
+import { IndividualSimUI } from '../individual_sim_ui.js';
+import { Player } from '../player.js';
+import { Spec } from '../proto/common.js';
 import {
 	AirTotem,
 	EarthTotem,
 	FireTotem,
-	WaterTotem,
 	ShamanTotems,
+	WaterTotem,
 } from '../proto/shaman.js';
-import { Spec } from '../proto/common.js';
 import { ActionId } from '../proto_utils/action_id.js';
-import { Player } from '../player.js';
-import { IndividualSimUI } from '../individual_sim_ui.js';
-import { EventID } from '../typed_event.js';
-import * as InputHelpers from '../components/input_helpers.js';
 import { ShamanSpecs } from '../proto_utils/utils.js';
+import { EventID } from '../typed_event.js';
 import { ContentBlock } from './content_block.js';
 import { Input } from './input.js';
 
 export function TotemsSection(parentElem: HTMLElement, simUI: IndividualSimUI<ShamanSpecs>): ContentBlock {
-	let contentBlock = new ContentBlock(parentElem, 'totems-settings', {
-		header: { title: 'Totems' }
+	const contentBlock = new ContentBlock(parentElem, 'totems-settings', {
+		header: { title: '图腾' }
 	});
 
-	let totemDropdownGroup = Input.newGroupContainer();
+	const totemDropdownGroup = Input.newGroupContainer();
 	totemDropdownGroup.classList.add('totem-dropdowns-container', 'icon-group');
 
-	let fireElementalContainer = document.createElement('div');
+	const fireElementalContainer = document.createElement('div');
 	fireElementalContainer.classList.add('fire-elemental-input-container');
 
 	contentBlock.bodyElement.appendChild(totemDropdownGroup);
