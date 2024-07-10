@@ -1,6 +1,6 @@
 [
 	{
-		"name": "Arms",
+		"name": "武器",
 		"backgroundUrl": "https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/wrath/161.jpg",
 		"talents": [
 			{
@@ -408,7 +408,7 @@
 		]
 	},
 	{
-		"name": "Fury",
+		"name": "狂暴",
 		"backgroundUrl": "https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/wrath/164.jpg",
 		"talents": [
 			{
@@ -777,7 +777,7 @@
 		]
 	},
 	{
-		"name": "Protection",
+		"name": "防护",
 		"backgroundUrl": "https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/wrath/163.jpg",
 		"talents": [
 			{

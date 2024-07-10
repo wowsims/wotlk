@@ -21,7 +21,7 @@ import * as PresetUtils from '../core/preset_utils.js';
 // keep them in a separate file.
 
 import PreraidGear from './gear_sets/preraid.gear.json';
-export const PRERAID_PRESET = PresetUtils.makePresetGear('PreRaid', PreraidGear);
+export const PRERAID_PRESET = PresetUtils.makePresetGear('Preraid预设', PreraidGear);
 import P1Gear from './gear_sets/p1.gear.json';
 export const P1_PRESET = PresetUtils.makePresetGear('P1 Preset', P1Gear);
 import P2Gear from './gear_sets/p2.gear.json';
