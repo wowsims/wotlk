@@ -209,8 +209,8 @@ export class SimHeader extends Component {
 		container.classList.add('sim-toolbar-socials');
 		this.simToolbar.appendChild(container);
 		this.addBilibiliLink(container);
-		this.addDiscordLink(container);
-		this.addGitHubLink(container);
+		// this.addDiscordLink(container);
+		// this.addGitHubLink(container);
 		// this.addPatreonLink(container);
 	}
 
