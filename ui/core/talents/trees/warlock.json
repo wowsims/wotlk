@@ -1,6 +1,6 @@
 [
     {
-       "name":"Affliction",
+       "name":"痛苦",
        "backgroundUrl":"https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/wrath/302.jpg",
        "talents":[
           {
@@ -372,7 +372,7 @@
        ]
     },
     {
-       "name":"Demonology",
+       "name":"恶魔学识",
        "backgroundUrl":"https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/wrath/303.jpg",
        "talents":[
           {
@@ -743,7 +743,7 @@
        ]
     },
     {
-       "name":"Destruction",
+       "name":"毁灭",
        "backgroundUrl":"https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/wrath/301.jpg",
        "talents":[
           {

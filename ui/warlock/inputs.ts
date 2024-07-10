@@ -46,6 +46,6 @@ export const PetInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecWarlo
 
 export const DetonateSeed = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecWarlock>({
 	fieldName: 'detonateSeed',
-	label: 'Detonate Seed on Cast',
-	labelTooltip: 'Simulates raid doing damage to targets such that seed detonates immediately on cast.',
+	label: '施法时引爆种子',
+	labelTooltip: '模拟团队对目标造成伤害，使种子在施法时立即引爆。',
 });
