@@ -1,6 +1,6 @@
 [
     {
-       "name":"Holy",
+       "name":"神圣",
        "backgroundUrl":"https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/classic/382.jpg",
        "talents":[
           {
@@ -318,7 +318,7 @@
        ]
     },
     {
-       "name":"Protection",
+       "name":"防护",
        "backgroundUrl":"https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/classic/383.jpg",
        "talents":[
           {
@@ -637,7 +637,7 @@
        ]
     },
     {
-       "name":"Retribution",
+       "name":"惩戒",
        "backgroundUrl":"https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/classic/381.jpg",
        "talents":[
           {
