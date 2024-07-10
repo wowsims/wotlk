@@ -1,47 +1,45 @@
+import * as InputHelpers from '../core/components/input_helpers.js';
 import { Spec } from '../core/proto/common.js';
-
 import {
 	PaladinAura as PaladinAura,
-	PaladinSeal,
 	PaladinJudgement as PaladinJudgement,
+	PaladinSeal,
 } from '../core/proto/paladin.js';
-
-import * as InputHelpers from '../core/components/input_helpers.js';
 
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
 
 export const AuraSelection = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecProtectionPaladin, PaladinAura>({
 	fieldName: 'aura',
-	label: 'Aura',
+	label: '光环',
 	values: [
 		{ name: 'None', value: PaladinAura.NoPaladinAura },
-		{ name: 'Devotion Aura', value: PaladinAura.DevotionAura },
-		{ name: 'Retribution Aura', value: PaladinAura.RetributionAura },
+		{ name: '虔诚光环', value: PaladinAura.DevotionAura },
+		{ name: '惩戒光环', value: PaladinAura.RetributionAura },
 	],
 });
 
 export const StartingSealSelection = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecProtectionPaladin, PaladinSeal>({
 	fieldName: 'seal',
-	label: 'Seal',
-	labelTooltip: 'The seal active before encounter',
+	label: '圣印',
+	labelTooltip: '战斗前激活的圣印',
 	values: [
-		{ name: 'Vengeance', value: PaladinSeal.Vengeance },
-		{ name: 'Command', value: PaladinSeal.Command },
+		{ name: '复仇', value: PaladinSeal.Vengeance },
+		{ name: '命令', value: PaladinSeal.Command },
 	],
 });
 
 export const JudgementSelection = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecProtectionPaladin, PaladinJudgement>({
 	fieldName: 'judgement',
-	label: 'Judgement',
-	labelTooltip: 'Judgement debuff you will use on the target during the encounter.',
+	label: '审判',
+	labelTooltip: '战斗中你将对目标使用的审判减益。',
 	values: [
-		{ name: 'Wisdom', value: PaladinJudgement.JudgementOfWisdom },
-		{ name: 'Light', value: PaladinJudgement.JudgementOfLight },
+		{ name: '智慧', value: PaladinJudgement.JudgementOfWisdom },
+		{ name: '光明', value: PaladinJudgement.JudgementOfLight },
 	],
 });
 
 export const UseAvengingWrath = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecProtectionPaladin>({
 	fieldName: 'useAvengingWrath',
-	label: 'Use Avenging Wrath',
+	label: '使用复仇之怒',
 });

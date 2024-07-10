@@ -1,3 +1,4 @@
+import * as PresetUtils from '../core/preset_utils.js';
 import {
 	BattleElixir,
 	Conjured,
@@ -10,21 +11,16 @@ import {
 	Spec,
 	UnitReference,
 } from '../core/proto/common.js';
-import { SavedTalents } from '../core/proto/ui.js';
-
 import {
-	FeralTankDruid_Rotation as DruidRotation,
-	FeralTankDruid_Options as DruidOptions,
 	DruidMajorGlyph,
 	DruidMinorGlyph,
+	FeralTankDruid_Options as DruidOptions,
+	FeralTankDruid_Rotation as DruidRotation,
 } from '../core/proto/druid.js';
-
-import * as PresetUtils from '../core/preset_utils.js';
-
+import { SavedTalents } from '../core/proto/ui.js';
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
 // keep them in a separate file.
-
 import P1Gear from './gear_sets/p1.gear.json';
 export const P1_PRESET = PresetUtils.makePresetGear('P1', P1Gear);
 import P2Gear from './gear_sets/p2.gear.json';
@@ -41,14 +37,14 @@ export const DefaultSimpleRotation = DruidRotation.create({
 });
 
 import DefaultApl from './apls/default.apl.json';
-export const ROTATION_DEFAULT = PresetUtils.makePresetAPLRotation('APL Default', DefaultApl);
+export const ROTATION_DEFAULT = PresetUtils.makePresetAPLRotation('APL预设', DefaultApl);
 
-export const ROTATION_PRESET_SIMPLE = PresetUtils.makePresetSimpleRotation('Simple Default', Spec.SpecFeralTankDruid, DefaultSimpleRotation);
+export const ROTATION_PRESET_SIMPLE = PresetUtils.makePresetSimpleRotation('标准预设', Spec.SpecFeralTankDruid, DefaultSimpleRotation);
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
 export const StandardTalents = {
-	name: 'Standard',
+	name: '标准预设',
 	data: SavedTalents.create({
 		talentsString: '-503232132322010353120300313511-20350001',
 		glyphs: Glyphs.create({

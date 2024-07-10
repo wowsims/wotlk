@@ -235,7 +235,7 @@ export class SettingsTab extends SimTab {
 				this.simUI.player,
 				{
 					inputs: miscDebuffOptions.map(options => options.config),
-					label: 'Misc',
+					label: '特殊',
 				},
 				this.simUI,
 			);

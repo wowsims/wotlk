@@ -93,8 +93,8 @@ export class EncounterPicker extends Component {
 
 			if (simUI.isIndividualSim() && isHealingSpec((simUI as IndividualSimUI<any>).player.spec)) {
 				new NumberPicker(this.rootElem, simUI.sim.raid, {
-					label: 'Num Allies',
-					labelTooltip: 'Number of allied players in the raid.',
+					label: '盟友数量',
+					labelTooltip: '团队中盟友玩家的数量。',
 					changedEvent: (raid: Raid) => raid.targetDummiesChangeEmitter,
 					getValue: (raid: Raid) => raid.getTargetDummies(),
 					setValue: (eventID: EventID, raid: Raid, newValue: number) => {
@@ -105,8 +105,8 @@ export class EncounterPicker extends Component {
 
 			if (simUI.isIndividualSim() && isTankSpec((simUI as IndividualSimUI<any>).player.spec)) {
 				new NumberPicker(this.rootElem, modEncounter, {
-					label: 'Min Base Damage',
-					labelTooltip: 'Base damage for auto attacks, i.e. lowest roll with 0 AP against a 0-armor Player.',
+					label: '最低基础伤害',
+					labelTooltip: '自动攻击的基础伤害，即在0攻击强度和0护甲的玩家身上的最低伤害。',
 					changedEvent: (encounter: Encounter) => encounter.changeEmitter,
 					getValue: (encounter: Encounter) => encounter.primaryTarget.minBaseDamage,
 					setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
