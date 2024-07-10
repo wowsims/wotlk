@@ -59,10 +59,10 @@ export class GlyphsPicker extends Component {
 		minorGlyphsData.sort((a, b) => stringComparator(a.name, b.name));
 
 		const majorGlyphsBlock = new ContentBlock(this.rootElem, 'major-glyphs', {
-			header: { title: '大雕文', extraCssClasses: ['border-0', 'mb-1'] }
+			header: { title: '大', extraCssClasses: ['border-0', 'mb-1'] }
 		});
 		const minorGlyphsBlock = new ContentBlock(this.rootElem, 'minor-glyphs', {
-			header: { title: '小雕文', extraCssClasses: ['border-0', 'mb-1'] }
+			header: { title: '小', extraCssClasses: ['border-0', 'mb-1'] }
 		});
 
 		this.majorGlyphPickers = (['major1', 'major2', 'major3'] as Array<keyof Glyphs>).map(glyphField => {
