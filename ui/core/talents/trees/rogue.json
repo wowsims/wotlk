@@ -1,6 +1,6 @@
 [
     {
-       "name":"Assassination",
+       "name":"刺杀",
        "backgroundUrl":"https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/wrath/182.jpg",
        "talents":[
           {
@@ -361,7 +361,7 @@
        ]
     },
     {
-       "name":"Combat",
+       "name":"战斗",
        "backgroundUrl":"https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/wrath/181.jpg",
        "talents":[
           {
@@ -742,7 +742,7 @@
        ]
     },
     {
-       "name":"Subtlety",
+       "name":"敏锐",
        "backgroundUrl":"https://db.newbeebox.com/wow/wz/images/wow/talents/backgrounds/wrath/183.jpg",
        "talents":[
           {
