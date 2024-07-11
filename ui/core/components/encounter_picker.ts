@@ -159,8 +159,8 @@ class AdvancedEncounterModal extends BaseModal {
 		addEncounterFieldPickers(header, this.encounter, true);
 		if (!simUI.isIndividualSim()) {
 			new BooleanPicker<Encounter>(header, encounter, {
-				label: 'Use Health',
-				labelTooltip: 'Uses a damage limit in place of a duration limit. Damage limit is equal to sum of all targets health.',
+				label: '使用生命值取代战斗时长',
+				labelTooltip: '使用伤害限制代替时间限制。伤害限制等于所有目标生命值的总和。',
 				inline: true,
 				changedEvent: (encounter: Encounter) => encounter.changeEmitter,
 				getValue: (encounter: Encounter) => encounter.getUseHealth(),
@@ -169,6 +169,7 @@ class AdvancedEncounterModal extends BaseModal {
 				},
 			});
 		}
+
 		new ListPicker<Encounter, TargetProto>(targetsElem, this.encounter, {
 			extraCssClasses: ['targets-picker', 'mb-0'],
 			itemLabel: '敌人',
