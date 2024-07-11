@@ -243,7 +243,7 @@ export class BulkTab extends SimTab {
 	private gemIconElements: HTMLImageElement[];
 
 	constructor(parentElem: HTMLElement, simUI: IndividualSimUI<Spec>) {
-		super(parentElem, simUI, { identifier: 'bulk-tab', title: 'Batch' });
+		super(parentElem, simUI, { identifier: 'bulk-tab', title: '批量模拟' });
 		this.simUI = simUI;
 
 		this.leftPanel = document.createElement('div');
@@ -414,7 +414,7 @@ export class BulkTab extends SimTab {
 
 	protected buildTabContent() {
 		const itemsBlock = new ContentBlock(this.column1, 'bulk-items', {
-			header: { title: 'Items' },
+			header: { title: '任务' },
 		});
 
 		itemsBlock.bodyElement.classList.add('gear-picker-root');
@@ -423,7 +423,7 @@ export class BulkTab extends SimTab {
 		noticeWorkInProgress.classList.add('bulk-items-text-line');
 		itemsBlock.bodyElement.appendChild(noticeWorkInProgress);
 		noticeWorkInProgress.innerHTML =
-			'<i>Notice: This is under very early but active development and experimental. You may also need to update your WoW AddOn if you want to import your bags.</i>';
+			'<i>注意:这是一个实验性功能!.</i>';
 
 		const itemTextIntro = document.createElement('div');
 		itemTextIntro.classList.add('bulk-items-text-line');
