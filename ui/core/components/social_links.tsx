@@ -53,7 +53,7 @@ export class SocialLinks extends Component {
 				href="https://space.bilibili.com/919498"
 				target="_blank"
 				className="patreon-link link-alt"
-				dataset={{ bsToggle: 'tooltip', bsTitle: '你可以通过B站<充电>或者新手盒子邀请码<财高八抖>来支持开发者!' }}>
+				dataset={{ bsToggle: 'tooltip', bsTitle: '你可以通过B站<充电>或者新手盒子邀请码<财高八抖>来支持开发者! 如果你有任何纠错和意见也可以私信!' }}>
 				<i className="fa-brands fa-bilibili" /> 支持用爱发电的开发者!
 			</a>
 		);
