@@ -1,3 +1,14 @@
+import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs.js';
+import * as OtherInputs from '../core/components/other_inputs.js';
+import * as Mechanics from '../core/constants/mechanics.js';
+import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
+import { Player } from '../core/player.js';
+import {
+	APLAction,
+	APLListItem,
+	APLPrepullAction,
+	APLRotation,
+} from '../core/proto/apl.js';
 import {
 	Class,
 	Cooldowns,
@@ -5,31 +16,17 @@ import {
 	Faction,
 	IndividualBuffs,
 	PartyBuffs,
+PseudoStat,
 	Race,
 	RaidBuffs,
 	Spec,
-	Stat, PseudoStat,
-	TristateEffect,
+	Stat, 	TristateEffect,
 } from '../core/proto/common.js';
-import {
-	APLAction,
-	APLListItem,
-	APLPrepullAction,
-	APLRotation,
-} from '../core/proto/apl.js';
-import { Stats } from '../core/proto_utils/stats.js';
-import { Player } from '../core/player.js';
-import { getSpecIcon } from '../core/proto_utils/utils.js';
-import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
-import { TypedEvent } from '../core/typed_event.js';
-
-import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs.js';
-import * as OtherInputs from '../core/components/other_inputs.js';
-import * as Mechanics from '../core/constants/mechanics.js';
-import * as AplUtils from '../core/proto_utils/apl_utils.js';
-
 import { PaladinMajorGlyph, PaladinSeal, ProtectionPaladin_Rotation as ProtectionPaladinRotation } from '../core/proto/paladin.js';
-
+import * as AplUtils from '../core/proto_utils/apl_utils.js';
+import { Stats } from '../core/proto_utils/stats.js';
+import { getSpecIcon } from '../core/proto_utils/utils.js';
+import { TypedEvent } from '../core/typed_event.js';
 import * as ProtectionPaladinInputs from './inputs.js';
 import * as Presets from './presets.js';
 
@@ -242,7 +239,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecProtectionPaladin, {
 	},
 
 	simpleRotation: (player: Player<Spec.SpecProtectionPaladin>, simple: ProtectionPaladinRotation, cooldowns: Cooldowns): APLRotation => {
-		let [prepullActions, actions] = AplUtils.standardCooldownDefaults(cooldowns);
+		const [prepullActions, actions] = AplUtils.standardCooldownDefaults(cooldowns);
 
 		const holyShieldPrepull = APLPrepullAction.fromJsonString(`{"action":{"castSpell":{"spellId":{"spellId":48952}}},"doAtValue":{"const":{"val":"-3s"}}}`);
 		const divinePlea = APLPrepullAction.fromJsonString(`{"action":{"castSpell":{"spellId":{"spellId":54428}}},"doAtValue":{"const":{"val":"-1500ms"}}}`);
@@ -279,8 +276,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecProtectionPaladin, {
 	raidSimPresets: [
 		{
 			spec: Spec.SpecProtectionPaladin,
-			tooltip: 'Protection Paladin',
-			defaultName: 'Protection',
+			tooltip: '防骑',
+			defaultName: '防骑',
 			iconUrl: getSpecIcon(Class.ClassPaladin, 1),
 
 			talents: Presets.GenericAoeTalents.data,

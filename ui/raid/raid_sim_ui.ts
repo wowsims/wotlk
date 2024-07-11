@@ -1,7 +1,7 @@
 import { EmbeddedDetailedResults } from "../core/components/detailed_results.js";
 import { LogRunner } from "../core/components/detailed_results/log_runner.js";
 import { addRaidSimAction, RaidSimResultsManager, ReferenceData } from "../core/components/raid_sim_action.js";
-
+import { raidSimStatus } from '../core/launched_sims.js';
 import { Player } from "../core/player.js";
 import { Raid as RaidProto } from "../core/proto/api.js";
 import { Class, Encounter as EncounterProto, RaidBuffs, TristateEffect } from "../core/proto/common.js";
@@ -10,19 +10,15 @@ import { BlessingsAssignments, RaidSimSettings, SavedEncounter } from "../core/p
 import { playerToSpec } from "../core/proto_utils/utils.js";
 import { Sim } from "../core/sim.js";
 import { SimUI } from "../core/sim_ui.js";
-import { raidSimStatus } from '../core/launched_sims.js';
 import { EventID, TypedEvent } from "../core/typed_event.js";
-
+import { BlessingsPicker } from "./blessings_picker.js";
+import * as ImportExport from "./import_export.js";
+import { implementedSpecs } from "./presets.js";
+import { RaidPicker } from "./raid_picker.js";
 import { RaidTab } from "./raid_tab.js";
 import { SettingsTab } from "./settings_tab.js";
 
-import { BlessingsPicker } from "./blessings_picker.js";
-import { implementedSpecs } from "./presets.js";
-import { RaidPicker } from "./raid_picker.js";
-
-import * as ImportExport from "./import_export.js";
-
-declare var pako: any;
+declare let pako: any;
 
 export interface RaidSimConfig {
 	knownIssues?: Array<string>,
@@ -106,10 +102,10 @@ export class RaidSimUI extends SimUI {
 	}
 
 	private addTopbarComponents() {
-		this.simHeader.addImportLink('JSON', (parent) => new ImportExport.RaidJsonImporter(this.rootElem, this));
-		this.simHeader.addImportLink('WCL', (parent) => new ImportExport.RaidWCLImporter(this.rootElem, this));
+		this.simHeader.addImportLink('JSON', parent => new ImportExport.RaidJsonImporter(this.rootElem, this));
+		this.simHeader.addImportLink('WCL', parent => new ImportExport.RaidWCLImporter(this.rootElem, this));
 
-		this.simHeader.addExportLink('JSON', (parent) => new ImportExport.RaidJsonExporter(this.rootElem, this));
+		this.simHeader.addExportLink('JSON', parent => new ImportExport.RaidJsonExporter(this.rootElem, this));
 	}
 
 	private addRaidTab() {
@@ -121,7 +117,7 @@ export class RaidSimUI extends SimUI {
 	}
 
 	private addDetailedResultsTab() {
-		this.addTab('Results', 'detailed-results-tab', `
+		this.addTab('模拟结果', 'detailed-results-tab', `
 			<div class="detailed-results">
 			</div>
 		`);

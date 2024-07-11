@@ -181,7 +181,7 @@ export class SimTitleDropdown extends Component {
 				<div class="sim-link-content">
 					<img src="${iconPath}" class="sim-link-icon">
 					<div class="d-flex flex-column">
-						<span class="sim-link-label text-white">WowsimsCN  by 财高八抖</span>
+						<span class="sim-link-label text-white">WowsimsCN by 财高八抖</span>
 						<span class="sim-link-title">${label === '牧师' ? '治疗' : label}</span>
 						${this.launchStatusLabel(data)}
 					</div>

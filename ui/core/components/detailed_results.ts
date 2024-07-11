@@ -431,7 +431,7 @@ export class EmbeddedDetailedResults extends DetailedResults {
 		const newTabButton = this.rootElem.querySelector('.detailed-results-new-tab-button') as HTMLButtonElement;
 		newTabButton.addEventListener('click', event => {
 			if (this.tabWindow == null || this.tabWindow.closed) {
-				this.tabWindow = window.open(url.href, 'Detailed Results');
+				this.tabWindow = window.open(url.href, '模拟结果细节');
 				this.tabWindow!.addEventListener('load', async event => {
 					if (this.latestRun) {
 						await this.updateSettings();

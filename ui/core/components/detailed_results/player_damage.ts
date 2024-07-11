@@ -1,11 +1,11 @@
-import { UnitMetrics, SimResult, SimResultFilter } from '../../proto_utils/sim_result.js';
-import { maxIndex } from '../../utils.js';
+import tippy from 'tippy.js';
 
+import { SimResult, SimResultFilter,UnitMetrics } from '../../proto_utils/sim_result.js';
+import { maxIndex } from '../../utils.js';
 import { ColumnSortType, MetricsTable } from './metrics_table.js';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
 import { ResultsFilter } from './results_filter.js';
 import { SourceChart } from './source_chart.js';
-import tippy from 'tippy.js';
 
 export class PlayerDamageMetricsTable extends MetricsTable<UnitMetrics> {
 	private readonly resultsFilter: ResultsFilter;
@@ -19,8 +19,8 @@ export class PlayerDamageMetricsTable extends MetricsTable<UnitMetrics> {
 		super(config, [
 			MetricsTable.playerNameCellConfig(),
 			{
-				name: 'Amount',
-				tooltip: 'Player Damage / Raid Damage',
+				name: '伤害量',
+				tooltip: '玩家伤害/团队伤害',
 				headerCellClass: 'amount-header-cell',
 				fillCell: (player: UnitMetrics, cellElem: HTMLElement, rowElem: HTMLElement) => {
 					cellElem.classList.add('amount-cell');
@@ -60,7 +60,7 @@ export class PlayerDamageMetricsTable extends MetricsTable<UnitMetrics> {
 			},
 			{
 				name: 'DPS',
-				tooltip: 'Damage / Encounter Duration',
+				tooltip: '伤害量 /战斗时长',
 				sort: ColumnSortType.Descending,
 				getValue: (metric: UnitMetrics) => metric.dps.avg,
 				getDisplayString: (metric: UnitMetrics) => metric.dps.avg.toFixed(1),

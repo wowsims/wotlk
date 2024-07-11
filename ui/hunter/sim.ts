@@ -367,8 +367,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHunter, {
 	raidSimPresets: [
 		{
 			spec: Spec.SpecHunter,
-			tooltip: 'Beast Mastery Hunter',
-			defaultName: 'Beast Mastery',
+			tooltip: '兽王猎',
+			defaultName: '兽王猎',
 			iconUrl: getSpecIcon(Class.ClassHunter, 0),
 
 			talents: Presets.BeastMasteryTalents.data,
@@ -397,8 +397,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHunter, {
 		},
 		{
 			spec: Spec.SpecHunter,
-			tooltip: 'Marksmanship Hunter',
-			defaultName: 'Marksmanship',
+			tooltip: '射击猎',
+			defaultName: '射击猎',
 			iconUrl: getSpecIcon(Class.ClassHunter, 1),
 
 			talents: Presets.MarksmanTalents.data,
@@ -427,8 +427,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHunter, {
 		},
 		{
 			spec: Spec.SpecHunter,
-			tooltip: 'Survival Hunter',
-			defaultName: 'Survival',
+			tooltip: '生存猎',
+			defaultName: '生存猎',
 			iconUrl: getSpecIcon(Class.ClassHunter, 2),
 
 			talents: Presets.SurvivalTalents.data,

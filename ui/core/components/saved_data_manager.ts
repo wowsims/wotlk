@@ -225,11 +225,13 @@ export class SavedDataManager<ModObject, T> extends Component {
 		'Encounter': '敌人设置',
 		'Gear Set': '配装',
 		'Talents': '天赋',
-		'Rotation': '输出循环'
+		'Rotation': '输出循环',
+		'Raid': '团队配置'
 	};
 
 	private buildCreateContainer(): HTMLElement {
 		const savedDataCreateFragment = document.createElement('fragment');
+		console.log(this.config.label);
 		savedDataCreateFragment.innerHTML = `
 			<div class="saved-data-create-container">
 				<input class="saved-data-save-input form-control" type="text" placeholder="输入名称...">

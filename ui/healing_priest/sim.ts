@@ -135,8 +135,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHealingPriest, {
 	raidSimPresets: [
 		{
 			spec: Spec.SpecHealingPriest,
-			tooltip: 'Discipline Priest',
-			defaultName: 'Discipline',
+			tooltip: '戒律牧',
+			defaultName: '戒律牧',
 			iconUrl: getSpecIcon(Class.ClassPriest, 0),
 
 			talents: Presets.DiscTalents.data,
@@ -165,8 +165,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHealingPriest, {
 		},
 		{
 			spec: Spec.SpecHealingPriest,
-			tooltip: 'Holy Priest',
-			defaultName: 'Holy',
+			tooltip: '神牧',
+			defaultName: '神牧',
 			iconUrl: getSpecIcon(Class.ClassPriest, 1),
 
 			talents: Presets.HolyTalents.data,

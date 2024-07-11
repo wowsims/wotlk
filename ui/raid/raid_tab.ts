@@ -1,11 +1,11 @@
+import { SavedDataManager } from "../core/components/saved_data_manager";
+import { SimTab } from "../core/components/sim_tab";
+import { Raid as RaidProto } from "../core/proto/api";
+import { BlessingsAssignments, SavedRaid } from "../core/proto/ui";
+import { EventID, TypedEvent } from "../core/typed_event";
 import { RaidPicker } from "./raid_picker";
 import { RaidSimUI } from "./raid_sim_ui";
 import { RaidStats } from "./raid_stats";
-import { SavedDataManager } from "../core/components/saved_data_manager";
-import { SimTab } from "../core/components/sim_tab";
-import { BlessingsAssignments, SavedRaid } from "../core/proto/ui";
-import { EventID, TypedEvent } from "../core/typed_event";
-import { Raid as RaidProto } from "../core/proto/api";
 
 export class RaidTab extends SimTab {
 	protected simUI: RaidSimUI;
@@ -14,7 +14,7 @@ export class RaidTab extends SimTab {
 	readonly rightPanel: HTMLElement;
 
 	constructor(parentElem: HTMLElement, simUI: RaidSimUI) {
-		super(parentElem, simUI, { identifier: 'raid-tab', title: 'Raid' });
+		super(parentElem, simUI, { identifier: 'raid-tab', title: '团队配置' });
 		this.simUI = simUI;
 
 		this.rootElem.classList.add('active', 'show')
@@ -37,7 +37,7 @@ export class RaidTab extends SimTab {
 
 		const savedRaidManager = new SavedDataManager<RaidSimUI, SavedRaid>(this.rightPanel, this.simUI, {
 			label: 'Raid',
-			header: { title: 'Saved Raid Groups' },
+			header: { title: '已保存团队配置' },
 			storageKey: this.simUI.getSavedRaidStorageKey(),
 			getData: (raidSimUI: RaidSimUI) => SavedRaid.create({
 				raid: this.simUI.sim.raid.toProto(),

@@ -1,15 +1,13 @@
+import { DeathknightTalents } from 'ui/core/proto/deathknight.js';
+import { PriestTalents } from 'ui/core/proto/priest.js';
+
 import { Component } from '../core/components/component.js';
 import { UnitReferencePicker } from '../core/components/raid_target_picker.js';
-
 import { Player } from '../core/player.js';
-import { EventID, TypedEvent } from '../core/typed_event.js';
-
-import { Class, UnitReference, Spec } from '../core/proto/common.js';
+import { Class, Spec,UnitReference } from '../core/proto/common.js';
 import { emptyUnitReference } from '../core/proto_utils/utils.js';
-
+import { EventID, TypedEvent } from '../core/typed_event.js';
 import { RaidSimUI } from './raid_sim_ui.js';
-import { PriestTalents } from 'ui/core/proto/priest.js';
-import { DeathknightTalents } from 'ui/core/proto/deathknight.js';
 
 export class AssignmentsPicker extends Component {
 	readonly raidSimUI: RaidSimUI;
@@ -76,7 +74,7 @@ abstract class AssignedBuffPicker extends Component {
 			row.classList.add('assigned-buff-player', 'input-inline');
 			this.playersContainer.appendChild(row);
 
-			let sourceElem = document.createElement('div');
+			const sourceElem = document.createElement('div');
 			sourceElem.classList.add('raid-target-picker-root');
 			sourceElem.appendChild(
 				UnitReferencePicker.makeOptionElem({ player: sourcePlayer, isDropdown: false })
@@ -89,7 +87,7 @@ abstract class AssignedBuffPicker extends Component {
 
 			const raidTargetPicker: UnitReferencePicker<Player<any>> | null = new UnitReferencePicker<Player<any>>(row, this.raidSimUI.sim.raid, sourcePlayer, {
 				extraCssClasses: ['assigned-buff-target-picker'],
-				noTargetLabel: 'Unassigned',
+				noTargetLabel: '未选择',
 				compChangeEmitter: this.raidSimUI.sim.raid.compChangeEmitter,
 
 				changedEvent: (player: Player<any>) => player.specOptionsChangeEmitter,
@@ -120,7 +118,7 @@ abstract class AssignedBuffPicker extends Component {
 
 class InnervatesPicker extends AssignedBuffPicker {
 	getTitle(): string {
-		return 'Innervate';
+		return '激活';
 	}
 
 	getSourcePlayers(): Array<Player<any>> {
@@ -140,7 +138,7 @@ class InnervatesPicker extends AssignedBuffPicker {
 
 class PowerInfusionsPicker extends AssignedBuffPicker {
 	getTitle(): string {
-		return 'Power Infusion';
+		return '能量灌注';
 	}
 
 	getSourcePlayers(): Array<Player<any>> {
@@ -160,7 +158,7 @@ class PowerInfusionsPicker extends AssignedBuffPicker {
 
 class TricksOfTheTradesPicker extends AssignedBuffPicker {
 	getTitle(): string {
-		return 'Tricks of the Trade';
+		return '嫁祸诀窍';
 	}
 
 	getSourcePlayers(): Array<Player<any>> {
@@ -180,7 +178,7 @@ class TricksOfTheTradesPicker extends AssignedBuffPicker {
 
 class UnholyFrenzyPicker extends AssignedBuffPicker {
 	getTitle(): string {
-		return 'Unholy Frenzy';
+		return '邪恶狂热';
 	}
 
 	getSourcePlayers(): Array<Player<any>> {
@@ -200,7 +198,7 @@ class UnholyFrenzyPicker extends AssignedBuffPicker {
 
 class FocusMagicsPicker extends AssignedBuffPicker {
 	getTitle(): string {
-		return 'Focus Magic';
+		return '专注魔法';
 	}
 
 	getSourcePlayers(): Array<Player<any>> {
