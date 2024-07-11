@@ -207,7 +207,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 		{
 			spec: Spec.SpecFeralDruid,
 			tooltip: classAndSpecTranslation[specNames[Spec.SpecFeralDruid]],
-			defaultName: 'Cat',
+			defaultName: '猫德',
 			iconUrl: getSpecIcon(Class.ClassDruid, 3),
 
 			talents: Presets.StandardTalents.data,
