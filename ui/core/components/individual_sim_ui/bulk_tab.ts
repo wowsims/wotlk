@@ -450,7 +450,7 @@ export class BulkTab extends SimTab {
 
 		const resultsBlock = new ContentBlock(this.column1, 'bulk-results', {
 			header: {
-				title: 'Results',
+				title: '模拟结果',
 				extraCssClasses: ['bulk-results-header'],
 			},
 		});

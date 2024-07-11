@@ -26,7 +26,7 @@ export class SettingsTab extends SimTab {
 	readonly column3: HTMLElement = this.buildColumn(3, 'raid-settings-col');
 
 	constructor(parentElem: HTMLElement, simUI: RaidSimUI) {
-		super(parentElem, simUI, { identifier: 'raid-settings-tab', title: 'Settings' });
+		super(parentElem, simUI, { identifier: 'raid-settings-tab', title: '团本设置' });
 		this.simUI = simUI;
 
 		this.leftPanel = document.createElement('div');
@@ -59,7 +59,7 @@ export class SettingsTab extends SimTab {
 
 	private buildEncounterSettings() {
 		const contentBlock = new ContentBlock(this.column1, 'encounter-settings', {
-			header: { title: 'Encounter' }
+			header: { title: '敌人设置' }
 		});
 
 		new EncounterPicker(contentBlock.bodyElement, this.simUI.sim.encounter, { showExecuteProportion: true }, this.simUI);
@@ -67,7 +67,7 @@ export class SettingsTab extends SimTab {
 
 	private buildConsumesSettings() {
 		const contentBlock = new ContentBlock(this.column1, 'consumes-settings', {
-			header: { title: 'Consumables' }
+			header: { title: '消耗品' }
 		});
 
 		const container = document.createElement('div');
@@ -87,7 +87,7 @@ export class SettingsTab extends SimTab {
 
 	private buildOtherSettings() {
 		const contentBlock = new ContentBlock(this.column2, 'other-settings', {
-		  header: {title: 'Other'}
+		  header: {title: '其他'}
 		});
 
 		this.makeBooleanRaidIconBuffInput(contentBlock.bodyElement, ActionId.fromSpellId(73828), 'strengthOfWrynn');
@@ -105,7 +105,7 @@ export class SettingsTab extends SimTab {
 
 	private buildTankSettings() {
 		const contentBlock = new ContentBlock(this.column2, 'tanks-settings', {
-			header: { title: 'Tanks' }
+			header: { title: '坦克' }
 		});
 
 		new TanksPicker(contentBlock.bodyElement, this.simUI);
@@ -113,7 +113,7 @@ export class SettingsTab extends SimTab {
 
 	private buildAssignmentSettings() {
 		const contentBlock = new ContentBlock(this.column2, 'assignments-settings', {
-			header: { title: 'External Buffs' }
+			header: { title: '额外Buffs' }
 		});
 
 		new AssignmentsPicker(contentBlock.bodyElement, this.simUI);
@@ -121,7 +121,7 @@ export class SettingsTab extends SimTab {
 
 	private buildBlessingsPicker() {
 		const contentBlock = new ContentBlock(this.column3, 'blessings-settings', {
-			header: { title: 'Blessings', tooltip: Tooltips.BLESSINGS_SECTION }
+			header: { title: '团队Buff安排', tooltip: Tooltips.BLESSINGS_SECTION }
 		});
 
 		this.simUI.blessingsPicker = new BlessingsPicker(contentBlock.bodyElement, this.simUI);

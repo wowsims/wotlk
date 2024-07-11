@@ -1,3 +1,10 @@
+import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs.js';
+import * as OtherInputs from '../core/components/other_inputs.js';
+import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
+import { Player } from '../core/player.js';
+import {
+	APLRotation,
+} from '../core/proto/apl.js';
 import {
 	Class,
 	Debuffs,
@@ -11,17 +18,8 @@ import {
 	Stat,
 	TristateEffect,
 } from '../core/proto/common.js';
-import {
-	APLRotation,
-} from '../core/proto/apl.js';
-import { Player } from '../core/player.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import { getSpecIcon } from '../core/proto_utils/utils.js';
-import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
-
-import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs.js';
-import * as OtherInputs from '../core/components/other_inputs.js';
-
 import * as DeathKnightInputs from './inputs.js';
 import * as Presets from './presets.js';
 
@@ -219,8 +217,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecTankDeathknight, {
 	raidSimPresets: [
 		{
 			spec: Spec.SpecTankDeathknight,
-			tooltip: 'Blood Tank Death Knight',
-			defaultName: 'Blood Tank',
+			tooltip: '血DKT',
+			defaultName: '血DKT',
 			iconUrl: getSpecIcon(Class.ClassDeathknight, 0),
 
 			talents: Presets.BloodTalents.data,

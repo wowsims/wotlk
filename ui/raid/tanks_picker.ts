@@ -1,12 +1,9 @@
 import { Component } from '../core/components/component';
 import { UnitReferencePicker } from '../core/components/raid_target_picker';
-
-import { Raid } from '../core/raid';
-import { EventID } from '../core/typed_event';
-
 import { UnitReference } from '../core/proto/common';
 import { emptyUnitReference } from '../core/proto_utils/utils';
-
+import { Raid } from '../core/raid';
+import { EventID } from '../core/typed_event';
 import { RaidSimUI } from './raid_sim_ui';
 
 const MAX_TANKS = 4;
@@ -26,13 +23,13 @@ export class TanksPicker extends Component {
 			this.rootElem.appendChild(row);
 
 			const labelElem = document.createElement('label');
-			labelElem.textContent = i == 0 ? 'Main Tank' : `Tank ${i + 1}`;
+			labelElem.textContent = i == 0 ? '主坦克' : `副坦 ${i}`;
 			labelElem.classList.add('tank-picker-label', 'form-label');
 			row.appendChild(labelElem);
 
 			new UnitReferencePicker<Raid>(row, raid, raid, {
 				extraCssClasses: ['tank-picker'],
-				noTargetLabel: 'Unassigned',
+				noTargetLabel: '未选择',
 				compChangeEmitter: raid.compChangeEmitter,
 
 				changedEvent: (raid: Raid) => raid.tanksChangeEmitter,

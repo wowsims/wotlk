@@ -293,8 +293,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecMage, {
 	raidSimPresets: [
 		{
 			spec: Spec.SpecMage,
-			tooltip: 'Arcane Mage',
-			defaultName: 'Arcane',
+			tooltip: '奥法',
+			defaultName: '奥法',
 			iconUrl: getSpecIcon(Class.ClassMage, 0),
 
 			talents: Presets.ArcaneTalents.data,
@@ -324,8 +324,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecMage, {
 		},
 		{
 			spec: Spec.SpecMage,
-			tooltip: 'TTW Fire Mage',
-			defaultName: 'TTW Fire',
+			tooltip: '火法',
+			defaultName: '火法',
 			iconUrl: getSpecIcon(Class.ClassMage, 1),
 
 			talents: Presets.FireTalents.data,
@@ -355,8 +355,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecMage, {
 		},
 		{
 			spec: Spec.SpecMage,
-			tooltip: 'FFB Fire Mage',
-			defaultName: 'FFB Fire',
+			tooltip: '冰火法',
+			defaultName: '冰火法',
 			iconUrl: "https://db.newbeebox.com/wow/wz/images/wow/icons/medium/ability_mage_frostfirebolt.jpg",
 
 			talents: Presets.FrostfireTalents.data,

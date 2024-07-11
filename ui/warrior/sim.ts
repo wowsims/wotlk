@@ -1,3 +1,12 @@
+import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs.js';
+import * as OtherInputs from '../core/components/other_inputs.js';
+import { PhysicalDPSGemOptimizer } from '../core/components/suggest_gems_action.js';
+import * as Mechanics from '../core/constants/mechanics.js';
+import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
+import { Player } from '../core/player.js';
+import {
+	APLRotation,
+} from '../core/proto/apl.js';
 import {
 	Class,
 	Debuffs,
@@ -6,27 +15,16 @@ import {
 	IndividualBuffs,
 	ItemSlot,
 	PartyBuffs,
+	Profession,
+PseudoStat,
 	Race,
 	RaidBuffs,
 	Spec,
-	Stat, PseudoStat,
-	Profession,
-	TristateEffect,
+	Stat, 	TristateEffect,
 } from '../core/proto/common.js';
-import {
-	APLRotation,
-} from '../core/proto/apl.js';
-import { Stats } from '../core/proto_utils/stats.js';
-import { Player } from '../core/player.js';
-import { getSpecIcon } from '../core/proto_utils/utils.js';
-import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
 import { Gear } from '../core/proto_utils/gear.js';
-import { PhysicalDPSGemOptimizer } from '../core/components/suggest_gems_action.js';
-
-import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs.js';
-import * as OtherInputs from '../core/components/other_inputs.js';
-import * as Mechanics from '../core/constants/mechanics.js';
-
+import { Stats } from '../core/proto_utils/stats.js';
+import { getSpecIcon } from '../core/proto_utils/utils.js';
 import * as WarriorInputs from './inputs.js';
 import * as Presets from './presets.js';
 
@@ -210,8 +208,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarrior, {
 	raidSimPresets: [
 		{
 			spec: Spec.SpecWarrior,
-			tooltip: 'Arms Warrior',
-			defaultName: 'Arms',
+			tooltip: '武器战',
+			defaultName: '武器战',
 			iconUrl: getSpecIcon(Class.ClassWarrior, 0),
 
 			talents: Presets.ArmsTalents.data,
@@ -240,8 +238,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarrior, {
 		},
 		{
 			spec: Spec.SpecWarrior,
-			tooltip: 'Fury Warrior',
-			defaultName: 'Fury',
+			tooltip: '狂暴战',
+			defaultName: '狂暴战',
 			iconUrl: getSpecIcon(Class.ClassWarrior, 1),
 
 			talents: Presets.FuryTalents.data,
@@ -295,7 +293,7 @@ class WarriorGemOptimizer extends PhysicalDPSGemOptimizer {
 		let expTarget = super.calcExpTarget();
 		const weaponMastery = this.player.getTalents().weaponMastery;
 		const hasWeaponMasteryTalent = !!weaponMastery;
-		
+
 		if (hasWeaponMasteryTalent) {
 			expTarget -= weaponMastery * 4 * Mechanics.EXPERTISE_PER_QUARTER_PERCENT_REDUCTION;
 		}

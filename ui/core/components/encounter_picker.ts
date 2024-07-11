@@ -367,8 +367,8 @@ class TargetPicker extends Input<Encounter, TargetProto> {
 		});
 
 		this.swingSpeedPicker = new NumberPicker(section3, null, {
-			label: 'Swing Speed',
-			labelTooltip: 'Time in seconds between auto attacks. Set to 0 to disable auto attacks.',
+			label: '攻击速度',
+			labelTooltip: '自动攻击之间的时间（秒）。设置为0以禁用自动攻击。',
 			float: true,
 			changedEvent: () => encounter.targetsChangeEmitter,
 			getValue: () => this.getTarget().swingSpeed,
@@ -377,9 +377,10 @@ class TargetPicker extends Input<Encounter, TargetProto> {
 				encounter.targetsChangeEmitter.emit(eventID);
 			},
 		});
+
 		this.minBaseDamagePicker = new NumberPicker(section3, null, {
-			label: 'Min Base Damage',
-			labelTooltip: 'Base damage for auto attacks, i.e. lowest roll with 0 AP against a 0-armor Player.',
+			label: '最低基础伤害',
+			labelTooltip: '自动攻击的基础伤害，即在0攻击强度和0护甲对手下的最低伤害。',
 			changedEvent: () => encounter.targetsChangeEmitter,
 			getValue: () => this.getTarget().minBaseDamage,
 			setValue: (eventID: EventID, _: null, newValue: number) => {
@@ -387,9 +388,10 @@ class TargetPicker extends Input<Encounter, TargetProto> {
 				encounter.targetsChangeEmitter.emit(eventID);
 			},
 		});
+
 		this.damageSpreadPicker = new NumberPicker(section3, null, {
-			label: 'Damage Spread',
-			labelTooltip: 'Fractional spread between the minimum and maximum auto-attack damage from this enemy at 0 Attack Power.',
+			label: '伤害分布',
+			labelTooltip: '在0攻击强度下，此敌人的自动攻击最小和最大伤害之间的分布比例。',
 			float: true,
 			changedEvent: () => encounter.targetsChangeEmitter,
 			getValue: () => this.getTarget().damageSpread,
@@ -398,9 +400,10 @@ class TargetPicker extends Input<Encounter, TargetProto> {
 				encounter.targetsChangeEmitter.emit(eventID);
 			},
 		});
+
 		this.dualWieldPicker = new BooleanPicker(section3, null, {
-			label: 'Dual Wield',
-			labelTooltip: 'Uses 2 separate weapons to attack.',
+			label: '双持',
+			labelTooltip: '使用两把独立的武器进行攻击。',
 			inline: true,
 			reverse: true,
 			changedEvent: () => encounter.targetsChangeEmitter,
@@ -410,10 +413,10 @@ class TargetPicker extends Input<Encounter, TargetProto> {
 				encounter.targetsChangeEmitter.emit(eventID);
 			},
 		});
+
 		this.dwMissPenaltyPicker = new BooleanPicker(section3, null, {
-			label: 'DW Miss Penalty',
-			labelTooltip:
-				'Enables the Dual Wield Miss Penalty (+19% chance to miss) if dual wielding. Bosses in Hyjal/BT/SWP usually have this disabled to stop tanks from avoidance stacking.',
+			label: '双持命中惩罚',
+			labelTooltip: '如果双持，启用双持命中惩罚（+19%命中率惩罚）。在海加尔山/黑暗神殿/太阳之井高地的Boss通常禁用此功能，以防止坦克堆叠闪避。',
 			inline: true,
 			reverse: true,
 			changedEvent: () => encounter.targetsChangeEmitter,
@@ -424,9 +427,10 @@ class TargetPicker extends Input<Encounter, TargetProto> {
 			},
 			enableWhen: () => this.getTarget().dualWield,
 		});
+
 		this.parryHastePicker = new BooleanPicker(section3, null, {
-			label: 'Parry Haste',
-			labelTooltip: 'Whether this enemy will gain parry haste when parrying attacks.',
+			label: '招架加速',
+			labelTooltip: '此敌人招架攻击时是否会获得招架加速。',
 			inline: true,
 			reverse: true,
 			changedEvent: () => encounter.targetsChangeEmitter,
@@ -436,17 +440,18 @@ class TargetPicker extends Input<Encounter, TargetProto> {
 				encounter.targetsChangeEmitter.emit(eventID);
 			},
 		});
+
 		this.spellSchoolPicker = new EnumPicker<null>(section3, null, {
-			label: 'Spell School',
-			labelTooltip: 'Type of damage caused by auto attacks. This is usually Physical, but some enemies have elemental attacks.',
+			label: '法术类型',
+			labelTooltip: '自动攻击造成的伤害类型。通常是物理伤害，但有些敌人有元素攻击。',
 			values: [
-				{ name: 'Physical', value: SpellSchool.SpellSchoolPhysical },
-				{ name: 'Arcane', value: SpellSchool.SpellSchoolArcane },
-				{ name: 'Fire', value: SpellSchool.SpellSchoolFire },
-				{ name: 'Frost', value: SpellSchool.SpellSchoolFrost },
-				{ name: 'Holy', value: SpellSchool.SpellSchoolHoly },
-				{ name: 'Nature', value: SpellSchool.SpellSchoolNature },
-				{ name: 'Shadow', value: SpellSchool.SpellSchoolShadow },
+				{ name: '物理', value: SpellSchool.SpellSchoolPhysical },
+				{ name: '奥术', value: SpellSchool.SpellSchoolArcane },
+				{ name: '火焰', value: SpellSchool.SpellSchoolFire },
+				{ name: '冰霜', value: SpellSchool.SpellSchoolFrost },
+				{ name: '神圣', value: SpellSchool.SpellSchoolHoly },
+				{ name: '自然', value: SpellSchool.SpellSchoolNature },
+				{ name: '暗影', value: SpellSchool.SpellSchoolShadow },
 			],
 			changedEvent: () => encounter.targetsChangeEmitter,
 			getValue: () => this.getTarget().spellSchool,
@@ -455,9 +460,10 @@ class TargetPicker extends Input<Encounter, TargetProto> {
 				encounter.targetsChangeEmitter.emit(eventID);
 			},
 		});
+
 		this.suppressDodgePicker = new BooleanPicker(section3, null, {
-			label: 'Chill of the Throne',
-			labelTooltip: "Reduces the chance for this enemy's attacks to be dodged by 20%. Active in Icecrown Citadel.",
+			label: '冰冠堡垒的寒气',
+			labelTooltip: '减少此敌人的攻击被闪避的几率20%。在冰冠堡垒中激活。',
 			inline: true,
 			reverse: true,
 			changedEvent: () => encounter.targetsChangeEmitter,

@@ -1,35 +1,31 @@
-import {
-	Class,
-	Cooldowns, 
-	Debuffs, 
-	Faction,
-	IndividualBuffs, 
-	PartyBuffs, 
-	Race,
-	RaidBuffs, 
-	Spec, 
-	Stat, 
-	PseudoStat, 
-	TristateEffect
-} from '../core/proto/common.js';
-
-import {
-	APLAction,
-	APLPrepullAction,
-	APLListItem,
-	APLRotation,
-} from '../core/proto/apl.js';
-import { Stats } from '../core/proto_utils/stats.js';
-import { Player } from '../core/player.js';
-import { getSpecIcon } from '../core/proto_utils/utils.js';
-import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
-
-import { ProtectionWarrior_Rotation as ProtectionWarriorRotation } from '../core/proto/warrior.js';
-
 import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
+import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
+import { Player } from '../core/player.js';
+import {
+	APLAction,
+	APLListItem,
+	APLPrepullAction,
+	APLRotation,
+} from '../core/proto/apl.js';
+import {
+	Class,
+	Cooldowns,
+	Debuffs,
+	Faction,
+	IndividualBuffs,
+	PartyBuffs,
+	PseudoStat,
+	Race,
+	RaidBuffs,
+	Spec,
+	Stat,
+	TristateEffect
+} from '../core/proto/common.js';
+import { ProtectionWarrior_Rotation as ProtectionWarriorRotation } from '../core/proto/warrior.js';
 import * as AplUtils from '../core/proto_utils/apl_utils.js';
-
+import { Stats } from '../core/proto_utils/stats.js';
+import { getSpecIcon } from '../core/proto_utils/utils.js';
 import * as ProtectionWarriorInputs from './inputs.js';
 import * as Presets from './presets.js';
 
@@ -215,9 +211,9 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecProtectionWarrior, {
 	autoRotation: (_player: Player<Spec.SpecProtectionWarrior>): APLRotation => {
 		return Presets.ROTATION_DEFAULT.rotation.rotation!;
 	},
-	
+
 	simpleRotation: (player: Player<Spec.SpecProtectionWarrior>, simple: ProtectionWarriorRotation, cooldowns: Cooldowns): APLRotation => {
-		let [prepullActions, actions] = AplUtils.standardCooldownDefaults(cooldowns);
+		const [prepullActions, actions] = AplUtils.standardCooldownDefaults(cooldowns);
 
 		const preShout = APLPrepullAction.fromJsonString(`{"action":{"castSpell":{"spellId":{"spellId":47440}}},"doAtValue":{"const":{"val":"-10s"}}}`);
 
@@ -252,8 +248,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecProtectionWarrior, {
 	raidSimPresets: [
 		{
 			spec: Spec.SpecProtectionWarrior,
-			tooltip: 'Protection Warrior',
-			defaultName: 'Protection',
+			tooltip: '防战',
+			defaultName: '防战',
 			iconUrl: getSpecIcon(Class.ClassWarrior, 2),
 
 			talents: Presets.StandardTalents.data,

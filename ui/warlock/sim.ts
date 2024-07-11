@@ -178,8 +178,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 	raidSimPresets: [
 		{
 			spec: Spec.SpecWarlock,
-			tooltip: 'Affliction Warlock',
-			defaultName: 'Affliction',
+			tooltip: '痛苦术',
+			defaultName: '痛苦术',
 			iconUrl: getSpecIcon(Class.ClassWarlock, 0),
 
 			talents: Presets.AfflictionTalents.data,
@@ -209,8 +209,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 		},
 		{
 			spec: Spec.SpecWarlock,
-			tooltip: 'Demonology Warlock',
-			defaultName: 'Demonology',
+			tooltip: '恶魔术',
+			defaultName: '恶魔术',
 			iconUrl: getSpecIcon(Class.ClassWarlock, 1),
 
 			talents: Presets.DemonologyTalents.data,
@@ -240,8 +240,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 		},
 		{
 			spec: Spec.SpecWarlock,
-			tooltip: 'Destruction Warlock',
-			defaultName: 'Destruction',
+			tooltip: '毁灭术',
+			defaultName: '毁灭术',
 			iconUrl: getSpecIcon(Class.ClassWarlock, 2),
 
 			talents: Presets.DestructionTalents.data,

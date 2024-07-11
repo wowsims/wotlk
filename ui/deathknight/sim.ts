@@ -1,3 +1,9 @@
+import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs.js';
+import * as ConsumablesInputs from '../core/components/inputs/consumables.js';
+import * as OtherInputs from '../core/components/other_inputs.js';
+import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
+import { Player } from '../core/player.js';
+import { APLRotation } from '../core/proto/apl.js';
 import {
 	Class,
 	Debuffs,
@@ -13,16 +19,8 @@ import {
 	Stat,
 	TristateEffect,
 } from '../core/proto/common.js';
-import { APLRotation } from '../core/proto/apl.js';
-import { Player } from '../core/player.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import { getSpecIcon } from '../core/proto_utils/utils.js';
-import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
-
-import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs.js';
-import * as ConsumablesInputs from '../core/components/inputs/consumables.js';
-import * as OtherInputs from '../core/components/other_inputs.js';
-
 import * as DeathKnightInputs from './inputs.js';
 import * as Presets from './presets.js';
 
@@ -133,7 +131,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecDeathknight, {
 		const talentTree = player.getTalentTree();
 		const numTargets = player.sim.encounter.targets.length;
 		switch (talentTree) {
-			case 0: 
+			case 0:
 				if (player.getSpecOptions().drwPestiApply || numTargets > 1) {
 					if (numTargets > 5) {
 						return Presets.BLOOD_PESTI_AOE_ROTATION_PRESET_DEFAULT.rotation.rotation!;
@@ -143,7 +141,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecDeathknight, {
 				} else {
 					return Presets.BLOOD_DPS_ROTATION_PRESET_DEFAULT.rotation.rotation!;
 				}
-			case 1: 
+			case 1:
 				const talentPoints = player.getTalentTreePoints()
 				// TODO: Add Frost AOE rotation
 				if (talentPoints[0] > talentPoints[2]) {
@@ -151,7 +149,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecDeathknight, {
 				} else {
 					return Presets.FROST_UH_PESTI_ROTATION_PRESET_DEFAULT.rotation.rotation!;
 				}
-			default: 
+			default:
 				if (numTargets > 1) {
 					return Presets.UNHOLY_DND_AOE_ROTATION_PRESET_DEFAULT.rotation.rotation!;
 				} else {
@@ -250,8 +248,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecDeathknight, {
 	raidSimPresets: [
 		{
 			spec: Spec.SpecDeathknight,
-			tooltip: 'Frost Death Knight',
-			defaultName: 'Frost',
+			tooltip: '冰DK',
+			defaultName: '冰DK',
 			iconUrl: getSpecIcon(Class.ClassDeathknight, 1),
 
 			talents: Presets.FrostTalents.data,
@@ -281,8 +279,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecDeathknight, {
 		},
 		{
 			spec: Spec.SpecDeathknight,
-			tooltip: 'Dual-Wield Unholy DK',
-			defaultName: 'Unholy',
+			tooltip: '邪DK',
+			defaultName: '邪DK',
 			iconUrl: getSpecIcon(Class.ClassDeathknight, 2),
 
 			talents: Presets.UnholyDualWieldTalents.data,

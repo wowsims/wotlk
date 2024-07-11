@@ -335,8 +335,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 	raidSimPresets: [
 		{
 			spec: Spec.SpecRogue,
-			tooltip: 'Assassination Rogue',
-			defaultName: 'Assassination',
+			tooltip: '刺杀贼',
+			defaultName: '刺杀贼',
 			iconUrl: getSpecIcon(Class.ClassRogue, 0),
 
 			talents: Presets.AssassinationTalents137.data,
@@ -365,8 +365,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 		},
 		{
 			spec: Spec.SpecRogue,
-			tooltip: 'Combat Rogue',
-			defaultName: 'Combat',
+			tooltip: '战斗贼',
+			defaultName: '战斗贼',
 			iconUrl: getSpecIcon(Class.ClassRogue, 1),
 
 			talents: Presets.CombatCQCTalents.data,
