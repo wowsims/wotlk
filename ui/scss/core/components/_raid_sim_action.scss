@@ -33,11 +33,10 @@
 		content: "% TMI";
 	}
 	.results-sim-cod .topline-result-avg:after {
-		content: "% Chance of Death";
+		content: "% 死亡几率";
 	}
-
 	.results-sim-percent-oom .topline-result-avg:after {
-		content: " spent OOM";
+		content: " OOM 的花费时间";
 	}
 
 	[class^='results-sim-'], [class*=' results-sim-'] {

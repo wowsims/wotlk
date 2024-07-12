@@ -410,11 +410,11 @@ export class EmbeddedDetailedResults extends DetailedResults {
 		super(parent, simUI, simUI.cssScheme)
 
 		const newTabBtn = document.createElement('div');
-		newTabBtn.classList.add('detailed-results-controls-div');
-		newTabBtn.innerHTML = `
-			<button class="detailed-results-new-tab-button btn btn-primary">在新窗口中打开</button>
-			<button class="detailed-results-1-iteration-button btn btn-primary">快速模拟一次</button>
-		`;
+		// newTabBtn.classList.add('detailed-results-controls-div');
+		// newTabBtn.innerHTML = `
+		// 	<button class="detailed-results-new-tab-button btn btn-primary">在新窗口中打开</button>
+		// 	<button class="detailed-results-1-iteration-button btn btn-primary">快速模拟一次</button>
+		// `;
 
 		this.rootElem.prepend(newTabBtn);
 
@@ -428,25 +428,25 @@ export class EmbeddedDetailedResults extends DetailedResults {
 			this.rootElem.classList.add('individual-sim');
 		}
 
-		const newTabButton = this.rootElem.querySelector('.detailed-results-new-tab-button') as HTMLButtonElement;
-		newTabButton.addEventListener('click', event => {
-			if (this.tabWindow == null || this.tabWindow.closed) {
-				this.tabWindow = window.open(url.href, '模拟结果细节');
-				this.tabWindow!.addEventListener('load', async event => {
-					if (this.latestRun) {
-						await this.updateSettings();
-						await this.setSimRunData(this.latestRun);
-					}
-				});
-			} else {
-				this.tabWindow.focus();
-			}
-		});
+		// const newTabButton = this.rootElem.querySelector('.detailed-results-new-tab-button') as HTMLButtonElement;
+		// newTabButton.addEventListener('click', event => {
+		// 	if (this.tabWindow == null || this.tabWindow.closed) {
+		// 		this.tabWindow = window.open(url.href, '模拟结果细节');
+		// 		this.tabWindow!.addEventListener('load', async event => {
+		// 			if (this.latestRun) {
+		// 				await this.updateSettings();
+		// 				await this.setSimRunData(this.latestRun);
+		// 			}
+		// 		});
+		// 	} else {
+		// 		this.tabWindow.focus();
+		// 	}
+		// });
 
-		const simButton = this.rootElem.querySelector('.detailed-results-1-iteration-button') as HTMLButtonElement;
-		simButton.addEventListener('click', () => {
-			(window.opener || window.parent)!.postMessage('runOnce', '*');
-		});
+		// const simButton = this.rootElem.querySelector('.detailed-results-1-iteration-button') as HTMLButtonElement;
+		// simButton.addEventListener('click', () => {
+		// 	(window.opener || window.parent)!.postMessage('runOnce', '*');
+		// });
 
 		simResultsManager.currentChangeEmitter.on(async () => {
 			const runData = simResultsManager.getRunData();
