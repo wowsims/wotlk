@@ -386,7 +386,8 @@ export class CharacterStats extends Component {
 			Spec.SpecEnhancementShaman,
 			Spec.SpecRetributionPaladin,
 			Spec.SpecRogue,
-			Spec.SpecWarrior
+			Spec.SpecWarrior,
+			Spec.SpecFeralDruid
 		].includes(player.spec);
 	}
 

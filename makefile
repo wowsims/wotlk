@@ -34,7 +34,31 @@ $(OUT_DIR)/tooltips.js: ui/tooltips.js
 	mkdir -p $(@D)
 	cp $< $@
 
+$(OUT_DIR)/jquery.js: ui/jquery.js
+	mkdir -p $(@D)
+	cp $< $@
+
+$(OUT_DIR)/jquery.tablesorter.js: ui/jquery.tablesorter.js
+	mkdir -p $(@D)
+	cp $< $@
+
+$(OUT_DIR)/apexcharts.js: ui/apexcharts.js
+	mkdir -p $(@D)
+	cp $< $@
+
+$(OUT_DIR)/chart.js: ui/chart.js
+	mkdir -p $(@D)
+	cp $< $@
+
+$(OUT_DIR)/pako.js: ui/pako.js
+	mkdir -p $(@D)
+	cp $< $@
+
 $(OUT_DIR)/universal.css: ui/universal.css
+	mkdir -p $(@D)
+	cp $< $@
+
+$(OUT_DIR)/font-awesome.css: ui/font-awesome.css
 	mkdir -p $(@D)
 	cp $< $@
 
@@ -44,6 +68,12 @@ $(OUT_DIR)/.dirstamp: \
   $(ASSETS) \
   $(OUT_DIR)/bundle/.dirstamp \
   $(OUT_DIR)/tooltips.js \
+  $(OUT_DIR)/jquery.js \
+  $(OUT_DIR)/jquery.tablesorter.js \
+  $(OUT_DIR)/apexcharts.js \
+  $(OUT_DIR)/chart.js \
+  $(OUT_DIR)/pako.js \
+  $(OUT_DIR)/font-awesome.css \
   $(OUT_DIR)/universal.css
 	touch $@
 
