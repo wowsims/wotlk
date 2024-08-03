@@ -1,10 +1,19 @@
 import { JsonObject } from '@protobuf-ts/runtime';
 
 import { IndividualSimUI } from '../individual_sim_ui';
-import { Class, EquipmentSpec, Glyphs, ItemSlot, ItemSpec, Profession, Race, Spec } from '../proto/common';
+import {
+	Class,
+	EquipmentSpec,
+	Glyphs,
+	ItemSlot,
+	ItemSpec,
+	Profession,
+	Race,
+	Spec,
+} from '../proto/common';
 import { IndividualSimSettings } from '../proto/ui';
 import { Database } from '../proto_utils/database';
-import { classNames, nameToClass, nameToProfession, nameToRace } from '../proto_utils/names';
+import { classNames, nameToClass, nameToProfession,nameToRace } from '../proto_utils/names';
 import { SimSettingCategories } from '../sim';
 import { SimUI } from '../sim_ui';
 import { classGlyphsConfig, talentSpellIdsToTalentString } from '../talents/factory';
@@ -534,6 +543,7 @@ export class IndividualAddonImporter<SpecType extends Spec> extends Importer {
 
 		const gearJson = importJson['gear'];
 		gearJson.items = (gearJson.items as Array<any>).filter(item => item != null);
+		delete gearJson.version;
 		(gearJson.items as Array<any>).forEach(item => {
 			if (item.gems) {
 				item.gems = (item.gems as Array<any>).map(gem => gem || 0);
