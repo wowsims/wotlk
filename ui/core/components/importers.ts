@@ -40,13 +40,16 @@ export abstract class Importer extends BaseModal {
 			<textarea spellCheck="false" class="importer-textarea form-control"></textarea>
 		`;
 		this.footer!.innerHTML = `
-			${this.includeFile ? `
+			${
+				this.includeFile
+					? `
 				<label for="${uploadInputId}" class="importer-button btn btn-primary upload-button me-2">
 					<i class="fas fa-file-arrow-up"></i>
 					Upload File
 				</label>
 				<input type="file" id="${uploadInputId}" class="importer-upload-input d-none" hidden>
-			` : ''
+			`
+					: ''
 			}
 			<button class="importer-button btn btn-primary import-button">
 				<i class="fa fa-download"></i>
@@ -66,18 +69,27 @@ export abstract class Importer extends BaseModal {
 		}
 
 		this.importButton = this.rootElem.getElementsByClassName('import-button')[0] as HTMLButtonElement;
-		this.importButton.addEventListener('click', event => {
+		this.importButton.addEventListener('click', async () => {
 			try {
-				this.onImport(this.textElem.value || '');
-			} catch (error) {
-				alert('Import error: ' + error);
+				await this.onImport(this.textElem.value || '');
+			} catch (error: any) {
+				alert(`Import error:
+${error?.message}`);
 			}
 		});
 	}
 
-	abstract onImport(data: string): void
+	abstract onImport(data: string): Promise<void>;
 
-	protected async finishIndividualImport<SpecType extends Spec>(simUI: IndividualSimUI<SpecType>, charClass: Class, race: Race, equipmentSpec: EquipmentSpec, talentsStr: string, glyphs: Glyphs | null, professions: Array<Profession>): Promise<void> {
+	protected async finishIndividualImport<SpecType extends Spec>(
+		simUI: IndividualSimUI<SpecType>,
+		charClass: Class,
+		race: Race,
+		equipmentSpec: EquipmentSpec,
+		talentsStr: string,
+		glyphs: Glyphs | null,
+		professions: Array<Profession>,
+	): Promise<void> {
 		const playerClass = simUI.player.getClass();
 		if (charClass != playerClass) {
 			throw new Error(`Wrong Class! Expected ${classNames.get(playerClass)} but found ${classNames.get(charClass)}!`);
@@ -104,10 +116,10 @@ export abstract class Importer extends BaseModal {
 				simUI.player.setTalentsString(eventID, talentsStr);
 			}
 			if (glyphs) {
-				simUI.player.setGlyphs(eventID, glyphs)
+				simUI.player.setGlyphs(eventID, glyphs);
 			}
 			if (professions.length > 0) {
-				simUI.player.setProfessions(eventID, professions)
+				simUI.player.setProfessions(eventID, professions);
 			}
 		});
 
@@ -116,21 +128,22 @@ export abstract class Importer extends BaseModal {
 		if (missingItems.length == 0 && missingEnchants.length == 0) {
 			alert('Import successful!');
 		} else {
-			alert('Import successful, but the following IDs were not found in the sim database:' +
-				(missingItems.length == 0 ? '' : '\n\nItems: ' + missingItems.join(', ')) +
-				(missingEnchants.length == 0 ? '' : '\n\nEnchants: ' + missingEnchants.join(', ')));
+			alert(
+				'Import successful, but the following IDs were not found in the sim database:' +
+					(missingItems.length == 0 ? '' : '\n\nItems: ' + missingItems.join(', ')) +
+					(missingEnchants.length == 0 ? '' : '\n\nEnchants: ' + missingEnchants.join(', ')),
+			);
 		}
 	}
 }
 
 interface UrlParseData {
-	settings: IndividualSimSettings,
-	categories: Array<SimSettingCategories>,
+	settings: IndividualSimSettings;
+	categories: Array<SimSettingCategories>;
 }
 
 // For now this just holds static helpers to match the exporter, so it doesn't extend Importer.
 export class IndividualLinkImporter {
-
 	// Exclude UISettings by default, since most users don't intend to export those.
 	static readonly DEFAULT_CATEGORIES = getEnumValues(SimSettingCategories).filter(c => c != SimSettingCategories.UISettings) as Array<SimSettingCategories>;
 
@@ -149,7 +162,7 @@ export class IndividualLinkImporter {
 		return map;
 	})();
 
-	static tryParseUrlLocation(location: Location): UrlParseData|null {
+	static tryParseUrlLocation(location: Location): UrlParseData | null {
 		let hash = location.hash;
 		if (hash.length <= 1) {
 			return null;
@@ -171,8 +184,7 @@ export class IndividualLinkImporter {
 		if (urlParams.has(IndividualLinkImporter.CATEGORY_PARAM)) {
 			const categoryChars = urlParams.get(IndividualLinkImporter.CATEGORY_PARAM)!.split('');
 			exportCategories = categoryChars
-				.map(char => [...IndividualLinkImporter.CATEGORY_KEYS.entries()]
-				.find(e => e[1] == char))
+				.map(char => [...IndividualLinkImporter.CATEGORY_KEYS.entries()].find(e => e[1] == char))
 				.filter(e => e)
 				.map(e => e![0]);
 		}
@@ -231,10 +243,18 @@ export class Individual80UImporter<SpecType extends Spec> extends Importer {
 		`;
 	}
 
-	onImport(data: string) {
+	async onImport(data: string) {
 		const importJson = JSON.parse(data);
 
 		// Parse all the settings.
+		const charLevel = importJson?.character?.level;
+		const hasReforge = importJson?.items?.some((item: any) => !!item?.reforge);
+		const hasMastery = importJson?.stats?.masteryRating > 0;
+
+		if ((charLevel && charLevel > 80) || hasReforge || hasMastery) {
+			throwCataError();
+		}
+
 		const charClass = nameToClass((importJson?.character?.gameClass as string) || '');
 		if (charClass == Class.ClassUnknown) {
 			throw new Error('Could not parse Class!');
@@ -289,10 +309,15 @@ export class IndividualWowheadGearPlannerImporter<SpecType extends Spec> extends
 		`;
 	}
 
-	onImport(url: string) {
+	async onImport(url: string) {
+		const isCataUrl = url.includes('wowhead.com/cata');
+		if (isCataUrl) {
+			throwCataError();
+		}
+
 		const match = url.match(/www\.wowhead\.com\/wotlk\/gear-planner\/([a-z\-]+)\/([a-z\-]+)\/([a-zA-Z0-9_\-]+)/);
 		if (!match) {
-			throw new Error(`Invalid WCL URL ${url}, must look like "https://www.wowhead.com/wotlk/gear-planner/CLASS/RACE/XXXX"`);
+			throw new Error(`Invalid WowHead URL ${url}, must look like "https://www.wowhead.com/wotlk/gear-planner/CLASS/RACE/XXXX"`);
 		}
 
 		// Parse all the settings.
@@ -308,7 +333,7 @@ export class IndividualWowheadGearPlannerImporter<SpecType extends Spec> extends
 
 		const base64Data = match[3].replaceAll('_', '/').replaceAll('-', '+');
 		//console.log('Base64: ' + base64Data);
-		const data = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0))
+		const data = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
 		//console.log('Hex: ' + buf2hex(data));
 
 		// Binary schema
@@ -338,11 +363,10 @@ export class IndividualWowheadGearPlannerImporter<SpecType extends Spec> extends
 		// First byte in glyphs section seems to always be 0x30
 		cur = 1;
 		let hasGlyphs = false;
-		const d = "0123456789abcdefghjkmnpqrstvwxyz";
+		const d = '0123456789abcdefghjkmnpqrstvwxyz';
 		const glyphStr = String.fromCharCode(...glyphBytes);
 		const glyphIds = [0, 0, 0, 0, 0, 0];
 		while (cur < glyphBytes.length) {
-
 			// First byte for each glyph is 0x3z, where z is the glyph position.
 			// 0, 1, 2 are major glyphs, 3, 4, 5 are minor glyphs.
 			const glyphPosition = d.indexOf(glyphStr[cur]);
@@ -350,7 +374,8 @@ export class IndividualWowheadGearPlannerImporter<SpecType extends Spec> extends
 
 			// For some reason, wowhead uses the spell IDs for the glyphs and
 			// applies a ridiculous hashing scheme.
-			const spellId = 0 +
+			const spellId =
+				0 +
 				(d.indexOf(glyphStr[cur + 0]) << 15) +
 				(d.indexOf(glyphStr[cur + 1]) << 10) +
 				(d.indexOf(glyphStr[cur + 2]) << 5) +
@@ -391,7 +416,7 @@ export class IndividualWowheadGearPlannerImporter<SpecType extends Spec> extends
 			cur++;
 
 			const numGems = (gearBytes[cur] & 0b11100000) >> 5;
-			const highid = (gearBytes[cur] & 0b00011111);
+			const highid = gearBytes[cur] & 0b00011111;
 			cur++;
 
 			itemSpec.id = (highid << 16) + (gearBytes[cur] << 8) + gearBytes[cur + 1];
@@ -408,7 +433,7 @@ export class IndividualWowheadGearPlannerImporter<SpecType extends Spec> extends
 
 			for (let gemIdx = 0; gemIdx < numGems; gemIdx++) {
 				const gemPosition = (gearBytes[cur] & 0b11100000) >> 5;
-				const highgemid = (gearBytes[cur] & 0b00011111);
+				const highgemid = gearBytes[cur] & 0b00011111;
 				cur++;
 
 				const gemId = (highgemid << 16) + (gearBytes[cur] << 8) + gearBytes[cur + 1];
@@ -489,12 +514,16 @@ export class IndividualAddonImporter<SpecType extends Spec> extends Importer {
 			throw new Error('Could not parse Race!');
 		}
 
-		const professions = (importJson['professions'] as Array<{ name: string, level: number }>).map(profData => nameToProfession(profData.name));
+		const professions = (importJson['professions'] as Array<{ name: string; level: number }>).map(profData => nameToProfession(profData.name));
 		professions.forEach((prof, i) => {
 			if (prof == Profession.ProfessionUnknown) {
 				throw new Error(`Could not parse profession '${importJson['professions'][i]}'`);
 			}
 		});
+
+		if (importJson['glyphs']['prime']) {
+			throwCataError();
+		}
 
 		const talentsStr = (importJson['talents'] as string) || '';
 		const glyphsConfig = classGlyphsConfig[charClass];
@@ -525,6 +554,11 @@ export class IndividualAddonImporter<SpecType extends Spec> extends Importer {
 		this.finishIndividualImport(this.simUI, charClass, race, equipmentSpec, talentsStr, glyphs, professions);
 	}
 }
+
+const throwCataError = () => {
+	throw new Error(`WowSims does not support the Cata Pre-patch.
+Please use: https://wowsims.github.io/cata/ instead`);
+};
 
 function glyphNameToID(glyphName: string, glyphsConfig: Record<number, GlyphConfig>): number {
 	if (!glyphName) {
