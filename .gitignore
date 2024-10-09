@@ -4,6 +4,9 @@ ui/core/index.ts
 ui/*/index.html
 .dirstamp
 
+# nodejs version
+.nvmrc
+
 # IDE folders
 .idea
 .history
@@ -35,3 +38,5 @@ tmp/
 wowsimwotlk*.so
 wowsimwotlk*.dll
 wowsimwotlk*.h
+
+
