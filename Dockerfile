@@ -15,9 +15,10 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | b
 
 ENV NODE_VERSION=19.8.0
 ENV NVM_DIR="/root/.nvm"
-RUN . "$NVM_DIR/nvm.sh" && nvm install ${NODE_VERSION}
-RUN . "$NVM_DIR/nvm.sh" && nvm use v${NODE_VERSION}
-RUN . "$NVM_DIR/nvm.sh" && nvm alias default v${NODE_VERSION}
+RUN . "$NVM_DIR/nvm.sh" && \
+	nvm install ${NODE_VERSION} && \
+	nvm use v${NODE_VERSION} && \
+	nvm alias default v${NODE_VERSION}
 ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"
 
 EXPOSE 8080/tcp
