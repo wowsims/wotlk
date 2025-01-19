@@ -22,7 +22,7 @@ export class SocialLinks extends Component {
 	static buildGitHubLink(): Element {
 		const anchor = (
 			<a
-				href="https://github.com/wowsims/sod"
+				href="https://github.com/wowsims/wotlk"
 				target="_blank"
 				className="github-link link-alt"
 				dataset={{ bsToggle: 'tooltip', bsTitle: 'Contribute on GitHub' }}>
