@@ -1,3 +1,5 @@
+import { element } from 'tsx-vanilla';
+
 import { setItemQualityCssClass } from '../../css_utils';
 import { Player } from '../../player';
 import { UIGem as Gem } from '../../proto/ui.js';
@@ -30,11 +32,16 @@ export class GemSummary extends Component {
 
 		const headerElement = this.container.headerElement;
 		if (headerElement) {
-			const unequipButton = document.createElement('button');
-			unequipButton.innerHTML = `<i class="fas fa-times me-1"></i> Unequip All Gems`;
-			unequipButton.classList.add('btn', 'btn-sm', 'btn-link', 'gem-reset-button');
-			unequipButton.id = 'unequip-all-gems-btn';
-			unequipButton.onclick = () => this.unequipAllGems();
+			const unequipButton = (
+				<button
+					className="btn btn-sm btn-link gem-reset-button"
+					onclick={() => {
+						this.unequipAllGems();
+					}}>
+					<i className="fas fa-times me-1"></i>
+					Unequip All Gems
+				</button>
+			);
 			headerElement.appendChild(unequipButton);
 		}
 	}
