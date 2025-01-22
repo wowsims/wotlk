@@ -301,6 +301,10 @@ $favorite-cell-width: 2rem;
 	width: $source-cell-width;
 }
 
+.selector-modal-list-item-ilvl-container {
+	margin-left: map-get($spacers, 3);
+}
+
 .selector-modal-list-item-favorite {
 	margin-left: map-get($spacers, 3);
 	color: $brand;

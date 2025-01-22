@@ -821,6 +821,9 @@ export class ItemList<T> {
 					<label className="source-label">
 						<small>Source</small>
 					</label>
+					<label className="ilvl-label">
+						<small>ILvl</small>
+					</label>
 					<label className="ep-label">
 						<small>EP</small>
 						<i className="fa-solid fa-plus-minus fa-2xs"></i>
@@ -1106,6 +1109,9 @@ export class ItemList<T> {
 		if (this.label == 'Items') {
 			listItemElem.appendChild(
 				<div className="selector-modal-list-item-source-container">{this.getSourceInfo(itemData.item as unknown as Item, this.player.sim)}</div>,
+			);
+			listItemElem.appendChild(
+				<div className="selector-modal-list-item-ilvl-container">{(itemData.item as unknown as Item).ilvl}</div>,
 			);
 		}
 
