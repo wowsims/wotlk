@@ -4,7 +4,7 @@
   position: relative;
   width: var(--gem-width);
   height: var(--gem-width);
-  
+
   &:not(:last-child) {
     margin-right: 1px;
   }
@@ -29,4 +29,12 @@
   width: 100%;
   height: 100%;
   inset: 0;
+}
+
+.gem-reset-button {
+	margin-left: auto;
+	display: flex;
+	align-items: center;
+	padding: 0;
+	color: $link-danger-color;
 }

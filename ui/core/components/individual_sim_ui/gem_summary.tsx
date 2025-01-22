@@ -1,9 +1,12 @@
-import { Component } from '../../components/component';
+import { element } from 'tsx-vanilla';
+
 import { setItemQualityCssClass } from '../../css_utils';
 import { Player } from '../../player';
 import { UIGem as Gem } from '../../proto/ui.js';
 import { ActionId } from '../../proto_utils/action_id';
 import { SimUI } from '../../sim_ui';
+import { TypedEvent } from '../../typed_event';
+import { Component } from '../component';
 import { ContentBlock } from '../content_block';
 
 interface GemSummaryData {
@@ -26,6 +29,25 @@ export class GemSummary extends Component {
 			header: { title: 'Gem Summary' },
 		});
 		player.gearChangeEmitter.on(() => this.updateTable());
+
+		const headerElement = this.container.headerElement;
+		if (headerElement) {
+			const unequipButton = (
+				<button
+					className="btn btn-sm btn-link gem-reset-button"
+					onclick={() => {
+						this.unequipAllGems();
+					}}>
+					<i className="fas fa-times me-1"></i>
+					Unequip All Gems
+				</button>
+			);
+			headerElement.appendChild(unequipButton);
+		}
+	}
+
+	private unequipAllGems() {
+		this.player.setGear(TypedEvent.nextEventID(), this.player.getGear().withoutGems());
 	}
 
 	private updateTable() {
