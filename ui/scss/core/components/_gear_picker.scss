@@ -50,8 +50,36 @@ $favorite-cell-width: 2rem;
 			.item-picker-labels-container {
 				align-items: flex-end;
 			}
+
+			.item-picker-ilvl {
+				right: 0;
+				@include media-breakpoint-down(md) {
+					left: 0;
+				}
+			}
 		}
 	}
+}
+
+.item-picker-icon-wrapper {
+	position: relative;
+	width: 4rem;
+	height: 4rem;
+	border: var(--border-default);
+
+	@include media-breakpoint-down(lg) {
+		width: 3rem;
+		height: 3rem;
+	}
+}
+
+.item-picker-ilvl {
+	position: absolute;
+	padding-left: 1px;
+	background: rgba($black, 0.5);
+	font-size: 0.75rem;
+	z-index: 1;
+	pointer-events: none;
 }
 
 .item-picker-sockets-container {

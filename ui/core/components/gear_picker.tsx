@@ -105,6 +105,7 @@ export class ItemRenderer extends Component {
 
 	readonly iconElem: HTMLAnchorElement;
 	readonly nameElem: HTMLAnchorElement;
+	readonly ilvlElem: HTMLSpanElement;
 	readonly enchantElem: HTMLAnchorElement;
 	readonly socketsContainerElem: HTMLElement;
 
@@ -114,13 +115,17 @@ export class ItemRenderer extends Component {
 
 		const iconElem = ref<HTMLAnchorElement>();
 		const nameElem = ref<HTMLAnchorElement>();
+		const ilvlElem = ref<HTMLSpanElement>();
 		const enchantElem = ref<HTMLAnchorElement>();
 		const sce = ref<HTMLDivElement>();
 		this.rootElem.appendChild(
 			<>
-				<a ref={iconElem} className="item-picker-icon" href="javascript:void(0)" attributes={{ role: 'button' }}>
-					<div ref={sce} className="item-picker-sockets-container"></div>
-				</a>
+				<div className="item-picker-icon-wrapper">
+					<span className="item-picker-ilvl" ref={ilvlElem} />
+					<a ref={iconElem} className="item-picker-icon" href="javascript:void(0)" attributes={{ role: 'button' }}>
+						<div ref={sce} className="item-picker-sockets-container"></div>
+					</a>
+				</div>
 				<div className="item-picker-labels-container">
 					<a ref={nameElem} className="item-picker-name" href="javascript:void(0)" attributes={{ role: 'button' }}></a>
 					<a ref={enchantElem} className="item-picker-enchant" href="javascript:void(0)" attributes={{ role: 'button' }}></a>
@@ -130,6 +135,7 @@ export class ItemRenderer extends Component {
 
 		this.iconElem = iconElem.value!;
 		this.nameElem = nameElem.value!;
+		this.ilvlElem = ilvlElem.value!;
 		this.enchantElem = enchantElem.value!;
 		this.socketsContainerElem = sce.value!;
 	}
@@ -147,6 +153,7 @@ export class ItemRenderer extends Component {
 		this.enchantElem.innerText = '';
 		this.socketsContainerElem.innerText = '';
 		this.nameElem.textContent = '';
+		this.ilvlElem.replaceChildren();
 	}
 
 	update(newItem: EquippedItem) {
@@ -156,6 +163,7 @@ export class ItemRenderer extends Component {
 		} else {
 			this.nameElem.querySelector('.heroic-label')?.remove();
 		}
+		this.ilvlElem.textContent = newItem.item.ilvl.toString();
 
 		setItemQualityCssClass(this.nameElem, newItem.item.quality);
 
