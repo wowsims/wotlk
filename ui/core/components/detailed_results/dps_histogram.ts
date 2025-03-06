@@ -1,6 +1,6 @@
-import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
+import { Chart } from 'chart.js';
 
-declare var Chart: any;
+import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
 
 export class DpsHistogram extends ResultComponent {
 	constructor(config: ResultComponentConfig) {
@@ -12,7 +12,7 @@ export class DpsHistogram extends ResultComponent {
 		const chartBounds = this.rootElem.getBoundingClientRect();
 
 		this.rootElem.textContent = '';
-		const chartCanvas = document.createElement("canvas");
+		const chartCanvas = document.createElement('canvas');
 		chartCanvas.height = chartBounds.height;
 		chartCanvas.width = chartBounds.width;
 
@@ -34,17 +34,19 @@ export class DpsHistogram extends ResultComponent {
 			}
 		});
 
-		const ctx = chartCanvas.getContext('2d');
+		const ctx = chartCanvas.getContext('2d')!;
 		this.rootElem.appendChild(chartCanvas);
 
 		const chart = new Chart(ctx, {
 			type: 'bar',
 			data: {
 				labels: labels,
-				datasets: [{
-					data: vals,
-					backgroundColor: colors,
-				}],
+				datasets: [
+					{
+						data: vals,
+						backgroundColor: colors,
+					},
+				],
 			},
 			options: {
 				plugins: {
@@ -55,17 +57,18 @@ export class DpsHistogram extends ResultComponent {
 					legend: {
 						display: false,
 						labels: {},
-					}
+					},
 				},
 				scales: {
 					y: {
 						beginAtZero: true,
 						ticks: {
-							display: false
+							display: false,
 						},
 					},
 				},
 			},
 		});
+		this.addOnDisposeCallback(() => chart.destroy());
 	}
 }

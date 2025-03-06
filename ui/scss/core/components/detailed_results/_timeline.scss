@@ -1,25 +1,32 @@
 $dps-color: #ed5653;
 $threat-color: #b56d07;
 
-.threat .series-color, .threat.series-color {
+.threat .series-color,
+.threat.series-color {
 	color: $threat-color;
 }
-.health .series-color, .health.series-color {
+.health .series-color,
+.health.series-color {
 	color: $health-color;
 }
-.mana .series-color, .mana.series-color {
+.mana .series-color,
+.mana.series-color {
 	color: $mana-color;
 }
-.energy .series-color, .energy.series-color {
+.energy .series-color,
+.energy.series-color {
 	color: $energy-color;
 }
-.rage .series-color, .rage.series-color {
+.rage .series-color,
+.rage.series-color {
 	color: $rage-color;
 }
-.focus .series-color, .focus.series-color {
+.focus .series-color,
+.focus.series-color {
 	color: $focus-color;
 }
-.combo-points .series-color, .combo-points.series-color {
+.combo-points .series-color,
+.combo-points.series-color {
 	color: $combo-points-color;
 }
 
@@ -66,6 +73,22 @@ $threat-color: #b56d07;
 	}
 }
 
+.timeline-plot {
+	&.dps-resources-plot {
+		height: 32rem;
+	}
+
+	.apexcharts-tooltip.apexcharts-theme-dark {
+		z-index: 1000;
+		box-shadow: none;
+		border-radius: 0;
+		background-color: var(--bs-tooltip-bg);
+		border: var(--bs-tooltip-border) 1px solid;
+		color: var(--bs-tooltip-body-color);
+		padding: var(--bs-tooltip-body-padding-y) var(--bs-tooltip-body-padding-x);
+	}
+}
+
 .timeline-tooltip {
 	text-align: start;
 	background: $tooltip-bg;
@@ -105,7 +128,7 @@ $threat-color: #b56d07;
 }
 .rotation-row {
 	height: 28px;
-	margin: .25rem;
+	margin: 0.25rem;
 }
 .rotation-labels {
 	display: inline-block;
@@ -140,7 +163,8 @@ $threat-color: #b56d07;
 .rotation-label-text {
 	margin: 2px;
 }
-.rotation-label-header, .rotation-timeline-header {
+.rotation-label-header,
+.rotation-timeline-header {
 	height: 30px;
 }
 .rotation-timeline {

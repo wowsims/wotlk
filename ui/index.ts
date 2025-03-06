@@ -1,7 +1,11 @@
+import './shared/bootstrap_overrides';
+
 import * as Popper from '@popperjs/core';
 import * as bootstrap from 'bootstrap';
+import { Chart, registerables } from 'chart.js';
 
-import './shared/bootstrap_overrides';
+Chart.register(...registerables);
+Chart.defaults.color = 'white';
 
 declare global {
 	interface Window {
@@ -19,19 +23,19 @@ if (history.scrollRestoration) {
 } else {
 	window.onbeforeunload = function () {
 		window.scrollTo(0, 0);
-	}
+	};
 }
 
 function docReady(fn: any) {
 	// see if DOM is already available
-	if (document.readyState === "complete" || document.readyState === "interactive") {
+	if (document.readyState === 'complete' || document.readyState === 'interactive') {
 		// call on next available tick
 		setTimeout(fn, 1);
 	} else {
-		document.addEventListener("DOMContentLoaded", fn);
+		document.addEventListener('DOMContentLoaded', fn);
 	}
 }
 
-docReady(function() {
+docReady(function () {
 	document.body.classList.add('ready');
 });

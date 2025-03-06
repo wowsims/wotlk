@@ -26,7 +26,11 @@
     },
     "dependencies": {
         "@popperjs/core": "^2.11.6",
+        "@types/pako": "^2.0.0",
+        "apexcharts": "^4.5.0",
         "bootstrap": "5.2.3",
+        "chart.js": "^4.4.8",
+        "pako": "^2.0.4",
         "tippy.js": "^6.3.7",
         "tsx-vanilla": "^1.0.0"
     },

@@ -1,29 +1,25 @@
-import { REPO_NAME } from '../constants/other'
 import { TypedEvent } from '../../core/typed_event';
-import { DetailedResultsUpdate, SimRunData, SimRun } from '../proto/ui';
+import { REPO_NAME } from '../constants/other';
+import { DetailedResultsUpdate, SimRun, SimRunData } from '../proto/ui';
 import { SimResult } from '../proto_utils/sim_result';
 import { SimUI } from '../sim_ui';
-
-import { SimResultData } from './detailed_results/result_component';
-import { ResultsFilter } from './detailed_results/results_filter';
+import { Component } from './component';
+import { AuraMetricsTable } from './detailed_results/aura_metrics';
 import { CastMetricsTable } from './detailed_results/cast_metrics';
+import { DpsHistogram } from './detailed_results/dps_histogram';
 import { DtpsMeleeMetricsTable } from './detailed_results/dtps_melee_metrics';
 import { DtpsSpellMetricsTable } from './detailed_results/dtps_spell_metrics';
 import { HealingMetricsTable } from './detailed_results/healing_metrics';
-import { MeleeMetricsTable } from './detailed_results/melee_metrics';
-import { SpellMetricsTable } from './detailed_results/spell_metrics';
-import { ResourceMetricsTable } from './detailed_results/resource_metrics';
-import { PlayerDamageMetricsTable } from './detailed_results/player_damage';
-import { AuraMetricsTable } from './detailed_results/aura_metrics'
-import { DpsHistogram } from './detailed_results/dps_histogram';
-import { Timeline } from './detailed_results/timeline';
 import { LogRunner } from './detailed_results/log_runner';
+import { MeleeMetricsTable } from './detailed_results/melee_metrics';
+import { PlayerDamageMetricsTable } from './detailed_results/player_damage';
+import { ResourceMetricsTable } from './detailed_results/resource_metrics';
+import { SimResultData } from './detailed_results/result_component';
+import { ResultsFilter } from './detailed_results/results_filter';
+import { SpellMetricsTable } from './detailed_results/spell_metrics';
+import { Timeline } from './detailed_results/timeline';
 import { ToplineResults } from './detailed_results/topline_results';
-
-import { Component } from './component';
 import { RaidSimResultsManager } from './raid_sim_action';
-
-declare var Chart: any;
 
 const layoutHTML = `
 <div class="dr-root dr-no-results">
@@ -232,21 +228,19 @@ export abstract class DetailedResults extends Component {
 
 		this.simUI?.sim.settingsChangeEmitter.on(async () => await this.updateSettings());
 
-		Chart.defaults.color = 'white';
-
 		// Allow styling the sticky toolbar
 		const toolbar = document.querySelector('.dr-toolbar') as HTMLElement;
 		new IntersectionObserver(
 			([e]) => {
 				//console.log(e.intersectionRatio)
-				e.target.classList.toggle('stuck', e.intersectionRatio < 1)
+				e.target.classList.toggle('stuck', e.intersectionRatio < 1);
 			},
 			{
 				// Intersect with the sim header or top of the separate tab
 				rootMargin: this.simUI ? `-${this.simUI.simHeader.rootElem.offsetHeight + 1}px 0px 0px 0px` : '0px',
 				threshold: [1],
-			}
-		).observe(toolbar)
+			},
+		).observe(toolbar);
 
 		this.resultsFilter = new ResultsFilter({
 			parent: this.rootElem.getElementsByClassName('results-filter')[0] as HTMLElement,
@@ -257,24 +251,57 @@ export abstract class DetailedResults extends Component {
 			new ToplineResults({ parent: toplineResultsDiv, resultsEmitter: this.resultsEmitter });
 		});
 
-		const castMetrics = new CastMetricsTable({ parent: this.rootElem.getElementsByClassName('cast-metrics')[0] as HTMLElement, resultsEmitter: this.resultsEmitter });
-		const meleeMetrics = new MeleeMetricsTable({ parent: this.rootElem.getElementsByClassName('melee-metrics')[0] as HTMLElement, resultsEmitter: this.resultsEmitter });
-		const spellMetrics = new SpellMetricsTable({ parent: this.rootElem.getElementsByClassName('spell-metrics')[0] as HTMLElement, resultsEmitter: this.resultsEmitter });
-		const healingMetrics = new HealingMetricsTable({ parent: this.rootElem.getElementsByClassName('healing-spell-metrics')[0] as HTMLElement, resultsEmitter: this.resultsEmitter });
-		const resourceMetrics = new ResourceMetricsTable({ parent: this.rootElem.getElementsByClassName('resource-metrics')[0] as HTMLElement, resultsEmitter: this.resultsEmitter });
-		const playerDamageMetrics = new PlayerDamageMetricsTable({ parent: this.rootElem.getElementsByClassName('player-damage-metrics')[0] as HTMLElement, resultsEmitter: this.resultsEmitter }, this.resultsFilter);
-		const buffAuraMetrics = new AuraMetricsTable({
-			parent: this.rootElem.getElementsByClassName('buff-aura-metrics')[0] as HTMLElement,
+		const castMetrics = new CastMetricsTable({
+			parent: this.rootElem.getElementsByClassName('cast-metrics')[0] as HTMLElement,
 			resultsEmitter: this.resultsEmitter,
-		}, false);
-		const debuffAuraMetrics = new AuraMetricsTable({
-			parent: this.rootElem.getElementsByClassName('debuff-aura-metrics')[0] as HTMLElement,
+		});
+		const meleeMetrics = new MeleeMetricsTable({
+			parent: this.rootElem.getElementsByClassName('melee-metrics')[0] as HTMLElement,
 			resultsEmitter: this.resultsEmitter,
-		}, true);
-		const dpsHistogram = new DpsHistogram({ parent: this.rootElem.getElementsByClassName('dps-histogram')[0] as HTMLElement, resultsEmitter: this.resultsEmitter });
+		});
+		const spellMetrics = new SpellMetricsTable({
+			parent: this.rootElem.getElementsByClassName('spell-metrics')[0] as HTMLElement,
+			resultsEmitter: this.resultsEmitter,
+		});
+		const healingMetrics = new HealingMetricsTable({
+			parent: this.rootElem.getElementsByClassName('healing-spell-metrics')[0] as HTMLElement,
+			resultsEmitter: this.resultsEmitter,
+		});
+		const resourceMetrics = new ResourceMetricsTable({
+			parent: this.rootElem.getElementsByClassName('resource-metrics')[0] as HTMLElement,
+			resultsEmitter: this.resultsEmitter,
+		});
+		const playerDamageMetrics = new PlayerDamageMetricsTable(
+			{ parent: this.rootElem.getElementsByClassName('player-damage-metrics')[0] as HTMLElement, resultsEmitter: this.resultsEmitter },
+			this.resultsFilter,
+		);
+		const buffAuraMetrics = new AuraMetricsTable(
+			{
+				parent: this.rootElem.getElementsByClassName('buff-aura-metrics')[0] as HTMLElement,
+				resultsEmitter: this.resultsEmitter,
+			},
+			false,
+		);
+		const debuffAuraMetrics = new AuraMetricsTable(
+			{
+				parent: this.rootElem.getElementsByClassName('debuff-aura-metrics')[0] as HTMLElement,
+				resultsEmitter: this.resultsEmitter,
+			},
+			true,
+		);
+		const dpsHistogram = new DpsHistogram({
+			parent: this.rootElem.getElementsByClassName('dps-histogram')[0] as HTMLElement,
+			resultsEmitter: this.resultsEmitter,
+		});
 
-		const dtpsMeleeMetrics = new DtpsMeleeMetricsTable({ parent: this.rootElem.getElementsByClassName('dtps-melee-metrics')[0] as HTMLElement, resultsEmitter: this.resultsEmitter });
-		const dtpsSpellMetrics = new DtpsSpellMetricsTable({ parent: this.rootElem.getElementsByClassName('dtps-spell-metrics')[0] as HTMLElement, resultsEmitter: this.resultsEmitter });
+		const dtpsMeleeMetrics = new DtpsMeleeMetricsTable({
+			parent: this.rootElem.getElementsByClassName('dtps-melee-metrics')[0] as HTMLElement,
+			resultsEmitter: this.resultsEmitter,
+		});
+		const dtpsSpellMetrics = new DtpsSpellMetricsTable({
+			parent: this.rootElem.getElementsByClassName('dtps-spell-metrics')[0] as HTMLElement,
+			resultsEmitter: this.resultsEmitter,
+		});
 
 		const timeline = new Timeline({
 			parent: this.rootElem.getElementsByClassName('timeline')[0] as HTMLElement,
@@ -310,23 +337,26 @@ export abstract class DetailedResults extends Component {
 
 	protected async setSimRunData(simRunData: SimRunData) {
 		this.latestRun = simRunData;
-		await this.postMessage(DetailedResultsUpdate.create({
-			data: {
-				oneofKind: 'runData',
-				runData: simRunData,
-			},
-		}));
+		await this.postMessage(
+			DetailedResultsUpdate.create({
+				data: {
+					oneofKind: 'runData',
+					runData: simRunData,
+				},
+			}),
+		);
 	}
 
 	protected async updateSettings() {
-		if (!this.simUI)
-			return
-		await this.postMessage(DetailedResultsUpdate.create({
-			data: {
-				oneofKind: 'settings',
-				settings: this.simUI.sim.toProto(),
-			},
-		}));
+		if (!this.simUI) return;
+		await this.postMessage(
+			DetailedResultsUpdate.create({
+				data: {
+					oneofKind: 'settings',
+					settings: this.simUI.sim.toProto(),
+				},
+			}),
+		);
 	}
 
 	private updateResults() {
@@ -386,18 +416,18 @@ export abstract class DetailedResults extends Component {
 	}
 }
 
-
 export class WindowedDetailedResults extends DetailedResults {
 	constructor(parent: HTMLElement) {
-		super(parent, null, new URLSearchParams(window.location.search).get("cssScheme") ?? "")
+		super(parent, null, new URLSearchParams(window.location.search).get('cssScheme') ?? '');
 
-		window.addEventListener('message',
-			async (event) => await this.handleMessage(DetailedResultsUpdate.fromJson(event.data))
-		);
+		window.addEventListener('message', async event => await this.handleMessage(DetailedResultsUpdate.fromJson(event.data)));
 
-		this.rootElem.insertAdjacentHTML('beforeend', `
+		this.rootElem.insertAdjacentHTML(
+			'beforeend',
+			`
 			<div class="sim-bg"></div>
-		`);
+		`,
+		);
 	}
 
 	async postMessage(update: DetailedResultsUpdate): Promise<void> {
@@ -409,7 +439,7 @@ export class EmbeddedDetailedResults extends DetailedResults {
 	private tabWindow: Window | null = null;
 
 	constructor(parent: HTMLElement, simUI: SimUI, simResultsManager: RaidSimResultsManager) {
-		super(parent, simUI, simUI.cssScheme)
+		super(parent, simUI, simUI.cssScheme);
 
 		const newTabBtn = document.createElement('div');
 		newTabBtn.classList.add('detailed-results-controls-div');
