@@ -1,4 +1,5 @@
 import { JsonObject } from '@protobuf-ts/runtime';
+import pako from 'pako';
 
 import { IndividualSimUI } from '../individual_sim_ui';
 import {
@@ -21,8 +22,6 @@ import { GlyphConfig } from '../talents/glyphs_picker';
 import { TypedEvent } from '../typed_event';
 import { buf2hex, getEnumValues } from '../utils';
 import { BaseModal } from './base_modal';
-
-declare let pako: any;
 
 export abstract class Importer extends BaseModal {
 	protected readonly textElem: HTMLTextAreaElement;
