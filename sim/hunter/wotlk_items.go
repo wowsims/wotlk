@@ -177,8 +177,8 @@ var ItemSetAhnKaharBloodHuntersBattlegear = core.NewItemSet(core.ItemSet{
 				Duration: time.Second * 10,
 				OnGain: func(aura *core.Aura, sim *core.Simulation) {
 					curBonus = stats.Stats{
-						stats.AttackPower:       aura.Unit.GetStat(stats.AttackPower) * 0.1,
-						stats.RangedAttackPower: aura.Unit.GetStat(stats.RangedAttackPower) * 0.1,
+						stats.AttackPower:       aura.Unit.GetStat(stats.AttackPower) * 0.2,
+						stats.RangedAttackPower: aura.Unit.GetStat(stats.RangedAttackPower) * 0.2,
 					}
 
 					aura.Unit.AddStatsDynamic(sim, curBonus)
