@@ -38,8 +38,12 @@ jobs:
           make test
 
       - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@4.1.5
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          branch: gh-pages
-          folder: dist/wotlk
-          single-commit: true
+            repository-name: wowsims/pages-deploy
+            branch: main
+            folder: dist/wotlk
+            target-folder: wotlk
+            single-commit: true
+            token: ${{ secrets.DEPLOY_REPO_TOKEN }}
+            clean: false
