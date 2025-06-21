@@ -124,6 +124,7 @@ $(OUT_DIR)/lib.wasm: sim/wasm/* sim/core/proto/api.pb.go $(filter-out sim/core/i
 $(OUT_DIR)/assets/%: assets/%
 	mkdir -p $(@D)
 	cp $< $@
+	rm -rf $(OUT_DIR)/assets/db_inputs
 
 binary_dist/dist.go: sim/web/dist.go.tmpl
 	mkdir -p binary_dist/wotlk
