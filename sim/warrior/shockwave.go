@@ -31,9 +31,6 @@ func (warrior *Warrior) registerShockwaveSpell() {
 				Duration: 20*time.Second - core.TernaryDuration(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfShockwave), 3*time.Second, 0),
 			},
 		},
-		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			return warrior.StanceMatches(DefensiveStance)
-		},
 
 		DamageMultiplier: 1 + core.TernaryFloat64(warrior.HasSetBonus(ItemSetYmirjarLordsPlate, 2), .20, 0),
 		CritMultiplier:   warrior.critMultiplier(none),
