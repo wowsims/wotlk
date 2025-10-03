@@ -92,7 +92,7 @@ func (unit *Unit) averageResist(school SpellSchool, attacker *Unit) float64 {
 
 	c := 5 * float64(attacker.Level)
 	if attacker.Type == EnemyUnit && attacker.Level-unit.Level >= 3 {
-		c = 510 // other values TBD, but not very useful in practice
+		c = 150 + (float64(attacker.Level)-60)*(float64(attacker.Level)-67.5)
 	}
 
 	return resistance/(c+resistance) + unit.levelBasedResist(attacker) // these may stack differently, but that's irrelevant in practice
