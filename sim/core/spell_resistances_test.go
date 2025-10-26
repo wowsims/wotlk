@@ -49,7 +49,7 @@ func Test_PartialResistsVsPlayer(t *testing.T) {
 			chance = th.cumulativeChance
 		}
 
-		expectedAr := float64(resist) / (510 + float64(resist))
+		expectedAr := float64(resist) / ((150 + (float64(attacker.Level)-60)*(float64(attacker.Level)-67.5)) + float64(resist))
 
 		if math.Abs(resultingAr-expectedAr) > 1e-9 {
 			t.Errorf("resist = %d, thresholds = %s, resultingAr = %.2f%%, expectedAr = %.2f%%", resist, thresholds, resultingAr, expectedAr)
