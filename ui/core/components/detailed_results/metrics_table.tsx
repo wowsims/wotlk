@@ -5,8 +5,7 @@ import { EventID, TypedEvent } from '../../typed_event.js';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
 import tippy from 'tippy.js'
 import { element, fragment, ref } from 'tsx-vanilla'
-
-declare var $: any;
+import { TableSorter } from './table_sorter.js';
 
 export enum ColumnSortType {
 	None,
@@ -32,7 +31,8 @@ export abstract class MetricsTable<T> extends ResultComponent {
 	private readonly columnConfigs: Array<MetricsColumnConfig<T>>;
 
 	protected readonly tableElem: HTMLElement;
-	protected readonly bodyElem: HTMLElement;
+	protected readonly bodyElem: HTMLTableSectionElement;
+	private readonly sorter: TableSorter;
 
 	readonly onUpdate = new TypedEvent<void>('MetricsTableUpdate');
 
@@ -50,10 +50,10 @@ export abstract class MetricsTable<T> extends ResultComponent {
 			</table>
 		);
 
-		this.tableElem = this.rootElem.getElementsByClassName('metrics-table')[0] as HTMLTableSectionElement;
-		this.bodyElem = this.rootElem.getElementsByClassName('metrics-table-body')[0] as HTMLElement;
+		this.tableElem = this.rootElem.querySelector<HTMLTableElement>('.metrics-table')!;
+		this.bodyElem = this.rootElem.querySelector<HTMLTableSectionElement>('.metrics-table-body')!;
 
-		const headerRowElem = this.rootElem.getElementsByClassName('metrics-table-header-row')[0] as HTMLElement;
+		const headerRowElem = this.rootElem.querySelector<HTMLTableRowElement>('.metrics-table-header-row')!;
 		this.columnConfigs.forEach(columnConfig => {
 			const headerCell = document.createElement('th');
 			headerCell.classList.add('metrics-table-header-cell');
@@ -73,12 +73,15 @@ export abstract class MetricsTable<T> extends ResultComponent {
 			headerRowElem.appendChild(headerCell);
 		});
 
-		const sortList = this.columnConfigs
-			.map((config, i) => [i, config.sort == ColumnSortType.Ascending ? 0 : 1])
-			.filter(sortData => this.columnConfigs[sortData[0]].sort);
-		$(this.tableElem).tablesorter({
-			sortList: sortList,
-			cssChildRow: 'child-metric',
+		const sortCol = this.columnConfigs.findIndex(v => !!v.sort);
+
+		this.sorter = new TableSorter({
+			tableHead: headerRowElem,
+			tableBody: this.bodyElem,
+			dataSetKey: 'text',
+			childRowClass: 'child-metric',
+			defaultSortCol: sortCol !== -1 ? sortCol : 0,
+			defaultSortDesc: sortCol !== -1 && this.columnConfigs[sortCol].sort == ColumnSortType.Descending,
 		});
 	}
 
@@ -101,6 +104,9 @@ export abstract class MetricsTable<T> extends ResultComponent {
 
 		this.columnConfigs.forEach(columnConfig => {
 			const cellElem = document.createElement('td');
+			if (columnConfig.getValue) {
+				cellElem.dataset.text = String(columnConfig.getValue(metric));
+			}
 			if (columnConfig.columnClass) {
 				cellElem.classList.add(columnConfig.columnClass);
 			}
@@ -128,7 +134,7 @@ export abstract class MetricsTable<T> extends ResultComponent {
 			return;
 		}
 
-		// Manually sort because tablesorter doesn't let us apply sorting to child rows.
+		// Manually sort because the sorter doesn't apply sorting to child rows.
 		this.sortMetrics(metrics);
 
 		const mergedMetrics = this.mergeMetrics(metrics);
@@ -162,7 +168,7 @@ export abstract class MetricsTable<T> extends ResultComponent {
 		}
 
 		groupedMetrics.forEach(group => this.addGroup(group));
-		$(this.tableElem).trigger('update');
+		this.sorter.update();
 		this.onUpdate.emit(resultData.eventID);
 	}
 
