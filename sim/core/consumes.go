@@ -493,19 +493,27 @@ func (character *Character) HasAlchStone() bool {
 func makePotionActivation(potionType proto.Potions, character *Character, potionCD *Timer) MajorCooldown {
 	mcd := makePotionActivationInternal(potionType, character, potionCD)
 	if mcd.Spell != nil {
-		// Mark as 'Encounter Only' so that users are forced to select the generic Potion
-		// placeholder action instead of specific potion spells, in APL prepull. This
-		// prevents a mismatch between Consumes and Rotation settings.
-		mcd.Spell.Flags |= SpellFlagEncounterOnly | SpellFlagPotion
+		// Potions are ordinary APL spells, so the APL can name the exact potion
+		// each of its actions uses. The generic Potion placeholder resolves to
+		// a single potion per phase (the prepull potion before the pull, the
+		// combat potion afterwards), which cannot express more than one potion
+		// before the pull, e.g. an Indestructible Potion at -61 s followed by a
+		// different potion at -1 s. Naming the spells is what makes that
+		// expressible; every potion they name shares the one potion cooldown
+		// below, which is the only limit on how many are used.
+		mcd.Spell.Flags |= SpellFlagAPL | SpellFlagPotion
 		oldApplyEffects := mcd.Spell.ApplyEffects
 		mcd.Spell.ApplyEffects = func(sim *Simulation, target *Unit, spell *Spell) {
 			oldApplyEffects(sim, target, spell)
 			if sim.CurrentTime < 0 {
-				if potionType == proto.Potions_IndestructiblePotion {
-					potionCD.Set(sim.CurrentTime + 2*time.Minute)
-				} else {
-					potionCD.Set(sim.CurrentTime + time.Minute)
-				}
+				// Every potion shares one one-minute cooldown, the
+				// Indestructible Potion included. The two-minute cooldown on
+				// the Indestructible Potion is a 3.4.x anti-abuse change: on
+				// the 3.3.5 client a one-minute cooldown applies to all
+				// potions, which is what makes the standard prepot sequence
+				// possible (Indestructible at -61 s, another potion at -1 s,
+				// a third at +59 s).
+				potionCD.Set(sim.CurrentTime + time.Minute)
 				character.UpdateMajorCooldowns()
 			}
 		}
